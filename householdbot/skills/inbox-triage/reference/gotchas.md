@@ -12,3 +12,8 @@
 - **The PDF is the bill, the email is the envelope.** Amount and due date come
   from the attachment when there is one; the email text may round or omit them.
 - **Seven days is a window, not the mailbox.** Say which period was searched.
+- **The connected mailbox is the member's.** In testing, the profile said
+  Mail was not connected and an answer refused to read the connected inbox,
+  comparing the session account's address with the household's names. Read
+  the connected mailbox, offer to note it in the profile, and never quote the
+  account's address.

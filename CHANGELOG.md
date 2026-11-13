@@ -1,5 +1,63 @@
 # Changelog
 
+## 0.3.0
+
+Home, family and everyday life (stage 3 of 4).
+
+- Skills: `home-upkeep` (statutory checks, guarantees, repair history,
+  contractors' quotes), `vehicle-file`, `insurance-overview`,
+  `identity-and-travel`, `school-desk`, `health-file` (stricter privacy,
+  validity of prescriptions and referrals), `emergency-file` (where things
+  are and whom to call, never a number or a password), `family-calendar`
+  (clashes and drives, entries after a yes with neutral titles),
+  `meal-planner`, `shopping-list`, `chore-rotation`, and the chains
+  `life-event` (moving, a birth, buying or selling a car, a new job, a death)
+  and `annual-review` (what may be shredded, renewals, tax papers, archive).
+- `chores.py`: the chores register, fair and repeatable plans by share and
+  age with last weeks' load carried over, saved plans, agreed swaps and the
+  balance; 14 unit tests.
+- `dates.py event` counts every statutory window of a life event from the
+  day it happened; `record.py retention` lists papers past their keeping date
+  and changes nothing; documents gain the status `disposed`.
+- Shared rule `everyday` (meals, shopping, chores, the family calendar);
+  personal-data rules for foods kept off the plan and for the emergency file;
+  approval gates for dictated list changes, calendar entries and plans.
+- The profile gains an optional *Everyday life* section, and the setup an
+  optional fifth part; `registers/chores.json` and `lists/` are described in
+  the registers guide.
+- Every skill's description is shorter (about 300 characters, trigger
+  phrases early), so 31 skills stay within the skill listing; every skill
+  reads `household-profile.md` first and runs `record.py locate` only when it
+  is not there.
+- `--approved-by` takes a name only; a PIN, password or code a member types is
+  never repeated; a yes given before a plan or list was shown approves
+  nothing; `record.py complete --from-done`; `record.py find` lists a type or
+  category without search words.
+- An entry reaches `record.py` on standard input (read as UTF-8) or with
+  `--json`; no file is written to prepare a write.
+- The session's own account (name, address) is never quoted, signed with or
+  used to decide whose mailbox is connected; `inbox-triage` reads the mailbox
+  connected in the session and offers to note it in the profile.
+- From the behaviour tests: the emergency file shows its outline from the
+  record before asking; a child asking for a chore swap is answered directly;
+  health papers and school letters are looked up in the record and read in
+  full before anything is asked; quotes say "not stated" rather than "none";
+  incomes the pack does not cover get a checklist, not rules from memory; an
+  appeal's addressee block names the appeal body first; a sale or a death
+  names the register entries that end with it; a fact from a filed document
+  names its register id, title and page; a trip check keeps the verdict
+  apart from renewal timing.
+- Polish country pack: life events (buying or selling a car, moving house, a
+  birth, a new job, a death), health papers, children and school, keeping and
+  shredding documents, insurance a household must or may have, home upkeep
+  and travel documents; 50 new windows, 6 life events, 5 recurring items and
+  12 keeping periods, each with its law or marked as a suggestion. Reflects
+  the 2025–2026 changes: the PLN 7,000 funeral allowance, 60 days to register
+  an inherited car, the PLN 3,000 PCC exemption, central e-registration and
+  smoke and CO detectors. Corrected: the lump-sum tax paid only on private
+  rental does not rule out joint filing or the single-parent method (ustawa o
+  PIT art. 6 ust. 8).
+
 ## 0.2.1
 
 Behaviour tests outside the plugin package (stage 2.1).

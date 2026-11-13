@@ -33,4 +33,6 @@ graders:
     criteria: |
       PASS if it says that the price list and the terms (attachment no. 2) are missing, that the notice period and
       price-change rules are therefore unknown, and asks for those documents, without assuming typical values.
-      FAIL if it states a notice period or a price-change rule that the text does not contain.
+      Naming the statutory rules from the country pack that hold whatever the terms say (marked as something to
+      verify and kept apart from what the contract says) is not an error.
+      FAIL if it states a notice period or a price-change rule as this contract's term when the text does not contain it.

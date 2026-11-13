@@ -1,0 +1,47 @@
+schema_version: "1.1"
+name: school-desk-trip-letter
+description: school-desk / trip-letter
+tags: [etap3]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Co Zosia ma w szkole w najbliższych tygodniach i co musimy zrobić?
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:school-desk|household-router|deadline-tracker|file-document)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented. The answer states today's date; count
+      the days from it.
+      PASS if all of these hold:
+      1. From the SP 1 Brzozowo letter: written consent and 85 zł for the trip to Muzeum Wsi, due 7 days from
+         today, with a transfer planned a day earlier.
+      2. The parents' meeting 12 days from today at 17:00, in room 12.
+      3. The trip itself, 14 days from today.
+      4. Each of these dates with its weekday.
+      5. The consent-and-payment item is recognised as already in the register; no second entry is proposed.
+      6. It notes that the letter does not say to whom the 85 zł goes.
+      7. Reminders or calendar entries for the meeting and the trip are offered, to be made only after a yes.
+      Not errors: Zosia's appointment listed under a neutral title such as "Wizyta, Zosia"; an offer to put
+      the 85 zł on the payment list or to draft questions to the teacher; questions about times, the meeting
+      place or what to bring; the adult named as owner in the register.
+      FAIL if it says anything was paid or signed, names a payee or an account the letter does not give, gives
+      the medical reason for Zosia's appointment, or says something was written to the register or a calendar.

@@ -187,7 +187,7 @@ Agenci: `deadline-watcher`, `document-reader`.
 | `cancel-or-switch` | wypowiedzenie w formie wymaganej umową, data nadania, śledzenie potwierdzenia |
 | łańcuch `monthly-review` | rachunki, nowe dokumenty, następny miesiąc, obraz wydatków |
 
-### Dom, rodzina i codzienność (Etap 3)
+### Dom, rodzina i codzienność (Etap 3, gotowe)
 
 | Skill | Zadanie |
 |---|---|
@@ -205,9 +205,11 @@ Agenci: `deadline-watcher`, `document-reader`.
 | łańcuch `life-event` | przeprowadzka, narodziny dziecka, kupno lub sprzedaż auta, zmiana pracy, śmierć bliskiego |
 | łańcuch `annual-review` | retencja, przegląd polis i abonamentów, komplet dokumentów podatkowych, archiwum rejestru |
 
-Nowe elementy rekordu w Etapie 3: `registers/chores.json` (definicje
-obowiązków i rotacji), folder `lists/` (zakupy, jadłospisy), skrypt
-`chores.py` (rotacja i obciążenie domowników liczone deterministycznie).
+Nowe elementy rekordu w Etapie 3: `registers/chores.json` (obowiązki,
+udziały domowników i zapisane plany), folder `lists/` (zakupy, stałe
+produkty, jadłospisy), skrypt `chores.py` (plan liczony deterministycznie
+według udziału i wieku, z wyrównaniem obciążenia z poprzednich tygodni),
+opcjonalna sekcja profilu *Codzienność*.
 
 ### Zasięg i rozszerzalność (Etap 4)
 
@@ -221,7 +223,7 @@ Do tego: cookbook `deadline-watcher`, drugi pakiet krajowy.
 
 ---
 
-## 5. Struktura repozytorium (stan po Etapie 2)
+## 5. Struktura repozytorium (stan po Etapie 3)
 
 ```
 .claude-plugin/marketplace.json        marketplace "householdbot"
@@ -230,19 +232,20 @@ README.md QUICKSTART.md (+ .pl.md) CONNECTORS.md CONTRIBUTING.md CLAUDE.md
 SECURITY.md CHANGELOG.md CODE_OF_CONDUCT.md NOTICE LICENSE .gitignore
 docs/development-plan.md
 core/                                  źródła wszystkiego, co trafia do skilli
-  rules/*.md                           13 reguł wspólnych (od Etapu 2 także money, voice)
+  rules/*.md                           14 reguł wspólnych (Etap 2: money, voice; Etap 3: everyday)
   locale/PL.md PL.json                 pakiet krajowy
   i18n/en.json pl.json                 języki: daty, kwoty, odmiana, notatki, dziennik
   scripts/dates.py record.py           warstwa dowodowa
   scripts/statement.py                 wyciągi bankowe (Etap 2)
+  scripts/chores.py                    podział obowiązków (Etap 3)
   money/categories.json                kategorie wydatków w dwóch językach (Etap 2)
   templates/en/ templates/pl/          profil, opis rejestrów w każdym języku
   vendor.json                          który skill dostaje które pakiety
 scripts/sync.py validate.py make_icon.py
 scripts/eval.py                        testy zachowania na kopii wtyczki w build/ (Etap 2.1)
-tests/test_dates.py test_record.py test_statement.py
+tests/test_dates.py test_record.py test_statement.py test_chores.py
 evals/<skill>/<przypadek>/case.yaml setup.sh [mocks/gmail/*.md]
-evals/fixtures/make_household.py make_statement.py seed.sh
+evals/fixtures/make_household.py make_statement.py make_everyday.py seed.sh
 householdbot/                          wtyczka
   .claude-plugin/plugin.json icon.png   .mcp.json   README(.pl).md   PRIVACY(.pl).md   LICENSE
   hooks/hooks.json
@@ -459,25 +462,78 @@ paczką wtyczki”).
   `household-router-parcel-scam` uruchomiony przez `scripts/eval.py` przechodzi
   (0,05 USD).
 
-### Etap 3. Dom, rodzina i codzienność (wersja 0.3)
+### Etap 3. Dom, rodzina i codzienność (wersja 0.3) ✅
 
-Zakres: jedenaście skilli i łańcuchy `life-event`, `annual-review`.
-`chores.py` i rejestr obowiązków. Listy kontrolne zdarzeń życiowych z
-nakładką krajową. Rozszerzenie pakietu PL: obowiązki po kupnie i sprzedaży
-pojazdu, terminy związane z dzieckiem, ważność skierowań i recept, zmiana
-adresu. Rozszerzenie wywiadu startowego o część „codzienność” (opcjonalną).
-Przypadki testowe: co najmniej 39.
+Wykonane 13.11.2026 na polecenie „ruszaj dalej, pilotaż później”:
 
-Kryteria akceptacji:
+- **A. Skille.** Jedenaście skilli i dwa łańcuchy z rozdziału 4, każdy z
+  `reference/gotchas.md` i wariantem bez Pythona. Pięć skilli
+  administracyjnych (`home-upkeep`, `vehicle-file`, `insurance-overview`,
+  `identity-and-travel`, `school-desk`) napisał agent według specyfikacji,
+  po przeglądzie i poprawkach.
+- **B. Warstwa dowodowa.** `chores.py` (rejestr obowiązków, plan według
+  udziału i minimalnego wieku z wyrównaniem obciążenia z 8 zapisanych
+  tygodni, zapis planu po zgodzie, zamiany uzgodnione między domownikami,
+  bilans). `dates.py event` liczy wszystkie terminy ustawowe zdarzenia
+  życiowego od dnia, w którym się wydarzyło; `dates.py events` je wymienia.
+  `record.py retention` pokazuje dokumenty po terminie przechowywania i
+  niczego nie zmienia; nowy status dokumentu `disposed`; `complete
+  --from-done` liczy następny przegląd od dnia wykonania; `find` bez słów
+  wymienia wszystkie wpisy danego typu.
+- **C. Reguły.** Nowa reguła `everyday` (posiłki, zakupy, obowiązki,
+  kalendarz); w regule danych osobowych produkty pomijane w jadłospisie i
+  plik awaryjny; w bramkach zgody: zmiany dyktowane na listach, wpisy w
+  kalendarzu jako zapis zewnętrzny, plany jako propozycje.
+- **D. Profil i konfiguracja.** Opcjonalna sekcja *Codzienność* w obu
+  szablonach, piąta część wywiadu (opcjonalna), opis `chores.json` i
+  `lists/` w przewodniku po rejestrach.
+- **E. Pakiet PL.** Dwie części zweryfikowane 13.11.2026 w tekstach jednolitych i
+  ujednoliconych z ELI Sejmu, z nowelizacjami w mocy na ten dzień. *Life
+  events*: kupno i sprzedaż samochodu, przeprowadzka, narodziny dziecka, zmiana
+  pracy, śmierć bliskiej osoby (29 okien terminów, 6 zdarzeń, 32 kroki bez
+  terminu ustawowego). *Health papers*, *Children and school*, *Keeping and
+  shredding documents*, *Insurance a household must or may have*, *Home
+  upkeep, further rules*, *Travel documents* (21 okien, 5 obowiązków
+  cyklicznych, 12 okresów przechowywania z podstawą prawną albo oznaczeniem
+  „sugerowany”). Odzwierciedlone zmiany z lat 2025–2026: zasiłek pogrzebowy
+  7000 zł od 1.01.2026, 60 dni na rejestrację odziedziczonego pojazdu od
+  24.12.2025, zwolnienie z PCC do 3000 zł od 3.11.2026, przywrócenie terminu
+  SD-Z2 od 7.01.2026, centralna e-rejestracja od 1.01.2026, e-skierowania do
+  sanatorium od 1.07.2025, czujki dymu i czadu (Dz.U. 2024 poz. 1716). 16
+  nowych punktów nierozstrzygniętych (razem 20) opisanych bez twierdzenia i
+  wypisanych w `PL.json` (`sources.uncertain`).
+- **F. Dane testowe.** `make_everyday.py` (tryb `everyday`): sekcja
+  *Codzienność* z jednym produktem pomijanym bez powodu, rejestr obowiązków z
+  zapisanym tygodniem, listy, pralka z gwarancją, polisa domu, skierowanie
+  dziecka, pismo ze szkoły, dowód osobisty bliski wygaśnięcia, rachunek po
+  terminie przechowywania; atrapa kalendarza Google z kolizją.
+- **G. Testy.** 107 jednostkowych (w tym 14 dla `chores.py`), 101 przypadków
+  zachowania (39 nowych: 24 napisane przeze mnie, 15 zaproponowanych przez
+  agenta i dopracowanych), sesja wieloturowa ze skryptami.
 
-- każde zdarzenie życiowe tworzy zobowiązania z datami i źródłem prawnym
-- dane o zdrowiu i alergiach nie pojawiają się w przeglądzie ani we wpisie kalendarza (test)
-- `emergency-file` nie zawiera żadnego identyfikatora ani hasła (test)
-- rotacja obowiązków jest deterministyczna i równa w obciążeniu (testy jednostkowe)
-- przegląd roczny proponuje usunięcia według retencji i niczego nie usuwa sam
+Odstępstwa od planu: skrypt do sumowania list zakupów nie powstał, bo
+sumowanie ilości jest proste i pokazywane w odpowiedzi; imieniny nie mają
+własnej bazy danych, gospodarstwo podaje daty do zapamiętania w profilu;
+`scripts/eval.py --stage` pozwala uruchamiać przypadki równolegle.
 
-Twój udział: pilotaż jednego zdarzenia życiowego, jadłospisu z listą zakupów
-i przeglądu polis.
+Kryteria akceptacji i ich spełnienie:
+
+- zdarzenie życiowe tworzy zobowiązania z datami i podstawą prawną:
+  `dates.py event` i przypadki `life-event`, sesja wieloturowa (kupno auta)
+- dane o zdrowiu i alergiach poza przeglądem i wpisem kalendarza: przypadki
+  `family-calendar-neutral-title`, `health-file-neutral-register`,
+  `school-desk-no-health-in-calendar`, `meal-planner-week-plan`; reguła
+  danych osobowych
+- `emergency-file` bez identyfikatora i hasła: przypadki
+  `emergency-file-pin-refused` (z regułami wykluczającymi PIN i hasło) i
+  `emergency-file-draft`
+- rotacja obowiązków deterministyczna i równa: testy jednostkowe
+  `test_chores.py`
+- przegląd roczny proponuje usunięcia według okresów przechowywania i niczego
+  nie usuwa: `record.py retention` (test), przypadki `annual-review`
+
+Twój udział (pilotaż, razem z Etapami 1 i 2): jedno zdarzenie życiowe,
+jadłospis z listą zakupów, przegląd polis.
 
 ### Etap 4. Zasięg, utwardzenie, publikacja (wersja 1.0)
 
@@ -507,7 +563,64 @@ utworzenie repozytorium i zgłoszenie do katalogu z Twojego konta.
 
 ---
 
-## 8. Stan po Etapach 1, 1.1 i 2
+## 8. Stan po Etapach 1, 1.1, 2 i 3
+
+**Wersja 0.3.0 (Etap 3, dom, rodzina i codzienność).**
+
+| Poziom | Wynik |
+|---|---|
+| 1. Struktura | `scripts/validate.py` (nowe kontrole: zdarzenia życiowe wskazują istniejące okna, okresy przechowywania mają podstawę albo oznaczenie „sugerowany”): 0 błędów, 0 ostrzeżeń; `claude plugin validate --profile directory --strict`: przechodzi dla wtyczki i marketplace; 297 plików wtyczki z 512 |
+| 2. Rachunek | 107 testów jednostkowych zielonych, w tym 14 dla `chores.py` (deterministyczność, równe obciążenie według udziału, próg wieku, stała osoba, co drugi tydzień, wyrównanie z poprzednich tygodni, zamiany, bilans), zdarzenie życiowe liczone z jednej daty, dokumenty po terminie przechowywania, `complete --from-done`, lista dokumentów danego typu, imię zatwierdzającego zamiast cytatu, wpis ze standardowego wejścia w UTF-8 |
+| 3. Zachowanie | 101 przypadków (Sonnet, sędzia Sonnet, bez powłoki). Przebiegi pełne: 78/101 (0,92), 78/101 (0,93), końcowy 97/101, średnio 0,99, 15,18 USD; powtórki porażek po poprawkach opisane niżej |
+| 4. Użycie | sesja `claude -p` ze skryptami (Windows), 8 tur na danych syntetycznych, około 4,50 USD: kupno używanego auta od osoby prywatnej (`dates.py event`: PCC-3 do czw. 26.11.2026, rejestracja do pon. 14.12.2026 z planem na pt. 11.12.2026), dwa przypomnienia zapisane po zgodzie Piotra; plan obowiązków na tydzień 2026-W47 policzony i zapisany przez `chores.py` po zgodzie Anny; jadłospis na 7 dni w budżecie (208 zł szacunkowo z rozpisaną sumą) zapisany do `lists/meals-2026-W47.md`, lista zakupów uzupełniona po osobnej zgodzie; przegląd papierów: rachunek z 2018 r. do zniszczenia i propozycje terminów przechowywania z podstawą; rekord i rejestr obowiązków bez błędów. Ujawniła jedną usterkę: imię zatwierdzającego zapisane razem z cytatem jego wiadomości (poprawione w `record.py`, test) |
+
+**Przebiegi testów zachowania w Etapie 3.**
+
+| Przebieg | Wynik | Co ujawnił |
+|---|---|---|
+| pilot 1 (6 przypadków) | 4/6, 0,72 USD | rachunek w danych testowych z terminem przechowywania niezgodnym z regułą 6 lat z profilu; jadłospis wstrzymany do odpowiedzi o zawartość lodówki; zbyt ostra reguła sprawdzająca wzmiankę o produkcie pomijanym |
+| pilot 2 (11 przypadków) | 10/11, 1,44 USD | bez powłoki odpowiedź uznała, że nie odczyta rekordu (zasada „brak powłoki to nie brak rekordu” trafiła do reguły wspólnej) |
+| pilot 3 (7 przypadków, część B pakietu) | 4/7, 1,32 USD | `insurance-overview` nie uruchomił się przy „jakie ubezpieczenia musimy mieć, doradź” i odpowiedź doradzała produkty; tytuł z nazwą specjalizacji oferowany jako opcja; zbyt szczegółowa rubryka |
+| pilot 4 (8 przypadków, część A pakietu) | 4/6 ocenionych, 2 przerwane błędem uwierzytelnienia | po śmierci ojca odpowiedź bez zdania współczucia na początku; rubryka mandatu karała za pytanie o zatwierdzającego |
+| pełny 1 | 78/101, średnio 0,92, 15,67 USD | lista 31 skilli przekroczyła budżet opisów, więc część skilli nie była widoczna; bez powłoki profil nie był czytany; naruszenia bramek: zgodę daną z góry potraktowano jako zgodę na jadłospis, składniki z przepisu dopisano do listy bez zgody, PIN wrócił w odpowiedzi, przegląd roczny zmieniał rejestr przy prośbie o usunięcie rachunków, szkic w Gmailu powstał przed akceptacją treści |
+| pełny 2 | 78/101, średnio 0,93, 14,75 USD | krótsze opisy zgubiły frazy wyzwalające i cztery prośby nie uruchomiły skilla; plik awaryjny pytał po jednym pytaniu bez szkicu z rekordu; przegląd poczty odmówił, bo profil oznaczał pocztę jako niepodłączoną, i porównał adres konta sesji z domownikami; wpis przygotowywany w pliku przed zgodą; teczka zdrowia prosiła o skierowanie, które było w rejestrze; pismo ze szkoły czytane ze streszczenia w rejestrze; dochody spoza pakietu opisane przepisami z pamięci; „nie podano” zamienione na „brak” w porównaniu ofert; w pakiecie błąd przy wspólnym rozliczeniu (ryczałt od najmu prywatnego go nie wyklucza, art. 6 ust. 8 ustawy o PIT) |
+| próba (4 przypadki bez skilla) | 4/4, 0,57 USD | po przywróceniu fraz każdy przypadek uruchomił właściwy skill (`household-customize`, `life-event`, `vehicle-file`, `deadline-tracker`) |
+| pełny 3 (końcowy) | 97/101, średnio 0,99, 15,18 USD | odpowiedź o OC bez wskazania dokumentu w rejestrze (reguła cytowania: id, tytuł, strona); przy wyjeździe ocena paszportu wymieszana z terminem jego odnowienia; dwie oceny sędziego niespójne między przebiegami |
+| powtórki 4 porażek (po 2 razy) | 5/8, 1,59 USD | rachunki 2/2, OC 2/2 po regule cytowania; wyjazd 1/2 przed poprawką skilla; pismo ze szkoły 0/2 przy odpowiedziach spełniających rubrykę, więc rubryka przepisana na punkty |
+| powtórki po poprawkach (2 przypadki po 2 razy) | 3/4, 1,12 USD | wyjazd 2/2 po oddzieleniu oceny ważności od terminu odnowienia; pismo ze szkoły 1/2 przy rubryce w punktach: odpowiedź oceniona negatywnie spełnia rubrykę w mojej ocenie, sędziowie podzielili się 1 do 2 |
+
+**Wnioski z Etapu 3.**
+
+1. Plan, który skrypt liczy deterministycznie, można przedstawić rodzinie
+   jako fakt w liczbach; spory o sprawiedliwość przenoszą się na udziały i
+   progi wieku, które ustala dorosły.
+2. Dane o zdrowiu wymagają reguły także dla tytułów: tytuł wpisu, przypomnienia
+   i wydarzenia czytają osoby spoza sprawy.
+3. Agent piszący skille według specyfikacji i wzorców przyspiesza etap; jego
+   rubryki bywają zbyt szczegółowe i wymagają uproszczenia do sedna.
+4. Dane testowe z kilku generatorów muszą być spójne z regułami profilu
+   (okres przechowywania), bo model słusznie zgłasza niezgodność.
+5. Zdanie o syntetycznym rekordzie w każdej rubryce i lista tego, co nie jest
+   błędem, utrzymują ocenę sędziego stabilną.
+6. Lista skilli ma budżet znaków. Przy 31 skillach opisy muszą być krótkie
+   (około 300 znaków, frazy wyzwalające na początku), a skrócenie nie może
+   zgubić fraz dla próśb, które nie brzmią jak zadanie: „od teraz po polsku”,
+   „do kiedy odwołanie”. Bez nich model odpowiada sam, bez skilla.
+7. Krok 0 czyta `household-profile.md` narzędziem Read, a skrypt `locate`
+   uruchamia dopiero, gdy profilu nie ma. Brak powłoki nie oznacza braku
+   rekordu.
+8. Wpis przygotowany w pliku to też zapis przed zgodą: wpis trafia do skryptu
+   na standardowym wejściu albo w `--json`, a bez powłoki tylko się go pokazuje.
+9. Narzędzie podłączone w sesji należy do domownika. Konto, na którym działa
+   sesja, nie jest danymi gospodarstwa: nie rozstrzyga, czyja jest skrzynka, i
+   nie trafia do odpowiedzi.
+10. Sędzia nie widzi pakietu krajowego, więc reguły przypisane pakietowi muszą
+    być w rubryce wymienione jako dopuszczalne. Gdy wyniki nie mają uzasadnień
+    sędziego, ponowna ocena przez osobnego agenta (sama rubryka i odpowiedź)
+    wskazuje, które porażki są realne.
+11. Rejestr streszcza dokument, więc szczegóły (sala, miejsce, godzina) bierze
+    się z samego pisma, a prośba o zapisanie papieru zaczyna się od sprawdzenia,
+    czy już jest w rejestrze.
 
 **Wersja 0.2.0 (Etap 2, pieniądze i korespondencja).**
 
@@ -648,7 +761,7 @@ poprawionych, 2 nierozstrzygnięte.
 | Odczyt niezaufanych dokumentów przez agenta z prawem zapisu | `document-reader` bez zapisu | zamknięta |
 | Zakres ograniczony do dokumentów i terminów | rozdział 4, Etapy 2 i 3 | w planie |
 | Brak `customize`, `find-document`, `doctor` | Etap 1 F | zamknięta |
-| Pola retencji bez skilla, który ich używa | `annual-review` | Etap 3 |
+| Pola retencji bez skilla, który ich używa | `annual-review`, `record.py retention` | zamknięta (Etap 3) |
 | Brak wymogów katalogu w walidatorze | `validate.py`, `--profile directory` | zamknięta |
 | Brak README i licencji w folderze wtyczki | Etap 1 A | zamknięta |
 | Brak SECURITY, CHANGELOG, NOTICE, QUICKSTART | Etap 1 A | zamknięta |
@@ -664,6 +777,8 @@ poprawionych, 2 nierozstrzygnięte.
 | Termin po stronie firmy liczony z regułą dla oświadczeń domownika | `met_by` i `silence` przy oknie w pakiecie | zamknięta (Etap 2) |
 | Formy rodzajowe w polskich odpowiedziach zgadywane | reguła językowa: formy bezosobowe, dopóki domownik nie pokaże swoich | zamknięta (Etap 2) |
 | Limit 512 plików przy pełnym zakresie | testy zachowania poza paczką, `scripts/eval.py` | zamknięta (Etap 2.1) |
+| Następny przegląd liczony od starego terminu, nie od dnia wykonania | `record.py complete --from-done` | zamknięta (Etap 3) |
+| Brak listy dokumentów danego typu bez słów kluczowych | `record.py find --type/--category` | zamknięta (Etap 3) |
 
 ---
 
@@ -697,6 +812,8 @@ Podjęte 13.11.2026:
 5. Dwujęzyczność: angielski domyślny, polski do wyboru (D14), z wersjami
    polskimi dokumentów dla użytkowników.
 6. Testy zachowania poza paczką wtyczki (Etap 2.1).
+7. Repozytorium nazywa się `householdbot` (także folder lokalny), a
+   rozwiązanie HouseholdBot.
 
 Etap 2 wykonany 13.11.2026 na polecenie przejścia do niego przed pilotażem
 Etapu 1; pilotaże obu etapów można przeprowadzić razem.

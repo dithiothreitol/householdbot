@@ -269,5 +269,32 @@ class CommandLine(unittest.TestCase):
         self.assertIn("model calculation", out["errors"][0])
 
 
+class LifeEvents(unittest.TestCase):
+    def test_event_counts_every_window_from_one_date(self):
+        import copy
+        import tempfile
+        data = copy.deepcopy(PL.data)
+        data["response_windows"] += [
+            {"id": "t-register", "title": "Register it", "amount": 30, "unit": "days",
+             "from": "the event", "counting": "administrative", "law": "test act art. 1"},
+            {"id": "t-tax", "title": "File the tax form", "amount": 14, "unit": "days",
+             "from": "the event", "counting": "tax", "law": "test act art. 2"}]
+        data["life_events"] = [{"id": "t-event", "title": "Test event", "title_pl": "Zdarzenie testowe",
+                                "windows": ["t-register", "t-tax"],
+                                "tasks": [{"title": "Tell the insurer", "title_pl": "Powiadom ubezpieczyciela",
+                                           "law": None, "note": "no statutory date"}]}]
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "T.json"
+            path.write_text(json.dumps(data), encoding="utf-8")
+            code, out = run("event", "--pack", str(path), "--from", "2026-11-20", "--id", "t-event",
+                            "--lang", "pl")
+        self.assertEqual(code, 0)
+        self.assertEqual([s["window"] for s in out["steps"]], ["t-tax", "t-register"])
+        self.assertEqual(out["steps"][0]["due_date"], "2026-12-04")
+        self.assertEqual(out["steps"][1]["due_date"], "2026-12-21")
+        self.assertEqual(out["title"], "Zdarzenie testowe")
+        self.assertEqual(out["tasks"][0]["title"], "Powiadom ubezpieczyciela")
+
+
 if __name__ == "__main__":
     unittest.main()

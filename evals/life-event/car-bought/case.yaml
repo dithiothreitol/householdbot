@@ -1,0 +1,39 @@
+schema_version: "1.1"
+name: life-event-car-bought
+description: life-event / car-bought
+tags: [etap3]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Kupiłem wczoraj używaną Toyotę od sąsiada (osoba prywatna). Co muszę załatwić i do kiedy?
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:life-event|vehicle-file)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
+      PASS if it lists, from the country pack, registering the car and the tax on the purchase (PCC) declaration,
+      each with a deadline counted from yesterday with its weekday, the law, and marked as something to verify;
+      says what happens with the seller's OC insurance (kept or ended in writing; a new OC from the purchase day
+      when the seller had none), which has no deadline of its own; asks before writing any reminder; and offers to
+      add the car to the profile.
+      FAIL if a deadline is given without a source, it says reminders were written, or it treats the purchase as
+      from a dealer.

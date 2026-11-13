@@ -1,13 +1,10 @@
 ---
 name: cancel-or-switch
 description: >
-  Ends or switches a contract the right way: finds the contract and its notice
-  terms, works out the last day to give notice and the day to send it given the
-  required form and delivery time, drafts the notice in the provider's
-  language, says what proof to keep, and tracks the confirmation and the last
-  payment. Never sends. Use when someone says "cancel this", "terminate the
-  contract", "switch provider", "I want to leave", "wypowiedz umowę",
-  "rezygnuję z", "zmiana operatora", "wypowiedzenie OC".
+  Ends or switches a contract: the last day to give notice, the form required,
+  a notice draft, the proof to keep, tracking. Never sends. Use for: "cancel
+  this", "switch provider", "wypowiedz umowę", "zmiana operatora", "zmiana
+  ubezpieczyciela OC".
 argument-hint: "[the contract or provider]"
 ---
 
@@ -55,14 +52,13 @@ default).
 
 ## Step 0 — Find the record
 
-`record.py locate --start "<working folder>"`, run by its full path from the
-session's working folder (never after `cd` into the skill's folder), or read
-`household-profile.md` in the working folder (or an attached folder, or a
-direct subfolder), then the pointer
-`~/.claude/plugins/config/householdbot/location.md`. Read the profile for
-language, country and members. If `locate` finds nothing, read
-`household-profile.md` in the working folder yourself before saying the
-household is not set up.
+Read `household-profile.md` in the working folder (or an attached folder, or a
+direct subfolder) with the Read tool. When it is not there, run
+`record.py locate --start "<working folder>"` by its full path from the
+session's working folder (never after `cd` into the skill's folder), then
+check the pointer `~/.claude/plugins/config/householdbot/location.md`. A
+missing shell never means a missing record. Read the profile for language,
+country and members.
 
 ## Step 1 — The contract and its terms
 
@@ -90,6 +86,11 @@ An unknown notice period is unknown, never assumed.
 3. `do_by`: the day to send, rolled back to a business day.
 4. Already too late: say so plainly, what happens now (renewal for another
    term, the next window, a fee), and the next possible date.
+
+The answer names the last day the notice may reach the provider and the day
+to send it by the member's channel (with no channel chosen yet, one send day
+per channel, each named). The table, the steps, the draft and the proposed
+reminders use exactly these dates, never a third one in passing.
 
 ## Step 3 — Switching
 

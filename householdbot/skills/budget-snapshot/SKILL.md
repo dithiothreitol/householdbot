@@ -1,14 +1,10 @@
 ---
 name: budget-snapshot
 description: >
-  Turns a bank statement export (CSV) into a one-page picture of the
-  household's money: income and spending by month and category to the grosz,
-  regular payments and price rises, the biggest changes against the previous
-  month, and what the file does not cover. Learns the household's own
-  categories with its approval. Use when someone sends a bank export or asks
-  "where does our money go", "how much did we spend", "summarise my
-  statement", "podsumuj wydatki", "na co idą pieniądze", "budżet", "wyciąg z
-  banku".
+  A bank CSV export on one page: coverage, income, spending by category and
+  month, regular payments and price rises, exact to the grosz. Use for: a bank
+  export, "where does our money go", "podsumuj wydatki", "wyciąg z banku",
+  "budżet".
 argument-hint: "[the CSV export] [--months N]"
 ---
 
@@ -50,15 +46,14 @@ the profile given with `--household`, or takes `--lang pl`.
 
 ## Step 0 — The record and the file
 
-Find the record with `record.py locate --start "<working folder>"`, run by its
-full path from the session's working folder (never after `cd` into the skill's
-folder), or read `household-profile.md` in the working folder; `statement.py`
-uses its category rules and language. If `locate` finds nothing, read
-`household-profile.md` in the working folder yourself before saying the
-household is not set up. The export is a CSV from the bank's website or app
-(usually under the account history, "export" or "download", format CSV). A PDF
-statement: ask for the CSV export instead; reading PDF statements is not
-supported yet. Never log in to a bank, never fetch a statement yourself.
+Find the record: read `household-profile.md` in the working folder with the
+Read tool; when it is not there, run
+`record.py locate --start "<working folder>"` by its full path, never after
+`cd` into the skill's folder. `statement.py` uses its category rules and
+language. The export is a CSV from the bank's website or app (usually under
+the account history, "export" or "download", format CSV). A PDF statement: ask
+for the CSV export instead; reading PDF statements is not supported yet. Never
+log in to a bank, never fetch a statement yourself.
 
 ## Step 1 — Coverage before totals
 

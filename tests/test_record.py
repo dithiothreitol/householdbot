@@ -152,6 +152,16 @@ class Writes(RecordTestCase):
         self.assertEqual(len(self.obligations()), 9)
         self.assertEqual(self.log_lines(), [])
 
+    def test_entry_from_stdin_is_utf8(self):
+        entry = dict(self.ENTRY, title="Czyszczenie rynien, dom w Brzozowie: żółć")
+        raw = io.TextIOWrapper(io.BytesIO(json.dumps(entry, ensure_ascii=False).encode("utf-8")), encoding="cp1250")
+        with mock.patch.object(sys, "stdin", raw):
+            code, out = run("add", self.home, "--register", "obligations", "--file", "-",
+                            "--dry-run", "--today", TODAY, "--country", "PL")
+        self.assertEqual(code, 0, out)
+        self.assertEqual(out["entry"]["title"], entry["title"])
+        self.assertEqual(len(self.obligations()), 9)
+
     def test_add_writes_logs_and_backs_up(self):
         code, out = run("add", self.home, "--register", "obligations", "--file", self.entry_file(self.ENTRY),
                         "--approved-by", "Anna", "--today", TODAY, "--country", "PL")
@@ -400,6 +410,53 @@ class Locate(RecordTestCase):
         self.assertFalse(out["found"])
         self.assertIn("pointer_target", out)
         self.assertIn("hint", out)
+
+
+class Retention(RecordTestCase):
+    def test_lists_what_may_go_and_changes_nothing(self):
+        run("update", self.home, "--id", "doc-2026-0001", "--set", "keep_until=2026-01-31",
+            "--approved-by", "Anna", "--today", TODAY)
+        run("update", self.home, "--id", "doc-2026-0005", "--set", "keep_until=permanent",
+            "--approved-by", "Anna", "--today", TODAY)
+        before = (self.home / "registers" / "documents.json").read_text(encoding="utf-8")
+        code, out = run("retention", self.home, "--today", TODAY)
+        self.assertEqual([d["id"] for d in out["may_go"]], ["doc-2026-0001"])
+        self.assertGreaterEqual(out["permanent"], 1)
+        self.assertIn("never deletes", out["note"])
+        self.assertEqual(before, (self.home / "registers" / "documents.json").read_text(encoding="utf-8"))
+
+    def test_disposed_is_a_status_and_leaves_the_list(self):
+        run("update", self.home, "--id", "doc-2026-0001", "--set", "keep_until=2026-01-31",
+            "--approved-by", "Anna", "--today", TODAY)
+        code, out = run("update", self.home, "--id", "doc-2026-0001", "--set", "status=disposed",
+                        "--approved-by", "Anna", "--today", TODAY)
+        self.assertEqual(code, 0)
+        code, out = run("retention", self.home, "--today", TODAY)
+        self.assertEqual(out["may_go"], [])
+
+
+class Stage3Helpers(RecordTestCase):
+    def test_complete_from_done_counts_from_the_check(self):
+        chimney = next(o for o in self.obligations() if o.get("series") == "chimney-check")
+        code, out = run("complete", self.home, "--id", chimney["id"], "--done-date", TODAY, "--from-done",
+                        "--country", "PL", "--today", TODAY, "--dry-run")
+        self.assertEqual(code, 0)
+        self.assertEqual(out["next_occurrence"]["due_date"], "2027-11-13")
+        self.assertIn("counted from the day it was done", out["next_occurrence"]["notes"])
+
+    def test_approver_is_a_name_not_a_quote(self):
+        code, out = run("update", self.home, "--id", "doc-2026-0001", "--set", "notes=x",
+                        "--approved-by", "Piotr: Tak, dodaj wszystkie", "--today", TODAY)
+        self.assertEqual(code, 1)
+        self.assertIn("name only", out["errors"][0])
+
+
+    def test_find_lists_a_type_without_words(self):
+        code, out = run("find", self.home, "--type", "insurance-policy")
+        self.assertEqual(code, 0)
+        self.assertEqual([r["id"] for r in out["results"]], ["doc-2026-0002"])
+        code, out = run("find", self.home)
+        self.assertEqual(code, 1)
 
 
 class Search(RecordTestCase):

@@ -56,6 +56,11 @@ another language is explained in yours, with the original quoted.
 | sends a bank export (CSV) | the month on one page: income, spending, categories, price rises |
 | "answer this letter" / "cancel this contract" | a draft in the recipient's language, the date to send by, nothing sent |
 | "monthly review" | mail, papers, bills, next month and money in one pass |
+| "we bought a car" / "we're moving" | every statutory step with its date, one approval at a time |
+| "plan our meals" / "add milk to the list" | a week of meals, then one shopping list grouped by shop |
+| "who does what this week" | a fair chore plan by share and age; an adult approves it |
+| "what's on this week" | the family's calendars side by side, clashes named |
+| "what can we shred" | papers past their keeping date; you shred, nothing is deleted for you |
 | "from now on in Polish" | switches the household's language |
 
 ## Python

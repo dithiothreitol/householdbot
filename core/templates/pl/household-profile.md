@@ -110,6 +110,27 @@ Tylko nazwy. Numery kont i numery klienta zostają w dokumentach.
 
 ---
 
+## Codzienność
+
+*Część opcjonalna. Wypełniana tylko wtedy, gdy gospodarstwo chce planować
+posiłki, prowadzić wspólną listę zakupów, dzielić obowiązki albo korzystać z
+rodzinnego kalendarza.*
+
+- **Jemy w domu:** [PLACEHOLDER — które posiłki w które dni, np. „obiad codziennie, śniadanie w weekend”]
+- **Czas na gotowanie w dni robocze:** [PLACEHOLDER — np. „30 minut”]
+- **Budżet na jedzenie na tydzień:** [PLACEHOLDER — kwota i waluta albo „bez limitu”]
+- **Co lubimy, czego nie:** [PLACEHOLDER — według osób, same upodobania]
+- **Poza jadłospisem:** [PLACEHOLDER — produkty do pominięcia, zapisane za zgodą dorosłego; bez podawania powodu]
+- **Sklepy:** [PLACEHOLDER — gdzie robimy zakupy, w kolejności zwykłej trasy]
+- **Obowiązki:** [DEFAULT — biorą udział wszyscy domownicy; dzieci z udziałem 0,5]
+- **Kalendarz rodzinny:** [PLACEHOLDER — który podłączony kalendarz jest wspólny albo „brak”]
+
+| Data do zapamiętania | Czyja | Dzień i miesiąc |
+|---|---|---|
+| [PLACEHOLDER — urodziny albo imieniny] | | |
+
+---
+
 ## Rytm
 
 - **Przegląd tygodnia:** [DEFAULT — na żądanie; wystarczy napisać „przegląd tygodnia”]

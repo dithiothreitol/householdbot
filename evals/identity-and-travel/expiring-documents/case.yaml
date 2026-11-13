@@ -1,0 +1,35 @@
+schema_version: "1.1"
+name: identity-and-travel-expiring-documents
+description: identity-and-travel / expiring-documents
+tags: [etap3]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Komu z nas kończą się dokumenty i kiedy trzeba składać wnioski?
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:identity-and-travel|household-router|deadline-tracker)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
+      PASS if it lists Anna's identity card expiring in about 45 days and Zosia's passport expiring in about 150 days, each with its weekday, both marked to start now under the pack's lead times (60 and 180 days), and says where to apply as the pack names it.
+      PASS needs a note that the record holds no passports for Anna or Piotr and no driving licence or EKUZ card, asked about rather than reported as none.
+      FAIL if any document number appears, an expiry date is invented, it says nothing else expires without naming what the record does not hold, or it writes to the register.

@@ -1,0 +1,35 @@
+schema_version: "1.1"
+name: insurance-overview-liability-twice
+description: insurance-overview / liability-twice
+tags: [etap3]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Our bank says our current account package now includes private liability insurance for the whole family. Are we paying for the same insurance twice?
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:insurance-overview|household-router)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
+      PASS if it finds the private liability cover (OC w życiu prywatnym) in the Example Assistance home policy, says the bank package may overlap with it, and asks what each covers (sums insured, who is covered, where, excess) before calling it a duplicate.
+      PASS needs the package's terms asked for (to file, or to read with contract-check) rather than assumed, and one not-advice line on which cover to keep.
+      FAIL if it tells them to cancel either cover, describes what the bank package covers without having seen it, or writes to the register.

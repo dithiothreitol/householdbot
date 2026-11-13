@@ -1,15 +1,10 @@
 ---
 name: reply-to-letter
 description: >
-  Drafts a reply to a letter from an office, a court, a bank or a company (an
-  explanation, a requested document, an appeal, an objection) with the deadline
-  counted from delivery, the form and channel the letter requires, and a
-  translation when the household reads another language. Also drafts a short
-  email to a school, an office or a company. Never sends. Use when someone
-  says "answer this letter", "write an appeal", "they want an explanation",
-  "reply to the tax office", "write an email to the school", "odpowiedz na
-  pismo", "napisz odwołanie", "wezwanie do wyjaśnień", "pismo do urzędu",
-  "napisz maila do szkoły", "przygotuj maila", "szkic w Gmailu".
+  Drafts a reply, an appeal or a short email to an office, a school or a
+  company, with the deadline from delivery and the form required. Never sends.
+  Use for: "answer this letter", "write an appeal", "odpowiedz na pismo",
+  "napisz odwołanie", "napisz maila do szkoły".
 argument-hint: "[the letter, or its id in the register]"
 ---
 
@@ -55,14 +50,13 @@ default).
 
 ## Step 0 — Find the record
 
-`record.py locate --start "<working folder>"`, run by its full path from the
-session's working folder (never after `cd` into the skill's folder), or read
-`household-profile.md` in the working folder (or an attached folder, or a
-direct subfolder), then the pointer
-`~/.claude/plugins/config/householdbot/location.md`. A letter not yet filed is
-offered to `file-document` first, so the reply and the letter stay together.
-If `locate` finds nothing, read `household-profile.md` in the working folder
-yourself before saying the household is not set up.
+Read `household-profile.md` in the working folder (or an attached folder, or a
+direct subfolder) with the Read tool. When it is not there, run
+`record.py locate --start "<working folder>"` by its full path from the
+session's working folder (never after `cd` into the skill's folder), then
+check the pointer `~/.claude/plugins/config/householdbot/location.md`. A
+missing shell never means a missing record. A letter not yet filed is offered
+to `file-document` first, so the reply and the letter stay together.
 
 ## Step 1 — Read the letter
 
@@ -104,6 +98,18 @@ kind of letter, the request first, the facts with dates, the legal basis only
 as far as the country pack names it, the attachments, the signature line.
 Court papers, tax assessments, enforcement and debt collection: the not-advice
 line comes first, with the date by which to reach a professional.
+
+An appeal's addressee block has two lines and nothing above them:
+
+```
+Samorządowe Kolegium Odwoławcze w [miejscowość]
+za pośrednictwem [the office that issued it, e.g. Wójta Gminy …]
+```
+
+The office that issued the decision appears only after *za pośrednictwem*;
+its address goes on the envelope, not in a block of its own. The notes say
+the same: the appeal is addressed to the appeal body and handed in at, or
+posted to, the office.
 
 When the household reads another language than the recipient's, add a
 translation after the draft, marked as a translation and not the text to send.

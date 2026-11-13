@@ -2,12 +2,9 @@
 name: tax-season-organizer
 description: >
   Gets the household ready for the annual income tax return without filing it:
-  which information forms should arrive and from whom, which are already in
-  the record, which reliefs may apply and what proof each needs, the
-  deadlines, and what is still missing. Uses the country pack (Poland: PIT and
-  Twój e-PIT). Use when someone asks "help with our tax return", "what do I
-  need for taxes", "PIT", "rozliczenie roczne", "jakie dokumenty do PIT",
-  "ulgi podatkowe", "Twój e-PIT".
+  forms to collect, reliefs as questions, deadlines (Poland: PIT, Twój e-PIT).
+  Use for: "help with our tax return", "PIT", "rozliczenie roczne", "jakie
+  dokumenty do PIT", "ulgi".
 argument-hint: "[the tax year, default the previous year]"
 ---
 
@@ -54,21 +51,26 @@ from the profile, and `dates.py` takes `--lang pl` for Polish.
 
 ## Step 0 — Find the record
 
-`record.py locate --start "<working folder>"`, run by its full path from the
-session's working folder (never after `cd` into the skill's folder), or read
-`household-profile.md` in the working folder (or an attached folder, or a
-direct subfolder), then the pointer
-`~/.claude/plugins/config/householdbot/location.md`. The tax year is the
-previous calendar year unless the member says otherwise. If `locate` finds
-nothing, read `household-profile.md` in the working folder yourself before
-saying the household is not set up.
+Read `household-profile.md` in the working folder (or an attached folder, or a
+direct subfolder) with the Read tool. When it is not there, run
+`record.py locate --start "<working folder>"` by its full path from the
+session's working folder (never after `cd` into the skill's folder), then
+check the pointer `~/.claude/plugins/config/householdbot/location.md`. A
+missing shell never means a missing record. The tax year is the previous
+calendar year unless the member says otherwise.
 
 ## Step 1 — Who earned what
 
 For each adult: employment, contract work, pension or benefit, savings and
 investments, rental, income from abroad, a business. Ask; never infer from
-the profile. A business, foreign income, crypto-assets or a property sale get
-the not-advice line: the checklist helps, an accountant decides.
+the profile. A business, rental, foreign income, crypto-assets or a property
+sale get the not-advice line in one sentence: the checklist helps, an
+accountant or a tax adviser decides. For these, list only what to collect
+(statements and transaction histories, contracts, records of income and
+costs, invoices) and the pack's dates. Forms, rates, ways of being taxed and
+elections the pack does not name are not given, not even marked to verify:
+tax rules for these incomes change often, and a rule from memory may be out of
+date.
 
 ## Step 2 — The forms
 

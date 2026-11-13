@@ -522,11 +522,8 @@ def cmd_deadline(args) -> dict:
     return res
 
 
-def cmd_window(args) -> dict:
-    pack, lang = _pack(args), _lang(args)
-    w = pack.entry("response_windows", args.id)
-    res = deadline(pack, parse_date(args.start), int(w["amount"]), w["unit"], w["counting"],
-                   args.transit, lang)
+def window_result(pack: Pack, lang: Lang, w: dict, start: date, transit: int = 0) -> dict:
+    res = deadline(pack, start, int(w["amount"]), w["unit"], w["counting"], transit, lang)
     res.update({"window": w["id"], "title": w.get(f"title_{lang.code}") or w.get("title"),
                 "counted_from": w.get("from"), "law": w.get("law"), "pack": pack.label(),
                 "provenance": "country pack rule — verify"})
@@ -537,6 +534,37 @@ def cmd_window(args) -> dict:
     if w.get("silence"):
         res["silence"] = w["silence"]
     return res
+
+
+def cmd_window(args) -> dict:
+    pack, lang = _pack(args), _lang(args)
+    w = pack.entry("response_windows", args.id)
+    return window_result(pack, lang, w, parse_date(args.start), args.transit)
+
+
+def cmd_event(args) -> dict:
+    """Every statutory window of a life event, counted from the day it happened."""
+    pack, lang = _pack(args), _lang(args)
+    ev = pack.entry("life_events", args.id)
+    start = parse_date(args.start)
+    steps = [window_result(pack, lang, pack.entry("response_windows", wid), start, args.transit)
+             for wid in ev.get("windows", [])]
+    steps.sort(key=lambda s: (s["do_by"], s["window"]))
+    tasks = [{"title": t.get(f"title_{lang.code}") or t.get("title"), "law": t.get("law"),
+              "note": t.get(f"note_{lang.code}") or t.get("note")} for t in ev.get("tasks", [])]
+    return {"event": ev["id"], "title": ev.get(f"title_{lang.code}") or ev.get("title"),
+            "happened": describe(start, lang), "steps": steps, "tasks": tasks,
+            "pack": pack.label(), "lang": lang.code,
+            "provenance": "country pack rule — verify",
+            "note": "steps are statutory windows counted from the event; tasks have no statutory date"}
+
+
+def cmd_events(args) -> dict:
+    pack, lang = _pack(args), _lang(args)
+    return {"pack": pack.label(), "events": [
+        {"id": e["id"], "title": e.get(f"title_{lang.code}") or e.get("title"),
+         "windows": len(e.get("windows", [])), "tasks": len(e.get("tasks", []))}
+        for e in pack.data.get("life_events", [])]}
 
 
 def cmd_deemed(args) -> dict:
@@ -662,6 +690,15 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--id", required=True)
     s.add_argument("--transit", type=int, default=0)
     s.set_defaults(func=cmd_window)
+
+    s = with_pack(sub.add_parser("event", help="every statutory window of a life event"))
+    s.add_argument("--from", dest="start", required=True, help="the day the event happened")
+    s.add_argument("--id", required=True, help="a life event id from the pack (see: events)")
+    s.add_argument("--transit", type=int, default=0)
+    s.set_defaults(func=cmd_event)
+
+    s = with_pack(sub.add_parser("events", help="the life events the pack knows"))
+    s.set_defaults(func=cmd_events)
 
     s = with_pack(sub.add_parser("deemed", help="deemed delivery date"))
     s.add_argument("--from", dest="start", required=True,

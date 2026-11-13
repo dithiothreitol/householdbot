@@ -1,13 +1,10 @@
 ---
 name: find-document
 description: >
-  Finds a filed household document and answers what it says: where the policy
-  is, what the contract says about notice, when the warranty ends, which
-  letter came from the tax office. Answers from the household record with the
-  page and quote, and says plainly when something was never filed. Use when
-  someone asks "where is", "do we have", "what did the letter say about",
-  "when does it end", "gdzie jest", "czy mamy", "co było w piśmie", "kiedy
-  kończy się".
+  Finds a filed document or a fact in it, with the page and the quote. Use
+  for: "where is the car insurance", "what did the contract say about notice",
+  "when does it end", "gdzie jest polisa", "co było w umowie", "kiedy się
+  kończy".
 argument-hint: "[what to find] [--type TYPE] [--category CATEGORY]"
 ---
 
@@ -47,14 +44,14 @@ default).
 
 ## Step 0 — Find the record
 
-`record.py locate --start "<working folder>"`, run by its full path from the
-session's working folder (never after `cd` into the skill's folder), or look
-for `household-profile.md` in the working folder and the pointer
-`~/.claude/plugins/config/householdbot/location.md`. With no record, say so in
-one line and offer `/householdbot:household-onboard`; if the member has the
-paper at hand, offer to read it with `file-document`. If `locate` finds
-nothing, read `household-profile.md` in the working folder yourself before
-saying the household is not set up.
+Read `household-profile.md` in the working folder (or an attached folder, or a
+direct subfolder) with the Read tool. When it is not there, run
+`record.py locate --start "<working folder>"` by its full path from the
+session's working folder (never after `cd` into the skill's folder), then
+check the pointer `~/.claude/plugins/config/householdbot/location.md`. A
+missing shell never means a missing record. With no record, say so in one line
+and offer `/householdbot:household-onboard`; if the member has the paper at
+hand, offer to read it with `file-document`.
 
 ## Step 1 — Search the registers
 

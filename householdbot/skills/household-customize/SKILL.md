@@ -1,14 +1,10 @@
 ---
 name: household-customize
 description: >
-  Changes one thing in the household profile without re-running setup: a new
-  member, a sold car, a new provider, the household's language (English or
-  Polish), the two-adult threshold, who sees the brief, a connected account.
-  Shows the change and what it touches in the record, and writes only after a
-  yes. Use when someone says "change our", "update the profile", "we sold the
-  car", "add a member", "we moved", "from now on talk to us in Polish", "use
-  English from now on", "switch the language", "zmień", "sprzedaliśmy auto",
-  "dodaj domownika", "od teraz po polsku", "przejdź na angielski".
+  Changes one thing in the household profile and what follows from it:
+  members, homes, vehicles, providers, decision rules, language. Use for: "add
+  a member", "change the threshold", "from now on talk to us in Polish",
+  "switch to English", "dodaj domownika", "zmień próg", "od teraz po polsku".
 argument-hint: "[what to change]"
 ---
 
@@ -49,14 +45,13 @@ default).
 
 ## Step 0 — Find the record
 
-`record.py locate --start "<working folder>"`, run by its full path from the
-session's working folder (never after `cd` into the skill's folder), or look
-for `household-profile.md` in the working folder (or an attached folder, or a
-direct subfolder) and the pointer
-`~/.claude/plugins/config/householdbot/location.md`. With no record, offer
-`/householdbot:household-onboard`. If `locate` finds nothing, read
-`household-profile.md` in the working folder yourself before saying the
-household is not set up.
+Read `household-profile.md` in the working folder (or an attached folder, or a
+direct subfolder) with the Read tool. When it is not there, run
+`record.py locate --start "<working folder>"` by its full path from the
+session's working folder (never after `cd` into the skill's folder), then
+check the pointer `~/.claude/plugins/config/householdbot/location.md`. A
+missing shell never means a missing record. With no record, offer
+`/householdbot:household-onboard`.
 
 ## Step 1 — Pin down the change
 

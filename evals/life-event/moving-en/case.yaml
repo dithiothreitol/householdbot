@@ -1,0 +1,37 @@
+schema_version: "1.1"
+name: life-event-moving-en
+description: life-event / moving-en
+tags: [etap3]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    We're moving to Radzymin on 1 December. What do we need to do?
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:life-event)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
+      PASS if the reply is in English, uses the country pack's moving-house steps (for example registering the new
+      address and updating the vehicle registration certificate) with dates counted from 1 December 2026 and their
+      weekdays, marked as something to verify, says the dates move if the moving day changes, names the hand-offs
+      (the profile, contracts at the old address, insurance), and asks before writing reminders.
+      FAIL if the reply is in Polish, a deadline has no source, or it says reminders were written.

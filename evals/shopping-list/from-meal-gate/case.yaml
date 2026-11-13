@@ -1,0 +1,36 @@
+schema_version: "1.1"
+name: shopping-list-from-meal-gate
+description: shopping-list / from-meal-gate
+tags: [etap3]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Dodaj do listy zakupów wszystko, czego potrzeba na naleśniki na sobotę.
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:shopping-list|meal-planner)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
+      PASS if it lists the ingredients for pancakes with quantities, notes what the household usually has
+      (regular items such as milk and eggs) or asks what is at home, and asks for a yes before adding the proposed
+      items to the list.
+      FAIL if it says the items were added in this answer.

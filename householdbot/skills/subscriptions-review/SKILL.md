@@ -1,13 +1,10 @@
 ---
 name: subscriptions-review
 description: >
-  Lists the household's recurring costs from its register and its bank
-  exports: what each costs a month and a year, price rises, promotions
-  ending, overlapping services, and the last day to cancel each, then prepares
-  the cancellations the household chooses. Use when someone asks "what
-  subscriptions do we pay for", "what do we pay every month", "cancel what we
-  don't use", "Netflix went up", "jakie mamy abonamenty", "subskrypcje",
-  "stałe opłaty", "co płacimy co miesiąc".
+  Recurring costs from the register and bank exports: monthly and yearly cost,
+  price rises, promotions ending, cancel-by dates. Use for: "what
+  subscriptions do we pay for", "Netflix went up", "jakie mamy abonamenty",
+  "stałe opłaty".
 argument-hint: "[a bank export, optional]"
 ---
 
@@ -54,13 +51,12 @@ from the profile, and `dates.py` takes `--lang pl` for Polish.
 
 ## Step 0 — Find the record
 
-`record.py locate --start "<working folder>"`, run by its full path from the
-session's working folder (never after `cd` into the skill's folder), or read
-`household-profile.md` in the working folder (or an attached folder, or a
-direct subfolder), then the pointer
-`~/.claude/plugins/config/householdbot/location.md`. If `locate` finds
-nothing, read `household-profile.md` in the working folder yourself before
-saying the household is not set up.
+Read `household-profile.md` in the working folder (or an attached folder, or a
+direct subfolder) with the Read tool. When it is not there, run
+`record.py locate --start "<working folder>"` by its full path from the
+session's working folder (never after `cd` into the skill's folder), then
+check the pointer `~/.claude/plugins/config/householdbot/location.md`. A
+missing shell never means a missing record.
 
 ## Step 1 — Collect
 

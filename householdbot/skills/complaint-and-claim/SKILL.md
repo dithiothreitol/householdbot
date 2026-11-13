@@ -1,13 +1,10 @@
 ---
 name: complaint-and-claim
 description: >
-  Prepares a complaint, a return, a warranty claim or an insurance claim: works
-  out which route applies and its deadlines from the country pack, lists the
-  evidence, drafts the letter for the member to send, and tracks the reply
-  date, including when silence means the complaint is accepted. Use when
-  someone says "the product broke", "I want my money back", "return this",
-  "file a complaint", "insurance claim", "reklamacja", "zwrot towaru",
-  "gwarancja", "odszkodowanie", "nie odpowiadają na reklamację".
+  A complaint, return or insurance claim: the route, its deadlines, the
+  evidence and a draft, then the reply tracked. Never sends. Use for: "the
+  product broke", "insurance claim", "I want to return it", "reklamacja",
+  "zwrot towaru", "odszkodowanie".
 argument-hint: "[what happened, and the document if filed]"
 ---
 
@@ -64,14 +61,13 @@ default).
 
 ## Step 0 — Find the record
 
-`record.py locate --start "<working folder>"`, run by its full path from the
-session's working folder (never after `cd` into the skill's folder), or read
-`household-profile.md` in the working folder (or an attached folder, or a
-direct subfolder), then the pointer
-`~/.claude/plugins/config/householdbot/location.md`. Look for the receipt,
-invoice, warranty card or policy with `record.py find`. If `locate` finds
-nothing, read `household-profile.md` in the working folder yourself before
-saying the household is not set up.
+Read `household-profile.md` in the working folder (or an attached folder, or a
+direct subfolder) with the Read tool. When it is not there, run
+`record.py locate --start "<working folder>"` by its full path from the
+session's working folder (never after `cd` into the skill's folder), then
+check the pointer `~/.claude/plugins/config/householdbot/location.md`. A
+missing shell never means a missing record. Look for the receipt, invoice,
+warranty card or policy with `record.py find`.
 
 ## Step 1 — The facts
 

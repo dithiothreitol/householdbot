@@ -1,0 +1,42 @@
+schema_version: "1.1"
+name: home-upkeep-house-year
+description: home-upkeep / house-year
+tags: [etap3]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Co musimy zrobić przy domu w ciągu najbliższego roku? Przeglądy, gwarancje, wszystko.
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:home-upkeep|household-router|deadline-tracker)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
+      PASS if it lists the chimney and gas installation check from the register (about 25 days from today, with its
+      weekday and the country pack's law marked as something to verify) and the washing machine guarantee from the
+      record (ending in about 11 months), raises the building condition check (every 5 years) as a question about
+      when it was last done rather than a date counted from today, presents seasonal jobs as the household's own
+      choice, and offers new reminders only after a yes.
+      Mentioning other dated items from the record (property tax instalments, the home insurance policy) is not an
+      error, and neither are further rules the answer attributes to the country pack with their law and marked as
+      something to verify (other statutory checks, smoke and CO detectors, consumer rights on goods).
+      FAIL if it writes to the register, invents the date of a past check, or presents a seasonal job as a legal
+      duty.

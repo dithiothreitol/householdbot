@@ -262,6 +262,16 @@ def check_packs() -> None:
                     errors.append(f"{rel(js)}: {section} {item.get('id')} uses unknown rule {item.get('counting')}")
                 if not item.get("law"):
                     errors.append(f"{rel(js)}: {section} {item.get('id')} names no law")
+        windows = {w.get("id") for w in data.get("response_windows", [])}
+        for ev in data.get("life_events", []):
+            for wid in ev.get("windows", []):
+                if wid not in windows:
+                    errors.append(f"{rel(js)}: life event {ev.get('id')} names unknown window {wid}")
+            if not ev.get("title"):
+                errors.append(f"{rel(js)}: life event {ev.get('id')} has no title")
+        for item in data.get("retention", []):
+            if not item.get("law") and not item.get("suggested"):
+                errors.append(f"{rel(js)}: retention {item.get('id')} needs a law or \"suggested\": true")
         md = js.with_suffix(".md")
         if not md.exists():
             errors.append(f"{rel(js)}: no matching {md.name}")

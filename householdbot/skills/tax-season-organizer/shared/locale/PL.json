@@ -468,6 +468,547 @@
       "from": "filing the correction",
       "counting": "tax",
       "law": "Ordynacja podatkowa art. 77 § 1 pkt 6 lit. a and art. 165 § 8a (Dz.U. 2026 poz. 846)"
+    },
+    {
+      "id": "prescription-paper",
+      "title": "Filling a paper prescription (recepta)",
+      "amount": 30,
+      "unit": "days",
+      "from": "the issue date, or the date it may be filled from (realizacja od dnia) written on it",
+      "counting": "calendar",
+      "law": "Prawo farmaceutyczne art. 96a ust. 1 pkt 5, ust. 7 pkt 1"
+    },
+    {
+      "id": "e-prescription",
+      "title": "Filling an e-prescription (e-recepta) with no longer term marked",
+      "amount": 30,
+      "unit": "days",
+      "from": "the issue date, or the date it may be filled from (realizacja od dnia)",
+      "counting": "calendar",
+      "law": "Prawo farmaceutyczne art. 96a ust. 7 pkt 1"
+    },
+    {
+      "id": "e-prescription-365-full-quantity",
+      "title": "E-prescription marked for 365 days: collecting within this time gives the full quantity; later, the days of use already passed are deducted",
+      "amount": 30,
+      "unit": "days",
+      "from": "the issue date, or the date it may be filled from (realizacja od dnia)",
+      "counting": "calendar",
+      "law": "Prawo farmaceutyczne art. 96a ust. 7a pkt 1"
+    },
+    {
+      "id": "e-prescription-365",
+      "title": "E-prescription marked for 365 days: last day it can be filled (at most 120 days of use per collection; the next part after three quarters of that period)",
+      "amount": 365,
+      "unit": "days",
+      "from": "the issue date, or the date it may be filled from (realizacja od dnia)",
+      "counting": "calendar",
+      "law": "Prawo farmaceutyczne art. 96a ust. 7 pkt 1, ust. 7a and 7aa; prescriptions regulation (t.j. Dz.U. 2025 poz. 604) § 9 ust. 3"
+    },
+    {
+      "id": "prescription-antibiotic",
+      "title": "Filling a prescription for an antibiotic for internal use or injection",
+      "amount": 7,
+      "unit": "days",
+      "from": "the issue date, or the date it may be filled from (realizacja od dnia)",
+      "counting": "calendar",
+      "law": "Prawo farmaceutyczne art. 96a ust. 7 pkt 2"
+    },
+    {
+      "id": "prescription-imported-or-immunological",
+      "title": "Filling a prescription for a medicine or special food imported for the patient, or an immunological product made for the patient",
+      "amount": 120,
+      "unit": "days",
+      "from": "the issue date",
+      "counting": "calendar",
+      "law": "Prawo farmaceutyczne art. 96a ust. 7 pkt 3"
+    },
+    {
+      "id": "prescription-narcotic",
+      "title": "Filling a prescription for a narcotic or psychotropic medicine",
+      "amount": 30,
+      "unit": "days",
+      "from": "the issue date",
+      "counting": "calendar",
+      "law": "Prawo farmaceutyczne art. 96a ust. 7 pkt 4"
+    },
+    {
+      "id": "referral-original-delivery",
+      "title": "Delivering the original paper referral (skierowanie) to the provider after being entered on a waiting list; missing it means removal from the list",
+      "amount": 14,
+      "unit": "business_days",
+      "from": "being entered on the waiting list",
+      "counting": "court",
+      "law": "ustawa o świadczeniach opieki zdrowotnej finansowanych ze środków publicznych art. 20 ust. 2a pkt 1 and ust. 2aa",
+      "met_by": "posting it at a Polish post office of the designated operator before the end of the last day (KPC art. 165 § 2, applied by art. 20 ust. 2aa of that act)"
+    },
+    {
+      "id": "waiting-list-reinstatement",
+      "title": "Request to be restored to a waiting list or to central e-registration after a missed appointment caused by force majeure",
+      "amount": 7,
+      "unit": "days",
+      "from": "the obstacle that caused the missed appointment ending",
+      "counting": "calendar",
+      "law": "ustawa o świadczeniach opieki zdrowotnej finansowanych ze środków publicznych art. 20 ust. 10e and 10f, art. 23g ust. 10"
+    },
+    {
+      "id": "physiotherapy-referral-registration",
+      "title": "Registering a referral for outpatient physiotherapy with a chosen provider",
+      "amount": 30,
+      "unit": "days",
+      "from": "the issue date of the referral",
+      "counting": "calendar",
+      "law": "guaranteed rehabilitation benefits regulation (t.j. Dz.U. 2021 poz. 265), annex 1 lp. 1 lit. b"
+    },
+    {
+      "id": "spa-referral-paper-sending",
+      "title": "A paper referral for spa treatment must reach the NFZ branch, or it lapses (paper only: no system access or treatment abroad)",
+      "amount": 30,
+      "unit": "days",
+      "from": "the issue date of the referral",
+      "counting": "calendar",
+      "law": "spa referral regulation (t.j. Dz.U. 2026 poz. 557) § 1a pkt 2, § 2 ust. 6"
+    },
+    {
+      "id": "spa-referral-nfz-decision",
+      "title": "NFZ decides on a spa referral (may extend by up to 14 days when it asks for more medical documents)",
+      "amount": 30,
+      "unit": "days",
+      "from": "the NFZ branch receiving the referral",
+      "counting": "calendar",
+      "law": "spa referral regulation (t.j. Dz.U. 2026 poz. 557) § 7 ust. 1, § 9c"
+    },
+    {
+      "id": "sick-leave-address-change",
+      "title": "Telling the employer and ZUS about a change of address during sick leave",
+      "amount": 3,
+      "unit": "days",
+      "from": "the change of address",
+      "counting": "calendar",
+      "law": "ustawa o świadczeniach pieniężnych z ubezpieczenia społecznego w razie choroby i macierzyństwa art. 59 ust. 5e"
+    },
+    {
+      "id": "sickness-benefit-claim",
+      "title": "Claim for sickness, maternity or care benefit becomes time-barred (3 years when the employer or ZUS made the error)",
+      "amount": 6,
+      "unit": "months",
+      "from": "the last day of the period the benefit covers",
+      "counting": "civil",
+      "law": "ustawa o świadczeniach pieniężnych z ubezpieczenia społecznego w razie choroby i macierzyństwa art. 67 ust. 1 and 4"
+    },
+    {
+      "id": "farm-holder-change-notice",
+      "title": "Written notice to the insurer of farmers' OC and farm buildings about a change of the farm's holder (by the previous holder; after a death, by the new holder)",
+      "amount": 14,
+      "unit": "days",
+      "from": "the change of the farm's holder",
+      "counting": "civil",
+      "law": "ustawa o ubezpieczeniach obowiązkowych, UFG i PBUK art. 48 ust. 1, art. 64 ust. 1"
+    },
+    {
+      "id": "compulsory-policy-renewal-document",
+      "title": "Insurer confirms an automatically renewed vehicle OC, farmers' OC or farm buildings contract with a policy document",
+      "amount": 14,
+      "unit": "days",
+      "from": "the automatic renewal of the contract",
+      "counting": "civil",
+      "law": "ustawa o ubezpieczeniach obowiązkowych, UFG i PBUK art. 28 ust. 1a, art. 46 ust. 1a, art. 62 ust. 1a"
+    },
+    {
+      "id": "insurance-claim-limitation",
+      "title": "Claim under an insurance contract becomes time-barred; reporting the claim or the event interrupts the period, which restarts on receiving the insurer's written decision",
+      "amount": 3,
+      "unit": "years",
+      "from": "the claim becoming due, or receiving the insurer's written decision on a reported claim",
+      "counting": "civil",
+      "law": "Kodeks cywilny art. 819 § 1 and 4"
+    },
+    {
+      "id": "building-defect-discovery",
+      "title": "Contractor's warranty (rękojmia) for construction works: a defect of the building must be found within this time (no limit if the contractor fraudulently concealed it)",
+      "amount": 5,
+      "unit": "years",
+      "from": "handover (odbiór) of the works",
+      "counting": "civil",
+      "law": "Kodeks cywilny art. 656 § 1, art. 638 § 1, art. 568 § 1 and 6"
+    },
+    {
+      "id": "building-defect-repair-claim",
+      "title": "Claim to repair a defect of construction works or replace the item becomes time-barred (for a consumer, not before the 5-year warranty period ends)",
+      "amount": 1,
+      "unit": "years",
+      "from": "finding the defect",
+      "counting": "civil",
+      "law": "Kodeks cywilny art. 568 § 2 and 3, with art. 638 § 1 and art. 656 § 1"
+    },
+    {
+      "id": "contract-for-work-claims",
+      "title": "Claims under a contract for specific work (umowa o dzieło) become time-barred",
+      "amount": 2,
+      "unit": "years",
+      "from": "handover of the work, or the day it should have been handed over",
+      "counting": "civil",
+      "law": "Kodeks cywilny art. 646"
+    },
+    {
+      "id": "heating-system-check-20-100kw",
+      "title": "Periodic heating-system check for a boiler of 20 to 100 kW, by a person on the list in the central register of energy performance of buildings",
+      "amount": 5,
+      "unit": "years",
+      "from": "the previous heating-system check",
+      "counting": "calendar",
+      "law": "ustawa o charakterystyce energetycznej budynków art. 23 ust. 1 pkt 1 lit. a, art. 24 ust. 8"
+    },
+    {
+      "id": "pcc-3-vehicle-purchase",
+      "title": "File PCC-3 and pay 2% tax on a vehicle bought from a private person (not due when the market value is PLN 3,000 or less, or when the seller sells as a VAT taxpayer)",
+      "amount": 14,
+      "unit": "days",
+      "from": "signing the sale contract",
+      "counting": "tax",
+      "law": "ustawa o podatku od czynności cywilnoprawnych art. 3 ust. 1 pkt 1, art. 7 ust. 1 pkt 1 lit. a, art. 10 ust. 1; exemptions art. 2 pkt 4 lit. a and b, art. 9 pkt 6 (PLN 3,000 for contracts from 3 Nov 2026, PLN 1,000 before: Dz.U. 2026 poz. 1354 art. 3, 10 and 11)",
+      "events": [
+        "vehicle-purchase"
+      ]
+    },
+    {
+      "id": "vehicle-registration-after-purchase",
+      "title": "Apply to the starosta to register a bought vehicle (late: fixed penalty PLN 500; PLN 1,000 when no application is made within 180 days)",
+      "amount": 30,
+      "unit": "days",
+      "from": "buying the vehicle (the date of the contract or invoice)",
+      "counting": "administrative",
+      "law": "Prawo o ruchu drogowym art. 73 ust. 1, art. 73aa ust. 1 pkt 1 and ust. 7; penalties art. 140mb ust. 1 and 5",
+      "events": [
+        "vehicle-purchase"
+      ]
+    },
+    {
+      "id": "vehicle-sale-notice-insurer",
+      "title": "Notify the OC insurer in writing of the sale and of the buyer's name, address and PESEL (until then the seller shares liability for the premium)",
+      "amount": 14,
+      "unit": "days",
+      "from": "the sale (transfer of ownership)",
+      "counting": "civil",
+      "law": "ustawa o ubezpieczeniach obowiązkowych, UFG i PBUK art. 32 ust. 1, 2 and 4",
+      "events": [
+        "vehicle-sale"
+      ]
+    },
+    {
+      "id": "vehicle-sale-notice-starosta",
+      "title": "Notify the starosta of the sale of a registered vehicle, with a copy of the sale agreement (late: fixed penalty PLN 250)",
+      "amount": 30,
+      "unit": "days",
+      "from": "the sale (the date of the contract)",
+      "counting": "administrative",
+      "law": "Prawo o ruchu drogowym art. 78 ust. 2 pkt 1 and ust. 2a; penalty art. 140mb ust. 6; vehicle registration regulation (Dz.U. 2024 poz. 1709) § 15 ust. 1",
+      "events": [
+        "vehicle-sale"
+      ]
+    },
+    {
+      "id": "child-benefit-800-change-notice",
+      "title": "Report changed 800+ application data, such as a new address, to ZUS on the PUE/eZUS profile",
+      "amount": 7,
+      "unit": "days",
+      "from": "the change (for a move, the day of moving)",
+      "counting": "administrative",
+      "law": "ustawa o pomocy państwa w wychowywaniu dzieci art. 13 ust. 3 pkt 1 lit. a, art. 20 ust. 1, art. 28 ust. 1",
+      "events": [
+        "moving-house"
+      ]
+    },
+    {
+      "id": "property-tax-information",
+      "title": "File the property information (informacja o nieruchomościach i obiektach budowlanych) with the municipality after buying or selling a home or land",
+      "amount": 14,
+      "unit": "days",
+      "from": "the event that starts or ends the property tax obligation, such as acquiring or selling the property",
+      "counting": "tax",
+      "law": "ustawa o podatkach i opłatach lokalnych art. 6 ust. 6",
+      "events": [
+        "moving-house"
+      ]
+    },
+    {
+      "id": "waste-fee-first-declaration",
+      "title": "First waste-fee declaration for a property where residents move in (in a block of separately owned flats the housing community or cooperative files it)",
+      "amount": 14,
+      "unit": "days",
+      "from": "the first resident moving in",
+      "counting": "tax",
+      "law": "ustawa o utrzymaniu czystości i porządku w gminach art. 6m ust. 1 and 1¹ pkt 1, art. 2 ust. 3, art. 6q ust. 1",
+      "events": [
+        "moving-house"
+      ]
+    },
+    {
+      "id": "residence-registration-after-move",
+      "title": "Register residence (zameldowanie) at the new address, at the municipal office or online; this can also deregister the old address",
+      "amount": 30,
+      "unit": "days",
+      "from": "arriving at the new address",
+      "counting": "administrative",
+      "law": "ustawa o ewidencji ludności art. 24 ust. 1, art. 27 ust. 1, art. 28 ust. 1, art. 33 ust. 3",
+      "events": [
+        "moving-house"
+      ]
+    },
+    {
+      "id": "vehicle-registration-certificate-address-change",
+      "title": "Tell the starosta of the new address on the vehicle registration certificate (new certificate, or registration by the new office when the office changes)",
+      "amount": 30,
+      "unit": "days",
+      "from": "the change of address",
+      "counting": "administrative",
+      "law": "Prawo o ruchu drogowym art. 78 ust. 2 pkt 2; vehicle registration regulation (Dz.U. 2024 poz. 1709) § 16 ust. 1 pkt 1 and 2",
+      "events": [
+        "moving-house"
+      ]
+    },
+    {
+      "id": "birth-registration",
+      "title": "Register the birth at the civil registry office for the place of birth, or online (if missed, the registrar registers it ex officio and chooses the name)",
+      "amount": 21,
+      "unit": "days",
+      "from": "the birth card (karta urodzenia) being drawn up",
+      "counting": "administrative",
+      "law": "Prawo o aktach stanu cywilnego art. 12 ust. 1, art. 14, art. 55 ust. 1 and 2, art. 56 ust. 2, art. 57 ust. 1 and 2, art. 58a ust. 1",
+      "events": [
+        "birth"
+      ]
+    },
+    {
+      "id": "newborn-health-insurance-notice",
+      "title": "Tell the employer, or whoever registers the parent for health insurance, about the newborn so the child is registered as a family member",
+      "amount": 7,
+      "unit": "days",
+      "from": "the birth",
+      "counting": "calendar",
+      "law": "ustawa o świadczeniach opieki zdrowotnej finansowanych ze środków publicznych art. 67 ust. 3",
+      "events": [
+        "birth"
+      ]
+    },
+    {
+      "id": "maternity-benefit-81-5-application",
+      "title": "Mother's written application for maternity benefit for maternity and parental leave together (81.5% throughout; the father's 9 reserved weeks at 70%)",
+      "amount": 21,
+      "unit": "days",
+      "from": "the birth",
+      "counting": "calendar",
+      "law": "ustawa o świadczeniach pieniężnych z ubezpieczenia społecznego w razie choroby i macierzyństwa art. 30a ust. 1, art. 31 ust. 3 and 3f",
+      "events": [
+        "birth"
+      ]
+    },
+    {
+      "id": "child-benefit-800-newborn",
+      "title": "800+ application for a newborn, online only (filed in time: paid from the month of birth; later: from the month of filing)",
+      "amount": 3,
+      "unit": "months",
+      "from": "the birth",
+      "counting": "administrative",
+      "law": "ustawa o pomocy państwa w wychowywaniu dzieci art. 13 ust. 5, art. 18 ust. 2 and 2a, art. 28 ust. 1",
+      "events": [
+        "birth"
+      ]
+    },
+    {
+      "id": "parental-benefit-kosiniakowe",
+      "title": "Application to the municipality for the parental benefit (świadczenie rodzicielskie, PLN 1,000 a month) when no parent receives maternity benefit (filed in time: paid from the month of birth)",
+      "amount": 3,
+      "unit": "months",
+      "from": "the birth",
+      "counting": "administrative",
+      "law": "ustawa o świadczeniach rodzinnych art. 17c ust. 1, 3, 5 and 9 pkt 1, art. 24 ust. 9, art. 32 ust. 2",
+      "events": [
+        "birth"
+      ]
+    },
+    {
+      "id": "becikowe-application",
+      "title": "Application to the municipality for the one-off birth grant (becikowe, PLN 1,000; income limit PLN 1,922 a person; medical care from the 10th week of pregnancy); a later application is left unexamined",
+      "amount": 12,
+      "unit": "months",
+      "from": "the birth",
+      "counting": "administrative",
+      "law": "ustawa o świadczeniach rodzinnych art. 15b ust. 1, 2, 3 and 5, art. 32 ust. 2",
+      "events": [
+        "birth"
+      ]
+    },
+    {
+      "id": "paternity-leave-before-first-birthday",
+      "title": "Paternity leave (up to 2 weeks; request at least 7 days ahead) must be over before the child turns 12 months",
+      "amount": 12,
+      "unit": "months",
+      "from": "the birth",
+      "counting": "calendar",
+      "law": "Kodeks pracy art. 182³ § 1 pkt 1, § 1¹ and § 2",
+      "events": [
+        "birth"
+      ]
+    },
+    {
+      "id": "work-certificate-issue",
+      "title": "Employer issues the work certificate (świadectwo pracy) on the last day of employment, or posts or delivers it within these 7 days when that is not possible",
+      "amount": 7,
+      "unit": "days",
+      "from": "the end of employment",
+      "counting": "civil",
+      "law": "Kodeks pracy art. 97 § 1 and 1³, art. 300",
+      "met_by": "the employer posting the certificate or delivering it in another way before the end of the last day (Kodeks pracy art. 97 § 1)",
+      "events": [
+        "job-change"
+      ]
+    },
+    {
+      "id": "work-certificate-correction-request",
+      "title": "Ask the employer to correct the work certificate",
+      "amount": 14,
+      "unit": "days",
+      "from": "receiving the certificate",
+      "counting": "civil",
+      "law": "Kodeks pracy art. 97 § 2¹, art. 300",
+      "events": [
+        "job-change"
+      ]
+    },
+    {
+      "id": "work-certificate-correction-court",
+      "title": "Take the correction of the work certificate to the labour court after the employer refused",
+      "amount": 14,
+      "unit": "days",
+      "from": "being told of the refusal",
+      "counting": "court",
+      "law": "Kodeks pracy art. 97 § 2¹",
+      "events": [
+        "job-change"
+      ]
+    },
+    {
+      "id": "health-cover-after-employment",
+      "title": "Public health cover continues after the insurance obligation ends (longer while sickness or maternity benefit is paid)",
+      "amount": 30,
+      "unit": "days",
+      "from": "the end of the health insurance obligation, such as the end of employment",
+      "counting": "calendar",
+      "law": "ustawa o świadczeniach opieki zdrowotnej finansowanych ze środków publicznych art. 67 ust. 4 and 6",
+      "events": [
+        "job-change"
+      ]
+    },
+    {
+      "id": "ppk-other-accounts-statement",
+      "title": "Tell the new employer which PPK accounts earlier employers opened (the employer then explains the transfer request)",
+      "amount": 7,
+      "unit": "days",
+      "from": "the new employer concluding the PPK contract on the employee's behalf",
+      "counting": "civil",
+      "law": "ustawa o pracowniczych planach kapitałowych art. 19 ust. 1 and 2",
+      "events": [
+        "job-change"
+      ]
+    },
+    {
+      "id": "death-registration",
+      "title": "Register the death at the civil registry office for the place of death, with the death card (24 hours when the death was caused by an infectious disease)",
+      "amount": 3,
+      "unit": "days",
+      "from": "the death card (karta zgonu) being drawn up",
+      "counting": "administrative",
+      "law": "Prawo o aktach stanu cywilnego art. 12 ust. 1, art. 13 ust. 2, art. 93 ust. 1 and 2; ustawa o cmentarzach i chowaniu zmarłych art. 10 ust. 1",
+      "events": [
+        "death"
+      ]
+    },
+    {
+      "id": "funeral-allowance-claim",
+      "title": "Claim the funeral allowance (zasiłek pogrzebowy, PLN 7,000 for deaths from 1 Jan 2026) from ZUS; without an application the right expires",
+      "amount": 12,
+      "unit": "months",
+      "from": "the death (or the funeral, when an earlier application was impossible for reasons beyond the claimant's control)",
+      "counting": "administrative",
+      "law": "ustawa o emeryturach i rentach z FUS art. 80 ust. 1 and 7, art. 81 ust. 1 and 2, art. 124; Dz.U. 2025 poz. 718 art. 13; M.P. 2026 poz. 150",
+      "events": [
+        "death"
+      ]
+    },
+    {
+      "id": "child-benefit-800-after-parent-death",
+      "title": "800+ application by the other parent after the death of the parent who received it (filed in time: paid from the day of death, for months not yet paid)",
+      "amount": 3,
+      "unit": "months",
+      "from": "the death of the parent",
+      "counting": "administrative",
+      "law": "ustawa o pomocy państwa w wychowywaniu dzieci art. 18 ust. 2b, art. 28 ust. 1",
+      "events": [
+        "death"
+      ]
+    },
+    {
+      "id": "inheritance-statement",
+      "title": "Accept or reject the inheritance by a statement before a notary or a court",
+      "amount": 6,
+      "unit": "months",
+      "from": "the day the heir learned of their title to inherit",
+      "counting": "civil",
+      "law": "Kodeks cywilny art. 1012, art. 1015 § 1, 1¹, 1² and 2, art. 1018 § 3",
+      "met_by": "making the statement before a notary or a court, or filing the request with the court, before the end of the last day (Kodeks cywilny art. 1015 § 1¹); the time stops while a court decides on a required permission (art. 1015 § 1²)",
+      "silence": "no statement within the window means acceptance with the benefit of inventory (Kodeks cywilny art. 1015 § 2)",
+      "events": [
+        "death"
+      ]
+    },
+    {
+      "id": "deposit-disposition-tax-notice",
+      "title": "SD-Z2 for money received under a disposition on death (closest family; not needed within the PLN 36,120 limit)",
+      "amount": 6,
+      "unit": "months",
+      "from": "the death of the account holder",
+      "counting": "tax",
+      "law": "ustawa o podatku od spadków i darowizn art. 1 ust. 2, art. 4a ust. 1 pkt 1 and ust. 4 pkt 1, art. 6 ust. 1 pkt 3, art. 9 ust. 1 pkt 1",
+      "events": [
+        "death"
+      ]
+    },
+    {
+      "id": "inheritance-tax-return-other-heirs",
+      "title": "Inheritance tax return (SD-3) for heirs outside the exempt closest family whose share exceeds their tax-free amount",
+      "amount": 1,
+      "unit": "months",
+      "from": "the court decision on succession becoming final, or the notarial certificate of succession being registered",
+      "counting": "tax",
+      "law": "ustawa o podatku od spadków i darowizn art. 6 ust. 1 pkt 1, art. 9 ust. 1, art. 17a ust. 1 (as amended by Dz.U. 2025 poz. 1854, for decisions and certificates from 7 Jan 2026)",
+      "events": [
+        "death"
+      ]
+    },
+    {
+      "id": "vehicle-registration-after-inheritance",
+      "title": "Heirs apply to the starosta to register an inherited vehicle (late: fixed penalty PLN 500; PLN 1,000 after 180 days)",
+      "amount": 60,
+      "unit": "days",
+      "from": "the court decision on succession becoming final, or the notarial certificate of succession being drawn up",
+      "counting": "administrative",
+      "law": "Prawo o ruchu drogowym art. 73aa ust. 2, art. 140mb ust. 1 and 5 (60 days since 24 Dec 2025, Dz.U. 2025 poz. 1734)",
+      "events": [
+        "death"
+      ]
+    },
+    {
+      "id": "inheritance-tax-exemption-notice",
+      "title": "SD-Z2 to keep the inheritance tax exemption for the closest family (not needed within the PLN 36,120 limit; a missed deadline can be restored on request filed within 7 days of the cause ending, when not the heir's fault)",
+      "amount": 6,
+      "unit": "months",
+      "from": "the court decision on succession becoming final, or the notarial certificate of succession being registered",
+      "counting": "tax",
+      "law": "ustawa o podatku od spadków i darowizn art. 4a ust. 1 pkt 1, ust. 1a, 2, 3 and 4 pkt 1, art. 4c ust. 1, art. 17a ust. 1a (Dz.U. 2025 poz. 1854); Ordynacja podatkowa art. 162 § 2",
+      "events": [
+        "death"
+      ]
     }
   ],
   "recurring": [
@@ -554,6 +1095,71 @@
       "lead_time_days": 14,
       "applies_when": "a pensioner whose PIT-40A settles the year wants to choose or change the organisation",
       "law": "ustawa o podatku dochodowym od osób fizycznych art. 45c ust. 3a and 3c"
+    },
+    {
+      "id": "preschool-year-start",
+      "title": "Compulsory pre-school year (roczne przygotowanie przedszkolne) starts with the school year",
+      "kind": "task",
+      "category": "children",
+      "dates": [
+        "09-01"
+      ],
+      "counting": "calendar",
+      "lead_time_days": 30,
+      "applies_when": "a child in the household turns 6 this calendar year",
+      "law": "Prawo oświatowe art. 31 ust. 4 and 5, art. 33 ust. 1, art. 94"
+    },
+    {
+      "id": "school-obligation-start",
+      "title": "School obligation (obowiązek szkolny) starts with the school year",
+      "kind": "task",
+      "category": "children",
+      "dates": [
+        "09-01"
+      ],
+      "counting": "calendar",
+      "lead_time_days": 30,
+      "applies_when": "a child in the household turns 7 this calendar year, has not started school at 6 and has no postponement",
+      "law": "Prawo oświatowe art. 35 ust. 2, art. 40 ust. 1, art. 94"
+    },
+    {
+      "id": "school-start-postponement",
+      "title": "Application to postpone the start of school by one year, with a counselling-centre opinion, to the head of the district primary school",
+      "kind": "filing",
+      "category": "children",
+      "dates": [
+        "08-31"
+      ],
+      "counting": "calendar",
+      "lead_time_days": 60,
+      "applies_when": "a child turns 7 this calendar year and the parents want to postpone the start of school",
+      "law": "Prawo oświatowe art. 36 ust. 4 to 6"
+    },
+    {
+      "id": "school-abroad-notice",
+      "title": "Informing the head of the district primary school that the pre-school year or school obligation is fulfilled abroad or at a foreign embassy school",
+      "kind": "filing",
+      "category": "children",
+      "dates": [
+        "09-30"
+      ],
+      "counting": "calendar",
+      "lead_time_days": 14,
+      "applies_when": "a child of pre-school-year or school-obligation age attends a kindergarten or school abroad, or a foreign embassy school in Poland",
+      "law": "Prawo oświatowe art. 33 ust. 1 pkt 3, art. 36 ust. 10 and 11, art. 40 ust. 1 pkt 4"
+    },
+    {
+      "id": "school-extra-days-off",
+      "title": "The school head announces this school year's extra days off (up to 8 in primary schools, 10 in secondary schools); the school offers supervised activities on those days",
+      "kind": "task",
+      "category": "children",
+      "dates": [
+        "09-30"
+      ],
+      "counting": "calendar",
+      "lead_time_days": 0,
+      "applies_when": "a child attends a public primary or secondary school",
+      "law": "school year regulation (t.j. Dz.U. 2023 poz. 1211) § 5 ust. 1 and 3, § 6"
     }
   ],
   "sources": {
@@ -562,7 +1168,23 @@
       "Twój e-PIT automatic filing on 30 April for PIT-28 (filed under the lump-sum tax act, not read)",
       "deemed acceptance of a payment-service complaint: ustawa o usługach płatniczych art. 15a has no such rule; whether the financial-complaints act art. 8 applies is unsettled",
       "deemed acceptance of an energy billing complaint: Prawo energetyczne art. 6c ust. 2 covers disconnection and prosumer complaints; the system regulations give 14 days without deemed acceptance",
-      "whether a home lease may set a shorter notice than Kodeks cywilny art. 688 (3 months to the end of a month)"
+      "whether a home lease may set a shorter notice than Kodeks cywilny art. 688 (3 months to the end of a month)",
+      "whether a single-family house counts as a dwelling (lokal mieszkalny) for the smoke and CO detector duty (fire protection regulation § 28a)",
+      "the status of the building technical-conditions regulation (Dz.U. 2022 poz. 1225), marked as deemed repealed from 21.09.2026 with no replacement found",
+      "whether the year-end rule of Kodeks cywilny art. 118 also extends special limitation periods (art. 554, 646, 819)",
+      "limitation of telecom charges under Prawo komunikacji elektronicznej (the Supreme Court ruling III CZP 20/09 was under the 2004 act)",
+      "whether the GDPR one-month deadline also applies to requests for medical records",
+      "whether 3 or 6 years applies to a consumer's own claims against a building contractor",
+      "when the first heating-system check is due for a newly installed boiler",
+      "whether NFZ contract terms limit how long a hospital referral can be used",
+      "whether identity cards of holders aged 70 or more stay valid after 3 Aug 2031 (Regulation (EU) 2019/1157 art. 5)",
+      "documents that still print an address (identity cards from before 1 Mar 2015, driving licences from before 4 Mar 2019) after a move: the 2019 rule lapsed on 7 Aug 2025 (Dz.U. 2025 poz. 1072)",
+      "the last day for registering residence (zameldowanie): 'w 30 dniu, licząc od dnia przybycia' may mean day 29 or day 30 after arrival",
+      "counting of the 7-day newborn health-insurance notice and the 21-day application for the 81.5% maternity benefit (no counting rule in the acts; calendar counting used)",
+      "PCC on a car bought by a person with a disability (ustawa o PCC art. 2 pkt 1 lit. b)",
+      "any penalty for a late address notice for the vehicle registration certificate (art. 140mb has none; Kodeks wykroczeń art. 97 unclear)",
+      "the funeral allowance from 1 Mar 2027, which depends on 2026 inflation",
+      "the first waste-fee declaration after an occupied property changes owner"
     ]
   },
   "transit_buffer_days": {
@@ -571,5 +1193,416 @@
     "bank-transfer": 1,
     "post-domestic": 5,
     "post-international": 10
-  }
+  },
+  "retention": [
+    {
+      "id": "tax-returns-and-relief-proof",
+      "title": "Tax returns, payers' forms (PIT-11 and similar) and proof of reliefs",
+      "title_pl": "Zeznania podatkowe, informacje od płatników i dowody ulg",
+      "keep_years": 5,
+      "from": "the end of the calendar year in which the tax was due (for an annual PIT return, the year of the 30 April deadline); for a relief carried forward, the tax for the last year in which it is deducted",
+      "permanent": false,
+      "law": "Ordynacja podatkowa art. 70 § 1",
+      "suggested": false,
+      "note": "The tax becomes time-barred 5 years after the end of the year it was due. The formal duty to keep records for that time (Ordynacja podatkowa art. 86 § 1) binds those who keep tax books; see the pack section Correcting a return, refunds and keeping papers."
+    },
+    {
+      "id": "utility-bills",
+      "title": "Energy, gas and water bills with proof of payment",
+      "title_pl": "Rachunki za prąd, gaz i wodę z potwierdzeniami zapłaty",
+      "keep_years": 3,
+      "from": "the end of the calendar year in which the bill was due",
+      "permanent": false,
+      "law": "Kodeks cywilny art. 554, 555, 118, 117 § 2¹",
+      "suggested": true,
+      "note": "Suggestion covering the longest period that can apply. Claims from sales by a business, which include energy and water, expire after 2 years (art. 554 with 555); claims for periodic payments after 3 years, ending on 31 December (art. 118). After that a claim generally cannot be enforced against a consumer (art. 117 § 2¹, with the court's exception in art. 117¹)."
+    },
+    {
+      "id": "telecom-bills",
+      "title": "Phone, internet and TV bills with proof of payment",
+      "title_pl": "Rachunki za telefon, internet i telewizję z potwierdzeniami zapłaty",
+      "keep_years": 3,
+      "from": "the end of the calendar year in which the bill was due",
+      "permanent": false,
+      "law": "Kodeks cywilny art. 118; Prawo komunikacji elektronicznej art. 381",
+      "suggested": true,
+      "note": "Suggestion. The Supreme Court applied the 3-year period of art. 118 to telephone charges under the earlier telecom act (III CZP 20/09 of 7.05.2009). A complaint suspends the limitation until the complaint procedure ends (Prawo komunikacji elektronicznej art. 381)."
+    },
+    {
+      "id": "proof-of-purchase",
+      "title": "Receipts, invoices and other proof of purchase of goods",
+      "title_pl": "Paragony, faktury i inne dowody zakupu towarów",
+      "keep_years": 2,
+      "from": "delivery of the goods",
+      "permanent": false,
+      "law": "ustawa o prawach konsumenta art. 43c ust. 1; Kodeks cywilny art. 577 § 4",
+      "suggested": false,
+      "note": "The trader's liability for lack of conformity lasts 2 years from delivery, or longer if the stated shelf life is longer. Keep longer for the length of a voluntary guarantee (2 years unless it states otherwise) and until any complaint is settled."
+    },
+    {
+      "id": "building-works-documents",
+      "title": "Building works contract, acceptance record (protokół odbioru) and invoices",
+      "title_pl": "Umowa o roboty budowlane, protokół odbioru i faktury",
+      "keep_years": 5,
+      "from": "handover (odbiór) of the works",
+      "permanent": false,
+      "law": "Kodeks cywilny art. 568 § 1 and 2, with art. 638 § 1 and art. 656 § 1",
+      "suggested": false,
+      "note": "Defects of a building must be found within 5 years of handover; a repair claim expires 1 year after the defect is found, for a consumer not before the 5 years end. Keep longer while a defect claim is pending. Invoices for improvements may also matter for tax on a later sale (see notarial deeds)."
+    },
+    {
+      "id": "employment-records",
+      "title": "Work certificates (świadectwa pracy), employers' pay certificates and employment contracts",
+      "title_pl": "Świadectwa pracy, zaświadczenia o zatrudnieniu i wynagrodzeniu, umowy o pracę",
+      "keep_years": null,
+      "from": "receipt",
+      "permanent": true,
+      "law": null,
+      "suggested": true,
+      "note": "No period is set for the employee. ZUS accepts these documents as evidence of past work and pay (pension proceedings regulation, t.j. Dz.U. 2026 poz. 1055, § 21 and 22), including for the initial capital for work before 1999 (ustawa o emeryturach i rentach z FUS art. 173 ust. 1). An employer keeps its files only 10 years after the end of the year the employment ended (Kodeks pracy art. 94 pkt 9b)."
+    },
+    {
+      "id": "insurance-policies",
+      "title": "Insurance policies and claim correspondence",
+      "title_pl": "Polisy ubezpieczeniowe i korespondencja w sprawie szkód",
+      "keep_years": 3,
+      "from": "the end of the cover, or receipt of the insurer's written decision on a reported claim",
+      "permanent": false,
+      "law": "Kodeks cywilny art. 819 § 1 and 4",
+      "suggested": true,
+      "note": "Suggestion based on the 3-year limitation of claims under an insurance contract, which runs from the claim becoming due and restarts after the insurer's written decision on a reported claim or event."
+    },
+    {
+      "id": "liability-insurance-policies",
+      "title": "Liability (OC) insurance policies",
+      "title_pl": "Polisy ubezpieczenia odpowiedzialności cywilnej (OC)",
+      "keep_years": 10,
+      "from": "the end of the cover",
+      "permanent": false,
+      "law": "Kodeks cywilny art. 442¹ § 1 to 4, art. 819 § 3",
+      "suggested": true,
+      "note": "Suggestion. A claim for damage caused by a tort expires 3 years after the injured person learns of the damage and who is liable, but no later than 10 years after the event; longer periods apply after a crime and for personal injury. An injured person's claim against the liability insurer follows the same limitation (art. 819 § 3)."
+    },
+    {
+      "id": "property-deeds",
+      "title": "Notarial deeds and title documents for a home, with invoices for improvements",
+      "title_pl": "Akty notarialne i dokumenty własności nieruchomości wraz z fakturami za nakłady",
+      "keep_years": null,
+      "from": "receipt",
+      "permanent": true,
+      "law": null,
+      "suggested": true,
+      "note": "The notary keeps the original deed and issues further extracts (wypis) to the parties and their successors; an extract has the force of the original (Prawo o notariacie art. 95, 109, 110 § 1). A sale within 5 years from the end of the year of purchase or construction is taxed, and only documented purchase costs and value-adding outlays count (ustawa o PIT art. 10 ust. 1 pkt 8, art. 22 ust. 6c)."
+    },
+    {
+      "id": "court-decisions",
+      "title": "Court decisions and court settlements",
+      "title_pl": "Orzeczenia sądowe i ugody sądowe",
+      "keep_years": null,
+      "from": "receipt",
+      "permanent": true,
+      "law": null,
+      "suggested": true,
+      "note": "A claim confirmed by a final court ruling or a court settlement expires after 6 years, and future periodic payments under it after 3 years (Kodeks cywilny art. 125 § 1)."
+    },
+    {
+      "id": "loan-agreements",
+      "title": "Loan agreements, repayment schedules and the lender's confirmation of full repayment",
+      "title_pl": "Umowy kredytu lub pożyczki, harmonogramy spłat i potwierdzenie całkowitej spłaty",
+      "keep_years": 6,
+      "from": "the end of the calendar year of the final payment",
+      "permanent": false,
+      "law": "Kodeks cywilny art. 118, art. 120 § 1",
+      "suggested": true,
+      "note": "Suggestion. The general limitation period is 6 years and ends on 31 December; claims connected with running a business, such as the lender's, expire after 3 years (art. 118)."
+    },
+    {
+      "id": "bank-statements",
+      "title": "Bank statements",
+      "title_pl": "Wyciągi bankowe",
+      "keep_years": null,
+      "from": "the period of the item they prove",
+      "permanent": false,
+      "law": null,
+      "suggested": true,
+      "note": "No period is set for a household. Keep a statement while it is the proof for another item in this list (a tax relief, a bill, a loan). Banks keep transaction records for 5 years after the customer relationship ends (ustawa o przeciwdziałaniu praniu pieniędzy oraz finansowaniu terroryzmu art. 49 ust. 1)."
+    }
+  ],
+  "life_events": [
+    {
+      "id": "vehicle-purchase",
+      "title": "Buying a used car",
+      "title_pl": "Kupno używanego samochodu",
+      "windows": [
+        "pcc-3-vehicle-purchase",
+        "vehicle-registration-after-purchase"
+      ],
+      "tasks": [
+        {
+          "title": "Collect the registration certificate, the test certificate if needed, and the OC confirmation",
+          "title_pl": "Odbierz dowód rejestracyjny, zaświadczenie o badaniu technicznym (jeśli potrzebne) i potwierdzenie zawarcia OC",
+          "law": "Prawo o ruchu drogowym art. 78 ust. 1; ustawa o ubezpieczeniach obowiązkowych, UFG i PBUK art. 32 ust. 1",
+          "note": "The test certificate is needed when the registration certificate shows no current test date."
+        },
+        {
+          "title": "Keep the purchase agreement or invoice",
+          "title_pl": "Zachowaj umowę kupna lub fakturę",
+          "law": "Prawo o ruchu drogowym art. 72 ust. 1 pkt 1",
+          "note": "It is the proof of ownership for registration."
+        },
+        {
+          "title": "Decide on the seller's OC: keep it or end it in writing",
+          "title_pl": "Zdecyduj o OC sprzedającego: kontynuacja albo pisemne wypowiedzenie",
+          "law": "ustawa o ubezpieczeniach obowiązkowych, UFG i PBUK art. 31 ust. 1 and 6",
+          "note": "A new OC must start no later than the day the ended one stops."
+        },
+        {
+          "title": "No OC from the seller: take out OC on the purchase day",
+          "title_pl": "Brak OC sprzedającego: zawrzyj umowę OC w dniu zakupu",
+          "law": "ustawa o ubezpieczeniach obowiązkowych, UFG i PBUK art. 31 ust. 3",
+          "note": "Before driving at the latest."
+        },
+        {
+          "title": "Keeping the seller's OC: give the insurer the facts for recalculating the premium",
+          "title_pl": "Kontynuacja OC sprzedającego: przekaż ubezpieczycielowi dane do ponownej kalkulacji składki",
+          "law": "ustawa o ubezpieczeniach obowiązkowych, UFG i PBUK art. 31 ust. 2, art. 32 ust. 4",
+          "note": "No deadline; the buyer owes the premium from the purchase date."
+        }
+      ]
+    },
+    {
+      "id": "vehicle-sale",
+      "title": "Selling a car",
+      "title_pl": "Sprzedaż samochodu",
+      "windows": [
+        "vehicle-sale-notice-insurer",
+        "vehicle-sale-notice-starosta"
+      ],
+      "tasks": [
+        {
+          "title": "Hand over the registration certificate, the test certificate if needed, and the OC confirmation",
+          "title_pl": "Przekaż dowód rejestracyjny, zaświadczenie o badaniu technicznym (jeśli potrzebne) i potwierdzenie zawarcia OC",
+          "law": "Prawo o ruchu drogowym art. 78 ust. 1; ustawa o ubezpieczeniach obowiązkowych, UFG i PBUK art. 32 ust. 1",
+          "note": "The test certificate is needed when the registration certificate shows no current test date."
+        },
+        {
+          "title": "Keep the sale agreement and attach a copy to the starosta notice",
+          "title_pl": "Zachowaj umowę sprzedaży; kopię dołącz do zawiadomienia starosty",
+          "law": "vehicle registration regulation (Dz.U. 2024 poz. 1709) § 15 ust. 1; ustawa o ubezpieczeniach obowiązkowych, UFG i PBUK art. 32 ust. 3 and 4",
+          "note": "Its date fixes when liability and the premium passed to the buyer."
+        },
+        {
+          "title": "Check voluntary policies such as AC",
+          "title_pl": "Sprawdź ubezpieczenia dobrowolne, np. AC",
+          "law": "Kodeks cywilny art. 823 § 1 and 3",
+          "note": "They pass to the buyer only with the insurer's consent, unless the terms say otherwise; otherwise they end at the sale."
+        },
+        {
+          "title": "Sold within 6 months of buying: include the income in the annual PIT return",
+          "title_pl": "Sprzedaż przed upływem pół roku od zakupu: wykaż przychód w zeznaniu rocznym",
+          "law": "ustawa o PIT art. 10 ust. 1 pkt 8 lit. d",
+          "note": "Six months counted from the end of the month of purchase; a sale outside a business."
+        }
+      ]
+    },
+    {
+      "id": "moving-house",
+      "title": "Moving house",
+      "title_pl": "Przeprowadzka",
+      "windows": [
+        "child-benefit-800-change-notice",
+        "property-tax-information",
+        "waste-fee-first-declaration",
+        "residence-registration-after-move",
+        "vehicle-registration-certificate-address-change"
+      ],
+      "tasks": [
+        {
+          "title": "Update the address with the tax office",
+          "title_pl": "Zaktualizuj adres w urzędzie skarbowym",
+          "law": "ustawa o zasadach ewidencji i identyfikacji podatników i płatników art. 9 ust. 1d",
+          "note": "In the next tax return or other tax document, or on ZAP-3; from 1 Jan 2027 only a return or ZAP-3 (Dz.U. 2026 poz. 1270). No deadline."
+        },
+        {
+          "title": "Waste fee: new declaration when the data behind the fee change",
+          "title_pl": "Opłata za odpady: nowa deklaracja po zmianie danych, np. liczby mieszkańców",
+          "law": "ustawa o utrzymaniu czystości i porządku w gminach art. 6m ust. 2, art. 2 ust. 3",
+          "note": "By the 10th day of the month after the change; in a block of separately owned flats the housing community or cooperative files it."
+        },
+        {
+          "title": "Tell insurers about the move where the policy requires it",
+          "title_pl": "Zgłoś przeprowadzkę ubezpieczycielom, jeśli wymaga tego umowa",
+          "law": "Kodeks cywilny art. 815 § 2",
+          "note": "Promptly; not for life insurance."
+        },
+        {
+          "title": "Identity card: no new card for a move",
+          "title_pl": "Dowód osobisty: przeprowadzka nie wymaga wymiany",
+          "law": "ustawa o dowodach osobistych art. 12 ust. 1, art. 12a ust. 1, art. 46 ust. 1 pkt 2",
+          "note": "Cards issued under the act in force show no address."
+        },
+        {
+          "title": "Driving licence: the current pattern shows no address",
+          "title_pl": "Prawo jazdy: obecny wzór nie zawiera adresu",
+          "law": "ustawa o kierujących pojazdami art. 18 ust. 1; driving licence pattern regulation (Dz.U. 2025 poz. 1072) annex 1 pt 2.1.4",
+          "note": "Changes to data shown on the licence go to the starosta within 30 days."
+        },
+        {
+          "title": "Give the new address to the bank, the employer, schools and other contacts",
+          "title_pl": "Podaj nowy adres bankowi, pracodawcy, szkole i innym podmiotom",
+          "law": null,
+          "note": "No statutory deadline."
+        }
+      ]
+    },
+    {
+      "id": "birth",
+      "title": "Birth of a child",
+      "title_pl": "Narodziny dziecka",
+      "windows": [
+        "birth-registration",
+        "newborn-health-insurance-notice",
+        "maternity-benefit-81-5-application",
+        "child-benefit-800-newborn",
+        "parental-benefit-kosiniakowe",
+        "becikowe-application",
+        "paternity-leave-before-first-birthday"
+      ],
+      "tasks": [
+        {
+          "title": "PESEL number and registered residence follow from the birth registration",
+          "title_pl": "Numer PESEL i zameldowanie dziecka następują z urzędu",
+          "law": "ustawa o ewidencji ludności art. 16 ust. 1, art. 17 ust. 1 pkt 1, art. 29",
+          "note": "No separate application."
+        },
+        {
+          "title": "Request paternity leave from the employer",
+          "title_pl": "Złóż wniosek o urlop ojcowski",
+          "law": "Kodeks pracy art. 182³ § 2",
+          "note": "At least 7 days before the leave starts."
+        },
+        {
+          "title": "Request parental leave from the employer",
+          "title_pl": "Złóż wniosek o urlop rodzicielski",
+          "law": "Kodeks pracy art. 182¹a § 1 and 4, art. 182¹c, art. 182¹d § 1",
+          "note": "At least 21 days before the leave starts; up to 5 parts until the end of the year the child turns 6."
+        },
+        {
+          "title": "Premature or hospitalised baby: request supplementary maternity leave",
+          "title_pl": "Wcześniak lub dziecko w szpitalu: złóż wniosek o uzupełniający urlop macierzyński",
+          "law": "Kodeks pracy art. 180² § 1 and 4",
+          "note": "At least 21 days before maternity leave ends."
+        },
+        {
+          "title": "Check-up and vaccination schedules",
+          "title_pl": "Terminarz bilansów zdrowia i szczepień",
+          "law": "regulation on guaranteed primary care services (t.j. Dz.U. 2023 poz. 1427) annex 1 part III; ustawa o zapobieganiu oraz zwalczaniu zakażeń i chorób zakaźnych u ludzi art. 17 ust. 11",
+          "note": "The vaccination programme for each year is announced by 31 October of the year before."
+        },
+        {
+          "title": "Waste fee: new declaration if the fee depends on the number of residents",
+          "title_pl": "Opłata za odpady: nowa deklaracja, jeśli opłata zależy od liczby mieszkańców",
+          "law": "ustawa o utrzymaniu czystości i porządku w gminach art. 6m ust. 2, art. 2 ust. 3",
+          "note": "By the 10th day of the month after the change."
+        }
+      ]
+    },
+    {
+      "id": "job-change",
+      "title": "Changing job",
+      "title_pl": "Zmiana pracy",
+      "windows": [
+        "work-certificate-issue",
+        "work-certificate-correction-request",
+        "work-certificate-correction-court",
+        "health-cover-after-employment",
+        "ppk-other-accounts-statement"
+      ],
+      "tasks": [
+        {
+          "title": "Give the new employer a PIT-2 statement",
+          "title_pl": "Złóż nowemu pracodawcy oświadczenie PIT-2",
+          "law": "ustawa o PIT art. 31a ust. 2, 5 and 7, art. 31b ust. 1 to 3",
+          "note": "Applied from the month after it arrives at the latest; up to three payers, at 1/12, 1/24 or 1/36 each."
+        },
+        {
+          "title": "PPK at the new employer: enrolment or written opt-out",
+          "title_pl": "PPK u nowego pracodawcy: zapis albo pisemna rezygnacja",
+          "law": "ustawa o pracowniczych planach kapitałowych art. 15 ust. 1 and 2, art. 16 ust. 1 and 2, art. 23 ust. 2, 4 and 6",
+          "note": "Enrolment no later than the 10th day of the month after 3 months of employment; opting out stops contributions from that month."
+        },
+        {
+          "title": "No new job: register at the county labour office",
+          "title_pl": "Brak nowej pracy: rejestracja w powiatowym urzędzie pracy",
+          "law": "ustawa o rynku pracy i służbach zatrudnienia art. 218 ust. 1, art. 219 ust. 1 pkt 1, art. 220 ust. 1 pkt 5 and ust. 2 pkt 3",
+          "note": "Benefit from the day of registration; none after resigning with notice, and a 90-day wait after an agreed termination, with the listed exceptions."
+        },
+        {
+          "title": "Work certificate not issued: claim it in the labour court",
+          "title_pl": "Brak świadectwa pracy: pozew do sądu pracy",
+          "law": "Kodeks pracy art. 97¹ § 1 and 3",
+          "note": "At any time before the claim is time-barred."
+        }
+      ]
+    },
+    {
+      "id": "death",
+      "title": "Death of a close relative",
+      "title_pl": "Śmierć bliskiej osoby",
+      "windows": [
+        "death-registration",
+        "funeral-allowance-claim",
+        "child-benefit-800-after-parent-death",
+        "inheritance-statement",
+        "deposit-disposition-tax-notice",
+        "inheritance-tax-return-other-heirs",
+        "vehicle-registration-after-inheritance",
+        "inheritance-tax-exemption-notice"
+      ],
+      "tasks": [
+        {
+          "title": "Funeral costs from the deceased's bank accounts",
+          "title_pl": "Zwrot kosztów pogrzebu z rachunków zmarłego",
+          "law": "Prawo bankowe art. 55 ust. 1 pkt 1 and ust. 2",
+          "note": "Paid on the bills, within customary costs; outside the estate."
+        },
+        {
+          "title": "Disposition on death at the deceased's bank",
+          "title_pl": "Dyspozycja wkładem na wypadek śmierci",
+          "law": "Prawo bankowe art. 56 ust. 1, 2 and 5, art. 56a ust. 2",
+          "note": "To the named spouse, ascendants, descendants or siblings, up to 20 times the average monthly wage; the bank informs them."
+        },
+        {
+          "title": "Survivor's pension application to ZUS",
+          "title_pl": "Wniosek o rentę rodzinną",
+          "law": "ustawa o emeryturach i rentach z FUS art. 65 ust. 1, art. 95a ust. 1 and 2, art. 129 ust. 1 and 2",
+          "note": "Filed in the month of the death or the next month: paid from the day of death."
+        },
+        {
+          "title": "Confirm the heirs: court decision or notarial certificate of succession",
+          "title_pl": "Stwierdzenie nabycia spadku albo akt poświadczenia dziedziczenia",
+          "law": "Kodeks cywilny art. 1025 § 1, art. 1026",
+          "note": "Not within 6 months of the death unless all known heirs have made their statements."
+        },
+        {
+          "title": "Find the deceased's bank accounts",
+          "title_pl": "Uzyskaj informację o rachunkach zmarłego",
+          "law": "Prawo bankowe art. 92ba ust. 1 and 2, art. 92bc ust. 1",
+          "note": "For a person with a legal title to the estate, through a bank, from the central account information."
+        },
+        {
+          "title": "The deceased's OC passes to the heirs",
+          "title_pl": "OC zmarłego przechodzi na spadkobierców",
+          "law": "ustawa o ubezpieczeniach obowiązkowych, UFG i PBUK art. 31 ust. 1",
+          "note": "It ends with its term; the heirs may end it earlier in writing."
+        },
+        {
+          "title": "Waste fee: new declaration if the fee depends on the number of residents",
+          "title_pl": "Opłata za odpady: nowa deklaracja, jeśli opłata zależy od liczby mieszkańców",
+          "law": "ustawa o utrzymaniu czystości i porządku w gminach art. 6m ust. 2, art. 2 ust. 3",
+          "note": "By the 10th day of the month after the change."
+        }
+      ]
+    }
+  ]
 }

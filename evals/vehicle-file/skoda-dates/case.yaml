@@ -1,0 +1,36 @@
+schema_version: "1.1"
+name: vehicle-file-skoda-dates
+description: vehicle-file / skoda-dates
+tags: [etap3]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Czego musimy pilnować przy Skodzie? OC, przegląd, cokolwiek.
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:vehicle-file|household-router|deadline-tracker|find-document)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
+      PASS if it gives the OC with Example Insurance S.A. (1 240,00 zł) and its last day to give notice from the register, the day before the term ends, with its weekday and the planned date before it when that day falls on a weekend, tagged as a rule to verify (ustawa o ubezpieczeniach obowiązkowych, UFG i PBUK art. 28).
+      PASS needs the roadworthiness test listed as date unknown with a question asking for the date from the registration certificate, the last test confirmation or mObywatel; explaining the pack's test intervals as a rule to verify is not an error.
+      Switching insurer is pointed to cancel-or-switch, not done.
+      FAIL if it invents a test date, drops the test, writes to the register, or shows a VIN or a policy number.

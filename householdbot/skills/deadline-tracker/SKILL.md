@@ -1,16 +1,10 @@
 ---
 name: deadline-tracker
 description: >
-  Shows what the household has to do and by when, from its register of
-  payments, renewals, cancel-by dates, expiries, responses and dated tasks, and
-  keeps that register current. Computes any deadline counted from a delivery
-  or an event (an appeal, an objection, a withdrawal, a notice period) with the
-  country's holidays and counting rules, also without a record. Use when
-  someone asks "what's due", "any deadlines", "what did we miss", "when do we
-  have to cancel", "how long do I have", "until when can I appeal", "co mamy
-  do zapłacenia", "jakie terminy", "do kiedy", "ile mam czasu", "termin na
-  odwołanie", or says "remind me", "add a deadline", "I paid it",
-  "zapłaciłem", "zapłaciłam", "done", "we cancelled it".
+  Lists what is due by urgency, adds and closes reminders, and counts any
+  deadline from a delivery or an event with holidays. Use for: "what's due",
+  "remind me", "I paid it", "until when can I appeal", "co mamy do zrobienia",
+  "do kiedy", "termin na odwołanie", "przypomnij".
 argument-hint: "[--days N] [--missed] [--member NAME] [--category NAME] [--seed for the country pack's recurring reminders]"
 ---
 
@@ -44,14 +38,14 @@ default).
 
 ## Step 0 — Find the record
 
-`record.py locate --start "<working folder>"`, run by its full path from the
-session's working folder (never after `cd` into the skill's folder), or look
-for `household-profile.md` in the working folder and the pointer
-`~/.claude/plugins/config/householdbot/location.md`. Read the profile for
-language, country and members. With no record, the skill still computes a
-single deadline (Mode 5) and says nothing was saved. If `locate` finds
-nothing, read `household-profile.md` in the working folder yourself before
-saying the household is not set up.
+Read `household-profile.md` in the working folder (or an attached folder, or a
+direct subfolder) with the Read tool. When it is not there, run
+`record.py locate --start "<working folder>"` by its full path from the
+session's working folder (never after `cd` into the skill's folder), then
+check the pointer `~/.claude/plugins/config/householdbot/location.md`. A
+missing shell never means a missing record. Read the profile for language,
+country and members. With no record, the skill still computes a single
+deadline (Mode 5) and says nothing was saved.
 
 ## Mode 1 — What is due (default)
 
@@ -96,7 +90,8 @@ From a handoff or from what a member says.
    `told by household member`.
 2. Check for an open entry in the same `series` with `record.py find`; update
    it instead of adding a parallel one.
-3. `record.py add "<root>" --register obligations --file entry.json --country <CC> --today <today> --dry-run`.
+3. `record.py add "<root>" --register obligations --file - --country <CC> --today <today> --dry-run`,
+   the entry on standard input.
    The script assigns the id and computes `do_by`.
 4. Show the entry in plain words with the arithmetic, wait for the yes, run it
    again with `--approved-by "<name>"`.

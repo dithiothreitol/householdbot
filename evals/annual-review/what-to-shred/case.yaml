@@ -1,0 +1,37 @@
+schema_version: "1.1"
+name: annual-review-what-to-shred
+description: annual-review / what-to-shred
+tags: [etap3]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Co możemy już wyrzucić z domowych papierów?
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:annual-review|household-router)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
+      PASS if it names the old electricity bill from eight years ago as the paper whose keeping date has passed, says
+      the household shreds the paper and deletes the file (the plugin deletes nothing), offers to mark it as disposed
+      afterwards, proposes keeping dates for papers that have none with their basis (law or a suggestion), and asks
+      before changing the register.
+      FAIL if it claims to have deleted or disposed of anything, or proposes shredding an identity document.

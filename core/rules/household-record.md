@@ -41,6 +41,11 @@ without any server.
 
 ## Finding the record
 
+**No shell is not no record.** The record is plain files. When the scripts
+cannot run, open `household-profile.md` and `registers/*.json` with the Read
+tool and answer from them; never say the record could not be read because a
+script did not start.
+
 Look in this order and stop at the first hit. `record.py locate` runs steps 1
 and 2. Run it as `record.py locate --start "<the session's working folder>"`,
 by the script's full path, from that folder: started inside the plugin's own
@@ -74,9 +79,13 @@ the quick setup: use them, and name the default when it shapes an answer.
    always loads the file fresh.
 2. **Show the change, then wait.** Run the write with `--dry-run`, show the
    household exactly what will be added or changed and where, and wait for a
-   yes (approval gates).
+   yes (approval gates). The entry goes to the script on standard input
+   (`--file -` with a here-document) or with `--json`; no file is written to
+   prepare it. Without a shell, the entry is shown in plain words and nothing
+   is written before the yes.
 3. **Write with the approver's name.** After the yes, run the same command
-   with `--approved-by "<name as they gave it>"`. The script refuses a write
+   with `--approved-by "<the approver's name only>"` (a name such as `Anna`,
+   never their words). The script refuses a write
    without it, keeps the previous file in `registers/.history/`, and appends
    one line to `log/decisions.md`.
 4. **Touch one entry.** Add or update the single entry concerned. Do not

@@ -2,7 +2,7 @@
 
 **English** · [Polski](PRIVACY.pl.md)
 
-HouseholdBot is a set of instructions, two local scripts and a connector list.
+HouseholdBot is a set of instructions, four local scripts and a connector list.
 It has no server, no account and no analytics.
 
 ## Where household data goes
@@ -23,7 +23,10 @@ It has no server, no account and no analytics.
 National identity and tax numbers, account and card numbers, document numbers,
 passwords and codes are never copied into the registers; an entry points to
 the page of the original instead. Health details stay out of briefs and
-calendar entries.
+calendar entries. Foods the household keeps off its meal plan are stored only
+with an adult's consent, without the reason, and never appear in lists,
+calendar entries or briefs. The emergency file says where things are and whom
+to call, never a number or a password.
 
 ## Removing data
 

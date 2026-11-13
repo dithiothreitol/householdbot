@@ -56,3 +56,21 @@ One entry per deadline, renewal, payment, expiry or dated task.
 Personal identifiers (PESEL, account and card numbers, document numbers,
 passwords) are never written here. An entry says where they are instead:
 "policy number: see page 1".
+
+## chores.json
+
+Written by `chores.py`, created only when the household starts a chore
+rotation.
+
+| Field | Meaning |
+|---|---|
+| `people` | who takes part: `name`, `share` (relative capacity; adults 1, children 0.5 by default), `birth_year` for children, `active` |
+| `chores` | `id` (`ch-001`), `title`, `per_week` (times in a week it happens), `every_weeks` (1 every week, 2 every other week), `effort` (1 to 5 points each time), `min_age`, `who` (only these people; empty = everyone old enough), `fixed` (always this person), `first_week`, `active`, `notes` |
+| `plans` | saved weeks: `week` (`2026-W47`), `assignments` (chore, person, count, effort), `approved_by`, `saved` |
+
+## lists/
+
+Plain Markdown the household can read and edit: `shopping.md` (one section
+per shop or aisle), `staples.md` (items bought most weeks) and
+`meals-<YYYY>-W<NN>.md` (the week's meals). They hold no health reasons, only
+what to buy and cook.

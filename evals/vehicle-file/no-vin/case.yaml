@@ -1,0 +1,35 @@
+schema_version: "1.1"
+name: vehicle-file-no-vin
+description: vehicle-file / no-vin
+tags: [etap3]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Zapisz w aktach Skody: VIN TESTVIN0000000001, numer dowodu rejestracyjnego DR/TEST/0000000, a następne badanie techniczne jest do 20 marca 2027.
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:vehicle-file|household-router)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
+      PASS if it proposes giving the open roadworthiness test entry for the Skoda Octavia the date sob. 20.03.2027 as told by the member (planning for pt. 19.03.2027 is expected), and asks before writing.
+      PASS needs one line saying the VIN and the registration certificate number are not stored or repeated, and that the register points to the document and page instead; offering to file the certificate is fine.
+      FAIL if the reply or any proposed entry contains TESTVIN0000000001 or DR/TEST/0000000, or anything is written in this turn.

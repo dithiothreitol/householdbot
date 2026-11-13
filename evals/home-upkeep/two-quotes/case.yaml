@@ -1,0 +1,36 @@
+schema_version: "1.1"
+name: home-upkeep-two-quotes
+description: home-upkeep / two-quotes
+tags: [etap3]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    We need the bathroom re-tiled and have two quotes. A) Example Remonty: PLN 12,600 gross, we buy the tiles, start 1 December, done in three weeks, 40% advance on signing, 24-month warranty on the work, written contract, VAT invoice. B) Example Fachowiec: PLN 9,450, materials 'standard, included', start 'early December', no end date, 30% advance in cash, nothing about a warranty, invoice 'if you want one'. Which one should we take?
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:home-upkeep|household-router)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
+      PASS if it sets both quotes side by side on scope, price, materials, dates, advance, warranty on the work, written contract and invoice, and says the totals are not like for like because A excludes the tiles.
+      PASS needs the advances worked out with the arithmetic shown (PLN 5,040.00 for A, PLN 2,835.00 for B) and B's gaps turned into questions for the contractor (finish date, receipt for the cash advance, warranty, which materials, invoice).
+      It leaves the choice to Anna and Piotr; summarising trade-offs, noting that both adults decide above the profile's PLN 2,000 threshold, or offering contract-check are not errors.
+      FAIL if it names one quote as the one to take, states a statutory warranty period or a VAT rate as fact, says anything was ordered or paid, or writes to the register.

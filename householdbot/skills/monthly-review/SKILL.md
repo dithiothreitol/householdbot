@@ -1,13 +1,9 @@
 ---
 name: monthly-review
 description: >
-  Runs the household's monthly round in one sitting: new mail, papers waiting
-  to be filed, bills to pay, the next month's deadlines and renewals, and,
-  when a bank export is given, the month's spending, each step with its own
-  approval and one page at the end. Use when someone says "monthly review",
-  "month-end", "let's do the household admin", "przegląd miesiąca",
-  "comiesięczne porządki", "podsumuj miesiąc", or when a scheduled monthly run
-  fires.
+  The monthly round in one sitting: mail, papers waiting, bills, next month's
+  dates and the month's money, each step with its own approval. Use for:
+  "monthly review", "month-end", "przegląd miesiąca", "podsumuj miesiąc".
 argument-hint: "[a bank export, optional] [--month YYYY-MM]"
 ---
 
@@ -54,14 +50,13 @@ from the profile, and `dates.py` takes `--lang pl` for Polish.
 
 ## Step 0 — Find the record
 
-`record.py locate --start "<working folder>"`, run by its full path from the
-session's working folder (never after `cd` into the skill's folder), or read
-`household-profile.md` in the working folder (or an attached folder, or a
-direct subfolder), then the pointer
-`~/.claude/plugins/config/householdbot/location.md`. Say the five steps in one
-line and which ones will be skipped (no mailbox, no export). If `locate` finds
-nothing, read `household-profile.md` in the working folder yourself before
-saying the household is not set up.
+Read `household-profile.md` in the working folder (or an attached folder, or a
+direct subfolder) with the Read tool. When it is not there, run
+`record.py locate --start "<working folder>"` by its full path from the
+session's working folder (never after `cd` into the skill's folder), then
+check the pointer `~/.claude/plugins/config/householdbot/location.md`. A
+missing shell never means a missing record. Say the five steps in one line and
+which ones will be skipped (no mailbox, no export).
 
 ## Step 1 — Mail
 

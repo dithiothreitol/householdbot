@@ -1,13 +1,10 @@
 ---
 name: bills-due
 description: >
-  Prepares the household's payment list: open bills and payments due in the
-  coming days with amounts, totals per currency, how each is paid and where its
-  account number is, checks each payee's account against the last bill, and
-  marks items paid after the member pays. Never pays. Use when someone asks
-  "what bills do we have", "what do we need to pay", "pay the bills", "I paid
-  these", "rachunki do zapłaty", "co trzeba zapłacić", "zapłaciłem te
-  rachunki", "zapłaciłam za prąd".
+  The payment list: open bills with amounts, totals and where each account
+  number is, payee accounts checked, two approvals (the list, then paid).
+  Never pays. Use for: "what do we need to pay", "I paid these", "co trzeba
+  zapłacić", "rachunki", "zapłaciłam".
 argument-hint: "[--days N, default 14] [--member NAME]"
 ---
 
@@ -55,15 +52,14 @@ from the profile, and `dates.py` takes `--lang pl` for Polish.
 
 ## Step 0 — Find the record
 
-`record.py locate --start "<working folder>"`, run by its full path from the
-session's working folder (never after `cd` into the skill's folder), or read
-`household-profile.md` in the working folder (or an attached folder, or a
-direct subfolder), then the pointer
-`~/.claude/plugins/config/householdbot/location.md`. Read the profile for the
-language, the members and the *two-adult threshold*. With no record, work from
-the bills the member shows and say nothing is saved. If `locate` finds
-nothing, read `household-profile.md` in the working folder yourself before
-saying the household is not set up.
+Read `household-profile.md` in the working folder (or an attached folder, or a
+direct subfolder) with the Read tool. When it is not there, run
+`record.py locate --start "<working folder>"` by its full path from the
+session's working folder (never after `cd` into the skill's folder), then
+check the pointer `~/.claude/plugins/config/householdbot/location.md`. A
+missing shell never means a missing record. Read the profile for the language,
+the members and the *two-adult threshold*. With no record, work from the bills
+the member shows and say nothing is saved.
 
 ## Step 1 — Collect
 

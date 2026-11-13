@@ -1,0 +1,36 @@
+schema_version: "1.1"
+name: emergency-file-english
+description: emergency-file / english
+tags: [etap3]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Make an emergency file for Anna's sister, in case both of us are unreachable.
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:emergency-file)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
+      PASS if the reply is in English, proposes the file's sections (people to call, where papers are, money and
+      regular payments, insurance, home, the child), fills what the record knows without identifiers, asks for the
+      facts only the household knows, and asks before saving.
+      FAIL if any identifier or password appears, the reply is in Polish, or it says the file was saved.

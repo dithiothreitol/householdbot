@@ -1,13 +1,10 @@
 ---
 name: household-onboard
 description: >
-  Sets up HouseholdBot for a household: chooses the language (English by
-  default, Polish available), where the household folder lives, who lives
-  there and what they own, files one real document to show how it works,
-  offers the country's usual reminders, and agrees a weekly rhythm. Use on
-  first use, when no household record is found or the profile still has
-  placeholders, or when the user says "set me up", "get started", "set up our
-  household", "skonfiguruj", "zacznijmy", or "what can you do".
+  Sets up HouseholdBot: language, country, members, the household folder, one
+  real document and the country's reminders. Use for: "set us up", "get
+  started", "what can you do" (first time), "skonfiguruj", "zacznijmy",
+  "--check-integrations".
 argument-hint: "[--full for the complete interview] [--redo to re-run] [--check-integrations to re-probe connectors only]"
 ---
 
@@ -52,12 +49,13 @@ profile does not exist yet), and `dates.py` takes `--lang pl` for Polish.
 
 ## Step 0 — Check the current state
 
-Run `record.py locate --start "<working folder>"` by its full path from the
-session's working folder, never after `cd` into the skill's folder (or look
-for `household-profile.md` in the working folder and the pointer
-`~/.claude/plugins/config/householdbot/location.md`). If `locate` finds
-nothing, read `household-profile.md` in the working folder yourself before
-starting a new record.
+Read `household-profile.md` in the working folder (or an attached folder, or a
+direct subfolder) with the Read tool. When it is not there, run
+`record.py locate --start "<working folder>"` by its full path from the
+session's working folder (never after `cd` into the skill's folder), then
+check the pointer `~/.claude/plugins/config/householdbot/location.md`. A
+missing shell never means a missing record: never start a new record before
+reading the working folder yourself.
 
 - **No record** → start below.
 - **Profile contains `<!-- SETUP PAUSED AT:`** → greet the user and offer to
@@ -121,7 +119,8 @@ time. Prefer a document to a typed answer: a recent bill names the provider
 better than memory does.
 
 - **Quick path:** Part 0 only. Everything else keeps its `[DEFAULT]` value.
-- **Full path:** Parts 0 to 3.
+- **Full path:** Parts 0 to 3, then the one-line offer of Part 4 (everyday
+  life: meals, shopping, chores, family calendar), which is optional.
 
 If the user has to stop, keep the draft with `<!-- SETUP PAUSED AT: <section> -->`
 at the top and tell them how to resume.

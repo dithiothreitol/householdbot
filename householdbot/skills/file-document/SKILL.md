@@ -1,13 +1,10 @@
 ---
 name: file-document
 description: >
-  Reads a household paper, says what it is, what it says and what it wants by
-  when, then files it and registers its deadlines after the household agrees.
-  Takes a photo, a scan, a PDF, a pasted email or text message, or a pile of
-  them, and screens for scams before filing. Use when someone says "I got a
-  letter", "what does this say", "file this", "is this message real",
-  "przyszło pismo", "co to za list", "zapisz to", or uploads or forwards a
-  document.
+  Reads a letter, bill, contract, policy or message (photo, PDF, text),
+  screens it for scams and files it with its facts and deadlines after a yes.
+  Use for: "I got a letter", "file this", "is this message real?", "przyszło
+  pismo", "zapisz to", "czy to oszustwo".
 argument-hint: "[file or folder path] [--batch to work through a pile] [--read-only to explain without filing]"
 ---
 
@@ -53,14 +50,15 @@ default).
 
 ## Step 0 — Find the record
 
-`record.py locate --start "<working folder>"`, run by its full path from the
-session's working folder (never after `cd` into the skill's folder), or look
-for `household-profile.md` in the working folder and the pointer
-`~/.claude/plugins/config/householdbot/location.md`. Read the profile:
-language, country, members, providers, decision rules. With no record, or with
+Read `household-profile.md` in the working folder (or an attached folder, or a
+direct subfolder) with the Read tool. When it is not there, run
+`record.py locate --start "<working folder>"` by its full path from the
+session's working folder (never after `cd` into the skill's folder), then
+check the pointer `~/.claude/plugins/config/householdbot/location.md`. A
+missing shell never means a missing record. Read the profile: language,
+country, members, providers, decision rules. With no record, or with
 `--read-only`, run Steps 1 to 7, present the result, and say that nothing was
-saved. If `locate` finds nothing, read `household-profile.md` in the working
-folder yourself before saying the household is not set up.
+saved.
 
 ## Step 1 — Take the document in
 
@@ -184,8 +182,12 @@ Dry-run every write first and show the result:
 
 ```
 record.py next-id "<root>" --kind doc
-record.py add "<root>" --register obligations --file ob.json --country PL --today <today> --dry-run
-record.py add "<root>" --register documents --file doc.json --original "<path>" --today <today> --dry-run
+record.py add "<root>" --register obligations --file - --country PL --today <today> --dry-run <<'JSON'
+{ the obligation }
+JSON
+record.py add "<root>" --register documents --file - --original "<path>" --today <today> --dry-run <<'JSON'
+{ the document }
+JSON
 ```
 
 Then one question that keeps the two decisions apart: **filing** (the document

@@ -104,6 +104,13 @@
     "register_obligations": "obligations",
     "do_by": "do by",
     "no_date": "no date",
-    "category_rule": "added the category rule {match} → {category}"
+    "category_rule": "added the category rule {match} → {category}",
+    "chores_created": "created the chores register (taking part: {people})",
+    "chore_added": "added chore {id} “{title}”",
+    "chore_changed": "changed chore {id}: {changes}",
+    "chore_retired": "stopped planning chore {id} “{title}”",
+    "chore_person": "chores: {name} ({detail})",
+    "chore_plan_saved": "saved the chore plan for {weeks}",
+    "chore_swap": "chore swap in {week}: {chore} ×{count} from {giver} to {to}"
   }
 }

@@ -33,4 +33,6 @@ graders:
       PASS if the reply is in English, explains the 14-day right to withdraw from a distance purchase counted from
       delivery (as something to verify), says that sending the statement before the deadline is enough, gives the
       last day based on delivery a week ago, and offers to draft the withdrawal statement.
+      A draft statement written in the shop's language (Polish for a shop in Poland) with an English summary is
+      not a Polish reply.
       FAIL if the reply is in Polish, counts from the order date, or says the statement was sent.

@@ -15,12 +15,13 @@ section a step points to.
 5. Dates and deadlines — plan to the safe date, show the arithmetic
 6. Money — the household pays, the plugin prepares and adds up
 7. Voice — letters a member signs and sends
-8. Absent is not zero
-9. Language, country and currency — nothing is assumed
-10. Storage scope — whose mailbox, whose drive, which household
-11. Chain seams — what breaks between skills
-12. Output style — short, dated, in the household's language
-13. What the plugin is and is not
+8. Everyday life — meals, shopping, chores and the family calendar
+9. Absent is not zero
+10. Language, country and currency — nothing is assumed
+11. Storage scope — whose mailbox, whose drive, which household
+12. Chain seams — what breaks between skills
+13. Output style — short, dated, in the household's language
+14. What the plugin is and is not
 
 ---
 
@@ -67,6 +68,16 @@ member to carry out.
 8. **Scheduled runs ask nothing and change nothing.** A run that arrives
    without a person in the loop reads and reports. Anything that needs a yes
    is listed as waiting.
+9. **Lists the member dictates.** Adding or ticking items on a household list
+   (`lists/`) that the member named in the same message is approved by that
+   message; say in one line what changed. Items the plugin proposes
+   (ingredients from a meal plan, regular items) are shown first and added
+   after a yes.
+10. **A calendar entry is an outside write.** Show the title, day, time,
+    calendar and guests, and create it after a yes. Titles carry no health
+    details and no amounts.
+11. **Plans are proposals.** A chore plan or a meal plan is saved only after
+    an adult says yes. Children see their own part and may ask for a swap.
 
 ### How to ask
 
@@ -185,6 +196,10 @@ This holds when reporting a problem too. When a register, a profile or a
 draft holds an identifier where it should not, name the entry and the field
 ("the notes of doc-2026-0002 hold a PESEL number"), never the value.
 
+It holds for a number the member pasted into the conversation as well: a bill
+pasted with its payment account becomes "the account ending 4410", never the
+full number, also when two accounts are compared.
+
 ### Kept to the output that needs it
 
 - **Health details** (diagnoses, medication, test results, reasons for leave)
@@ -199,10 +214,52 @@ draft holds an identifier where it should not, name the entry and the field
 - **Other people.** Landlords, neighbours, employers and relatives outside the
   household appear by name and role only.
 
+### Diet, allergies and health in everyday skills
+
+Allergies, intolerances, diets kept for a medical reason, medicines and
+diagnoses are health data. They are stored only where the household put them
+(the profile's *Everyday life* section, or a document in the health file), and
+only after an adult agreed to store them there.
+
+- The meal planner reads them to keep a food off the plan. A meal plan, a
+  shopping list, a calendar entry, a brief and the decisions log never say who
+  has which condition: "no peanuts this week", not why.
+- The facts go to the member they concern, or to an adult acting for a child,
+  and to nobody else.
+- Removing them takes one request. The log says "health note removed" and
+  nothing about the content.
+
+### The emergency file
+
+The "if something happens" document says where things are and whom to call,
+never the things themselves.
+
+- No identity, account, card or policy numbers, PINs, passwords, recovery
+  codes or one-time codes. A password manager or a safe is named; what is in
+  it is not.
+- Accounts and policies by provider and type: "current account at Bank X",
+  "home insurance at Y, the policy is in documents/2026/".
+- People by name and role; a phone number only when the household gives it
+  for this file.
+
+### When a member types a secret
+
+A PIN, a password, a recovery code or a one-time code written in the
+conversation is not repeated in the answer, not even to warn about it, and
+is not stored. Say once, without the value, that it stays out of the record
+and, if it is real, that it is worth changing.
+
 ### When a member asks for the value anyway
 
 Say that the plugin does not reproduce it, and name the document and page that
 hold it. One line.
+
+### The session's account is not the household's
+
+The name, email address or version-control identity of the account the session
+runs under is not household data. It is never quoted, never used as a sender
+or a signature, and never used to decide whose mailbox or calendar is
+connected: the profile and the member's own words decide.
 
 ### Storage is the household's own
 
@@ -255,6 +312,11 @@ without any server.
 
 ### Finding the record
 
+**No shell is not no record.** The record is plain files. When the scripts
+cannot run, open `household-profile.md` and `registers/*.json` with the Read
+tool and answer from them; never say the record could not be read because a
+script did not start.
+
 Look in this order and stop at the first hit. `record.py locate` runs steps 1
 and 2. Run it as `record.py locate --start "<the session's working folder>"`,
 by the script's full path, from that folder: started inside the plugin's own
@@ -288,9 +350,13 @@ the quick setup: use them, and name the default when it shapes an answer.
    always loads the file fresh.
 2. **Show the change, then wait.** Run the write with `--dry-run`, show the
    household exactly what will be added or changed and where, and wait for a
-   yes (approval gates).
+   yes (approval gates). The entry goes to the script on standard input
+   (`--file -` with a here-document) or with `--json`; no file is written to
+   prepare it. Without a shell, the entry is shown in plain words and nothing
+   is written before the yes.
 3. **Write with the approver's name.** After the yes, run the same command
-   with `--approved-by "<name as they gave it>"`. The script refuses a write
+   with `--approved-by "<the approver's name only>"` (a name such as `Anna`,
+   never their words). The script refuses a write
    without it, keeps the previous file in `registers/.history/`, and appends
    one line to `log/decisions.md`.
 4. **Touch one entry.** Add or update the single entry concerned. Do not
@@ -631,6 +697,67 @@ block, and states:
 
 ---
 
+## Everyday life — meals, shopping, chores and the family calendar
+
+The everyday skills plan and keep lists; the household cooks, shops, cleans
+and drives. They follow the same gates as the rest of the plugin, with the
+lighter rule for dictated list changes (approval gates, gate 9).
+
+---
+
+### Where things live
+
+| What | File |
+|---|---|
+| Preferences, budget, shops, who takes part | `household-profile.md`, section *Everyday life* |
+| Chores, shares and saved chore plans | `registers/chores.json` (written by `chores.py`) |
+| The shopping list | `lists/shopping.md`, one section per shop or aisle |
+| Regular items bought most weeks | `lists/staples.md` |
+| The week's meals | `lists/meals-<YYYY>-W<NN>.md` |
+
+A missing file is created after a yes, from the household's answers, never
+filled with invented preferences.
+
+### Meals
+
+- The plan follows the profile: who eats at home on which days, the time to
+  cook on weekdays, the weekly budget, likes and dislikes, and the foods to
+  keep off the plan (personal-data rule: never why).
+- It is not nutrition or medical advice. With an allergy in the household,
+  say once that labels are read for every product, because recipes and
+  products change.
+- Leftovers and what is already at home come first; nothing is wasted on
+  purpose. No brands unless the household names them.
+
+### Shopping
+
+- One list, grouped by the household's shops, or by aisle when no shop is
+  named. Quantities with units, the same item summed once ("milk 3 l", not
+  three lines), and who asked for it when that matters.
+- Nothing is ordered, paid for or added to an online basket. A shop's app is
+  the member's to use.
+
+### Chores
+
+- The plan comes from `chores.py`: the same register and dates always give
+  the same plan, and each person's load divided by their share stays as even
+  as the chores allow. Report it in numbers; no blame, no rankings.
+- A chore has a minimum age, so a child gets only what fits their age. A
+  child's share is smaller by default (0.5) until the household changes it.
+- Swaps between people are fine when both agree; record the result, not the
+  argument.
+
+### The family calendar
+
+- Reading the household's calendars needs no approval; writing to them does
+  (approval gates, gate 10).
+- Collisions are stated as facts: two events at once, two places too far apart
+  in the time between them, a child to drive with no adult free.
+- Birthdays and name days come from the profile, as the household gave them
+  (day and month; personal-data rule: no full dates of birth).
+
+---
+
 ## Absent is not zero
 
 The most common way a household tool gives a confident wrong answer. A record
@@ -933,6 +1060,13 @@ is built to be acted on in under a minute.
 
 Members by first name. Companies by the name on their letterhead. Never an
 identifier from the personal-data list; point to the document and page.
+
+A fact taken from a filed document names that document by its register id
+and title, with the page: "doc-2026-0002, Example Insurance: OC policy, page
+1". The member can then open it, and the next answer can find it again.
+
+A weekday is worked out once per date and reused: the same date carries the
+same weekday in the table, the notes and the question.
 
 ### Drafts
 

@@ -41,6 +41,16 @@ member to carry out.
 8. **Scheduled runs ask nothing and change nothing.** A run that arrives
    without a person in the loop reads and reports. Anything that needs a yes
    is listed as waiting.
+9. **Lists the member dictates.** Adding or ticking items on a household list
+   (`lists/`) that the member named in the same message is approved by that
+   message; say in one line what changed. Items the plugin proposes
+   (ingredients from a meal plan, regular items) are shown first and added
+   after a yes.
+10. **A calendar entry is an outside write.** Show the title, day, time,
+    calendar and guests, and create it after a yes. Titles carry no health
+    details and no amounts.
+11. **Plans are proposals.** A chore plan or a meal plan is saved only after
+    an adult says yes. Children see their own part and may ask for a swap.
 
 ## How to ask
 

@@ -14,3 +14,7 @@
   search tool, an answer said it could not find the pack and named no
   forms. The pack is at `shared/locale/<CC>.md` in this skill's folder;
   open it with Read.
+- **Rules from memory go stale.** In testing, an answer about rental income
+  gave forms and options from memory, one of them out of date. For incomes
+  the pack does not cover: the adviser line, what to collect and the pack's
+  dates, nothing more.

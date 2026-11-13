@@ -106,6 +106,26 @@ Names only. Account and customer numbers stay on the documents.
 
 ---
 
+## Everyday life
+
+*Optional. Filled in only when the household wants meal plans, a shared
+shopping list, a chore rotation or a family calendar.*
+
+- **Eat at home:** [PLACEHOLDER — which meals on which days, e.g. "dinner every day, lunch at weekends"]
+- **Cooking time on weekdays:** [PLACEHOLDER — e.g. "30 minutes"]
+- **Food budget per week:** [PLACEHOLDER — amount and currency, or "none set"]
+- **Likes and dislikes:** [PLACEHOLDER — per person, plain preferences only]
+- **Keep off the plan:** [PLACEHOLDER — foods to avoid, stored with an adult's consent; never why]
+- **Shops:** [PLACEHOLDER — where the household shops, in the order of a usual trip]
+- **Chores:** [DEFAULT — everyone listed under Members takes part; children with a share of 0.5]
+- **Family calendar:** [PLACEHOLDER — which connected calendar the family shares, or "none"]
+
+| Date to remember | Whose | Day and month |
+|---|---|---|
+| [PLACEHOLDER — birthday or name day] | | |
+
+---
+
 ## Rhythm
 
 - **Weekly brief:** [DEFAULT — on request; say "weekly brief"]

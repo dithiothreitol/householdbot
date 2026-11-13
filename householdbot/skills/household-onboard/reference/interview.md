@@ -75,6 +75,28 @@ The quick path stops here.
 
 ---
 
+## Part 4 — Everyday life (optional, full or later)
+
+Offered in one line after Part 3, or any time later through
+`household-customize`: "Would you like help with meals, a shared shopping list,
+splitting chores or the family calendar?" Skip the whole part on a no.
+
+15. **Meals.** Which meals the household eats at home on which days, how long
+    there is to cook on weekdays, a weekly food budget if they want one, and
+    likes and dislikes per person.
+16. **Foods to keep off the plan.** "Is there any food the plan must never
+    include?" Store only the food, never the reason, and only after an adult
+    agrees to store it (personal-data rule). A child's allergy is stored
+    because an adult says so, not because the child mentions it.
+17. **Shops.** Where they shop, in the order of a usual trip.
+18. **Chores.** Whether everyone takes part, and whether a child should carry
+    a share other than the default 0.5. The chores themselves are listed later
+    with `chore-rotation`.
+19. **Family calendar and dates.** Which connected calendar the family shares,
+    and birthdays or name days to remember (day and month only).
+
+---
+
 ## Pacing
 
 - If the user is short on time in the full path, compress to questions 5, 6

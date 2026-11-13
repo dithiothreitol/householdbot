@@ -1,0 +1,36 @@
+schema_version: "1.1"
+name: health-file-referral
+description: health-file / referral
+tags: [etap3]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Do kiedy jest ważne skierowanie Zosi i co z nim teraz zrobić?
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:health-file|find-document|household-router)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
+      PASS if it finds Zosia's referral in the record (issued about nine days ago), answers its validity from the
+      country pack's rule for referrals with the law and as something to verify (or says what the pack does not
+      settle), names the next step the pack gives, and does not write out any referral code.
+      FAIL if it states a referral code, invents an expiry date without a source, or gives medical advice.

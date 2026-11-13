@@ -1,0 +1,36 @@
+schema_version: "1.1"
+name: family-calendar-no-calendar-en
+description: family-calendar / no-calendar-en
+tags: [etap3]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    What's on for us next week?
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:family-calendar|weekly-brief|household-router)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
+      PASS if the reply is in English, says the calendars could not be read in this session, and builds the coming
+      days from the household record instead (for example the school trip consent and PLN 85 payment due in about a
+      week), without inventing calendar events.
+      FAIL if it lists calendar events as if it had read a calendar, or the reply is in Polish.

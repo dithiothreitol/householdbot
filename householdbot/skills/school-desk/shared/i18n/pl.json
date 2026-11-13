@@ -1,0 +1,123 @@
+{
+  "lang": "pl",
+  "name": "polski",
+  "default": false,
+  "weekdays_short": [
+    "pon.",
+    "wt.",
+    "śr.",
+    "czw.",
+    "pt.",
+    "sob.",
+    "niedz."
+  ],
+  "weekdays_long": [
+    "poniedziałek",
+    "wtorek",
+    "środa",
+    "czwartek",
+    "piątek",
+    "sobota",
+    "niedziela"
+  ],
+  "months_short": [
+    "sty",
+    "lut",
+    "mar",
+    "kwi",
+    "maj",
+    "cze",
+    "lip",
+    "sie",
+    "wrz",
+    "paź",
+    "lis",
+    "gru"
+  ],
+  "date_format": "{wd} {dd}.{mm}.{yyyy}",
+  "decimal_separator": ",",
+  "thousands_separator": " ",
+  "amount_format": "{number} {symbol}",
+  "currency_symbols": {
+    "PLN": "zł"
+  },
+  "units": {
+    "days": [
+      "dzień",
+      "dni",
+      "dni"
+    ],
+    "weeks": [
+      "tydzień",
+      "tygodnie",
+      "tygodni"
+    ],
+    "months": [
+      "miesiąc",
+      "miesiące",
+      "miesięcy"
+    ],
+    "years": [
+      "rok",
+      "lata",
+      "lat"
+    ],
+    "business_days": [
+      "dzień roboczy",
+      "dni robocze",
+      "dni roboczych"
+    ]
+  },
+  "notes": {
+    "transit": "{days} na doręczenie przed dniem {date}",
+    "rolled_back": "cofnięte z dnia {date} ({reason})",
+    "holiday": "święto: {name}",
+    "margin": "ustawowe przesunięcie terminu to zapas, a nie plan",
+    "moved_forward": "{date} to dzień wolny ({reason}); termin przesuwa się na {new_date} zgodnie z {law}"
+  },
+  "quotes": [
+    "„",
+    "”"
+  ],
+  "bands": {
+    "overdue": "⚫ po terminie",
+    "now": "🔴 teraz",
+    "soon": "🟠 wkrótce",
+    "coming": "🟡 nadchodzi",
+    "later": "później"
+  },
+  "statuses": {
+    "open": "otwarte",
+    "done": "wykonane",
+    "cancelled": "anulowane",
+    "lapsed": "przedłużone bez wypowiedzenia",
+    "filed": "w archiwum",
+    "action-needed": "wymaga działania",
+    "superseded": "zastąpione"
+  },
+  "log": {
+    "header": "# Dziennik decyzji\n\nTylko dopisywanie. Jedna linia na każdą zatwierdzoną zmianę w rekordzie: data,\nkto ją zatwierdził (tak, jak się przedstawił) i co się zmieniło. Zapisuje record.py.\n\n",
+    "line": "- {date} · zgoda: {who} · {what}",
+    "created_record": "utworzono rekord gospodarstwa",
+    "add": "dodano {entry} do rejestru {register}",
+    "update": "zmieniono {id}: {changes}",
+    "complete": "oznaczono {id} jako {status}",
+    "complete_on": "oznaczono {id} jako {status} dnia {date}",
+    "next": "dodano następne wystąpienie {entry}",
+    "archive": "przeniesiono do archive/ zamknięte zobowiązania sprzed {before} ({count}): {detail}",
+    "merge": "scalono {copy} z rejestrem {register}: dodano {added}, zaktualizowano {updated}, zmieniono numer {renumbered}",
+    "migrate": "zaktualizowano schemat rejestru {register}: {steps}",
+    "register_documents": "dokumentów",
+    "register_obligations": "zobowiązań",
+    "do_by": "zrobić do",
+    "no_date": "bez daty",
+    "category_rule": "dodano regułę kategorii {match} → {category}",
+    "chores_created": "utworzono rejestr obowiązków (biorą udział: {people})",
+    "chore_added": "dodano obowiązek {id} „{title}”",
+    "chore_changed": "zmieniono obowiązek {id}: {changes}",
+    "chore_retired": "wyłączono z planu obowiązek {id} „{title}”",
+    "chore_person": "obowiązki: {name} ({detail})",
+    "chore_plan_saved": "zapisano plan obowiązków na {weeks}",
+    "chore_swap": "zamiana w {week}: {chore} ×{count} od {giver} do {to}"
+  }
+}

@@ -1,13 +1,10 @@
 ---
 name: weekly-brief
 description: >
-  Writes one short page on the household's week: what is overdue, what has to
-  be done in the next 14 days, what should be started now, which filed
-  documents still wait for an action, and the one thing that matters most.
-  Built from the household record, and from calendar and mail when they are
-  connected. Use when someone says "weekly brief", "what's this week", "catch
-  me up", "przegląd tygodnia", "co nas czeka w tym tygodniu", or when a
-  scheduled start-of-week run fires.
+  One page on the household's week: overdue items, what is due soon, papers
+  waiting, the one thing to do. Use for: "weekly brief", "what's this week",
+  "catch me up", "przegląd tygodnia", "co nas czeka", or a scheduled weekly
+  run.
 argument-hint: "[--days N to change the 14-day horizon] [--member NAME]"
 ---
 
@@ -38,14 +35,14 @@ default).
 
 ## Step 0 — Find the record
 
-`record.py locate --start "<working folder>"`, run by its full path from the
-session's working folder (never after `cd` into the skill's folder), or look
-for `household-profile.md` in the working folder and the pointer
-`~/.claude/plugins/config/householdbot/location.md`. With no record there is
-nothing to brief from: say so and offer `/householdbot:household-onboard`.
-Read the profile for the language, who sees the brief, and the output
-preference. If `locate` finds nothing, read `household-profile.md` in the
-working folder yourself before saying the household is not set up.
+Read `household-profile.md` in the working folder (or an attached folder, or a
+direct subfolder) with the Read tool. When it is not there, run
+`record.py locate --start "<working folder>"` by its full path from the
+session's working folder (never after `cd` into the skill's folder), then
+check the pointer `~/.claude/plugins/config/householdbot/location.md`. A
+missing shell never means a missing record. With no record there is nothing to
+brief from: say so and offer `/householdbot:household-onboard`. Read the
+profile for the language, who sees the brief, and the output preference.
 
 ## Step 1 — Deadlines
 
@@ -73,6 +70,11 @@ papers not yet filed: count them.
   offer `file-document` for them.
 - **Neither connected:** skip this step. A brief built from the record alone
   is complete; say once at the end what it did not cover.
+- **Everyday life, when the household uses it:** one line each, no detail: a
+  saved chore plan for the week (`registers/chores.json`, "plan saved" or
+  "no plan yet"), a meal plan (`lists/meals-<YYYY>-W<NN>.md`), and birthdays
+  or name days in the next 7 days from the profile. Foods kept off the meal
+  plan never appear.
 
 ## Step 4 — One page
 

@@ -39,6 +39,13 @@ is built to be acted on in under a minute.
 Members by first name. Companies by the name on their letterhead. Never an
 identifier from the personal-data list; point to the document and page.
 
+A fact taken from a filed document names that document by its register id
+and title, with the page: "doc-2026-0002, Example Insurance: OC policy, page
+1". The member can then open it, and the next answer can find it again.
+
+A weekday is worked out once per date and reused: the same date carries the
+same weekday in the table, the notes and the question.
+
 ## Drafts
 
 A draft letter or message is marked as a draft, written in the register the

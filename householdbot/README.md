@@ -30,6 +30,19 @@ ahead. Nothing is written, sent or paid without a household member's yes.
 | `complaint-and-claim` | "the product broke", "insurance claim", "I want to return it" |
 | `cancel-or-switch` | "cancel this", "switch provider" |
 | `monthly-review` | "monthly review" |
+| `home-upkeep` | "chimney check", "is the washing machine still under guarantee", "compare these quotes" |
+| `vehicle-file` | "when is the car's test", "I got a speeding ticket" |
+| `insurance-overview` | "what insurance do we have", "are we insured twice" |
+| `identity-and-travel` | "is my ID still valid", "are we ready for the trip" |
+| `school-desk` | "what does the school want", pastes an e-register message |
+| `health-file` | "is the referral still valid", "when does the prescription expire" |
+| `emergency-file` | "if something happens to me" |
+| `family-calendar` | "what's on this week", "who picks up Zosia" |
+| `meal-planner` | "plan our meals", "what's for dinner this week" |
+| `shopping-list` | "add milk to the list", "what do we need from Lidl" |
+| `chore-rotation` | "who does what this week", "split the chores" |
+| `life-event` | "we're moving", "we had a baby", "I bought a car", "my father died" |
+| `annual-review` | "annual review", "what can we shred" |
 
 Agents (Claude Code and Cowork): `deadline-watcher` reads the register on a
 schedule and reports, changing nothing; `document-reader` reads a pile of
@@ -53,15 +66,18 @@ drive so that two adults share it without any server:
 household-profile.md      who lives here, what they own, how they decide
 registers/documents.json  index of every filed document, with page and quote for each fact
 registers/obligations.json every deadline, renewal and payment, with its source
+registers/chores.json      chores, shares and saved chore plans (when the household uses them)
+lists/                     the shopping list, regular items and the week's meals
 documents/<year>/         the filed originals
 log/decisions.md          every approved change: when, who, what
 ```
 
 ## What it runs, sends and fetches
 
-- **Runs:** three Python scripts bundled in the skills (`dates.py` for
-  holidays and deadlines, `record.py` for the registers, `statement.py` for
-  bank exports the household gives it). Standard library only. They
+- **Runs:** four Python scripts bundled in the skills (`dates.py` for
+  holidays, deadlines and life events, `record.py` for the registers,
+  `statement.py` for bank exports the household gives it, `chores.py` for
+  fair chore plans). Standard library only. They
   read and write inside the household folder and one pointer file under
   `~/.claude/plugins/config/householdbot/`. Without Python the skills follow
   the same rules by hand and mark computed dates for checking.

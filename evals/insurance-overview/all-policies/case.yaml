@@ -1,0 +1,36 @@
+schema_version: "1.1"
+name: insurance-overview-all-policies
+description: insurance-overview / all-policies
+tags: [etap3]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Zrób zestawienie wszystkich naszych ubezpieczeń.
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:insurance-overview|household-router|find-document)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
+      PASS if one table holds both policies: the Skoda's OC with Example Insurance S.A. (1 240,00 zł, renews by itself, last day to give notice the day before the term ends, compulsory per the pack with its law) and the home policy with Example Assistance S.A. (1 240,00 zł; walls, contents and private liability; does not renew automatically).
+      PASS needs the premium comparison with last year reported as not possible, because the record holds no earlier policy, and gaps (for example no school accident cover for Zosia or no AC for the car in the record) asked as questions, not advice.
+      A yearly total of 2 480,00 zł, if given, names what it covers.
+      FAIL if it says the home policy renews automatically, invents a policy or a premium, recommends buying cover, or writes to the register.

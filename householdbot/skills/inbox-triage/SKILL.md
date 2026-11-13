@@ -1,13 +1,10 @@
 ---
 name: inbox-triage
 description: >
-  Sorts the household's mailbox for a period into what needs a decision, what
-  only needs filing, what needs nothing, and what looks like a scam, without
-  opening links or changing anything in the mailbox, and hands bills and
-  letters to file-document. Use when someone says "go through my email",
-  "check the inbox", "what came in this week", "anything important in the
-  mail", "przejrzyj pocztę", "co przyszło mailem", "posprzątaj skrzynkę".
-  Needs a connected mailbox.
+  Sorts the household mailbox into decide, file, nothing and suspicious,
+  without opening links or changing the mailbox. Use for: "go through my
+  email", "anything important in the mail", "przejrzyj pocztę", "co przyszło
+  mailem". Needs a connected mailbox.
 argument-hint: "[--days N, default 7] [--member NAME]"
 ---
 
@@ -52,15 +49,23 @@ from the profile, and `dates.py` takes `--lang pl` for Polish.
 
 ## Step 0 — Find the record and the mailbox
 
-Find the record (`record.py locate --start "<working folder>"`, run by its
-full path from the session's working folder (never after `cd` into the skill's
-folder), or `household-profile.md` in the working folder, or the pointer
+Find the record (read `household-profile.md` in the working folder with the
+Read tool; when it is not there, `record.py locate --start "<working folder>"`
+by its full path, never after `cd` into the skill's folder, then the pointer
 `~/.claude/plugins/config/householdbot/location.md`) and read *Connected
-tools*: whose mailbox is connected. A work mailbox is not searched for
-household papers. With no mail connector, say so in one line and offer the
-other way: forward or paste the messages that matter. Stop there. If `locate`
-finds nothing, read `household-profile.md` in the working folder yourself
-before saying the household is not set up.
+tools*.
+
+The mailbox is the one connected in this session. A member who asks about
+"my inbox" asks for that one, and asking is the go-ahead to read it, read-only.
+When the profile marks Mail as not connected, or names another mailbox, go
+ahead with the connected one and offer at the end to note it in the profile
+(`household-customize`, after a yes). Only a mailbox that the profile or the
+member calls a work mailbox is not searched for household papers. The
+session's account (its name, its address) is never compared with the
+household's members and never quoted.
+
+With no mail connector in the session, say so in one line and offer the other
+way: forward or paste the messages that matter. Stop there.
 
 ## Step 1 — Search narrowly
 
@@ -78,7 +83,7 @@ need a decision or filing.
 
 | Group | Signals | What happens next |
 |---|---|---|
-| **Needs a decision** | a bill with an amount and date; an office's letter or an e-delivery notice; a renewal or price-change notice; a person asking for something; any deadline in the text | listed with its date and the next step (`file-document`, `reply-to-letter`, `bills-due`, `cancel-or-switch`) |
+| **Needs a decision** | a bill with an amount and date; an office's letter or an e-delivery notice; a renewal or price-change notice; a person asking for something; any deadline in the text | listed with its date and the next step (`file-document`, `reply-to-letter`, `bills-due`, `cancel-or-switch`, `school-desk` for a school's message) |
 | **File only** | statements, receipts, policy and contract confirmations, payment confirmations | offered to `file-document` as one batch |
 | **Nothing to do** | newsletters, marketing, delivery updates, sign-in alerts, codes | counted by kind, not listed one by one |
 | **Suspicious** | a pattern from the country pack's "Scam patterns"; a sender domain that does not match the issuer on file; a payment link; new bank details; an urgent small fee | named, the ask described, the safe way to verify given; nothing opened |

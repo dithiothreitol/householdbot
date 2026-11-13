@@ -3,6 +3,7 @@
 # Sourced by each case's setup.sh with one or more modes:
 #   . "$(dirname "${BASH_SOURCE[0]}")/../../fixtures/seed.sh" full statement
 # Household modes: full | full-en | empty | conflict | broken | none
+#   everyday (after full or full-en): profile Everyday life, chores, lists, five more papers
 #   (full, empty, conflict and broken write a Polish household; full-en writes it in English)
 # Statement modes, written to inbox/wyciag.csv:
 #   statement (Polish layout, Windows-1250) | statement-gap (middle month missing) | statement-en (English layout)
@@ -34,6 +35,7 @@ for mode in "$@"; do
     statement)     "$HB_PY" "$HB_FIXTURES/make_statement.py" inbox/wyciag.csv --format a >/dev/null ;;
     statement-gap) "$HB_PY" "$HB_FIXTURES/make_statement.py" inbox/wyciag.csv --format b --gap >/dev/null ;;
     statement-en)  "$HB_PY" "$HB_FIXTURES/make_statement.py" inbox/statement.csv --format c >/dev/null ;;
+    everyday)      "$HB_PY" "$HB_FIXTURES/make_everyday.py" . >/dev/null ;;
     none)          : ;;
     *) echo "seed.sh: unknown mode $mode" >&2; exit 1 ;;
   esac

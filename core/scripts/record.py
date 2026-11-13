@@ -20,8 +20,8 @@ Examples:
   python3 record.py validate ./household
   python3 record.py due ./household --today 2026-11-13 --country PL
   python3 record.py find ./household --query "polisa OC"
-  python3 record.py add ./household --register obligations --file entry.json --dry-run
-  python3 record.py add ./household --register documents --file doc.json --original scan.pdf --approved-by Anna
+  python3 record.py add ./household --register obligations --file - --dry-run < entry
+  python3 record.py add ./household --register documents --json '{...}' --original scan.pdf --approved-by Anna
   python3 record.py complete ./household --id ob-2026-0003 --approved-by Anna --country PL
 """
 from __future__ import annotations
@@ -62,7 +62,7 @@ CATEGORIES = ["home", "vehicle", "money", "tax", "insurance", "utilities", "heal
               "children", "identity", "work", "daily", "other"]
 KINDS = ["payment", "renewal", "filing", "response", "appointment", "expiry", "task"]
 OB_STATUS = ["open", "done", "cancelled", "lapsed"]
-DOC_STATUS = ["filed", "action-needed", "superseded"]
+DOC_STATUS = ["filed", "action-needed", "superseded", "disposed"]
 PROVENANCE = ["stated in document", "calculated from document", "country pack rule — verify",
               "model calculation — verify", "told by household member"]
 CLOSED = {"done", "cancelled", "lapsed"}
@@ -102,9 +102,9 @@ DEFAULTS = {
 }
 CONFLICT_PATTERNS = [
     re.compile(r"conflict", re.I),                                   # Dropbox, Nextcloud, Syncthing
-    re.compile(r"^(documents|obligations|household-profile) \(\d+\)\.(json|md)$"),   # Google Drive
-    re.compile(r"^(documents|obligations|household-profile) \d+\.(json|md)$"),       # iCloud
-    re.compile(r"^(documents|obligations|household-profile)-[A-Za-z0-9][A-Za-z0-9-]*\.(json|md)$"),  # OneDrive
+    re.compile(r"^(documents|obligations|chores|household-profile) \(\d+\)\.(json|md)$"),   # Google Drive
+    re.compile(r"^(documents|obligations|chores|household-profile) \d+\.(json|md)$"),       # iCloud
+    re.compile(r"^(documents|obligations|chores|household-profile)-[A-Za-z0-9][A-Za-z0-9-]*\.(json|md)$"),  # OneDrive
 ]
 STOPWORDS = set("""
 a i w z na do od po o u we ze sie się jest są jak gdzie kiedy co czy mi mnie mój moja moje
@@ -234,9 +234,9 @@ def conflicts(root: Path) -> list[str]:
         for p in folder.iterdir():
             if not p.is_file() or p.name.endswith(".tmp"):
                 continue
-            if p.name in (PROFILE, "documents.json", "obligations.json"):
+            if p.name in (PROFILE, "documents.json", "obligations.json", "chores.json"):
                 continue
-            stem_ok = p.name.startswith(("documents", "obligations", "household-profile"))
+            stem_ok = p.name.startswith(("documents", "obligations", "chores", "household-profile"))
             if stem_ok and any(rx.search(p.name) for rx in CONFLICT_PATTERNS):
                 found.append(p.relative_to(root).as_posix())
     return sorted(found)
@@ -248,6 +248,9 @@ def require_writable(root: Path, args) -> None:
         if not who:
             raise RecordError("a write needs --approved-by NAME: show the change, get a yes, "
                               "then run again with the name of the person who approved")
+        if len(who) > 40 or any(ch in who for ch in (":", "\n", '"', "„", "”")):
+            raise RecordError("--approved-by takes the approver's name only, for example --approved-by Anna; "
+                              "their words stay in the conversation")
     if not getattr(args, "ignore_conflicts", False):
         found = conflicts(root)
         if found:
@@ -543,7 +546,12 @@ def read_entry(args) -> dict:
     if getattr(args, "json", None):
         raw = args.json
     elif getattr(args, "file", None):
-        raw = sys.stdin.read() if args.file == "-" else Path(args.file).read_text(encoding="utf-8")
+        if args.file == "-":
+            # Bytes, decoded as UTF-8: a pipe on Windows would otherwise use the ANSI code page.
+            stream = getattr(sys.stdin, "buffer", None)
+            raw = stream.read().decode("utf-8-sig") if stream is not None else sys.stdin.read()
+        else:
+            raw = Path(args.file).read_text(encoding="utf-8-sig")
     else:
         raise RecordError("give the entry with --json '<object>' or --file <path> (or --file - for stdin)")
     try:
@@ -932,8 +940,10 @@ def cmd_complete(args) -> dict:
         if not is_date(entry.get("due_date")):
             warnings.append("no due_date to compute the next occurrence from")
         else:
-            nxt = dates.next_occurrence(dates.parse_date(entry["due_date"]), recurrence,
-                                        series_anchor_day(entries, entry))
+            # --from-done: checks and services count the next one from the day they were done
+            base = dates.parse_date(done_date) if args.from_done else dates.parse_date(entry["due_date"])
+            anchor = None if args.from_done else series_anchor_day(entries, entry)
+            nxt = dates.next_occurrence(base, recurrence, anchor)
             if nxt is None:
                 warnings.append(f"recurrence '{recurrence}' cannot be computed; ask for the next date "
                                 "and add it with add")
@@ -945,7 +955,8 @@ def cmd_complete(args) -> dict:
                     "status": "open", "done_date": None,
                     "created": today.isoformat(), "updated": today.isoformat(),
                     "series": entry.get("series") or slug(entry.get("title", "series")),
-                    "notes": f"next occurrence after {entry['id']}, computed from recurrence '{recurrence}'",
+                    "notes": f"next occurrence after {entry['id']}, computed from recurrence '{recurrence}'"
+                             + (" counted from the day it was done" if args.from_done else ""),
                 })
                 if entry.get("source") and (entry["source"] or {}).get("document"):
                     new_entry["provenance"] = "calculated from document"
@@ -1084,7 +1095,7 @@ def entry_text(name: str, e: dict) -> list[tuple[str, int]]:
 def cmd_find(args) -> dict:
     root = root_of(args.root)
     for name in REGISTERS:
-        m = re.search(rf"\b{PREFIX[name]}-\d{{4}}-\d{{4,}}\b", args.query)
+        m = re.search(rf"\b{PREFIX[name]}-\d{{4}}-\d{{4,}}\b", args.query or "")
         if m:
             data = load(root, name)
             try:
@@ -1095,9 +1106,9 @@ def cmd_find(args) -> dict:
             return {"query": args.query, "results": [{"register": name, "id": e.get("id"),
                     "title": e.get("title"), "status": e.get("status"), "score": 100,
                     "matched": [m.group()], "file": e.get("file"), "entry": e}], "total_matches": 1}
-    q = [t for t in tokens(args.query) if t not in STOPWORDS]
-    if not q:
-        raise RecordError("the query has no searchable words")
+    q = [t for t in tokens(args.query or "") if t not in STOPWORDS]
+    if not q and not (args.type or args.category):
+        raise RecordError("give --query, or --type / --category to list every entry of that kind")
     stems = [stem(t) for t in q]
     results = []
     for name in REGISTERS:
@@ -1112,6 +1123,14 @@ def cmd_find(args) -> dict:
             if args.category and e.get("category") != args.category:
                 continue
             score, matched = 0, set()
+            if not q:
+                results.append({
+                    "register": name, "id": e.get("id"), "title": e.get("title"),
+                    "status": e.get("status"), "score": 0, "matched": [], "file": e.get("file"),
+                    "date": e.get("document_date") or e.get("do_by") or e.get("due_date"),
+                    "key_facts": e.get("key_facts") if name == "documents" else None,
+                })
+                continue
             for text, weight in entry_text(name, e):
                 toks = tokens(text)
                 for qs, qt in zip(stems, q):
@@ -1128,7 +1147,7 @@ def cmd_find(args) -> dict:
                     "key_facts": e.get("key_facts") if name == "documents" else None,
                 })
     results.sort(key=lambda r: (-r["score"], r["id"] or ""))
-    return {"query": args.query, "words": q, "results": results[: args.limit],
+    return {"query": args.query or "", "words": q, "results": results[: args.limit],
             "total_matches": len(results),
             "note": "no match in the registers is not proof the document does not exist; "
                     "it may never have been filed" if not results else ""}
@@ -1304,6 +1323,35 @@ def cmd_archive(args) -> dict:
     return result
 
 
+def cmd_retention(args) -> dict:
+    """Which papers may go, which have no keeping date, which stay for good. Changes nothing."""
+    root = root_of(args.root)
+    today = today_from(args).isoformat()
+    lang = lang_for(args, root)
+    data = load(root, "documents")
+    may_go, no_date, permanent, kept = [], [], [], 0
+    for d in data["documents"]:
+        if not isinstance(d, dict) or d.get("status") == "disposed":
+            continue
+        row = {k: d.get(k) for k in ("id", "title", "type", "category", "document_date", "file",
+                                     "keep_until", "status")}
+        ku = d.get("keep_until")
+        if ku == "permanent":
+            permanent.append(row)
+        elif not is_date(ku):
+            no_date.append(row)
+        elif ku <= today:
+            row["keep_until_text"] = lang.date(dates.parse_date(ku))
+            may_go.append(row)
+        else:
+            kept += 1
+    may_go.sort(key=lambda r: (r["keep_until"], r["id"]))
+    return {"today": today, "may_go": may_go, "no_keeping_date": no_date,
+            "permanent": len(permanent), "kept_for_now": kept,
+            "note": "the plugin never deletes anything: the household shreds the paper and deletes "
+                    "the file, then the entry is marked status=disposed with record.py update, after a yes"}
+
+
 MIGRATIONS: dict[int, callable] = {
     # schema_version N -> function(data, name) returning data at version N + 1
 }
@@ -1404,6 +1452,9 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--done-date")
     s.add_argument("--status", choices=["done", "lapsed", "cancelled"], default="done")
     s.add_argument("--no-next", action="store_true", help="do not add the next occurrence")
+    s.add_argument("--from-done", action="store_true",
+                   help="count the next occurrence from the done date, not the old due date "
+                        "(checks and services)")
     s.set_defaults(func=cmd_complete)
 
     s = common(sub.add_parser("due", help="open obligations by urgency"), pack=True)
@@ -1413,7 +1464,7 @@ def build_parser() -> argparse.ArgumentParser:
     s.set_defaults(func=cmd_due)
 
     s = common(sub.add_parser("find", help="search documents and obligations"))
-    s.add_argument("--query", required=True)
+    s.add_argument("--query", help="words to search; leave out with --type or --category to list them all")
     s.add_argument("--register", choices=list(REGISTERS))
     s.add_argument("--type")
     s.add_argument("--category")
@@ -1436,6 +1487,9 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--copy", required=True, help="the conflict copy, relative to the household folder")
     s.add_argument("--resolve", action="append", help="id=main or id=copy for an entry changed on both sides")
     s.set_defaults(func=cmd_merge)
+
+    s = common(sub.add_parser("retention", help="papers whose keeping period has ended; changes nothing"))
+    s.set_defaults(func=cmd_retention)
 
     s = common(sub.add_parser("archive", help="move closed obligations to archive/"), write=True)
     s.add_argument("--before", required=True, help="archive closed entries dated before this day")

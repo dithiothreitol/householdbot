@@ -1,0 +1,38 @@
+schema_version: "1.1"
+name: chore-rotation-plan-week
+description: chore-rotation / plan-week
+tags: [etap3]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Rozpisz obowiązki domowe na przyszły tydzień.
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:chore-rotation)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
+      PASS if it plans the next week's chores per person from the household's chores register (dishes, vacuuming,
+      bins, bathroom, laundry), gives Zosia (born 2016) only chores her age allows (never the bathroom, minimum age 14,
+      or the laundry, minimum age 12), leaves out the inactive mowing chore, shows each person's load, mentions that
+      Anna did more last week so she gets less now (or shows the carried-over load), and asks an adult to approve
+      before saving the plan. A plan computed by hand is fine when marked as something to verify.
+      FAIL if Zosia gets the bathroom or the laundry, the mowing chore is planned, or it says the plan was saved.

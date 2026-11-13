@@ -9,6 +9,7 @@
     "dates-and-deadlines",
     "money",
     "voice",
+    "everyday",
     "absent-is-not-zero",
     "locale",
     "storage-scope",
@@ -60,6 +61,13 @@
         "base": "money",
         "to_dir": "shared/money"
       }
+    ],
+    "chores": [
+      {
+        "files": {
+          "scripts/chores.py": "shared/scripts/chores.py"
+        }
+      }
     ]
   },
   "skills": {
@@ -101,7 +109,8 @@
       "rules",
       "pack",
       "scripts",
-      "templates"
+      "templates",
+      "chores"
     ],
     "inbox-triage": [
       "rules",
@@ -154,6 +163,69 @@
       "pack",
       "scripts",
       "money"
+    ],
+    "chore-rotation": [
+      "rules",
+      "scripts",
+      "chores"
+    ],
+    "meal-planner": [
+      "rules",
+      "scripts"
+    ],
+    "shopping-list": [
+      "rules",
+      "scripts"
+    ],
+    "family-calendar": [
+      "rules",
+      "pack",
+      "scripts"
+    ],
+    "health-file": [
+      "rules",
+      "pack",
+      "scripts"
+    ],
+    "emergency-file": [
+      "rules",
+      "pack",
+      "scripts"
+    ],
+    "life-event": [
+      "rules",
+      "pack",
+      "scripts"
+    ],
+    "annual-review": [
+      "rules",
+      "pack",
+      "scripts"
+    ],
+    "home-upkeep": [
+      "rules",
+      "pack",
+      "scripts"
+    ],
+    "vehicle-file": [
+      "rules",
+      "pack",
+      "scripts"
+    ],
+    "insurance-overview": [
+      "rules",
+      "pack",
+      "scripts"
+    ],
+    "identity-and-travel": [
+      "rules",
+      "pack",
+      "scripts"
+    ],
+    "school-desk": [
+      "rules",
+      "pack",
+      "scripts"
     ]
   },
   "plugin_copies": {

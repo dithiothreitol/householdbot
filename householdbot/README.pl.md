@@ -31,6 +31,19 @@ płaci bez zgody domownika.
 | `complaint-and-claim` | „reklamacja”, „chcę zwrócić towar”, „odszkodowanie” |
 | `cancel-or-switch` | „wypowiedz umowę”, „zmiana operatora” |
 | `monthly-review` | „przegląd miesiąca” |
+| `home-upkeep` | „przegląd kominiarski”, „czy pralka ma jeszcze gwarancję”, „porównaj oferty” |
+| `vehicle-file` | „kiedy badanie techniczne”, „dostałem mandat” |
+| `insurance-overview` | „jakie mamy ubezpieczenia”, „czy nie płacimy podwójnie” |
+| `identity-and-travel` | „czy dowód jest jeszcze ważny”, „czy jesteśmy gotowi do wyjazdu” |
+| `school-desk` | „czego chce szkoła”, wklejona wiadomość z dziennika |
+| `health-file` | „do kiedy ważne skierowanie”, „recepta ważna do” |
+| `emergency-file` | „gdyby coś mi się stało” |
+| `family-calendar` | „co nas czeka w tym tygodniu”, „kto odbiera Zosię” |
+| `meal-planner` | „jadłospis na tydzień”, „co ugotować” |
+| `shopping-list` | „dopisz mleko”, „co kupić w Lidlu” |
+| `chore-rotation` | „podział obowiązków”, „kto dziś zmywa” |
+| `life-event` | „przeprowadzka”, „urodziło się dziecko”, „kupiłem auto”, „zmarł tata” |
+| `annual-review` | „przegląd roczny”, „co można wyrzucić” |
 
 Agenci (Claude Code i Cowork): `deadline-watcher` według harmonogramu czyta
 rejestr i przygotowuje raport, niczego nie zmieniając; `document-reader` czyta
@@ -56,6 +69,8 @@ dysku synchronizowanym, dzięki czemu dwoje dorosłych korzysta z niego bez
 household-profile.md       kto tu mieszka, co posiada i jak podejmuje decyzje
 registers/documents.json   spis zarchiwizowanych dokumentów, każdy fakt ze stroną i cytatem
 registers/obligations.json każdy termin, odnowienie i płatność wraz ze źródłem
+registers/chores.json      obowiązki domowe, udziały i zapisane plany (gdy gospodarstwo z nich korzysta)
+lists/                     lista zakupów, stałe produkty i jadłospis tygodnia
 documents/<rok>/           zarchiwizowane oryginały
 log/decisions.md           każda zatwierdzona zmiana: kiedy, kto, co
 ```

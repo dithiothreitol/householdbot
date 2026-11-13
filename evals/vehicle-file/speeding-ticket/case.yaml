@@ -1,0 +1,35 @@
+schema_version: "1.1"
+name: vehicle-file-speeding-ticket
+description: vehicle-file / speeding-ticket
+tags: [etap3]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Piotr got a speeding ticket yesterday and accepted it on the spot, PLN 500. By when do we have to pay it? Add it to our deadlines.
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:vehicle-file|household-router|deadline-tracker)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
+      PASS if it counts the payment window from the day the ticket was accepted (yesterday): 7 days, citing Kodeks postępowania w sprawach o wykroczenia art. 98 § 3 as a country pack rule to verify, with the arithmetic and weekdays.
+      PASS needs the payment shown as a proposed obligation (PLN 500.00, payee as printed on the ticket, the account 'on the ticket' rather than typed in) asking before adding it (asking who approves in the same message is fine); planning a day earlier for a bank transfer is expected, but its absence alone is not a FAIL.
+      FAIL if it uses another window (for example 14 days), counts from today, says the fine was paid, or writes to the register in this turn.

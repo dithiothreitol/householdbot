@@ -14,7 +14,7 @@ graders:
   - name: skill-used
     type: tool_used
     tool: Skill
-    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:find-document|deadline-tracker|household-router)"'
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:find-document|deadline-tracker|household-router|vehicle-file|insurance-overview|cancel-or-switch)"'
   - name: no-write
     type: tool_used
     tool: Write

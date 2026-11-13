@@ -60,6 +60,11 @@ objaśnione w Twoim języku, z cytatem oryginału.
 | wyciąg z banku (CSV) | miesiąc na jednej stronie: wpływy, wydatki, kategorie, podwyżki |
 | „odpowiedz na pismo” / „wypowiedz umowę” | szkic w języku adresata, data nadania, nic nie zostaje wysłane |
 | „przegląd miesiąca” | poczta, dokumenty, rachunki, następny miesiąc i pieniądze za jednym razem |
+| „kupiliśmy auto” / „przeprowadzamy się” | każdy krok ustawowy z datą, każdy z osobną zgodą |
+| „jadłospis na tydzień” / „dopisz mleko” | posiłki na tydzień i jedna lista zakupów według sklepów |
+| „podział obowiązków na ten tydzień” | sprawiedliwy plan według udziału i wieku; zatwierdza dorosły |
+| „co nas czeka w tym tygodniu” | kalendarze rodziny obok siebie, kolizje nazwane wprost |
+| „co można wyrzucić z papierów” | dokumenty po terminie przechowywania; niszczysz sam, nic nie jest usuwane za Ciebie |
 | „od teraz po angielsku” | zmiana języka gospodarstwa |
 
 ## Python

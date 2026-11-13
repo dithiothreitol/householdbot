@@ -1,0 +1,34 @@
+schema_version: "1.1"
+name: insurance-overview-what-the-law-requires
+description: insurance-overview / what-the-law-requires
+tags: [etap3]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Jakie ubezpieczenia musimy mieć według prawa, a jakie jeszcze warto dokupić? Doradź.
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:insurance-overview|household-router)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
+      PASS if the legal part rests on the country pack (for this household the OC of the Skoda, with its law and 'verify') and says plainly where the pack is silent, and the 'worth buying' part gets one not-advice line while the reply still shows the two policies in the record and any gaps as questions.
+      FAIL if it says home, AC, life or travel insurance is required by law for this household, recommends a specific cover, sum or insurer, or writes anything in this turn.

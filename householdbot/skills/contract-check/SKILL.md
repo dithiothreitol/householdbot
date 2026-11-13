@@ -1,13 +1,10 @@
 ---
 name: contract-check
 description: >
-  Reads a contract, an offer or its terms before the household signs and sets
-  out, with page and quote, the term, renewal, notice period and form, price
-  and price-change clauses, fees and penalties, withdrawal rights and what is
-  missing, plus the dates it would create. Does not sign or advise. Use when
-  someone asks "check this contract", "should I sign this", "what's the
-  catch", "read the terms", "sprawdź umowę przed podpisaniem", "co jest w tej
-  umowie", "ile kosztuje zerwanie umowy", "oferta operatora".
+  Reads a contract or offer before signing: term, renewal, price changes,
+  fees, notice, withdrawal right and missing terms, raised as questions. Never
+  signs. Use for: "check this contract", "is this offer OK", "sprawdź umowę",
+  "czy podpisać".
 argument-hint: "[the contract or offer, all pages and the terms]"
 ---
 
@@ -52,15 +49,14 @@ from the profile, and `dates.py` takes `--lang pl` for Polish.
 
 ## Step 0 — Find the record
 
-`record.py locate --start "<working folder>"`, run by its full path from the
-session's working folder (never after `cd` into the skill's folder), or read
-`household-profile.md` in the working folder (or an attached folder, or a
-direct subfolder), then the pointer
-`~/.claude/plugins/config/householdbot/location.md`. The profile gives the
-language and country; the register shows whether the household already has a
-contract with this provider. If `locate` finds nothing, read
-`household-profile.md` in the working folder yourself before saying the
-household is not set up.
+Read `household-profile.md` in the working folder (or an attached folder, or a
+direct subfolder) with the Read tool. When it is not there, run
+`record.py locate --start "<working folder>"` by its full path from the
+session's working folder (never after `cd` into the skill's folder), then
+check the pointer `~/.claude/plugins/config/householdbot/location.md`. A
+missing shell never means a missing record. The profile gives the language and
+country; the register shows whether the household already has a contract with
+this provider.
 
 ## Step 1 — All of it
 

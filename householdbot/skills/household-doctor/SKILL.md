@@ -1,14 +1,10 @@
 ---
 name: household-doctor
 description: >
-  Checks the household record and repairs it with the household's approval:
-  register errors, sync-conflict copies from a shared drive, entries pointing
-  to missing files, originals with no entry, a profile left half-finished, a
-  register written by an older plugin version, and last year's closed
-  obligations to archive. Use when someone says "check my record", "something
-  is wrong with the files", "there are two versions", "sprawdź rekord",
-  "napraw", after a plugin update, or when another skill reports a record
-  error or conflict.
+  Checks and repairs the household record: invalid entries, sync-conflict
+  copies, identifiers in registers, schema updates, archiving. Use for: "check
+  my record", "Drive made a second copy", "sprawdź rekord", "coś jest nie tak
+  z plikami".
 argument-hint: "[--archive YEAR] [--fix]"
 ---
 
@@ -49,15 +45,14 @@ default).
 
 ## Step 0 — Find the record
 
-`record.py locate --start "<working folder>"`, run by its full path from the
-session's working folder (never after `cd` into the skill's folder), or read
-`household-profile.md` in the working folder (or an attached folder, or one of
-its direct subfolders), then the pointer
-`~/.claude/plugins/config/householdbot/location.md`. If the pointer names a
-folder that no longer has a profile, say so and ask where the record is now;
-fix the pointer with `record.py set-pointer` after a yes. If `locate` finds
-nothing, read `household-profile.md` in the working folder yourself before
-saying the household is not set up.
+Read `household-profile.md` in the working folder (or an attached folder, or a
+direct subfolder) with the Read tool. When it is not there, run
+`record.py locate --start "<working folder>"` by its full path from the
+session's working folder (never after `cd` into the skill's folder), then
+check the pointer `~/.claude/plugins/config/householdbot/location.md`. A
+missing shell never means a missing record. If the pointer names a folder that
+no longer has a profile, say so and ask where the record is now; fix the
+pointer with `record.py set-pointer` after a yes.
 
 ## Step 1 — Examine
 
@@ -94,6 +89,13 @@ setup), remaining `[PLACEHOLDER]` markers (list the sections), and sections
 missing against the template in the profile's language
 (`shared/templates/en/household-profile.md` or
 `shared/templates/pl/household-profile.md`; offer `household-customize`).
+
+When `registers/chores.json` exists, also run
+`"${CLAUDE_SKILL_DIR}/shared/scripts/chores.py" validate "<root>"`: a person
+missing from `people`, a bad `per_week` or `effort`, a duplicate id. Repairs
+go through `chores.py update` or `person` with a dry run, then a yes; a
+conflict copy of `chores.json` is merged by hand, entry by entry, after the
+member chooses each difference.
 
 Report the findings first, most serious first, one line each. If everything
 is clean, say so with the counts from `stats`.

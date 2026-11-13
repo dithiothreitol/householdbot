@@ -1,0 +1,598 @@
+#!/usr/bin/env python3
+"""Fair, repeatable chore plans for a household (HouseholdBot proof layer).
+
+The household lists its chores in registers/chores.json: how often, how much
+effort, from what age, and who takes part with what share. `plan` assigns the
+chores of the coming weeks so that each person's load, divided by their share,
+stays as even as the chores allow, and so that a chore moves between people
+from week to week when that costs nothing in fairness. The same register and
+the same dates always give the same plan.
+
+Writes follow the household record's rule: run with --dry-run, show the
+result, and run again with --approved-by NAME after a yes.
+
+    python3 chores.py init "<household>" --dry-run
+    python3 chores.py add "<household>" --json '{"title": "Bins out", "per_week": 2, "effort": 1, "min_age": 8}' --dry-run
+    python3 chores.py plan "<household>" --from 2026-11-16 --weeks 4
+    python3 chores.py save-plan "<household>" --from 2026-11-16 --weeks 1 --approved-by Anna
+    python3 chores.py swap "<household>" --week 2026-W47 --chore ch-002 --from Anna --to Piotr --approved-by Anna
+    python3 chores.py balance "<household>" --weeks 8 --today 2026-11-13
+    python3 chores.py validate "<household>"
+
+Output is JSON. Standard library only; Python 3.8+.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import re
+import shutil
+import sys
+from datetime import date, datetime, timedelta
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+if str(HERE) not in sys.path:
+    sys.path.insert(0, str(HERE))
+sys.dont_write_bytecode = True
+import dates  # noqa: E402
+import record  # noqa: E402
+
+VERSION = "1.0.0"
+SCHEMA_VERSION = 1
+CHORES = Path("registers/chores.json")
+ID_RE = re.compile(r"^ch-(\d{3,})$")
+WEEK_RE = re.compile(r"^(\d{4})-W(\d{2})$")
+EPOCH = date(2001, 1, 1)                 # a Monday; week ordinals count from it
+CHILD_SHARE = 0.5                        # default share of a child; the household changes it
+HISTORY_WEEKS = 8                        # saved weeks that count towards fairness
+LIMITS = {"per_week": (1, 21), "every_weeks": (1, 8), "effort": (1, 5), "min_age": (0, 18)}
+CHORE_DEFAULTS = {"every_weeks": 1, "effort": 1, "min_age": 0, "who": [], "fixed": None,
+                  "first_week": None, "active": True, "notes": ""}
+
+
+class ChoreError(record.RecordError):
+    """A problem with the chores register the household must resolve."""
+
+
+# --------------------------------------------------------------------------
+# Register
+# --------------------------------------------------------------------------
+
+def empty() -> dict:
+    return {"schema_version": SCHEMA_VERSION, "people": [], "chores": [], "plans": []}
+
+
+def load(root: Path, required: bool = True) -> dict:
+    p = root / CHORES
+    if not p.exists():
+        if required:
+            raise ChoreError(f"{CHORES.as_posix()} not found; run chores.py init first")
+        return empty()
+    try:
+        data = json.loads(p.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise ChoreError(f"{CHORES.as_posix()} is not valid JSON (line {exc.lineno}); household-doctor can help")
+    for key in ("people", "chores", "plans"):
+        data.setdefault(key, [])
+    return data
+
+
+def backup(root: Path) -> str | None:
+    src = root / CHORES
+    if not src.exists():
+        return None
+    hist = root / "registers" / ".history"
+    hist.mkdir(parents=True, exist_ok=True)
+    dst = hist / f"chores-{datetime.now().strftime('%Y%m%dT%H%M%S%f')}.json"
+    shutil.copy2(src, dst)
+    for old in sorted(hist.glob("chores-*.json"))[:-record.HISTORY_KEEP]:
+        old.unlink()
+    return dst.relative_to(root).as_posix()
+
+
+def week_monday(d: date) -> date:
+    return d - timedelta(days=d.weekday())
+
+
+def week_label(monday: date) -> str:
+    y, w, _ = monday.isocalendar()
+    return f"{y}-W{w:02d}"
+
+
+def week_from_label(label: str) -> date:
+    m = WEEK_RE.match(label or "")
+    if not m:
+        raise ChoreError(f"week {label!r} must look like 2026-W47")
+    return date.fromisocalendar(int(m.group(1)), int(m.group(2)), 1)
+
+
+def ordinal(monday: date) -> int:
+    return (monday - EPOCH).days // 7
+
+
+def validate(data: dict, today: date) -> tuple[list[str], list[str]]:
+    errors, warnings = [], []
+    if data.get("schema_version") != SCHEMA_VERSION:
+        errors.append(f"schema_version must be {SCHEMA_VERSION}")
+    names = []
+    for i, p in enumerate(data.get("people", [])):
+        where = f"people[{i}]"
+        if not isinstance(p, dict) or not str(p.get("name", "")).strip():
+            errors.append(f"{where}: needs a name")
+            continue
+        names.append(p["name"])
+        share = p.get("share", 1.0)
+        if not isinstance(share, (int, float)) or not 0 < share <= 3:
+            errors.append(f"{where} ({p['name']}): share must be a number above 0 and at most 3")
+        by = p.get("birth_year")
+        if by is not None and (not isinstance(by, int) or not 1900 <= by <= today.year):
+            errors.append(f"{where} ({p['name']}): birth_year must be a year or null")
+    if len(set(names)) != len(names):
+        errors.append("people: a name appears twice")
+    ids = []
+    for i, c in enumerate(data.get("chores", [])):
+        where = f"chores[{i}]"
+        if not isinstance(c, dict):
+            errors.append(f"{where}: must be an object")
+            continue
+        cid = c.get("id", "")
+        where = f"{cid or where}"
+        if not ID_RE.match(str(cid)):
+            errors.append(f"{where}: id must look like ch-001")
+        ids.append(cid)
+        if not str(c.get("title", "")).strip():
+            errors.append(f"{where}: needs a title")
+        for field, (lo, hi) in LIMITS.items():
+            v = c.get(field, CHORE_DEFAULTS.get(field))
+            if field == "per_week" and "per_week" not in c:
+                errors.append(f"{where}: needs per_week (how many times in a week it happens)")
+                continue
+            if not isinstance(v, int) or isinstance(v, bool) or not lo <= v <= hi:
+                errors.append(f"{where}: {field} must be a whole number from {lo} to {hi}")
+        for who in c.get("who", []) or []:
+            if who not in names:
+                errors.append(f"{where}: {who!r} in 'who' is not in people")
+        fixed = c.get("fixed")
+        if fixed is not None and fixed not in names:
+            errors.append(f"{where}: fixed person {fixed!r} is not in people")
+        if c.get("first_week"):
+            try:
+                week_from_label(c["first_week"])
+            except ChoreError as exc:
+                errors.append(f"{where}: {exc}")
+    if len(set(ids)) != len(ids):
+        errors.append("chores: an id appears twice")
+    for i, pl in enumerate(data.get("plans", [])):
+        try:
+            week_from_label(pl.get("week", ""))
+        except ChoreError as exc:
+            errors.append(f"plans[{i}]: {exc}")
+    if data.get("chores") and not data.get("people"):
+        warnings.append("chores are listed but nobody takes part yet (people is empty)")
+    return errors, warnings
+
+
+# --------------------------------------------------------------------------
+# Planning
+# --------------------------------------------------------------------------
+
+def age_in(person: dict, monday: date) -> int:
+    by = person.get("birth_year")
+    return 99 if by is None else monday.year - by
+
+
+def eligible(chore: dict, people: list[dict], monday: date) -> list[dict]:
+    who = chore.get("who") or []
+    out = [p for p in people
+           if p.get("active", True)
+           and age_in(p, monday) >= chore.get("min_age", 0)
+           and (not who or p["name"] in who)]
+    return sorted(out, key=lambda p: p["name"])
+
+
+def occurs(chore: dict, monday: date) -> bool:
+    every = chore.get("every_weeks", 1)
+    phase = ordinal(week_from_label(chore["first_week"])) if chore.get("first_week") else 0
+    return (ordinal(monday) - phase) % every == 0
+
+
+def history(data: dict, before: date, weeks: int = HISTORY_WEEKS) -> tuple[dict, dict]:
+    """Effort per person, and who did which chore, in saved plans of the weeks before `before`."""
+    load, did = {}, {}
+    start = before - timedelta(weeks=weeks)
+    for pl in data.get("plans", []):
+        try:
+            monday = week_from_label(pl["week"])
+        except ChoreError:
+            continue
+        if not start <= monday < before:
+            continue
+        for a in pl.get("assignments", []):
+            load[a["person"]] = load.get(a["person"], 0) + a.get("effort", 0)
+            did.setdefault(monday, {}).setdefault(a["chore"], set()).add(a["person"])
+    return load, did
+
+
+def plan(data: dict, start: date, weeks: int) -> dict:
+    people = [p for p in data.get("people", []) if p.get("active", True)]
+    share = {p["name"]: float(p.get("share", 1.0)) for p in people}
+    chores = [dict(CHORE_DEFAULTS, **c) for c in data.get("chores", []) if c.get("active", True)]
+    first = week_monday(start)
+    past_load, did = history(data, first)
+    # carried-over load, relative to the lightest person, so old imbalance is paid back
+    norm_past = {n: past_load.get(n, 0) / share[n] for n in share}
+    floor = min(norm_past.values()) if norm_past else 0
+    carry = {n: norm_past[n] - floor for n in share}
+    totals = {n: 0 for n in share}
+    out_weeks = []
+    for w in range(weeks):
+        monday = first + timedelta(weeks=w)
+        week_load = {n: 0 for n in share}
+        by_person: dict[str, dict] = {n: {} for n in share}
+        unassigned = []
+        last_week = did.get(monday - timedelta(weeks=1), {})
+        units = []
+        for c in chores:
+            if not occurs(c, monday):
+                continue
+            for u in range(c["per_week"]):
+                units.append((c, u))
+        units.sort(key=lambda cu: (-cu[0]["effort"], cu[0]["id"], cu[1]))
+        this_week: dict[str, set] = {}
+        for c, u in units:
+            if c.get("fixed"):
+                cand = [p for p in people if p["name"] == c["fixed"]]
+            else:
+                cand = eligible(c, people, monday)
+            if not cand:
+                if u == 0:
+                    unassigned.append({"chore": c["id"], "title": c["title"],
+                                       "reason": "nobody takes part who meets its age or 'who' limits"})
+                continue
+            n = len(cand)
+
+            def key(p, c=c, u=u, n=n):
+                name = p["name"]
+                projected = carry[name] + (totals[name] + c["effort"]) / share[name]
+                repeat = 1 if name in last_week.get(c["id"], set()) else 0
+                spread = 1 if name in this_week.get(c["id"], set()) and u > 0 else 0
+                turn = (cand.index(p) - ordinal(monday) - u) % n
+                return (round(projected, 6), repeat, spread, turn, name)
+
+            chosen = min(cand, key=key)["name"]
+            totals[chosen] += c["effort"]
+            week_load[chosen] += c["effort"]
+            slot = by_person[chosen].setdefault(c["id"], {"chore": c["id"], "title": c["title"],
+                                                           "count": 0, "effort": 0})
+            slot["count"] += 1
+            slot["effort"] += c["effort"]
+            this_week.setdefault(c["id"], set()).add(chosen)
+        did[monday] = this_week
+        out_weeks.append({
+            "week": week_label(monday), "start": monday.isoformat(),
+            "end": (monday + timedelta(days=6)).isoformat(),
+            "by_person": {n: sorted(v.values(), key=lambda s: s["chore"]) for n, v in by_person.items()},
+            "load": week_load, "unassigned": unassigned,
+        })
+    normalized = {n: round(carry[n] + totals[n] / share[n], 2) for n in share}
+    spread = round(max(normalized.values()) - min(normalized.values()), 2) if normalized else 0
+    return {"weeks": out_weeks, "totals": totals, "shares": share,
+            "carried_over": {n: round(v, 2) for n, v in carry.items()},
+            "normalized_load": normalized, "spread": spread,
+            "history_weeks": HISTORY_WEEKS,
+            "how": "each person's load divided by their share is kept as even as the chores allow; "
+                   "ties go to whoever did not do that chore last week, then by turn"}
+
+
+# --------------------------------------------------------------------------
+# Profile
+# --------------------------------------------------------------------------
+
+MEMBERS_HEAD = re.compile(r"^##\s+(Members|Domownicy)\s*$", re.M)
+ADULT = ("adult", "dorosły", "dorosła", "dorosly", "dorosla")
+CHILD = ("child", "dziecko")
+
+
+def members_from_profile(root: Path) -> list[dict]:
+    text = (root / record.PROFILE).read_text(encoding="utf-8")
+    m = MEMBERS_HEAD.search(text)
+    if not m:
+        return []
+    people = []
+    for line in text[m.end():].splitlines():
+        if line.startswith("## ") or line.strip() == "---":
+            if people:
+                break
+            continue
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if len(cells) < 2 or not line.lstrip().startswith("|") or set(cells[0]) <= set("-: "):
+            continue
+        name, role = cells[0], cells[1].lower()
+        if name.lower() in ("name", "imię", "imie") or name.startswith("["):
+            continue
+        year = re.search(r"\b(19|20)\d{2}\b", " ".join(cells[2:]))
+        if role.startswith(CHILD):
+            people.append({"name": name, "share": CHILD_SHARE,
+                           "birth_year": int(year.group(0)) if year else None})
+        elif role.startswith(ADULT):
+            people.append({"name": name, "share": 1.0})
+    return people
+
+
+# --------------------------------------------------------------------------
+# Commands
+# --------------------------------------------------------------------------
+
+def write(root: Path, data: dict, args, summary: str, today: date) -> dict:
+    errors, _ = validate(data, today)
+    if errors:
+        raise ChoreError("; ".join(errors))
+    if args.dry_run:
+        return {"dry_run": True, "summary": summary}
+    record.require_writable(root, args)
+    saved = backup(root)
+    record.atomic_write_json(root / CHORES, data)
+    record.append_log(root, today, args.approved_by.strip(), [summary], record.lang_for(args, root))
+    return {"written": CHORES.as_posix(), "backup": saved, "summary": summary}
+
+
+def cmd_init(args) -> dict:
+    root = record.root_of(args.root)
+    today = record.today_from(args)
+    if (root / CHORES).exists():
+        raise ChoreError(f"{CHORES.as_posix()} already exists")
+    data = empty()
+    data["people"] = members_from_profile(root)
+    lang = record.lang_for(args, root)
+    res = write(root, data, args, lang.log("chores_created", people=", ".join(
+        f"{p['name']} {p['share']:g}" for p in data["people"]) or "-"), today)
+    res["people"] = data["people"]
+    res["note"] = ("children get a share of 0.5 by default; change it with "
+                   "chores.py person --name NAME --share N")
+    return res
+
+
+def next_id(data: dict) -> str:
+    nums = [int(ID_RE.match(c["id"]).group(1)) for c in data["chores"] if ID_RE.match(str(c.get("id", "")))]
+    return f"ch-{(max(nums) + 1 if nums else 1):03d}"
+
+
+def cmd_add(args) -> dict:
+    root = record.root_of(args.root)
+    today = record.today_from(args)
+    data = load(root)
+    try:
+        entry = json.loads(args.json)
+    except json.JSONDecodeError as exc:
+        raise ChoreError(f"--json is not valid JSON: {exc}")
+    entry = dict(CHORE_DEFAULTS, **{k: v for k, v in entry.items() if k != "id"})
+    entry["id"] = next_id(data)
+    data["chores"].append(entry)
+    lang = record.lang_for(args, root)
+    res = write(root, data, args, lang.log("chore_added", id=entry["id"], title=entry["title"]), today)
+    res["entry"] = entry
+    return res
+
+
+def parse_sets(pairs: list[str]) -> dict:
+    out = {}
+    for pair in pairs or []:
+        if "=" not in pair:
+            raise ChoreError(f"--set {pair!r} must be field=value")
+        k, v = pair.split("=", 1)
+        try:
+            out[k.strip()] = json.loads(v)
+        except json.JSONDecodeError:
+            out[k.strip()] = v
+    return out
+
+
+def cmd_update(args) -> dict:
+    root = record.root_of(args.root)
+    today = record.today_from(args)
+    data = load(root)
+    changes = parse_sets(args.set)
+    if "id" in changes:
+        raise ChoreError("the id cannot change")
+    for c in data["chores"]:
+        if c.get("id") == args.id:
+            before = {k: c.get(k) for k in changes}
+            c.update(changes)
+            lang = record.lang_for(args, root)
+            what = ", ".join(f"{k}: {before[k]!r} → {changes[k]!r}" for k in changes)
+            res = write(root, data, args, lang.log("chore_changed", id=args.id, changes=what), today)
+            res["entry"] = c
+            return res
+    raise ChoreError(f"no chore {args.id}")
+
+
+def cmd_retire(args) -> dict:
+    root = record.root_of(args.root)
+    today = record.today_from(args)
+    data = load(root)
+    for c in data["chores"]:
+        if c.get("id") == args.id:
+            c["active"] = False
+            lang = record.lang_for(args, root)
+            return write(root, data, args, lang.log("chore_retired", id=args.id, title=c.get("title", "")),
+                         today)
+    raise ChoreError(f"no chore {args.id}")
+
+
+def cmd_person(args) -> dict:
+    root = record.root_of(args.root)
+    today = record.today_from(args)
+    data = load(root)
+    person = next((p for p in data["people"] if p["name"] == args.name), None)
+    if person is None:
+        person = {"name": args.name, "share": 1.0}
+        data["people"].append(person)
+    if args.share is not None:
+        person["share"] = args.share
+    if args.birth_year is not None:
+        person["birth_year"] = args.birth_year or None
+    if args.active is not None:
+        person["active"] = args.active == "yes"
+    lang = record.lang_for(args, root)
+    detail = ", ".join(f"{k} {person[k]}" for k in ("share", "birth_year", "active") if k in person)
+    res = write(root, data, args, lang.log("chore_person", name=args.name, detail=detail), today)
+    res["person"] = person
+    return res
+
+
+def cmd_plan(args) -> dict:
+    root = record.root_of(args.root)
+    data = load(root)
+    errors, warnings = validate(data, record.today_from(args))
+    if errors:
+        raise ChoreError("; ".join(errors))
+    res = plan(data, dates.parse_date(args.start), args.weeks)
+    res["warnings"] = warnings
+    return res
+
+
+def cmd_save_plan(args) -> dict:
+    root = record.root_of(args.root)
+    today = record.today_from(args)
+    data = load(root)
+    result = plan(data, dates.parse_date(args.start), args.weeks)
+    labels = []
+    for wk in result["weeks"]:
+        assignments = [dict(s, person=n) for n, items in wk["by_person"].items() for s in items]
+        data["plans"] = [p for p in data["plans"] if p.get("week") != wk["week"]]
+        data["plans"].append({"week": wk["week"], "start": wk["start"], "assignments": assignments,
+                              "approved_by": (args.approved_by or "").strip() or None,
+                              "saved": today.isoformat()})
+        labels.append(wk["week"])
+    data["plans"].sort(key=lambda p: p["week"])
+    lang = record.lang_for(args, root)
+    res = write(root, data, args, lang.log("chore_plan_saved", weeks=", ".join(labels)), today)
+    res["plan"] = result
+    return res
+
+
+def cmd_swap(args) -> dict:
+    """Move occurrences of a chore between two people in a saved week, after both agreed."""
+    root = record.root_of(args.root)
+    today = record.today_from(args)
+    data = load(root)
+    week = next((p for p in data["plans"] if p.get("week") == args.week), None)
+    if week is None:
+        raise ChoreError(f"no saved plan for {args.week}")
+    names = {p["name"] for p in data["people"]}
+    if args.to not in names:
+        raise ChoreError(f"{args.to!r} is not in people")
+    src = next((a for a in week["assignments"] if a["chore"] == args.chore and a["person"] == args.giver), None)
+    if src is None or src["count"] < args.count:
+        raise ChoreError(f"{args.giver} has fewer than {args.count} of {args.chore} in {args.week}")
+    per = src["effort"] // src["count"] if src["count"] else 0
+    src["count"] -= args.count
+    src["effort"] -= per * args.count
+    dst = next((a for a in week["assignments"] if a["chore"] == args.chore and a["person"] == args.to), None)
+    if dst is None:
+        dst = {"chore": args.chore, "title": src.get("title", ""), "person": args.to, "count": 0, "effort": 0}
+        week["assignments"].append(dst)
+    dst["count"] += args.count
+    dst["effort"] += per * args.count
+    week["assignments"] = [a for a in week["assignments"] if a["count"] > 0]
+    lang = record.lang_for(args, root)
+    summary = lang.log("chore_swap", week=args.week, chore=args.chore, giver=args.giver, to=args.to,
+                       count=args.count)
+    return write(root, data, args, summary, today)
+
+
+def cmd_balance(args) -> dict:
+    root = record.root_of(args.root)
+    today = record.today_from(args)
+    data = load(root)
+    upto = week_monday(today) + timedelta(weeks=1)
+    load_, _ = history(data, upto, args.weeks)
+    share = {p["name"]: float(p.get("share", 1.0)) for p in data["people"] if p.get("active", True)}
+    covered = sorted({p["week"] for p in data["plans"]
+                      if upto - timedelta(weeks=args.weeks) <= week_from_label(p["week"]) < upto})
+    normalized = {n: round(load_.get(n, 0) / s, 2) for n, s in share.items()}
+    spread = round(max(normalized.values()) - min(normalized.values()), 2) if normalized else 0
+    return {"weeks_asked": args.weeks, "weeks_saved": covered, "load": {n: load_.get(n, 0) for n in share},
+            "shares": share, "normalized_load": normalized, "spread": spread,
+            "note": None if covered else "no saved plans in this period: absent, not zero"}
+
+
+def cmd_validate(args) -> dict:
+    root = record.root_of(args.root)
+    data = load(root)
+    errors, warnings = validate(data, record.today_from(args))
+    return {"ok": not errors, "errors": errors, "warnings": warnings,
+            "stats": {"people": len(data["people"]), "chores": len(data["chores"]),
+                      "active_chores": sum(1 for c in data["chores"] if c.get("active", True)),
+                      "saved_weeks": len(data["plans"])}}
+
+
+def build_parser() -> argparse.ArgumentParser:
+    p = argparse.ArgumentParser(prog="chores.py", description=__doc__.split("\n\n")[0])
+    sub = p.add_subparsers(dest="cmd", required=True)
+
+    def common(sp, write=False):
+        sp.add_argument("root", help="the household folder")
+        sp.add_argument("--today", help="today's date, ISO; default the system date")
+        sp.add_argument("--lang", help="language of log lines; default the profile's")
+        if write:
+            sp.add_argument("--dry-run", action="store_true", help="show the change, write nothing")
+            sp.add_argument("--approved-by", help="the adult who said yes")
+        return sp
+
+    s = common(sub.add_parser("init", help="create registers/chores.json from the profile's members"), True)
+    s.set_defaults(func=cmd_init)
+    s = common(sub.add_parser("add", help="add one chore"), True)
+    s.add_argument("--json", required=True)
+    s.set_defaults(func=cmd_add)
+    s = common(sub.add_parser("update", help="change fields of one chore"), True)
+    s.add_argument("--id", required=True)
+    s.add_argument("--set", action="append", required=True, help="field=value; value is JSON when it parses")
+    s.set_defaults(func=cmd_update)
+    s = common(sub.add_parser("retire", help="stop planning a chore, keeping its history"), True)
+    s.add_argument("--id", required=True)
+    s.set_defaults(func=cmd_retire)
+    s = common(sub.add_parser("person", help="add a person or change a share, birth year or taking part"), True)
+    s.add_argument("--name", required=True)
+    s.add_argument("--share", type=float)
+    s.add_argument("--birth-year", type=int)
+    s.add_argument("--active", choices=["yes", "no"])
+    s.set_defaults(func=cmd_person)
+    s = common(sub.add_parser("plan", help="assign the chores of the coming weeks; writes nothing"))
+    s.add_argument("--from", dest="start", required=True, help="a day in the first week")
+    s.add_argument("--weeks", type=int, default=1)
+    s.set_defaults(func=cmd_plan)
+    s = common(sub.add_parser("save-plan", help="compute and keep the plan of the coming weeks"), True)
+    s.add_argument("--from", dest="start", required=True)
+    s.add_argument("--weeks", type=int, default=1)
+    s.set_defaults(func=cmd_save_plan)
+    s = common(sub.add_parser("swap", help="move a chore between two people in a saved week"), True)
+    s.add_argument("--week", required=True, help="the saved week, e.g. 2026-W47")
+    s.add_argument("--chore", required=True)
+    s.add_argument("--from", dest="giver", required=True)
+    s.add_argument("--to", required=True)
+    s.add_argument("--count", type=int, default=1)
+    s.set_defaults(func=cmd_swap)
+    s = common(sub.add_parser("balance", help="who did how much in the saved weeks"))
+    s.add_argument("--weeks", type=int, default=HISTORY_WEEKS)
+    s.set_defaults(func=cmd_balance)
+    s = common(sub.add_parser("validate", help="check registers/chores.json"))
+    s.set_defaults(func=cmd_validate)
+    return p
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = build_parser().parse_args(argv)
+    if getattr(args, "weeks", 1) is not None and not 1 <= getattr(args, "weeks", 1) <= 52:
+        return record.emit({"errors": ["--weeks must be from 1 to 52"], "calculated_by": f"chores.py {VERSION}"}, 1)
+    try:
+        res = args.func(args)
+    except (record.RecordError, dates.InputError, ValueError) as exc:
+        return record.emit({"errors": [str(exc)], "calculated_by": f"chores.py {VERSION}"}, 1)
+    res.setdefault("calculated_by", f"chores.py {VERSION}")
+    return record.emit(res, 0 if res.get("ok", True) else 1)
+
+
+if __name__ == "__main__":
+    sys.exit(main())

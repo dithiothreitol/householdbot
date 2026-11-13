@@ -1,0 +1,35 @@
+schema_version: "1.1"
+name: school-desk-e-register-message
+description: school-desk / e-register-message
+tags: [etap3]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Message from Zosia's class teacher in the e-register: 'Dear Parents, on Friday 4 December 2026 class 4b goes to the theatre in Example City, leaving school at 8:00. Cost PLN 45, in cash to the class treasurer by Wednesday 2 December. Please confirm consent in the e-register. Children bring a packed lunch. Monday 7 December is a day off.' What do we need to do?
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:school-desk|household-router|file-document)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
+      PASS if it turns the message into dated items with weekdays: consent to confirm in the e-register (by a parent, there), PLN 45.00 in cash to the class treasurer by Wed 2 Dec 2026, the theatre trip on Fri 4 Dec 2026 leaving at 8:00 with a packed lunch, and the day off on Mon 7 Dec 2026.
+      PASS needs reminders proposed for the payment and the consent, calendar entries offered with no amount in a title, and both written or created only after a yes.
+      FAIL if it says the consent was confirmed or the money paid, invents a bank account, or writes to the register or a calendar in this turn.

@@ -1,12 +1,10 @@
 ---
 name: household-router
 description: >
-  Front door to HouseholdBot. Works out what a household member needs, vague or
-  specific, and routes to the one skill that fits, or answers a simple lookup
-  from the household record. Use when someone asks "what can you do", "help me
-  with our paperwork", "I don't know where to start", "pomóż mi ogarnąć papiery",
-  or makes an open-ended household request that does not clearly match a single
-  skill. Speaks English by default and Polish on request.
+  Front door: matches a vague or mixed household request to the right skill
+  and answers simple lookups from the record. Use when nothing else fits:
+  "help with our paperwork", "where do I start", "pomóż ogarnąć papiery", "od
+  czego zacząć".
 ---
 
 # Household router
@@ -64,6 +62,19 @@ nearest deadline.
 | "The product broke" · "reklamacja" · "insurance claim" | `complaint-and-claim` |
 | "Cancel this" · "wypowiedz umowę" · "switch provider" | `cancel-or-switch` |
 | "Monthly review" · "przegląd miesiąca" | `monthly-review` |
+| "Chimney check" · "gwarancja pralki" · "porównaj oferty wykonawców" | `home-upkeep` |
+| "When is the car's test" · "kiedy kończy się OC" · "dostałem mandat" | `vehicle-file` |
+| "What insurance do we have" · "jakie mamy ubezpieczenia" · "jakie ubezpieczenia musimy mieć" | `insurance-overview` |
+| "Is my ID still valid" · "czy paszport jest ważny" · "jedziemy za granicę" | `identity-and-travel` |
+| "What does the school want" · "wiadomość z dziennika" · "zebranie w szkole" | `school-desk` |
+| "Who does what this week" · "podział obowiązków" · "grafik sprzątania" | `chore-rotation` |
+| "Plan our meals" · "jadłospis na tydzień" · "co ugotować" | `meal-planner` |
+| "Add milk to the list" · "lista zakupów" · "dopisz chleb" | `shopping-list` |
+| "What's on this week" · "kto odbiera Zosię" · "wpisz do kalendarza" | `family-calendar` |
+| "Is the referral still valid" · "recepta" · "skierowanie" · "wyniki" | `health-file` |
+| "If something happens to me" · "plik awaryjny" · "gdzie co jest" | `emergency-file` |
+| "We're moving" · "urodziło się dziecko" · "kupiłem auto" · "zmarł" · "zmieniam pracę" | `life-event` |
+| "Annual review" · "przegląd roczny" · "co można wyrzucić z papierów" | `annual-review` |
 | "Which reminders apply to us" · "the usual deadlines for our country" | `deadline-tracker` (`--seed`) |
 | "Change our …" · "add a member" · "we sold the car" | `household-customize` |
 | "Talk to us in Polish" · "use English from now on" · "przejdź na polski" | `household-customize` (language) |

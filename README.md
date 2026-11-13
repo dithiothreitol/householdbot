@@ -36,7 +36,7 @@ English translation. New languages are added as files in `core/i18n/` and
 ```
 .claude-plugin/marketplace.json   the marketplace (one plugin)
 householdbot/                     the plugin
-  skills/<skill>/SKILL.md         eighteen skills, each self-sufficient
+  skills/<skill>/SKILL.md         thirty-one skills, each self-sufficient
   skills/<skill>/shared/          generated copies of rules, country packs, scripts, templates
   agents/                         deadline-watcher (read-only), document-reader (no write tools)
 evals/                            behaviour tests for `claude plugin eval`, synthetic household;
@@ -46,7 +46,7 @@ core/                             sources of everything under skills/*/shared/
   locale/PL.md, PL.json           the Polish country pack
   i18n/en.json, pl.json           languages: date and amount formats, notes, log lines
   scripts/dates.py, record.py,    the proof layer (Python standard library)
-    statement.py
+    statement.py, chores.py
   money/categories.json           spending categories for bank exports
   templates/en/, templates/pl/    household profile and register guide per language
 scripts/sync.py                   copies core/ into the skills
@@ -84,14 +84,15 @@ Claude Code.
 
 ## Status
 
-Version 0.2: the core and money and correspondence, in English and Polish.
-Setup, filing, search, deadlines, the weekly brief, profile changes and record
-repair; the mailbox, bills and payment lists, contracts, subscriptions, bank
-statements, the tax-return checklist, replies to letters, complaints and
-claims, cancellations and the monthly review; with the Polish country pack.
-Next stages add home, family and daily life (vehicles, health, school,
-insurance overview, identity documents, life events, meals, shopping and
-chores), then more countries and a hosted watcher. See
+Version 0.3: the core, money and correspondence, and home, family and
+everyday life, in English and Polish. Setup, filing, search, deadlines, the
+weekly brief, profile changes and record repair; the mailbox, bills, contracts,
+subscriptions, bank statements, the tax-return checklist, replies, complaints,
+cancellations and the monthly review; the house, the car, insurance, identity
+documents and travel, school, health papers, the emergency file, life events,
+the family calendar, meals, shopping, chores and the annual review; with the
+Polish country pack. The last stage adds more countries, a dashboard, building
+your own skills and a hosted watcher. See
 [CHANGELOG.md](CHANGELOG.md).
 
 ## License

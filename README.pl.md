@@ -35,7 +35,7 @@ urzędów po polsku, z tłumaczeniem na angielski. Nowy język wymaga plików w
 ```
 .claude-plugin/marketplace.json   marketplace (jedna wtyczka)
 householdbot/                     wtyczka
-  skills/<skill>/SKILL.md         osiemnaście skilli, każdy samowystarczalny
+  skills/<skill>/SKILL.md         trzydzieści jeden skilli, każdy samowystarczalny
   skills/<skill>/shared/          generowane kopie reguł, pakietów krajowych, skryptów i szablonów
   agents/                         deadline-watcher (tylko odczyt), document-reader (bez narzędzi zapisu)
 evals/                            testy zachowania dla `claude plugin eval`, syntetyczne gospodarstwo;
@@ -83,15 +83,16 @@ repozytorium w Claude Code. Oba dokumenty są po angielsku.
 
 ## Stan
 
-Wersja 0.2 obejmuje rdzeń oraz pieniądze i korespondencję, po angielsku i po
-polsku: konfigurację, archiwizację dokumentów, wyszukiwanie, terminy,
-przegląd tygodnia, zmiany profilu i naprawę rekordu, a także pocztę, rachunki
-i listy płatności, umowy, abonamenty, wyciągi bankowe, listę do rozliczenia
-PIT, odpowiedzi na pisma, reklamacje, wypowiedzenia i przegląd miesiąca,
-razem z polskim pakietem krajowym. Kolejne etapy dodadzą dom,
-rodzinę i codzienność (pojazdy, zdrowie, szkoła, przegląd polis, dokumenty
-tożsamości, zdarzenia życiowe, posiłki, zakupy i obowiązki), a na końcu
-kolejne kraje i obserwatora terminów działającego bez udziału domowników.
+Wersja 0.3 obejmuje rdzeń, pieniądze i korespondencję oraz dom, rodzinę i
+codzienność, po angielsku i po polsku: konfigurację, archiwizację dokumentów,
+wyszukiwanie, terminy, przegląd tygodnia, zmiany profilu i naprawę rekordu;
+pocztę, rachunki, umowy, abonamenty, wyciągi bankowe, listę do rozliczenia PIT,
+odpowiedzi na pisma, reklamacje, wypowiedzenia i przegląd miesiąca; dom,
+samochód, ubezpieczenia, dokumenty tożsamości i podróże, szkołę, dokumenty
+medyczne, plik awaryjny, zdarzenia życiowe, kalendarz rodzinny, posiłki,
+zakupy, obowiązki domowe i przegląd roczny; razem z polskim pakietem
+krajowym. Ostatni etap doda kolejne kraje, pulpit, tworzenie własnych skilli
+i obserwatora terminów działającego bez udziału domowników.
 Historię zmian zawiera [CHANGELOG.md](CHANGELOG.md).
 
 ## Licencja

@@ -2,7 +2,7 @@
 
 [English](PRIVACY.md) · **Polski**
 
-HouseholdBot składa się z instrukcji, dwóch lokalnych skryptów i listy
+HouseholdBot składa się z instrukcji, czterech lokalnych skryptów i listy
 konektorów. Nie ma serwera, konta ani analityki.
 
 ## Gdzie trafiają dane gospodarstwa
@@ -23,7 +23,10 @@ konektorów. Nie ma serwera, konta ani analityki.
 Numery PESEL i NIP, numery kont i kart, numery dokumentów, hasła i kody nigdy
 nie trafiają do rejestrów; wpis wskazuje stronę oryginału, na której się
 znajdują. Informacje o zdrowiu nie pojawiają się w przeglądach ani we wpisach
-kalendarza.
+kalendarza. Produkty pomijane w jadłospisie są zapisywane tylko za zgodą
+dorosłego, bez powodu, i nie trafiają na listy zakupów, do kalendarza ani do
+przeglądów. Plik awaryjny mówi, gdzie co jest i do kogo dzwonić, nigdy nie
+zawiera numerów ani haseł.
 
 ## Usuwanie danych
 

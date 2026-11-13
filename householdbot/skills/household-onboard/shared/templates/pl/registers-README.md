@@ -58,3 +58,21 @@ Jeden wpis na każdy termin, odnowienie, płatność, wygaśnięcie lub zadanie 
 
 Identyfikatory osobiste (PESEL, numery kont i kart, numery dokumentów, hasła)
 nigdy tu nie trafiają. Wpis wskazuje, gdzie są: „numer polisy: zob. strona 1”.
+
+## chores.json
+
+Zapisuje go `chores.py`; powstaje dopiero wtedy, gdy gospodarstwo zaczyna
+dzielić obowiązki.
+
+| Pole | Znaczenie |
+|---|---|
+| `people` | kto bierze udział: `name`, `share` (względny udział; dorośli 1, dzieci domyślnie 0,5), `birth_year` dla dzieci, `active` |
+| `chores` | `id` (`ch-001`), `title`, `per_week` (ile razy w tygodniu), `every_weeks` (1 co tydzień, 2 co drugi tydzień), `effort` (1 do 5 punktów za raz), `min_age`, `who` (tylko te osoby; puste = każdy w odpowiednim wieku), `fixed` (zawsze ta osoba), `first_week`, `active`, `notes` |
+| `plans` | zapisane tygodnie: `week` (`2026-W47`), `assignments` (obowiązek, osoba, liczba, punkty), `approved_by`, `saved` |
+
+## lists/
+
+Zwykłe pliki Markdown, które domownicy czytają i poprawiają: `shopping.md`
+(lista zakupów, sekcja na sklep albo dział), `staples.md` (to, co kupujemy
+prawie co tydzień) i `meals-<RRRR>-W<NN>.md` (jadłospis tygodnia). Nie ma w
+nich powodów zdrowotnych, tylko co kupić i ugotować.

@@ -1,0 +1,25 @@
+schema_version: "1.1"
+name: shopping-list-english-merge
+description: shopping-list / english-merge
+tags: [etap3]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Add 2 more butter and 1 l of milk to the list, then tell me what we need from Lidl.
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:shopping-list|household-router)"'
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
+      PASS if the reply is in English, merges the new butter with the 2 already on the list into one line of 4,
+      adds 1 l of milk, and lists what is needed from Lidl (toilet paper, butter 4, milk 1 l).
+      FAIL if butter appears on two separate lines, an item nobody asked for is added, or the reply is in Polish.
