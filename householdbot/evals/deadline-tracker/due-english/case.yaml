@@ -1,0 +1,34 @@
+schema_version: "1.1"
+name: deadline-tracker-due-english
+description: deadline-tracker / due-english
+tags: [etap1]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    What do we have to do in the next 30 days?
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:deadline-tracker|household-router)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      PASS if the reply is in English and (1) the water bill from Example Wodociągi (PLN 164.20) is listed first or
+      clearly marked as overdue; (2) the electricity bill (PLN 286.40) is listed; (3) the roadworthiness test is
+      mentioned as having no known date; (4) the do-by date of each listed item is shown with its weekday.
+      FAIL if the reply is in Polish, or if any of (1) to (4) is missing.

@@ -41,6 +41,10 @@ and ranks title, issuer and type above notes. Without Python, read
 `registers/documents.json` and `registers/obligations.json` and search them
 the same way.
 
+Dates and amounts come out in the household's language: `record.py` reads it
+from the profile, and `dates.py` takes `--lang pl` for Polish (English is the
+default).
+
 ## Step 0 — Find the record
 
 `record.py locate`, or look for `household-profile.md` in the working folder

@@ -1,0 +1,26 @@
+schema_version: "1.1"
+name: household-onboard-polish-opening
+description: household-onboard / polish-opening
+tags: [etap1]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Cześć, chcę skonfigurować HouseholdBota dla naszego domu.
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:household-onboard)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      PASS if the reply is in Polish, makes clear that English is also available or that the language can be
+      changed, and asks whether to do the quick or the full setup, without creating any file.
+      FAIL if it answers only in English, or creates files.

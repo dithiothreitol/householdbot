@@ -1,7 +1,11 @@
 # Gotchas — household-onboard
 
-- **Language is not country.** A member writing Polish may live in Germany.
-  Ask for the country; propose currency and time zone from it.
+- **Language is not country.** A member writing Polish may live in Germany,
+  and an English-speaking family may live in Poland. Ask for the country;
+  propose currency and time zone from it.
+- **English is the default, not a guess.** Without a request or a Polish
+  opening message, set up in English and offer Polish in the first line. Once
+  chosen, the language goes into the profile and every skill follows it.
 - **The folder is created after the yes, not before.** Choosing a location in
   Step 2 creates nothing. `record.py init` runs only after the profile is
   approved.

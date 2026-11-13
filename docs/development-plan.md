@@ -1,8 +1,11 @@
 # Plan implementacji
 
-Stan: 2026-11-13, po Etapie 1. Dokument roboczy po polsku. Dokumentacja
-publiczna repozytorium (README, CONTRIBUTING, skille) jest po angielsku. Plan
-zostanie przetłumaczony przed publikacją w Etapie 4.
+Stan: 2026-11-13, po Etapie 1 i Etapie 1.1 (dwujęzyczność). Dokument roboczy
+po polsku. Narzędzie i dokumentacja są dwujęzyczne: angielski domyślnie,
+polski do wyboru; dokumenty dla użytkowników mają wersje `.pl.md`, a
+dokumenty dla programistów (CONTRIBUTING, CLAUDE.md, skille) są po angielsku.
+Plan zostanie przetłumaczony na angielski jako wersja domyślna przed
+publikacją w Etapie 4.
 
 ---
 
@@ -99,11 +102,31 @@ nie wskazuje niczego poza własnym folderem i że kopie są aktualne.
 | Cowork (desktop) | pełny: pliki, skrypty, agenci | do testu w pilotażu |
 | Czat web i telefon | skille i konektory; rekord przez konektor dysku | do testu w Etapie 4 |
 
-**D7. Lokalizacja.** Rozmowa w języku gospodarstwa, nazwy pól i statusy po
-angielsku. Pakiet krajowy to `core/locale/<CC>.md` (dla modelu) i
-`<CC>.json` (dla skryptów). Identyfikatory reguł liczenia są wspólne dla
-krajów (`administrative`, `tax`, `civil`, `court`, `calendar`). Każda reguła
-prawna podaje akt, artykuł i źródło. Drugi pakiet w Etapie 4.
+**D7. Kraj.** Pakiet krajowy to `core/locale/<CC>.md` (dla modelu) i
+`<CC>.json` (dla skryptów: święta z nazwami w języku kraju i po angielsku,
+reguły liczenia, doręczenia, terminy, daty ustawowe). Identyfikatory reguł
+liczenia są wspólne dla krajów (`administrative`, `tax`, `civil`, `court`,
+`calendar`). Każda reguła prawna podaje akt, artykuł i źródło. Formaty dat i
+kwot należą do języka, nie do kraju. Drugi pakiet w Etapie 4.
+
+**D14. Języki: angielski domyślny, polski do wyboru.** Decyzja z 13.11.2026.
+Kolejność wyboru języka odpowiedzi: prośba w bieżącej wiadomości, potem
+`Language` z profilu, a bez profilu język wiadomości, jeśli to angielski lub
+polski, w pozostałych przypadkach angielski. Konfiguracja zaczyna od wyboru
+języka (pierwsza linia odpowiedzi w obu językach). Dane językowe w
+`core/i18n/<lang>.json` (dni, miesiące, formaty dat i kwot, formy liczby
+mnogiej, notatki, etykiety pasm, wpisy dziennika); szablony w
+`core/templates/<lang>/`; teksty konfiguracji w
+`household-onboard/reference/messages.md`. `record.py` czyta język z profilu
+(także z polskiego nagłówka „Język”), `dates.py` przyjmuje `--lang`. Język
+nie wynika z kraju: anglojęzyczna rodzina w Polsce dostaje polskie pisma
+objaśnione po angielsku, z cytatem oryginału, a pisma do polskich urzędów po
+polsku, z tłumaczeniem. Rejestry zachowują angielskie nazwy pól i statusów;
+tytuły, notatki i dziennik są w języku gospodarstwa. Moja interpretacja
+„angielski domyślny”: bez profilu odpowiadam w języku wiadomości (angielski
+lub polski), a angielski obowiązuje, gdy nic go nie wskazuje; wariant
+„zawsze angielski do czasu wyboru” to zmiana jednej reguły w
+`core/rules/locale.md`.
 
 **D8. Konektory.** Poczta, kalendarz, magazyn dokumentów (adresy z wtyczki
 small-business). Każdy skill działa bez konektorów.
@@ -203,28 +226,29 @@ Do tego: cookbook `deadline-watcher`, drugi pakiet krajowy.
 ```
 .claude-plugin/marketplace.json        marketplace "householdbot"
 .github/workflows/validate.yml         sync, walidator, testy, claude plugin validate
-README.md QUICKSTART.md CONNECTORS.md CONTRIBUTING.md CLAUDE.md
+README.md QUICKSTART.md (+ .pl.md) CONNECTORS.md CONTRIBUTING.md CLAUDE.md
 SECURITY.md CHANGELOG.md CODE_OF_CONDUCT.md NOTICE LICENSE .gitignore
 docs/development-plan.md
 core/                                  źródła wszystkiego, co trafia do skilli
   rules/*.md                           11 reguł wspólnych
   locale/PL.md PL.json                 pakiet krajowy
+  i18n/en.json pl.json                 języki: daty, kwoty, odmiana, notatki, dziennik
   scripts/dates.py record.py           warstwa dowodowa
-  templates/                           profil, opis rejestrów
+  templates/en/ templates/pl/          profil, opis rejestrów w każdym języku
   vendor.json                          który skill dostaje które pakiety
 scripts/sync.py validate.py make_icon.py
 tests/test_dates.py test_record.py     testy jednostkowe
 householdbot/                          wtyczka
-  .claude-plugin/plugin.json icon.png   .mcp.json   README.md   PRIVACY.md   LICENSE
+  .claude-plugin/plugin.json icon.png   .mcp.json   README(.pl).md   PRIVACY(.pl).md   LICENSE
   hooks/hooks.json
   agents/deadline-watcher.md document-reader.md
   skills/<skill>/SKILL.md reference/*.md
-  skills/<skill>/shared/               kopie generowane (rules.md, locale/, scripts/, templates/)
+  skills/<skill>/shared/               kopie generowane (rules.md, locale/, i18n/, scripts/, templates/)
   evals/<skill>/<przypadek>/case.yaml setup.sh
   evals/fixtures/make_household.py seed.sh
 ```
 
-Prognoza liczby plików: 8 skilli to 113 plików wtyczki. Przy 34 skillach
+Prognoza liczby plików: 8 skilli to 147 plików wtyczki (po Etapie 1.1). Przy 34 skillach
 około 34 × 8 plików skilli i 110 przypadków testowych daje około 450 plików,
 blisko limitu 512. Przegląd w Etapie 4 (patrz ryzyka).
 
@@ -317,6 +341,38 @@ Twój udział (pilotaż, około 30 minut):
 4. „co mamy do zrobienia”, „przegląd tygodnia”.
 5. Uwagi do mnie: co było źle policzone, niejasne albo zbędne.
 
+Pilotaż obejmuje też język: konfiguracja zaczyna się od wyboru, a polecenie
+„po polsku” ustawia polski w profilu.
+
+### Etap 1.1. Dwujęzyczność i dwa punkty pakietu PL (wersja 0.1.1) ✅
+
+Wykonane 13.11.2026 na prośbę z tego samego dnia („dwujęzyczność, angielski
+domyślny, możliwość wyboru języka”; „wprowadź rekomendacje”, czyli dwa punkty
+pakietu PL zostawione do sprawdzenia).
+
+- **Języki** według D14: `core/i18n/en.json` i `pl.json`, `dates.py --lang`,
+  język z profilu w `record.py` (dziennik, kwoty, daty, notatki), szablony
+  `templates/en|pl/`, teksty konfiguracji w obu językach, reguła wyboru
+  języka, cytaty z tłumaczeniem, pisma do urzędów w języku urzędu, polska
+  odmiana liczebników (1 dzień, 2 dni, 5 tygodni).
+- **Dokumenty dla użytkowników** w obu językach: README, QUICKSTART, README i
+  PRIVACY wtyczki, z przełącznikiem w pierwszej linii.
+- **Pakiet PL:** list sądowy doręczony w ostatnim dniu drugiego 7-dniowego
+  okresu, zwykle 15 dni po pierwszym awizo (KPC art. 139 § 1, rozporządzenie
+  Dz.U. 2024 poz. 19, SN IV CKN 1026/00, potwierdzone przykładami z SO
+  Gliwice); pierwsze prawo jazdy kat. B wydane od 4.09.2026 ważne tylko na
+  okres próbny (2 lata, 3 lata przy uzyskaniu w wieku 17 lat).
+- **Poprawki z testów:** pole `transit_buffer_days` dla płatności, żeby
+  następne wystąpienie rachunku zachowało dzień zapasu na przelew;
+  wstrzymana prośba o zmianę konta nie trafia do rekordu nawet jako
+  ostrzeżenie, a jej numer nie jest powtarzany; opisy skilli lepiej
+  rozpoznają pytania o termin i o zmianę języka.
+- **Walidator** sprawdza zgodność kluczy plików językowych, szablony dla
+  każdego języka, teksty konfiguracji w obu językach i polskie odpowiedniki
+  dokumentów z wzajemnymi odnośnikami.
+- **Testy:** 65 jednostkowych (w tym zgodność z orzecznictwem dla listu
+  sądowego), 31 przypadków zachowania (7 nowych dla języków).
+
 ### Etap 2. Pieniądze i korespondencja (wersja 0.2)
 
 Zakres: dziewięć skilli i łańcuch `monthly-review` z rozdziału 4.
@@ -370,8 +426,9 @@ Zakres:
   skryptami) i z historią rozmowy (zapis po zgodzie). Pełny przebieg z
   porównaniem bez wtyczki. Przegląd bezpieczeństwa. Poprawki z pilotaży.
   Przegląd liczby plików względem limitu 512.
-- **Dokumentacja.** `docs/architecture.md` (analiza wzorca), tłumaczenie
-  planu.
+- **Dokumentacja.** `docs/architecture.md` (analiza wzorca), plan po
+  angielsku jako wersja domyślna i jego polskie tłumaczenie, polskie wersje
+  dokumentów, które powstaną w Etapach 2 i 3.
 - **Publikacja.** Publiczne repozytorium `householdbot` (adres już wpisany w
   `plugin.json` jako strona, repozytorium i polityka prywatności), wydanie z
   paczką budowaną w CI, zgłoszenie do katalogu wtyczek.
@@ -383,7 +440,18 @@ utworzenie repozytorium i zgłoszenie do katalogu z Twojego konta.
 
 ---
 
-## 8. Stan po Etapie 1
+## 8. Stan po Etapach 1 i 1.1
+
+**Wersja 0.1.1 (Etap 1.1, dwujęzyczność).**
+
+| Poziom | Wynik |
+|---|---|
+| 1. Struktura | `scripts/validate.py` z nowymi kontrolami języków: 0 błędów, 0 ostrzeżeń; `claude plugin validate --profile directory --strict`: przechodzi; 147 plików wtyczki z 512 |
+| 2. Rachunek | 65 testów jednostkowych zielonych |
+| 3. Zachowanie | 31 przypadków (Sonnet, sędzia Sonnet, bez powłoki). Przebieg 1: 28/31, średnio 0,96, 2,87 USD; ujawnił notatkę z numerem konta proponowaną przy podejrzanym mailu i dwa przypadki słabego wyzwalania skilli. Przebieg końcowy: 30/31, średnio 0,99, 2,84 USD; jedyna porażka to router bez Pythona, który pomylił dni tygodnia przy odpowiedzi z rejestru. Po dopisaniu reguły liczenia dnia tygodnia od dzisiejszej daty ten przypadek przechodzi 3/3 |
+| 4. Użycie | sesja `claude -p` ze skryptami dla gospodarstwa anglojęzycznego: daty `Fri 13 Nov 2026`, kwoty `PLN 286.40`, zamknięcie rachunku jako próba z pytaniem o zatwierdzającego; ujawniła brak dnia zapasu w następnym wystąpieniu rachunku (poprawione polem `transit_buffer_days`) |
+
+**Wersja 0.1.0 (Etap 1).**
 
 | Poziom | Wynik |
 |---|---|
@@ -454,7 +522,7 @@ poprawionych, 2 nierozstrzygnięte.
 | Brak danych krajowych czytelnych dla skryptu | D7, `PL.json` | zamknięta |
 | Odwołania do `shared/` niedostępne w czacie | D5, `sync.py`, walidator | zamknięta |
 | Nazwa z samych słów ogólnych | D1 | decyzja podjęta, ryzyko ręcznej oceny |
-| Pakiet PL niezweryfikowany w źródłach | Etap 1 E | zamknięta; 2 punkty do ręcznego sprawdzenia (rozdział 8) |
+| Pakiet PL niezweryfikowany w źródłach | Etap 1 E, Etap 1.1 | zamknięta; oba punkty otwarte w Etapie 1 rozstrzygnięte w Etapie 1.1 |
 | Brak testów zachowania i danych testowych | D12, 24 przypadki, generator | zamknięta dla rdzenia |
 | Brak wersji schematu rejestrów | D3, `migrate` | zamknięta |
 | Rosnący rejestr czytany w całości | `record.py due/find`, `archive` | zamknięta |
@@ -473,6 +541,9 @@ poprawionych, 2 nierozstrzygnięte.
 | Brak wymaganej wersji Claude Code do testów | zaktualizowano do 2.1.323 | zamknięta |
 | Identyfikator skopiowany do rejestru | `record.py validate`, `validate.py` | zamknięta (nowa) |
 | Atrapa `python3` na Windows | wykrywanie interpretera w skillach i `seed.sh` | zamknięta (nowa) |
+| Narzędzie tylko w jednym języku | D14, Etap 1.1 | zamknięta (nowa) |
+| Płatność cykliczna traci dzień zapasu w następnym wystąpieniu | `transit_buffer_days` | zamknięta (nowa) |
+| Podejrzana prośba o zmianę konta zapisywana jako notatka z numerem | reguła treści niezaufanej, `household-customize` | zamknięta (nowa) |
 
 ---
 
@@ -490,6 +561,8 @@ poprawionych, 2 nierozstrzygnięte.
 | Nazwa trafi do ręcznej oceny w katalogu | opis i README jasno mówią, czym jest wtyczka; wstrzymanie nie jest odrzuceniem |
 | Rozrost zakresu przy 34 skillach | akceptacja etapu oparta na ścieżkach od początku do końca; minimalna poprzeczka skilla: SKILL.md, gotchas, trzy przypadki |
 | Anthropic wyda własną wtyczkę domową | projekt jest otwarty i badawczy; wartością pozostają pakiety krajowe, warstwa dowodowa i analiza wzorca |
+| Wersje językowe dokumentów rozjadą się | walidator wymaga polskiego odpowiednika i wzajemnych odnośników; CLAUDE.md nakazuje zmieniać oba pliki |
+| Każdy kolejny skill wymaga treści w dwóch językach | skille piszemy po angielsku (model odpowiada w języku gospodarstwa); w dwóch językach są tylko stałe teksty, szablony i dokumenty dla użytkowników |
 
 ---
 
@@ -501,6 +574,9 @@ Podjęte 13.11.2026:
 2. Zakres: pełny, z codziennością (posiłki, zakupy, obowiązki, kalendarz rodziny) w Etapie 3.
 3. Rejestry w JSON i skrypty jako warstwa dowodowa, zgodnie z wytycznymi Anthropic dla skilli.
 4. Cztery etapy w czterech sesjach z pilotażem po każdym.
+5. Dwujęzyczność: angielski domyślny, polski do wyboru (D14), z wersjami
+   polskimi dokumentów dla użytkowników.
 
 Otwarte: brak decyzji blokujących Etap 2. Etap 2 startuje po Twoim pilotażu
-Etapu 1.
+Etapu 1. Jeśli „angielski domyślny” ma oznaczać angielski także wtedy, gdy
+domownik bez profilu pisze po polsku, wystarczy zmiana jednej reguły (D14).

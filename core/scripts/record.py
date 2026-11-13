@@ -10,6 +10,10 @@ the household member gave it; the script cannot verify who is typing. Every
 write keeps a copy of the previous file in registers/.history/ and refuses
 to run while sync-conflict copies of a register exist.
 
+Dates, amounts and log lines follow the household's language: the
+`Language` line of household-profile.md (English or Polish), English when it
+is not set, or --lang to override.
+
 Examples:
   python3 record.py locate
   python3 record.py init ./household --approved-by Anna
@@ -40,7 +44,7 @@ if str(HERE) not in sys.path:
 sys.dont_write_bytecode = True  # leave no __pycache__ inside the plugin folder
 import dates  # noqa: E402
 
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 SCHEMA_VERSION = 1
 PROFILE = "household-profile.md"
 REGISTERS = {"documents": Path("registers/documents.json"),
@@ -74,8 +78,8 @@ OB_FIELDS = {
     "owner": "str?", "subject": "str?", "counterparty": "str?", "due_date": "date?",
     "do_by": "date?", "do_by_note": "str", "lead_time_days": "int?", "recurrence": "str?",
     "recurrence_day": "int?", "amount": "money?", "currency": "currency?", "auto_renews": "bool?",
-    "notice": "obj?", "source": "obj?", "provenance": "provenance", "law": "str?",
-    "status": "ob_status", "done_date": "date?", "notes": "str", "created": "date!",
+    "notice": "obj?", "transit_buffer_days": "int?", "source": "obj?", "provenance": "provenance",
+    "law": "str?", "status": "ob_status", "done_date": "date?", "notes": "str", "created": "date!",
     "updated": "date!",
 }
 FIELDS = {"documents": DOC_FIELDS, "obligations": OB_FIELDS}
@@ -91,7 +95,8 @@ DEFAULTS = {
     "obligations": {"series": None, "owner": None, "subject": None, "counterparty": None,
                     "due_date": None, "do_by": None, "do_by_note": "", "lead_time_days": None,
                     "recurrence": "none", "recurrence_day": None, "amount": None,
-                    "currency": None, "auto_renews": None, "notice": None, "source": None,
+                    "currency": None, "auto_renews": None, "notice": None,
+                    "transit_buffer_days": None, "source": None,
                     "law": None, "status": "open", "done_date": None, "notes": ""},
 }
 CONFLICT_PATTERNS = [
@@ -117,6 +122,35 @@ class RecordError(Exception):
 
 def today_from(args) -> date:
     return dates.parse_date(args.today) if getattr(args, "today", None) else date.today()
+
+
+LANG_LINE = re.compile(r"^\s*-\s*\*\*(?:Language|Język)\s*:\*\*\s*(.+?)\s*$", re.I | re.M)
+LANG_WORDS = {"pl": ("pl", "polski", "polish", "po polsku"), "en": ("en", "english", "angielski")}
+
+
+def household_language(root: Path | None) -> str:
+    """The household's language from its profile; English when unset or unknown."""
+    if root is None or not (root / PROFILE).exists():
+        return dates.DEFAULT_LANG
+    m = LANG_LINE.search((root / PROFILE).read_text(encoding="utf-8"))
+    if not m:
+        return dates.DEFAULT_LANG
+    value = m.group(1).strip().lower()
+    marked = re.match(r"\[default\s*[—–-]\s*([a-z]{2})\b", value)
+    if marked:
+        return marked.group(1)
+    if value.startswith("[placeholder"):
+        return dates.DEFAULT_LANG
+    for code, words in LANG_WORDS.items():
+        if any(re.search(rf"(?<![a-ząćęłńóśźż]){re.escape(w)}(?![a-ząćęłńóśźż])", value) for w in words):
+            return code
+    return dates.DEFAULT_LANG
+
+
+def lang_for(args, root: Path | None) -> "dates.Lang":
+    """--lang when given, otherwise the profile's language, otherwise English."""
+    code = getattr(args, "lang", None) or household_language(root)
+    return dates.load_lang(code)
 
 
 def root_of(path: str) -> Path:
@@ -179,22 +213,16 @@ def backup(root: Path, name: str) -> str | None:
     return dst.relative_to(root).as_posix()
 
 
-def append_log(root: Path, when: date, approved_by: str, lines: list[str]) -> None:
+def append_log(root: Path, when: date, approved_by: str, lines: list[str],
+               lang: "dates.Lang | None" = None) -> None:
+    lang = lang or dates.load_lang(household_language(root))
     log = root / "log" / "decisions.md"
     log.parent.mkdir(parents=True, exist_ok=True)
     if not log.exists():
-        log.write_text(LOG_HEADER, encoding="utf-8")
+        log.write_text(lang.log("header"), encoding="utf-8")
     with log.open("a", encoding="utf-8", newline="\n") as fh:
         for line in lines:
-            fh.write(f"- {when.isoformat()} · approved by {approved_by} · {line}\n")
-
-
-LOG_HEADER = """# Decisions log
-
-Append-only. One line per approved change to the record: the date, who
-approved it as they stated it, and what changed. Written by record.py.
-
-"""
+            fh.write(lang.log("line", date=when.isoformat(), who=approved_by, what=line) + "\n")
 
 
 def conflicts(root: Path) -> list[str]:
@@ -559,13 +587,32 @@ def duplicate_warnings(name: str, entry: dict, entries: list) -> tuple[list, lis
     return errs, warns
 
 
-def describe_entry(name: str, e: dict) -> str:
+def describe_entry(name: str, e: dict, lang: "dates.Lang | None" = None) -> str:
+    lang = lang or dates.load_lang(dates.DEFAULT_LANG)
+    title = lang.quote(e.get("title") or "")
     if name == "documents":
-        return f"{e['id']} \"{e.get('title')}\""
+        return f"{e['id']} {title}"
     when = e.get("do_by") or e.get("due_date")
-    when_txt = dates.text_en(date.fromisoformat(when)) if is_date(when) else "no date"
-    money = f", {e['currency']} {e['amount']}" if e.get("amount") and e.get("currency") else ""
-    return f"{e['id']} \"{e.get('title')}\" (do by {when_txt}{money})"
+    when_txt = lang.date(date.fromisoformat(when)) if is_date(when) else lang.log("no_date")
+    money = ""
+    if e.get("amount") and e.get("currency"):
+        try:
+            money = ", " + lang.amount(e["amount"], e["currency"])
+        except dates.InputError:
+            money = f", {e['currency']} {e['amount']}"
+    return f"{e['id']} {title} ({lang.log('do_by')} {when_txt}{money})"
+
+
+def register_label(name: str, lang: "dates.Lang") -> str:
+    return lang.log(f"register_{name}")
+
+
+def transit_of(entry: dict) -> int:
+    """Days allowed for delivery: the obligation's own value, else its notice's, else none."""
+    for value in (entry.get("transit_buffer_days"), (entry.get("notice") or {}).get("transit_buffer_days")):
+        if isinstance(value, int) and not isinstance(value, bool) and value >= 0:
+            return value
+    return 0
 
 
 def pack_or_none(args):
@@ -614,20 +661,23 @@ def cmd_init(args) -> dict:
                           "nothing was changed. Use validate or household-doctor.")
     plan = [p.as_posix() for p in REGISTERS.values()] + [
         "registers/README.md", "log/decisions.md", "documents/", "briefs/", "inbox/"]
+    lang = lang_for(args, root)
     if args.dry_run:
-        return {"dry_run": True, "root": str(root), "would_create": plan}
+        return {"dry_run": True, "root": str(root), "would_create": plan, "lang": lang.code}
     if not (args.approved_by or "").strip():
         raise RecordError("a write needs --approved-by NAME")
     root.mkdir(parents=True, exist_ok=True)
     for name in REGISTERS:
         atomic_write_json(root / REGISTERS[name], empty_register(name))
-    readme_src = HERE.parent / "templates" / "registers-README.md"
+    readme_src = HERE.parent / "templates" / lang.code / "registers-README.md"
+    if not readme_src.exists():
+        readme_src = HERE.parent / "templates" / dates.DEFAULT_LANG / "registers-README.md"
     readme = readme_src.read_text(encoding="utf-8") if readme_src.exists() else REGISTERS_README
     (root / "registers" / "README.md").write_text(readme, encoding="utf-8")
     for d in ("documents", "briefs", "inbox"):
         (root / d).mkdir(exist_ok=True)
-    append_log(root, today_from(args), args.approved_by.strip(), ["created the household record"])
-    return {"root": str(root), "created": plan}
+    append_log(root, today_from(args), args.approved_by.strip(), [lang.log("created_record")], lang)
+    return {"root": str(root), "created": plan, "lang": lang.code}
 
 
 REGISTERS_README = """# Registers
@@ -673,11 +723,12 @@ def cmd_add(args) -> dict:
     entry.setdefault("created", today.isoformat())
     entry["created"] = entry.get("created") or today.isoformat()
     entry["updated"] = today.isoformat()
+    lang = lang_for(args, root)
     if name == "obligations" and entry.get("due_date") and not entry.get("do_by"):
         pack = pack_or_none(args)
         if pack:
-            transit = int(((entry.get("notice") or {}).get("transit_buffer_days")) or 0)
-            planned = dates.plan_do_by(pack, dates.parse_date(entry["due_date"]), transit)
+            transit = transit_of(entry)
+            planned = dates.plan_do_by(pack, dates.parse_date(entry["due_date"]), transit, lang)
             entry["do_by"], entry["do_by_note"] = planned["do_by"], planned["do_by_note"]
         else:
             warnings.append("do_by not given and no --country: do_by left empty")
@@ -704,7 +755,9 @@ def cmd_add(args) -> dict:
     if errs:
         return {"ok": False, "errors": errs, "warnings": warnings, "entry": entry}
     result = {"register": REGISTERS[name].as_posix(), "entry": entry, "warnings": warnings,
-              "summary": f"add {describe_entry(name, entry)} to {name}"}
+              "lang": lang.code,
+              "summary": lang.log("add", entry=describe_entry(name, entry, lang),
+                                  register=register_label(name, lang))}
     if args.dry_run:
         result["dry_run"] = True
         result["note"] = "nothing written; show this to the household and wait for a yes"
@@ -717,7 +770,7 @@ def cmd_add(args) -> dict:
     result["backup"] = backup(root, name)
     entries.append(entry)
     atomic_write_json(root / REGISTERS[name], data)
-    append_log(root, today, args.approved_by.strip(), [result["summary"]])
+    append_log(root, today, args.approved_by.strip(), [result["summary"]], lang)
     return result
 
 
@@ -780,11 +833,12 @@ def cmd_update(args) -> dict:
         raise RecordError("nothing to change; give one or more --set field=value")
     entry.update(changes)
     warnings: list[str] = []
+    lang = lang_for(args, root)
     if name == "obligations" and "due_date" in changes and "do_by" not in changes:
         pack = pack_or_none(args)
         if pack and entry.get("due_date"):
-            transit = int(((entry.get("notice") or {}).get("transit_buffer_days")) or 0)
-            planned = dates.plan_do_by(pack, dates.parse_date(entry["due_date"]), transit)
+            transit = transit_of(entry)
+            planned = dates.plan_do_by(pack, dates.parse_date(entry["due_date"]), transit, lang)
             entry["do_by"], entry["do_by_note"] = planned["do_by"], planned["do_by_note"]
             changes["do_by"] = entry["do_by"]
         else:
@@ -794,8 +848,8 @@ def cmd_update(args) -> dict:
     validate_entries(name, [entry], errs, warnings)
     warnings += identifier_warnings(changes)
     diff = {k: {"from": before.get(k), "to": entry.get(k)} for k in changes}
-    summary = f"update {args.id}: " + ", ".join(f"{k} → {json.dumps(entry.get(k), ensure_ascii=False)}"
-                                                 for k in changes)
+    summary = lang.log("update", id=args.id, changes=", ".join(
+        f"{k} → {json.dumps(entry.get(k), ensure_ascii=False)}" for k in changes))
     if errs:
         entry.clear()
         entry.update(before)
@@ -808,7 +862,7 @@ def cmd_update(args) -> dict:
         return result
     result["backup"] = backup(root, name)
     atomic_write_json(root / REGISTERS[name], data)
-    append_log(root, today, args.approved_by.strip(), [summary])
+    append_log(root, today, args.approved_by.strip(), [summary], lang)
     return result
 
 
@@ -836,6 +890,7 @@ def cmd_complete(args) -> dict:
     if not is_date(done_date):
         raise RecordError(f"--done-date must be YYYY-MM-DD, got {done_date!r}")
     lines = []
+    lang = lang_for(args, root)
     changes = {"status": args.status, "done_date": done_date if args.status == "done" else None,
                "updated": today.isoformat()}
     new_entry = None
@@ -864,17 +919,21 @@ def cmd_complete(args) -> dict:
                     new_entry["provenance"] = "calculated from document"
                 pack = pack_or_none(args)
                 if pack:
-                    transit = int(((entry.get("notice") or {}).get("transit_buffer_days")) or 0)
-                    planned = dates.plan_do_by(pack, nxt, transit)
+                    transit = transit_of(entry)
+                    planned = dates.plan_do_by(pack, nxt, transit, lang)
                     new_entry["do_by"], new_entry["do_by_note"] = planned["do_by"], planned["do_by_note"]
                 else:
                     new_entry["do_by"] = nxt.isoformat()
                     warnings.append("no --country: do_by of the next occurrence equals its due_date")
                 if not entry.get("series"):
                     changes["series"] = new_entry["series"]
-    lines.append(f"mark {args.id} {args.status}" + (f" on {done_date}" if args.status == "done" else ""))
+    if args.status == "done":
+        lines.append(lang.log("complete_on", id=args.id, status=lang.status(args.status),
+                              date=lang.date(dates.parse_date(done_date))))
+    else:
+        lines.append(lang.log("complete", id=args.id, status=lang.status(args.status)))
     if new_entry:
-        lines.append(f"add next occurrence {describe_entry('obligations', new_entry)}")
+        lines.append(lang.log("next", entry=describe_entry("obligations", new_entry, lang)))
     result = {"register": REGISTERS["obligations"].as_posix(), "id": args.id, "changes": changes,
               "next_occurrence": new_entry, "warnings": warnings, "summary": "; ".join(lines)}
     if args.dry_run:
@@ -886,7 +945,7 @@ def cmd_complete(args) -> dict:
         entries.append(new_entry)
     result["backup"] = backup(root, "obligations")
     atomic_write_json(root / REGISTERS["obligations"], data)
-    append_log(root, today, args.approved_by.strip(), lines)
+    append_log(root, today, args.approved_by.strip(), lines, lang)
     return result
 
 
@@ -894,6 +953,7 @@ def cmd_due(args) -> dict:
     root = root_of(args.root)
     today = today_from(args)
     pack = pack_or_none(args)
+    lang = lang_for(args, root)
     data = load(root, "obligations")
     items, no_date, beyond = [], [], 0
     counts = {b[0]: 0 for b in dates.BANDS}
@@ -908,12 +968,12 @@ def cmd_due(args) -> dict:
             continue
         computed_note = ""
         if not o.get("do_by") and pack:
-            transit = int(((o.get("notice") or {}).get("transit_buffer_days")) or 0)
-            planned = dates.plan_do_by(pack, dates.parse_date(plan), transit)
+            transit = transit_of(o)
+            planned = dates.plan_do_by(pack, dates.parse_date(plan), transit, lang)
             plan, computed_note = planned["do_by"], "do_by computed now; not stored"
         d = date.fromisoformat(plan)
         days = (d - today).days
-        b = dates.band(days)
+        b = dates.band(days, lang)
         lead = o.get("lead_time_days")
         start_now = bool(lead) and days >= 0 and days <= int(lead)
         if days >= args.horizon and not start_now:
@@ -921,14 +981,18 @@ def cmd_due(args) -> dict:
             continue
         counts[b["band"]] += 1
         due = o.get("due_date")
+        try:
+            amount_text = lang.amount(o["amount"], o.get("currency")) if o.get("amount") else None
+        except dates.InputError:
+            amount_text = None
         row = {
             "id": o.get("id"), "title": o.get("title"), "kind": o.get("kind"),
             "category": o.get("category"), "owner": o.get("owner"),
             "counterparty": o.get("counterparty"), "amount": o.get("amount"),
-            "currency": o.get("currency"),
+            "currency": o.get("currency"), "amount_text": amount_text,
             "due_date": due, "due_text": dates.text_en(date.fromisoformat(due)) if is_date(due) else None,
-            "do_by": plan, "do_by_text": dates.text_en(d),
-            "do_by_local": pack.text_local(d) if pack else None,
+            "due_local": lang.date(date.fromisoformat(due)) if is_date(due) else None,
+            "do_by": plan, "do_by_text": dates.text_en(d), "do_by_local": lang.date(d),
             "days": days, "band": b["band"], "band_label": b["label"],
             "start_now": start_now, "lead_time_days": lead,
             "recurrence": o.get("recurrence"), "series": o.get("series"),
@@ -941,8 +1005,9 @@ def cmd_due(args) -> dict:
         items.append(row)
     items.sort(key=lambda r: (r["do_by"], r["due_date"] or "", r["id"] or ""))
     if not pack:
-        warnings.append("no --country: weekdays are English and do_by is not recomputed")
+        warnings.append("no --country: missing do_by dates are not computed")
     return {"today": today.isoformat(), "today_source": "argument" if args.today else "system clock",
+            "today_local": lang.date(today), "lang": lang.code,
             "horizon_days": args.horizon, "items": items, "no_date": no_date,
             "counts": counts, "beyond_horizon": beyond, "warnings": warnings}
 
@@ -1125,11 +1190,12 @@ def cmd_merge(args) -> dict:
         copy_label = copy.resolve().relative_to(root).as_posix()
     except ValueError:
         copy_label = str(copy)
+    lang = lang_for(args, root)
     result = {"register": name, "copy": copy_label,
               "added_from_copy": added, "replaced_by_newer_copy": replaced,
               "id_collisions": collisions, "unresolved": unresolved,
-              "summary": f"merge {copy.name} into {REGISTERS[name].as_posix()}: {len(added)} added, "
-                         f"{len(replaced)} updated, {len(collisions)} renumbered"}
+              "summary": lang.log("merge", copy=copy.name, register=register_label(name, lang),
+                                  added=len(added), updated=len(replaced), renumbered=len(collisions))}
     if collisions:
         result["note"] = ("renumbered entries may be referenced by the other register; "
                           "check document 'obligations' lists and obligation 'source' fields")
@@ -1150,7 +1216,7 @@ def cmd_merge(args) -> dict:
     parked = hist / f"conflict-{datetime.now().strftime('%Y%m%dT%H%M%S')}-{copy.name}"
     shutil.move(str(copy), parked)
     result["conflict_copy_moved_to"] = parked.relative_to(root).as_posix()
-    append_log(root, today, args.approved_by.strip(), [result["summary"]])
+    append_log(root, today, args.approved_by.strip(), [result["summary"]], lang)
     return result
 
 
@@ -1169,8 +1235,11 @@ def cmd_archive(args) -> dict:
             keep.append(o)
     total = sum(len(v) for v in move.values())
     plan = {y: [o["id"] for o in v] for y, v in sorted(move.items())}
+    lang = lang_for(args, root)
+    detail = "; ".join(f"{y}: {', '.join(ids)}" for y, ids in plan.items())
     result = {"before": before, "move": plan, "count": total,
-              "summary": f"archive {total} closed obligation(s) dated before {before}"}
+              "summary": lang.log("archive", count=total, before=lang.date(dates.parse_date(before)),
+                                  detail=detail)}
     if args.dry_run or not total:
         result["dry_run"] = bool(args.dry_run)
         if not total:
@@ -1187,8 +1256,7 @@ def cmd_archive(args) -> dict:
         atomic_write_json(path, arch)
     data["obligations"] = keep
     atomic_write_json(root / REGISTERS["obligations"], data)
-    append_log(root, today, args.approved_by.strip(),
-               [f"{result['summary']} into archive/: " + "; ".join(f"{y}: {', '.join(ids)}" for y, ids in plan.items())])
+    append_log(root, today, args.approved_by.strip(), [result["summary"]], lang)
     return result
 
 
@@ -1220,8 +1288,10 @@ def cmd_migrate(args) -> dict:
             data["schema_version"] = sv
         report.append({"register": name, "steps": steps, "data": data})
     changed = [r for r in report if r["steps"]]
+    lang = lang_for(args, root)
     result = {"changes": [{"register": r["register"], "steps": r["steps"]} for r in report],
-              "summary": "; ".join(f"migrate {r['register']}: {', '.join(r['steps'])}" for r in changed)
+              "summary": "; ".join(lang.log("migrate", register=register_label(r["register"], lang),
+                                            steps=", ".join(r["steps"])) for r in changed)
               or "already at the current schema"}
     if args.dry_run or not changed:
         result["dry_run"] = bool(args.dry_run)
@@ -1229,7 +1299,7 @@ def cmd_migrate(args) -> dict:
     for r in changed:
         backup(root, r["register"])
         atomic_write_json(root / REGISTERS[r["register"]], r["data"])
-    append_log(root, today, args.approved_by.strip(), [result["summary"]])
+    append_log(root, today, args.approved_by.strip(), [result["summary"]], lang)
     return result
 
 
@@ -1243,6 +1313,7 @@ def build_parser() -> argparse.ArgumentParser:
         if root:
             sp.add_argument("root", help="the household folder")
         sp.add_argument("--today", help="today's date from the session, YYYY-MM-DD")
+        sp.add_argument("--lang", help="en or pl; default: the profile's Language, else English")
         if write:
             sp.add_argument("--approved-by", help="who approved this change, as they said it")
             sp.add_argument("--dry-run", action="store_true", help="show what would be written")

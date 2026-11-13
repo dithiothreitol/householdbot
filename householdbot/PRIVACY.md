@@ -1,5 +1,7 @@
 # Privacy
 
+**English** · [Polski](PRIVACY.pl.md)
+
 HouseholdBot is a set of instructions, two local scripts and a connector list.
 It has no server, no account and no analytics.
 

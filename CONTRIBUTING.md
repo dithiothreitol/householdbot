@@ -41,18 +41,41 @@ A pack is two files in `core/locale/`:
 - `<CC>.md` for the model, with these sections: *Public holidays*, *How
   deadlines are counted*, *Deemed delivery*, *Common response windows*,
   *Recurring household obligations*, *Documents with an expiry date*, *Where
-  things are done*, *Writing for a <country> household*, *Scam patterns*,
+  things are done*, *Writing for a household in <country>*, *Scam patterns*,
   *Sources*, and a `Reviewed:` line.
-- `<CC>.json` for `dates.py`: `weekend`, `holidays` (fixed and
-  Easter-relative), `counting_rules` (each with `end_roll` and `law`),
-  `deemed_delivery`, `response_windows`, `recurring`, `weekday_names`,
-  `date_format_local`, `reviewed`.
+- `<CC>.json` for `dates.py`: `official_language`, `weekend`, `holidays`
+  (fixed and Easter-relative, each with `name` in the country's language and
+  `name_en`), `counting_rules` (each with `end_roll` and `law`),
+  `deemed_delivery`, `response_windows`, `recurring`, `reviewed`.
 
 Every legal rule names its act and article and links an official source.
 Add unit tests for the holidays of the current and next year and for one
 deadline that ends on a holiday. Use the generic counting rule ids
 (`administrative`, `tax`, `civil`, `court`, `calendar`) so skills work across
-countries.
+countries. Date and amount formats belong to languages, not to packs.
+
+## Add a language
+
+English is the default; Polish is the second language. A language is:
+
+- `core/i18n/<lang>.json` with the same keys as `en.json`: weekday and month
+  names, `date_format`, separators and `amount_format`, currency symbols,
+  plural forms of units (one list per unit; add the plural rule to
+  `Lang.plural_index` in `dates.py` when it is not "one or many"), notes,
+  statuses, band labels, quotes and the decisions-log lines.
+  `scripts/validate.py` checks that the keys match.
+- `core/templates/<lang>/household-profile.md` and `registers-README.md`, with
+  headings that map one to one onto the English template and the markers
+  `[PLACEHOLDER]` and `[DEFAULT]` unchanged.
+- The setup texts in `householdbot/skills/household-onboard/reference/messages.md`.
+- The language's words for "language" in `record.py` (`LANG_LINE`,
+  `LANG_WORDS`), so the profile line is recognised.
+- Trigger phrases in that language in the descriptions of the skills.
+- Eval cases that run the core paths in that language.
+
+User-facing documents have a translation next to the English file
+(`README.pl.md`, `QUICKSTART.pl.md`, `householdbot/README.pl.md`,
+`householdbot/PRIVACY.pl.md`), linked from the first line of each.
 
 ## Checks
 

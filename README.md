@@ -1,5 +1,7 @@
 # HouseholdBot
 
+**English** · [Polski](README.pl.md)
+
 HouseholdBot is an open-source Claude plugin that runs a household's
 paperwork from a conversation. It reads letters, bills, contracts and
 policies, files them into a folder the household owns, tracks every deadline,
@@ -17,6 +19,18 @@ approval gates, and a read-only watcher agent. It adds a proof layer: small
 scripts count dates and check the registers, so the model judges and the
 scripts prove.
 
+## Languages
+
+HouseholdBot speaks **English** (the default) and **Polish**. The setup asks
+first; afterwards "in Polish" or "po angielsku" switches at any time. The
+language decides the answers, the weekly brief, the date and amount formats
+(`Fri 20 Nov 2026`, `PLN 1,240.00` or `pt. 20.11.2026`, `1 240,00 zł`), the
+profile template and the decisions log. Documents keep their own language:
+an English-speaking family in Poland gets Polish letters explained in English,
+with the original quoted, and drafts to Polish offices in Polish with an
+English translation. New languages are added as files in `core/i18n/` and
+`core/templates/<lang>/`.
+
 ## What is in this repository
 
 ```
@@ -29,8 +43,9 @@ householdbot/                     the plugin
 core/                             sources of everything under skills/*/shared/
   rules/                          the rules every skill follows
   locale/PL.md, PL.json           the Polish country pack
+  i18n/en.json, pl.json           languages: date and amount formats, notes, log lines
   scripts/dates.py, record.py     the proof layer (Python standard library)
-  templates/                      household profile and register guide
+  templates/en/, templates/pl/    household profile and register guide per language
 scripts/sync.py                   copies core/ into the skills
 scripts/validate.py               repository checks
 tests/                            unit tests for the scripts
@@ -66,13 +81,14 @@ Claude Code.
 
 ## Status
 
-Version 0.1: the core. Setup, filing, search, deadlines, the weekly brief,
-profile changes and record repair, with the Polish country pack. Next stages
-add money and correspondence (bills, contracts, subscriptions, bank
-statements, replies to offices, complaints, cancellations), then home, family
-and daily life (vehicles, health, school, insurance overview, identity
-documents, life events, meals, shopping and chores), then more countries and
-a hosted watcher. See [CHANGELOG.md](CHANGELOG.md).
+Version 0.1.1: the core, in English and Polish. Setup, filing, search,
+deadlines, the weekly brief, profile changes and record repair, with the
+Polish country pack. Next stages add money and correspondence (bills,
+contracts, subscriptions, bank statements, replies to offices, complaints,
+cancellations), then home, family and daily life (vehicles, health, school,
+insurance overview, identity documents, life events, meals, shopping and
+chores), then more countries and a hosted watcher. See
+[CHANGELOG.md](CHANGELOG.md).
 
 ## License
 

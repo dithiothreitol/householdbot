@@ -1,5 +1,7 @@
 # HouseholdBot
 
+**English** · [Polski](README.pl.md)
+
 HouseholdBot is a Claude plugin that runs a household's paperwork from a
 conversation. It reads letters, bills, contracts and policies, files them into
 a folder the household owns, tracks every deadline, renewal and cancel-by date
@@ -58,6 +60,16 @@ log/decisions.md          every approved change: when, who, what
   file) only after a yes, under the provider's terms.
 - **Fetches:** no web requests.
 
+## Languages
+
+English is the default and Polish is the second language. The setup asks
+first, and "in Polish" or "po angielsku" switches later. Answers, briefs,
+dates (`Fri 20 Nov 2026` or `pt. 20.11.2026`), amounts (`PLN 1,240.00` or
+`1 240,00 zł`), the profile template and the decisions log follow the chosen
+language. Documents keep theirs: a Polish letter is explained in English for
+an English-speaking household, with the original quoted, and a reply to a
+Polish office is drafted in Polish with an English translation.
+
 ## Countries
 
 Country packs hold public holidays, deadline counting rules, response windows
@@ -67,8 +79,8 @@ what documents state and what the household says.
 
 ## Privacy
 
-[Privacy](PRIVACY.md): the household's data stays in the household's folder
-and the services it chooses to connect.
+[Privacy](PRIVACY.md) ([po polsku](PRIVACY.pl.md)): the household's data
+stays in the household's folder and the services it chooses to connect.
 
 ## License
 

@@ -16,6 +16,11 @@ same whenever the suite runs:
   ob-*-0009  last month's electricity    done
 
 Usage: python3 make_household.py <target folder> [--today YYYY-MM-DD] [--empty]
+       [--conflict] [--broken] [--lang pl|en]
+
+--lang pl (default) writes a Polish household with a Polish profile; --lang en
+writes the same household speaking English, as an English-speaking family in
+Poland would set it up.
 """
 from __future__ import annotations
 
@@ -52,7 +57,7 @@ def next_property_tax(today: date) -> date:
     raise AssertionError
 
 
-PROFILE = """# Household profile
+PROFILE_EN = """# Household profile
 
 *Synthetic test household. Every name, place and amount is invented.*
 
@@ -60,9 +65,9 @@ PROFILE = """# Household profile
 
 ## Household
 
-- **Label:** Nowakowie, Brzozowo (test)
+- **Label:** The Nowaks, Brzozowo (test)
 - **Country:** PL
-- **Language:** pl
+- **Language:** en
 - **Currency:** PLN
 - **Time zone:** Europe/Warsaw
 - **Set up on:** {setup}
@@ -140,7 +145,95 @@ PROFILE = """# Household profile
 """
 
 
-def build(today: date) -> dict:
+PROFILE_PL = """# Profil gospodarstwa
+
+*Syntetyczne gospodarstwo testowe. Wszystkie imiona, miejsca i kwoty są zmyślone.*
+
+---
+
+## Gospodarstwo
+
+- **Nazwa:** Nowakowie, Brzozowo (test)
+- **Kraj:** PL
+- **Język:** pl
+- **Waluta:** PLN
+- **Strefa czasowa:** Europe/Warsaw
+- **Data konfiguracji:** {setup}
+- **Wersja profilu:** 1
+
+**Co zabiera najwięcej czasu lub nerwów:** rachunki przychodzą pocztą i mailem, a odnowienia umów umykają.
+
+---
+
+## Domownicy
+
+| Imię | Rola | Zajmuje się | Uwagi |
+|---|---|---|---|
+| Anna | dorosły | podatki, ubezpieczenia, szkoła | |
+| Piotr | dorosły | samochód, internet, naprawy w domu | |
+| Zosia | dziecko | | rok urodzenia 2016 |
+
+---
+
+## Domy
+
+| Nazwa | Własność czy najem | Miejscowość | Ogrzewanie | Uwagi |
+|---|---|---|---|---|
+| Dom, Brzozowo | własność | Brzozowo | kocioł gazowy | |
+
+## Pojazdy
+
+| Pojazd | Właściciel | Koniec okresu ubezpieczenia | Termin badania technicznego |
+|---|---|---|---|
+| Skoda Octavia | Piotr | {oc_end} | nieznany |
+
+---
+
+## Dostawcy
+
+| Kategoria | Dostawca | Sposób płatności | Uwagi |
+|---|---|---|---|
+| Prąd | Example Energia S.A. | przelew | |
+| Woda / odpady | Example Wodociągi Sp. z o.o. | przelew | |
+| Internet / telewizja | Example Net Sp. z o.o. | polecenie zapłaty | |
+| Ubezpieczenie samochodu | Example Insurance S.A. | przelew | |
+
+---
+
+## Zasady decyzji
+
+- **Próg zgody dwojga dorosłych:** 2000 zł
+- **Nigdy bez pytania:** płacenie, wysyłanie, podpisywanie, wypowiadanie, składanie pism
+- **Kto widzi przegląd tygodnia:** tylko dorośli
+- **Jak długo trzymamy dokumenty:** [DEFAULT — 6 lat, chyba że rodzaj dokumentu wymaga dłużej; dokumenty tożsamości, nieruchomości, sądowe i decyzje podatkowe bezterminowo]
+
+---
+
+## Podłączone narzędzia
+
+| Kategoria | Stan | Czyje konto | Bez tego |
+|---|---|---|---|
+| Poczta | ✗ | | Dokumenty przychodzą jako pliki, zdjęcia lub wklejony tekst |
+| Kalendarz | ✗ | | Terminy są w przeglądzie; bez propozycji wpisów w kalendarzu |
+| Magazyn dokumentów | ✗ | | Folder gospodarstwa jest lokalny lub na dysku synchronizowanym |
+
+---
+
+## Rytm
+
+- **Przegląd tygodnia:** [DEFAULT — na żądanie; wystarczy napisać „przegląd tygodnia”]
+- **Harmonogram:** [DEFAULT — brak; nic nie uruchamia się bez prośby domownika]
+
+---
+
+## Pakiet krajowy
+
+- **Wczytany:** PL
+- **Przyjęte przypomnienia ustawowe:** {accepted}
+"""
+
+
+def build(today: date, lang: str = "pl") -> dict:
     y = today.year
     bill_date = today - timedelta(days=12)
     bill_due = back_to_weekday(today + timedelta(days=5))
@@ -168,7 +261,7 @@ def build(today: date) -> dict:
                 "counterparty": None, "due_date": None, "do_by": None, "do_by_note": "",
                 "lead_time_days": None, "recurrence": "none", "recurrence_day": None,
                 "amount": None, "currency": None, "auto_renews": None, "notice": None,
-                "source": None, "law": None, "status": "open", "done_date": None, "notes": "",
+                "transit_buffer_days": None, "source": None, "law": None, "status": "open", "done_date": None, "notes": "",
                 "created": today.isoformat(), "updated": today.isoformat()}
         base.update(kw)
         return base
@@ -228,7 +321,8 @@ def build(today: date) -> dict:
         ob(1, series="electricity-bill", title="Electricity bill: pay Example Energia",
            kind="payment", category="utilities", owner="Anna", counterparty="Example Energia S.A.",
            due_date=bill_due.isoformat(), do_by=back_to_weekday(bill_due - timedelta(days=1)).isoformat(),
-           do_by_note="1 day allowed for a bank transfer", recurrence="monthly", amount="286.40",
+           do_by_note="1 day allowed for a bank transfer", transit_buffer_days=1, recurrence="monthly",
+           amount="286.40",
            currency="PLN", source={"document": f"doc-{y}-0001", "page": 1,
                                    "quote": f"Termin płatności: {pl(bill_due)}"},
            provenance="stated in document"),
@@ -286,15 +380,19 @@ def build(today: date) -> dict:
            recurrence="monthly", amount="301.15", currency="PLN", status="done",
            done_date=(last_bill_due - timedelta(days=2)).isoformat(), provenance="stated in document"),
     ]
+    if lang == "en":
+        profile_tpl, accepted, unknown, none_yet = PROFILE_EN, "property tax instalments", "unknown", "none yet"
+    else:
+        profile_tpl, accepted, unknown, none_yet = PROFILE_PL, "raty podatku od nieruchomości", "nieznany", "na razie brak"
     originals = {
         f_bill: BILL.format(date=pl(bill_date), due=pl(bill_due), month=bill_date.strftime("%m/%Y")),
         f_oc: OC.format(start=pl(oc_start), end=pl(oc_end)),
         f_net: NET.format(end=pl(net_end)),
     }
     return {"documents": documents, "obligations": obligations, "originals": originals,
-            "profile": PROFILE.format(setup=today.isoformat(), oc_end=oc_end.isoformat(),
-                                      accepted="property tax instalments"),
-            "profile_empty": PROFILE.format(setup=today.isoformat(), oc_end="unknown", accepted="none yet")}
+            "profile": profile_tpl.format(setup=today.isoformat(), oc_end=oc_end.isoformat(),
+                                          accepted=accepted),
+            "profile_empty": profile_tpl.format(setup=today.isoformat(), oc_end=unknown, accepted=none_yet)}
 
 
 BILL = """# Example Energia S.A. — Faktura VAT (synthetic test document)
@@ -342,9 +440,9 @@ złoży oświadczenie najpóźniej na 30 dni przed upływem tego okresu. Opłata
 """
 
 
-def write(target: Path, today: date, empty: bool = False) -> None:
+def write(target: Path, today: date, empty: bool = False, lang: str = "pl") -> None:
     target.mkdir(parents=True, exist_ok=True)
-    data = build(today)
+    data = build(today, lang)
     for sub in ("registers", "documents", "briefs", "inbox", "log"):
         (target / sub).mkdir(parents=True, exist_ok=True)
     docs = [] if empty else data["documents"]
@@ -354,8 +452,10 @@ def write(target: Path, today: date, empty: bool = False) -> None:
             json.dump({"schema_version": 1, name: items}, fh, ensure_ascii=False, indent=2)
             fh.write("\n")
     (target / "household-profile.md").write_text(data["profile_empty" if empty else "profile"], encoding="utf-8")
-    (target / "log" / "decisions.md").write_text(
-        "# Decisions log\n\nAppend-only. One line per approved change to the record.\n\n", encoding="utf-8")
+    header = ("# Dziennik decyzji\n\nTylko dopisywanie. Jedna linia na każdą zatwierdzoną zmianę w rekordzie.\n\n"
+              if lang == "pl" else
+              "# Decisions log\n\nAppend-only. One line per approved change to the record.\n\n")
+    (target / "log" / "decisions.md").write_text(header, encoding="utf-8")
     if not empty:
         for rel, text in data["originals"].items():
             p = target / rel
@@ -404,9 +504,11 @@ def main(argv=None) -> int:
     ap.add_argument("--empty", action="store_true", help="profile and empty registers only")
     ap.add_argument("--conflict", action="store_true", help="also write a sync-conflict copy")
     ap.add_argument("--broken", action="store_true", help="also break the registers the way a hand edit can")
+    ap.add_argument("--lang", choices=["pl", "en"], default="pl",
+                    help="pl: Polish household (Polish profile); en: English-speaking household in Poland")
     a = ap.parse_args(argv)
     today = date.fromisoformat(a.today) if a.today else date.today()
-    write(Path(a.target), today, a.empty)
+    write(Path(a.target), today, a.empty, a.lang)
     if a.conflict:
         add_conflict_copy(Path(a.target), today)
     if a.broken:

@@ -35,8 +35,9 @@ member to carry out.
    amount above which both adults agree. Above it, say so and record who
    confirmed. The plugin records what it is told; it cannot verify who is
    typing.
-7. **Minors do not approve.** A member marked `child` in the profile can ask
-   questions and see their own items. Approvals come from an adult.
+7. **Minors do not approve.** A member marked `child` (`dziecko` in a Polish
+   profile) can ask questions and see their own items. Approvals come from an
+   adult.
 8. **Scheduled runs ask nothing and change nothing.** A run that arrives
    without a person in the loop reads and reports. Anything that needs a yes
    is listed as waiting.

@@ -10,17 +10,20 @@ instead.
 electricity bill, or just tell me the provider" is the default ask for
 anything that is written down somewhere.
 
-The answers fill the sections of `shared/templates/household-profile.md`,
-under the same headings.
+The answers fill the sections of the profile template in the chosen language
+(`shared/templates/en/household-profile.md` or
+`shared/templates/pl/household-profile.md`), under the same headings.
 
 ---
 
 ## Part 0 — The essentials (quick and full)
 
-1. **Country and language.** "Which country do you live in, and which language
-   should I use with you?" Then propose the currency and time zone that follow
-   from the country and ask for a yes. Never infer the country from the
-   language.
+1. **Language and country.** The language was settled by the first line of
+   the first reply (English unless the member chose Polish); confirm it
+   rather than asking again. Then: "Which country do you live in?" Propose the
+   currency and time zone that follow from the country and ask for a yes.
+   Never infer the country from the language, or the language from the
+   country.
 2. **Who lives here.** "Who is in the household? First names are enough; tell
    me who is an adult and who is a child." Store a birth year for a child only
    if the household wants reminders that depend on age.

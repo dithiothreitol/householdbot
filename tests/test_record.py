@@ -149,7 +149,9 @@ class Writes(RecordTestCase):
                         "--approved-by", "Anna", "--today", TODAY, "--country", "PL")
         self.assertEqual(code, 0, out)
         self.assertEqual(len(self.obligations()), 10)
-        self.assertIn("approved by Anna", self.log_lines()[0])
+        self.assertIn("zgoda: Anna", self.log_lines()[0])
+        self.assertIn("do rejestru zobowiązań", self.log_lines()[0])
+        self.assertIn("250,00 zł", self.log_lines()[0])
         self.assertTrue((self.home / out["backup"]).exists())
 
     def test_merge_conflict_copy(self):
@@ -238,6 +240,7 @@ class Writes(RecordTestCase):
         self.assertEqual(nxt["id"], "ob-2026-0010")
         self.assertEqual(nxt["series"], "electricity-bill")
         self.assertEqual(nxt["due_date"], "2026-12-18")
+        self.assertEqual(nxt["do_by"], "2026-12-17")  # the 1-day transfer margin carries over
         self.assertEqual(nxt["status"], "open")
         obs = {o["id"]: o for o in self.obligations()}
         self.assertEqual(obs["ob-2026-0001"]["status"], "done")
@@ -279,6 +282,60 @@ class Writes(RecordTestCase):
         code, out = run("migrate", self.home, "--approved-by", "Anna", "--today", TODAY)
         self.assertEqual(code, 0)
         self.assertEqual(json.loads(path.read_text(encoding="utf-8"))["schema_version"], 1)
+
+
+class Languages(RecordTestCase):
+    def test_language_comes_from_the_profile(self):
+        self.assertEqual(record.household_language(self.home), "pl")
+        en_home = self.tmp / "en"
+        make_household.write(en_home, date.fromisoformat(TODAY), lang="en")
+        self.assertEqual(record.household_language(en_home), "en")
+        self.assertEqual(record.household_language(self.tmp / "nowhere"), "en")
+
+    def test_profile_values(self):
+        cases = {"- **Language:** [DEFAULT — en]": "en", "- **Język:** pl": "pl",
+                 "- **Language:** [PLACEHOLDER — language]": "en", "- **Language:** Polish": "pl",
+                 "- **Language:** English": "en", "- **Language:** de": "en"}
+        for line, code in cases.items():
+            (self.home / "household-profile.md").write_text("# Profile\n\n" + line + "\n", encoding="utf-8")
+            self.assertEqual(record.household_language(self.home), code, line)
+
+    def test_due_in_both_languages(self):
+        code, out = run("due", self.home, "--today", TODAY, "--country", "PL")
+        bill = [i for i in out["items"] if i["id"] == "ob-2026-0001"][0]
+        self.assertEqual(out["lang"], "pl")
+        self.assertEqual(bill["amount_text"], "286,40 zł")
+        self.assertEqual(bill["do_by_local"], "wt. 17.11.2026")
+        self.assertEqual(bill["band_label"], "🔴 teraz")
+        code, out = run("due", self.home, "--today", TODAY, "--country", "PL", "--lang", "en")
+        bill = [i for i in out["items"] if i["id"] == "ob-2026-0001"][0]
+        self.assertEqual(bill["amount_text"], "PLN 286.40")
+        self.assertEqual(bill["do_by_local"], "Tue 17 Nov 2026")
+
+    def test_english_household_logs_in_english(self):
+        en_home = self.tmp / "en"
+        make_household.write(en_home, date.fromisoformat(TODAY), lang="en")
+        code, out = run("complete", en_home, "--id", "ob-2026-0001", "--approved-by", "Anna",
+                        "--today", TODAY, "--country", "PL")
+        self.assertEqual(code, 0, out)
+        log = (en_home / "log" / "decisions.md").read_text(encoding="utf-8")
+        self.assertIn("approved by Anna · marked ob-2026-0001 as done on Fri 13 Nov 2026", log)
+        self.assertIn("added the next occurrence ob-2026-0010", log)
+
+    def test_init_in_polish(self):
+        fresh = self.tmp / "fresh-pl"
+        code, out = run("init", fresh, "--lang", "pl", "--approved-by", "Anna", "--today", TODAY)
+        self.assertEqual(code, 0, out)
+        self.assertTrue((fresh / "registers" / "README.md").read_text(encoding="utf-8").startswith("# Rejestry"))
+        log = (fresh / "log" / "decisions.md").read_text(encoding="utf-8")
+        self.assertTrue(log.startswith("# Dziennik decyzji"))
+        self.assertIn("zgoda: Anna · utworzono rekord gospodarstwa", log)
+
+    def test_init_defaults_to_english(self):
+        fresh = self.tmp / "fresh-en"
+        code, out = run("init", fresh, "--approved-by", "Anna", "--today", TODAY)
+        self.assertEqual(out["lang"], "en")
+        self.assertTrue((fresh / "registers" / "README.md").read_text(encoding="utf-8").startswith("# Registers"))
 
 
 class Search(RecordTestCase):

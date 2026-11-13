@@ -6,7 +6,7 @@ description: >
   from the household record. Use when someone asks "what can you do", "help me
   with our paperwork", "I don't know where to start", "pomóż mi ogarnąć papiery",
   or makes an open-ended household request that does not clearly match a single
-  skill.
+  skill. Speaks English by default and Polish on request.
 ---
 
 # Household router
@@ -32,6 +32,12 @@ worries it. If it does not exist, suggest `/householdbot:household-onboard`
 when the person seems new; do not force it when they arrive with a specific
 task.
 
+**Language.** Answer in the language the member asks for in this message;
+else the profile's `Language`; else, with no profile, the language of the
+message when it is English or Polish, and English otherwise. Without a
+profile, say once that the other language is available ("Wolisz po polsku?
+Napisz „po polsku”." or "Prefer English? Say \"in English\".").
+
 ## Step 2 — Match the request
 
 Pick the **single best match**. If two are close, pick the one with the
@@ -49,7 +55,8 @@ nearest deadline.
 | "I got this on Tuesday, how long do I have?" | `deadline-tracker` (compute) |
 | "Weekly brief" · "what's this week" · "catch me up" | `weekly-brief` |
 | "Which reminders apply to us" · "the usual deadlines for our country" | `deadline-tracker` (`--seed`) |
-| "Change our …" · "add a member" · "we sold the car" · "use English" | `household-customize` |
+| "Change our …" · "add a member" · "we sold the car" | `household-customize` |
+| "Talk to us in Polish" · "use English from now on" · "przejdź na polski" | `household-customize` (language) |
 | "Check my record" · "something is wrong with the files" · a sync conflict | `household-doctor` |
 | "Check my connections" | `household-onboard` (`--check-integrations`) |
 
@@ -57,7 +64,10 @@ nearest deadline.
 
 A one-line question about something already in the record needs no skill. Read
 `registers/documents.json` or `registers/obligations.json` and answer with the
-entry's title, date with weekday, file path, and provenance tag. For anything
+entry's title, date with weekday, file path, and provenance tag. A weekday is
+never recalled: take it from a script's output, or count it from today's date
+and today's weekday, writing the count down (`Fri 13 Nov + 5 days = Wed 18
+Nov`), and use the same weekday everywhere in the answer. For anything
 more (several matches, a fact that was not extracted, a search of the
 originals) route to `find-document`.
 

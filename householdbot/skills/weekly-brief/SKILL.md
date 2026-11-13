@@ -32,6 +32,10 @@ found". Without Python, read `registers/obligations.json`
 directly, apply the bands on `do_by`, check every weekday step by step, and
 tag computed dates `model calculation — verify`.
 
+Dates and amounts come out in the household's language: `record.py` reads it
+from the profile, and `dates.py` takes `--lang pl` for Polish (English is the
+default).
+
 ## Step 0 — Find the record
 
 `record.py locate`, or look for `household-profile.md` in the working folder
@@ -72,7 +76,7 @@ papers not yet filed: count them.
 In the household's language:
 
 1. **Overdue**: first, if any.
-2. **This week and next**: each item with weekday and date (local format), who,
+2. **This week and next**: each item with weekday and date (household language), who,
    amount with currency, and provenance tag when it is not
    `stated in document`.
 3. **Start now**: items inside their lead time.

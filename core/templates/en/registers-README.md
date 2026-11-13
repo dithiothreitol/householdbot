@@ -43,6 +43,7 @@ One entry per deadline, renewal, payment, expiry or dated task.
 | `due_date` | the deadline as the source or the rule gives it |
 | `do_by` | the date the household plans to; reminders use this one |
 | `do_by_note` | why `do_by` differs from `due_date` |
+| `transit_buffer_days` | days allowed for the payment or letter to arrive (1 for a bank transfer, 5 for domestic post); the next occurrence keeps it |
 | `lead_time_days` | start this many days before `do_by` |
 | `recurrence`, `recurrence_day` | `none`, `monthly`, `yearly`, `every 2 months`, or free text |
 | `amount`, `currency` | `"286.40"` and `PLN` |

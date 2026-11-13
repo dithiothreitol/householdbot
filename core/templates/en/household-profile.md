@@ -14,6 +14,9 @@ Rules for every skill and agent:
    name the default when it shapes an answer.
 4. A line starting with `<!-- SETUP PAUSED AT:` means the interview was
    interrupted. Offer to resume from that section.
+5. `Language` is `en` (English, the default) or `pl` (Polish). A Polish
+   household gets the Polish template (`../pl/household-profile.md`); the
+   headings map one to one, so a skill reads either.
 -->
 
 # Household profile
@@ -28,7 +31,7 @@ everywhere.*
 
 - **Label:** [PLACEHOLDER — a short name for this household, e.g. "Kowalscy, Radzymin"]
 - **Country:** [PLACEHOLDER — ISO 3166 two-letter code]
-- **Language:** [PLACEHOLDER — language the household reads]
+- **Language:** [DEFAULT — en]
 - **Currency:** [PLACEHOLDER — ISO 4217 code]
 - **Time zone:** [PLACEHOLDER — IANA name]
 - **Set up on:** [PLACEHOLDER — YYYY-MM-DD]

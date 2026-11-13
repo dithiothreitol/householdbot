@@ -16,7 +16,10 @@ than read: a deadline from a delivery date, a cancel-by date, the safe
 weekday. Pass today's date from the session with `--today`.
 
 When Python is not available, compute by hand following the same rules, show
-every step, and tag the result `model calculation — verify`.
+every step, and tag the result `model calculation — verify`. A weekday is
+never recalled from memory: count it from today's date and weekday and write
+the count down (`Fri 13 Nov + 5 days = Wed 18 Nov`). One date gets one weekday
+everywhere in the answer.
 
 ## Today
 
@@ -26,9 +29,9 @@ compute urgency from an assumed date.
 ## How a date is written
 
 - In registers: ISO `YYYY-MM-DD`.
-- In prose: the weekday with the date, in the household's language and the
-  country pack's local format (`pt. 20.11.2026` for Poland, `Fri 2026-11-20`
-  in English). A date printed without its weekday hides the weekend problem
+- In prose: the weekday with the date, in the household language's format
+  (`Fri 20 Nov 2026` in English, `pt. 20.11.2026` in Polish; the scripts
+  produce both). A date printed without its weekday hides the weekend problem
   this file exists to catch.
 - A date that cannot be read is reported as unreadable, with the document and
   page. It is never guessed and never left blank as if there were none.

@@ -7,6 +7,12 @@
 - `householdbot/skills/<skill>/shared/` is **generated** by `scripts/sync.py`
   from `core/`. Never edit it; edit `core/` and run the sync.
 - `core/vendor.json` says which skill gets which bundle.
+- Languages: English is the default, Polish the second. Formats, notes and
+  log lines live in `core/i18n/<lang>.json`; templates in
+  `core/templates/<lang>/`; setup texts in
+  `householdbot/skills/household-onboard/reference/messages.md`. A change to
+  a user-facing document (`README`, `QUICKSTART`, the plugin `README` and
+  `PRIVACY`) goes into both the English file and its `.pl.md` translation.
 - `householdbot/evals/<skill>/<case>/case.yaml` are behaviour tests; the
   synthetic household comes from `householdbot/evals/fixtures/make_household.py`.
 - `docs/development-plan.md` is the staged plan (in Polish). Read the current

@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.1.1
+
+English and Polish (stage 1.1).
+
+- English is the default language and Polish the second: the setup asks
+  first, "in Polish" or "po angielsku" switches later, and the choice is
+  stored in the profile.
+- Languages live in `core/i18n/` (`en.json`, `pl.json`): weekday and month
+  names, date and amount formats, plural forms, notes, band labels and the
+  decisions-log lines. `dates.py --lang` and `record.py` (from the profile)
+  write dates, amounts, notes and log lines in the household's language.
+- Profile and register templates in English and Polish
+  (`templates/en/`, `templates/pl/`); setup texts in both languages.
+- Documents keep their language: quotes in the original with a translation,
+  drafts to offices in the office's language with a translation for the
+  member.
+- Polish versions of the README, QUICKSTART, plugin README and privacy note.
+- Polish country pack: court letters count as delivered on the last day of
+  the second 7-day collection period (usually 15 days after the first
+  notice); a first category B driving licence issued from 4 Sep 2026 is valid
+  only for the probation period. Both checked against case law and acts.
+- Seven new eval cases for languages (31 in total).
+
 ## 0.1.0
 
 The core of HouseholdBot (stage 1 of 4).

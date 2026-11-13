@@ -1,12 +1,13 @@
 ---
 name: household-onboard
 description: >
-  Sets up HouseholdBot for a household: chooses where the household folder
-  lives, learns who lives there and what they own, files one real document to
-  show how it works, offers the country's usual reminders, and agrees a weekly
-  rhythm. Use on first use, when no household record is found or the profile
-  still has placeholders, or when the user says "set me up", "get started",
-  "set up our household", "skonfiguruj", "zacznijmy", or "what can you do".
+  Sets up HouseholdBot for a household: chooses the language (English by
+  default, Polish available), where the household folder lives, who lives
+  there and what they own, files one real document to show how it works,
+  offers the country's usual reminders, and agrees a weekly rhythm. Use on
+  first use, when no household record is found or the profile still has
+  placeholders, or when the user says "set me up", "get started", "set up our
+  household", "skonfiguruj", "zacznijmy", or "what can you do".
 argument-hint: "[--full for the complete interview] [--redo to re-run] [--check-integrations to re-probe connectors only]"
 ---
 
@@ -20,7 +21,7 @@ one real paper already filed in it.
 ```
 User: "set us up"
 → Check for an existing record
-→ Quick or full?
+→ Language (English by default, Polish available), then quick or full?
 → Choose the household folder
 → Interview, one question at a time
 → Show the profile, wait for yes, create the record
@@ -45,6 +46,10 @@ found". Every command prints JSON with `ok`, `errors` and
 `warnings`; read them before reporting. Without Python, create the same files
 by hand (Step 4) and say the record was created without the checking script.
 
+Dates, amounts and log lines come out in the household's language:
+`record.py` reads it from the profile (`init` takes `--lang`, because the
+profile does not exist yet), and `dates.py` takes `--lang pl` for Polish.
+
 ## Step 0 — Check the current state
 
 Run `record.py locate` (or look for `household-profile.md` in the working
@@ -59,9 +64,18 @@ folder and the pointer `~/.claude/plugins/config/householdbot/location.md`).
   single changes to `household-customize`. Do not re-interview unless `--redo`
   was passed, and show current against proposed before overwriting anything.
 
-## Step 1 — Quick or full
+## Step 1 — Language, then quick or full
 
-Show this, in the user's language, and wait for the pick:
+**Language first.** HouseholdBot speaks English (the default) and Polish.
+Pick the language for this first reply: the one the member asked for; else
+the one the opening message is written in, when it is English or Polish; else
+English. Open the reply with the one-line choice from
+[reference/messages.md](reference/messages.md), so the member can switch
+before anything else. The chosen language becomes `Language` in the profile
+(`en` or `pl`) and decides which template the profile uses.
+
+Then show the introduction from [reference/messages.md](reference/messages.md)
+in that language and wait for the pick. In English:
 
 > **HouseholdBot keeps your household's papers in order:** it files letters,
 > bills, contracts and policies, tracks deadlines and cancel-by dates, and
@@ -110,13 +124,14 @@ at the top and tell them how to resume.
 
 ## Step 4 — Show the profile, then create the record
 
-Show the complete profile draft (the template is
-`shared/templates/household-profile.md`; keep its headings and markers). Ask
-what is wrong. After an explicit yes, with the approver's name:
+Show the complete profile draft from the template in the chosen language
+(`shared/templates/en/household-profile.md` or
+`shared/templates/pl/household-profile.md`; keep its headings and markers).
+Ask what is wrong. After an explicit yes, with the approver's name:
 
-1. `record.py init "<folder>" --approved-by "<name>" --today <today>`
-   creates `registers/` (two empty JSON registers and `README.md`),
-   `documents/`, `briefs/`, `inbox/` and `log/decisions.md`.
+1. `record.py init "<folder>" --lang <en|pl> --approved-by "<name>" --today <today>`
+   creates `registers/` (two empty JSON registers and `README.md` in the
+   chosen language), `documents/`, `briefs/`, `inbox/` and `log/decisions.md`.
 2. Write `household-profile.md` into the folder from the approved draft.
 3. Offer to remember the folder on this machine:
    `record.py set-pointer "<folder>" --approved-by "<name>"`.
@@ -124,9 +139,9 @@ what is wrong. After an explicit yes, with the approver's name:
 Without Python: create the same folders, write each register as
 `{"schema_version": 1, "documents": []}` and
 `{"schema_version": 1, "obligations": []}`, copy
-`shared/templates/registers-README.md` to `registers/README.md`, and start
-`log/decisions.md` with one line for the setup. Confirm in one line where the
-record is.
+`shared/templates/<en|pl>/registers-README.md` to `registers/README.md`, and
+start `log/decisions.md` with one line for the setup. Confirm in one line
+where the record is.
 
 ## Step 5 — File one real document
 
@@ -200,7 +215,9 @@ household data during the probe.
 
 - [reference/interview.md](reference/interview.md) — the questions, their
   order, and pacing
+- [reference/messages.md](reference/messages.md) — the fixed texts of the
+  setup in English and Polish
 - [reference/gotchas.md](reference/gotchas.md) — setup mistakes seen in testing
 - `shared/rules.md` — the full HouseholdBot rules (generated)
-- `shared/templates/` — profile and register README templates (generated)
+- `shared/templates/` — profile and register README templates, `en/` and `pl/` (generated)
 - `shared/locale/` — country packs (generated)

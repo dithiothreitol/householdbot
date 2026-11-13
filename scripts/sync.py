@@ -68,16 +68,19 @@ def expected_files(manifest: dict) -> dict[Path, str]:
     for skill, wanted in manifest["skills"].items():
         sdir = plugin / "skills" / skill
         for key in wanted:
-            spec = manifest["bundles"][key]
-            if "bundle_to" in spec:
-                files[sdir / spec["bundle_to"]] = bundle
-            if "glob" in spec:
-                for src in sorted(CORE.glob(spec["glob"])):
-                    rel = src.relative_to(CORE).as_posix()
-                    files[sdir / spec["to_dir"] / src.name] = stamped(rel, src.read_text(encoding="utf-8"))
-            for src_rel, dst_rel in spec.get("files", {}).items():
-                text = (CORE / src_rel).read_text(encoding="utf-8")
-                files[sdir / dst_rel] = stamped(src_rel, text)
+            specs = manifest["bundles"][key]
+            for spec in specs if isinstance(specs, list) else [specs]:
+                if "bundle_to" in spec:
+                    files[sdir / spec["bundle_to"]] = bundle
+                if "glob" in spec:
+                    base = CORE / spec.get("base", "")
+                    for src in sorted(p for p in CORE.glob(spec["glob"]) if p.is_file()):
+                        rel = src.relative_to(CORE).as_posix()
+                        files[sdir / spec["to_dir"] / src.relative_to(base)] = stamped(
+                            rel, src.read_text(encoding="utf-8"))
+                for src_rel, dst_rel in spec.get("files", {}).items():
+                    text = (CORE / src_rel).read_text(encoding="utf-8")
+                    files[sdir / dst_rel] = stamped(src_rel, text)
     for src_rel, dst_rel in manifest.get("plugin_copies", {}).items():
         files[plugin / dst_rel] = (REPO / src_rel).read_text(encoding="utf-8")
     return files
@@ -85,7 +88,8 @@ def expected_files(manifest: dict) -> dict[Path, str]:
 
 def generated_on_disk(manifest: dict) -> set[Path]:
     plugin = REPO / manifest["plugin"]
-    return {p for p in (plugin / "skills").glob("*/shared/**/*") if p.is_file()}
+    return {p for p in (plugin / "skills").glob("*/shared/**/*")
+            if p.is_file() and "__pycache__" not in p.parts}
 
 
 def main(argv=None) -> int:
@@ -106,6 +110,9 @@ def main(argv=None) -> int:
     if not args.check:
         for p in extra:
             p.unlink()
+        for d in sorted((REPO / manifest["plugin"] / "skills").glob("*/shared/**/"), reverse=True):
+            if d.is_dir() and not any(d.iterdir()):
+                d.rmdir()
     rel = lambda p: p.relative_to(REPO).as_posix()  # noqa: E731
     report = {"ok": not (args.check and (stale or extra)),
               "mode": "check" if args.check else "write",

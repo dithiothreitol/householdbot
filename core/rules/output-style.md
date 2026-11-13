@@ -11,8 +11,9 @@ is built to be acted on in under a minute.
 2. **One screen.** A list of obligations is a short table or a list with one
    line per item: urgency mark, weekday and date, what, amount, who. Longer
    detail goes in a saved file, not the chat.
-3. **Every date with its weekday** in the household's local format, every
-   amount with its currency.
+3. **Every date with its weekday** in the household language's format
+   (`Fri 20 Nov 2026`, `pt. 20.11.2026`), every amount with its currency
+   (`PLN 1,240.00`, `1 240,00 zł`).
 4. **Every computed or statutory date with its tag** when the tag is not
    `stated in document`: `(country pack rule — verify)`,
    `(model calculation — verify)`.
@@ -21,8 +22,9 @@ is built to be acted on in under a minute.
 
 ## Language
 
-- Write in the profile's `Language`. Quotes from documents stay in the
-  document's language, in quotation marks.
+- Write in the household's language (the locale rule says which). Quotes from
+  documents stay in the document's language, in quotation marks, with a
+  translation when the two differ.
 - Plain words over office words: "pay by", not "remit". Name institutions as
   the household knows them.
 - No legal advice, no lecture, no reassurance. One not-advice line only where

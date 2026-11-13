@@ -42,12 +42,17 @@ These rules move a deadline forward. The plugin still plans to the rolled-back
   the last day of those 14 days, and the response window runs from then. Law:
   KPA art. 44; Ordynacja podatkowa art. 150.
 - **Registered letter from a court, not collected.** Each of the two notices
-  gives 7 days to collect it, and courts treat the letter as delivered when the
-  second period ends. Law: KPC art. 139 § 1. When it is the first letter in a
-  case against a private person, the court may have the claimant serve it
-  through a bailiff instead (KPC art. 139¹). An electronic payment order counts
-  as delivered when the notices were left at the address in the PESEL register
-  (KPC art. 505³⁴).
+  gives 7 days to collect it, counted from the day after the notice. The letter
+  counts as delivered on the last day of the second period, usually 15 days
+  after the first notice, and the response window runs from then. Law: KPC
+  art. 139 § 1; court delivery regulation (Dz.U. 2024 poz. 19) § 6 to § 8;
+  Supreme Court IV CKN 1026/00. When it is the first letter in a case against a
+  private person, the court may ask the claimant to have it served through a
+  bailiff (KPC art. 139¹ § 1). If the claimant shows in writing that the person
+  lives at that address, the letter counts as delivered on the original date,
+  and a later bailiff delivery does not restart the deadline (KPC art. 139¹
+  § 3). An electronic payment order counts as delivered when the notices were
+  left at the address in the PESEL register (KPC art. 505³⁴).
 - **e-Doręczenia.** A message from a public body counts as delivered when it
   is opened. If it is not opened, it counts as delivered on the day after the
   14 days that start when it reaches the delivery box. Law: ustawa o
@@ -101,7 +106,7 @@ Register the expiry as an obligation with `kind: expiry` and a lead time.
 |---|---|---|
 | Identity card (dowód osobisty) | 10 years; 5 years when issued to a child under 12 (ustawa o dowodach osobistych art. 7 ust. 1 and 2). A card issued before 2 Aug 2021 is valid until its printed date, but not after 3 Aug 2031 (Dz.U. 2021 poz. 1000, art. 4) | 60 days |
 | Passport | 10 years; 5 years when issued to a child under 12 (ustawa o dokumentach paszportowych art. 17 ust. 1 and 2) | 180 days, because many countries require 6 months of validity |
-| Driving licence issued from 19 Jan 2013 | The date printed in field 4b: up to 15 years for categories AM, A1, A2, A, B1, B, B+E and T, and up to 5 years for C and D categories (ustawa o kierujących pojazdami art. 13 ust. 1). A first category B licence issued from September 2026 may run only for the probation period, so field 4b decides | 60 days |
+| Driving licence issued from 19 Jan 2013 | The date printed in field 4b: up to 15 years for categories AM, A1, A2, A, B1, B, B+E and T, and up to 5 years for C and D categories. A first category B licence issued from 4 Sep 2026 is valid only for the probation period: 2 years, or 3 years for a licence obtained at 17 but not past the 20th birthday. When it expires, the holder applies to the starosta for a new licence, which then follows the 15-year rule (ustawa o kierujących pojazdami art. 13 ust. 1, art. 91 ust. 1; Dz.U. 2025 poz. 1676 art. 9 ust. 1; Dz.U. 2025 poz. 1073 § 14 ust. 1 pkt 13 and § 15 ust. 3 pkt 10) | 60 days |
 | Driving licence issued up to 18 Jan 2013 | Valid for its own period, but no longer than its exchange date; exchanges run from 19 Jan 2028 to 18 Jan 2033 on dates set by the transport minister (ustawa o kierujących pojazdami art. 124 ust. 4 and 6) | 60 days before the date set for it |
 | European Health Insurance Card (EKUZ) | The date printed on the card, while the holder keeps NFZ cover | 30 days before travel |
 
@@ -122,11 +127,18 @@ Identifiers on Polish papers that are never reproduced
 (the personal-data rule): PESEL, NIP, identity card and passport numbers, full
 bank account numbers (NRB / IBAN).
 
-## Writing for a Polish household
+## Writing for a household in Poland
 
-Dates in prose as `pt. 20.11.2026` alongside the ISO form in registers.
-Decimal comma and a space as the thousands separator in prose: `PLN 1 240,00`.
-Formal address (*Pan / Pani*) in drafts to offices and companies.
+- Letters to Polish offices, courts, banks and companies are drafted in
+  Polish, in the formal register (*Szanowni Państwo*, *Pan / Pani*), whatever
+  language the household uses. An English-speaking household gets an English
+  translation alongside, marked as a translation and not as the text to send.
+- In English text, a Polish legal term keeps its Polish name in brackets the
+  first time it appears: an appeal (*odwołanie*), a payment order (*nakaz
+  zapłaty*), a notice slip (*awizo*).
+- Dates and amounts follow the household's language: `pt. 20.11.2026` and
+  `1 240,00 zł` in Polish, `Fri 20 Nov 2026` and `PLN 1,240.00` in English,
+  with the ISO form in registers.
 
 ## Scam patterns
 
@@ -180,6 +192,9 @@ service on 2026-11-13:
 - Ustawa o dokumentach paszportowych, Dz.U. 2026 poz. 196: https://api.sejm.gov.pl/eli/acts/DU/2026/196/text.pdf
 - Ustawa o kierujących pojazdami, Dz.U. 2025 poz. 1226: https://api.sejm.gov.pl/eli/acts/DU/2025/1226/text.pdf
 - Act of 17.10.2025 amending road traffic and driver rules, Dz.U. 2025 poz. 1676: https://api.sejm.gov.pl/eli/acts/DU/2025/1676/text.pdf
+- Regulation on driving licence documents, Dz.U. 2025 poz. 1073: https://api.sejm.gov.pl/eli/acts/DU/2025/1073/text.pdf
+- Communication on probation data in the driver register, Dz.U. 2026 poz. 743: https://api.sejm.gov.pl/eli/acts/DU/2026/743/text.pdf
+- KPC reform of 2023 (art. 139¹), Dz.U. 2023 poz. 614: https://api.sejm.gov.pl/eli/acts/DU/2023/614/text.html
 
 Official pages:
 
@@ -190,5 +205,9 @@ Official pages:
 - Internetowe Konto Pacjenta: https://pacjent.gov.pl/
 - e-Doręczenia: https://www.gov.pl/web/e-doreczenia and https://edoreczenia.gov.pl/
 - e-sąd (EPU): https://www.e-sad.gov.pl/
+- Supreme Court, IV CKN 1026/00 of 10.08.2000, via SAOS: https://www.saos.org.pl/judgments/79878
+- Supreme Court, II UZ 43/04 of 28.09.2004, via SAOS: https://www.saos.org.pl/judgments/82871
+- Regional Court Gliwice, III Cz 256/26 of 10.09.2026, via SAOS: https://www.saos.org.pl/judgments/554498
+- Police, new rules for novice drivers (18.09.2026): https://policja.pl/pol/aktualnosci/281897,Nowe-zasady-dla-poczatkujacych-kierowcow-wazne-wyjasnienie.html
 - NFZ, EKUZ: https://www.nfz.gov.pl/dla-pacjenta/nasze-zdrowie-w-ue/leczenie-w-krajach-unii-europejskiej-i-efta/wypoczynek-w-panstwach-czlonkowskich-ueefta-ekuz/
 - City of Warsaw, rules for new category B drivers from 4 Sep 2026: https://warszawa19115.pl/-/przewodnik-dla-nowych-kierowcow-ktorzy-uzyskali-po-raz-pierwszy-uprawnienia-kat.-b-poczawszy-od-4-wrzesnia-2026-r.

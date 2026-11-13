@@ -43,6 +43,10 @@ use the folder this SKILL.md was read from. Use `python` or `py -3` where
 found". Without Python, examine the files by reading them (Step 1, "By
 hand") and make no repair beyond a single entry the household approves.
 
+Dates and amounts come out in the household's language: `record.py` reads it
+from the profile, and `dates.py` takes `--lang pl` for Polish (English is the
+default).
+
 ## Step 0 — Find the record
 
 `record.py locate`, or read `household-profile.md` in the working folder (or
@@ -83,8 +87,9 @@ entry by entry by `id` and show the differences.
 
 Also read `household-profile.md`: `<!-- SETUP PAUSED AT:` (offer to resume
 setup), remaining `[PLACEHOLDER]` markers (list the sections), and sections
-missing against `shared/templates/household-profile.md` (offer
-`household-customize`).
+missing against the template in the profile's language
+(`shared/templates/en/household-profile.md` or
+`shared/templates/pl/household-profile.md`; offer `household-customize`).
 
 Report the findings first, most serious first, one line each. If everything
 is clean, say so with the counts from `stats`.

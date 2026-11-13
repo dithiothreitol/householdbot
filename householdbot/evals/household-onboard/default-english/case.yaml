@@ -1,0 +1,27 @@
+schema_version: "1.1"
+name: household-onboard-default-english
+description: household-onboard / default-english
+tags: [etap1]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    I'd like to set up HouseholdBot for our home.
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:household-onboard)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      PASS if the reply is in English, makes clear that Polish is also available (for example a line offering to
+      switch to Polish), and asks whether to do the quick setup (about 2 minutes) or the full setup (about
+      15 minutes), without creating any file.
+      FAIL if it answers in Polish, does not mention that Polish is available, or creates files.

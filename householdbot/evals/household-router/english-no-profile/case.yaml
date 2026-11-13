@@ -1,0 +1,26 @@
+schema_version: "1.1"
+name: household-router-english-no-profile
+description: household-router / english-no-profile
+tags: [etap1]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    I got a letter from the tax office and I don't understand it.
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:household-router|file-document)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      PASS if the reply is in English and asks the user to share the letter (a photo, scan, PDF or pasted text) so it
+      can be read and explained, without claiming that anything was saved.
+      FAIL if the reply is in Polish or claims that something was saved or filed.

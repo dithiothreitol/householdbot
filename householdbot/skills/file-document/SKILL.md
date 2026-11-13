@@ -47,6 +47,10 @@ Without Python, follow the same rules by hand, show the arithmetic, tag each
 computed date `model calculation — verify`, and edit the JSON registers
 directly as the household-record rule describes.
 
+Dates and amounts come out in the household's language: `record.py` reads it
+from the profile, and `dates.py` takes `--lang pl` for Polish (English is the
+default).
+
 ## Step 0 — Find the record
 
 `record.py locate`, or look for `household-profile.md` in the working folder
@@ -102,7 +106,9 @@ delivery; never assume it equals the document date), `language`.
 ## Step 4 — Extract the facts
 
 For each fact the type calls for, record the value with its **page and a short
-quote** in the document's language. Amounts carry their currency; in the
+quote** in the document's language. When the household reads another language
+(an English-speaking family with a Polish letter), give the quote and then its
+translation. Amounts carry their currency; in the
 register an amount is a string such as `"286.40"` with `currency: "PLN"`.
 
 Identifiers (national ID and tax numbers, policy, account, card and document
@@ -125,7 +131,9 @@ renew, cancel, collect, expires. For each, build an obligation:
   `provenance: "calculated from document"`.
 - **`do_by`:** `dates.py do-by --due <date> --transit <days>`, or let
   `record.py add --country <CC>` compute it. Transit: 0 online, 1 bank
-  transfer, 5 domestic post, 10 international post.
+  transfer, 5 domestic post, 10 international post. Store it in
+  `transit_buffer_days` (or in `notice` for a notice period), so the next
+  occurrence of a recurring payment keeps the same margin.
 
 A document that asks for nothing is still filed. Say that it needs no action.
 

@@ -7,16 +7,19 @@ Public holidays, business days, deadlines counted from an event, the safe
 pack. Standard library only. Every command prints one JSON object.
 
 Country data is read from ../locale/<CC>.json relative to this file, or from
-the path given with --pack.
+the path given with --pack. Language data (weekday and month names, date and
+amount formats, notes) is read from ../i18n/<lang>.json. English is the
+default language; pass --lang pl for Polish.
 
 Examples:
-  python3 dates.py info 2026-11-11 --country PL
-  python3 dates.py deadline --country PL --from 2026-10-28 --amount 14 --unit days --rule kpa
+  python3 dates.py info 2026-11-11 --country PL --lang pl
+  python3 dates.py deadline --country PL --from 2026-10-28 --amount 14 --unit days --rule administrative
   python3 dates.py window --country PL --from 2026-11-03 --id appeal-administrative-decision
   python3 dates.py do-by --country PL --due 2026-11-16 --transit 1
   python3 dates.py band --today 2026-11-13 --date 2026-11-20
   python3 dates.py next --due 2026-01-31 --recurrence monthly
   python3 dates.py recurring --country PL --year 2027
+  python3 dates.py amount --value 1240.00 --currency PLN --lang pl
 """
 from __future__ import annotations
 
@@ -26,11 +29,14 @@ import json
 import re
 import sys
 from datetime import date, timedelta
+from decimal import Decimal, InvalidOperation
 from pathlib import Path
 
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 HERE = Path(__file__).resolve().parent
 LOCALE_DIR = HERE.parent / "locale"
+I18N_DIR = HERE.parent / "i18n"
+DEFAULT_LANG = "en"
 
 WEEKDAYS_EN = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 WEEKDAY_INDEX = {
@@ -41,12 +47,12 @@ ISO_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 EVERY_RE = re.compile(r"^every\s+(\d+)\s+(day|week|month|year)s?$")
 
 BANDS = [
-    # (name, label, lower bound inclusive, upper bound exclusive)
-    ("overdue", "⚫ overdue", None, 0),
-    ("now", "🔴 now", 0, 7),
-    ("soon", "🟠 soon", 7, 30),
-    ("coming", "🟡 coming", 30, 90),
-    ("later", "later", 90, None),
+    # (name, lower bound inclusive, upper bound exclusive)
+    ("overdue", None, 0),
+    ("now", 0, 7),
+    ("soon", 7, 30),
+    ("coming", 30, 90),
+    ("later", 90, None),
 ]
 
 
@@ -55,7 +61,7 @@ class InputError(Exception):
 
 
 # --------------------------------------------------------------------------
-# Parsing and formatting
+# Parsing and language
 # --------------------------------------------------------------------------
 
 def parse_date(value: str) -> date:
@@ -68,8 +74,108 @@ def parse_date(value: str) -> date:
 
 
 def text_en(d: date) -> str:
+    """Weekday and ISO date, the stable form used in notes for the model."""
     return f"{WEEKDAYS_EN[d.weekday()]} {d.isoformat()}"
 
+
+class Lang:
+    """Formats for one language: dates, amounts, notes, statuses, log lines."""
+
+    def __init__(self, data: dict, requested: str):
+        self.data = data
+        self.code = data.get("lang", DEFAULT_LANG)
+        self.requested = requested
+
+    def date(self, d: date) -> str:
+        return self.data["date_format"].format(
+            wd=self.data["weekdays_short"][d.weekday()],
+            wdl=self.data["weekdays_long"][d.weekday()],
+            d=d.day, dd=f"{d.day:02d}", mm=f"{d.month:02d}",
+            mon=self.data["months_short"][d.month - 1], yyyy=f"{d.year:04d}")
+
+    def weekday_long(self, d: date) -> str:
+        return self.data["weekdays_long"][d.weekday()]
+
+    def number(self, value) -> str:
+        try:
+            q = Decimal(str(value)).quantize(Decimal("0.01"))
+        except (InvalidOperation, ValueError) as exc:
+            raise InputError(f"not an amount: {value!r}") from exc
+        sign = "-" if q < 0 else ""
+        whole, frac = f"{abs(q):.2f}".split(".")
+        groups = []
+        while len(whole) > 3:
+            groups.insert(0, whole[-3:])
+            whole = whole[:-3]
+        groups.insert(0, whole)
+        return sign + self.data["thousands_separator"].join(groups) + self.data["decimal_separator"] + frac
+
+    def amount(self, value, currency: str | None) -> str | None:
+        if value is None:
+            return None
+        code = currency or ""
+        symbol = self.data.get("currency_symbols", {}).get(code, code)
+        return self.data["amount_format"].format(code=code, symbol=symbol, number=self.number(value)).strip()
+
+    def plural_index(self, n: int) -> int:
+        n = abs(int(n))
+        if self.code == "pl":
+            if n == 1:
+                return 0
+            if n % 10 in (2, 3, 4) and n % 100 not in (12, 13, 14):
+                return 1
+            return 2
+        return 0 if n == 1 else 1
+
+    def unit(self, unit: str, n: int | None = None) -> str:
+        """The unit word for n (\"1 day\", \"5 days\", \"2 dni\", \"5 dni\", \"1 dzień\")."""
+        forms = self.data.get("units", {}).get(unit, unit)
+        if isinstance(forms, str):
+            return forms
+        word = forms[min(self.plural_index(2 if n is None else n), len(forms) - 1)]
+        return word if n is None else f"{n} {word}"
+
+    def note(self, key: str, **kw) -> str:
+        return self.data["notes"][key].format(**kw)
+
+    def status(self, status: str) -> str:
+        return self.data.get("statuses", {}).get(status, status)
+
+    def band_label(self, band_name: str) -> str:
+        return self.data.get("bands", {}).get(band_name, band_name)
+
+    def log(self, key: str, **kw) -> str:
+        return self.data["log"][key].format(**kw)
+
+    def quote(self, text: str) -> str:
+        left, right = self.data.get("quotes", ['"', '"'])
+        return f"{left}{text}{right}"
+
+
+_LANG_CACHE: dict[str, Lang] = {}
+
+
+def load_lang(code: str | None = None) -> Lang:
+    """The language file for code; English when the code is missing or unknown."""
+    requested = (code or DEFAULT_LANG).strip().lower()[:2] or DEFAULT_LANG
+    if requested in _LANG_CACHE:
+        return _LANG_CACHE[requested]
+    path = I18N_DIR / f"{requested}.json"
+    if not path.exists():
+        path = I18N_DIR / f"{DEFAULT_LANG}.json"
+    with path.open(encoding="utf-8") as fh:
+        lang = Lang(json.load(fh), requested)
+    _LANG_CACHE[requested] = lang
+    return lang
+
+
+def describe(d: date, lang: Lang) -> dict:
+    return {"date": d.isoformat(), "text": text_en(d), "local": lang.date(d)}
+
+
+# --------------------------------------------------------------------------
+# Country packs
+# --------------------------------------------------------------------------
 
 class Pack:
     """A country pack: holidays, weekend, counting rules and statutory dates."""
@@ -80,29 +186,16 @@ class Pack:
         self.code = data.get("pack", "??")
         self.reviewed = data.get("reviewed", "unknown")
         self.weekend = {WEEKDAY_INDEX[d] for d in data.get("weekend", ["saturday", "sunday"])}
-        self._holiday_cache: dict[int, dict[date, str]] = {}
-
-    # -- formatting ---------------------------------------------------------
-    def text_local(self, d: date) -> str:
-        names = self.data.get("weekday_names")
-        fmt = self.data.get("date_format_local")
-        if not names or not fmt:
-            return text_en(d)
-        return fmt.format(
-            wd=names[d.weekday()], dd=f"{d.day:02d}", mm=f"{d.month:02d}", yyyy=f"{d.year:04d}"
-        )
-
-    def describe(self, d: date) -> dict:
-        return {"date": d.isoformat(), "text": text_en(d), "local": self.text_local(d)}
+        self._holiday_cache: dict[int, dict[date, dict]] = {}
 
     def label(self) -> str:
         return f"{self.code} pack, reviewed {self.reviewed}"
 
-    # -- calendar -----------------------------------------------------------
-    def holidays(self, year: int) -> dict[date, str]:
+    def holidays(self, year: int) -> dict[date, dict]:
+        """Every public holiday of the year, mapped to its entry (names per language)."""
         if year in self._holiday_cache:
             return self._holiday_cache[year]
-        out: dict[date, str] = {}
+        out: dict[date, dict] = {}
         spec = self.data.get("holidays", {})
         for h in spec.get("fixed", []):
             if h.get("from_year") and year < h["from_year"]:
@@ -110,29 +203,35 @@ class Pack:
             if h.get("to_year") and year > h["to_year"]:
                 continue
             month, day = (int(x) for x in h["date"].split("-"))
-            out[date(year, month, day)] = h["name"]
+            out[date(year, month, day)] = h
         if spec.get("easter_relative"):
             base = easter_sunday(year)
             for h in spec["easter_relative"]:
                 if h.get("from_year") and year < h["from_year"]:
                     continue
-                out[base + timedelta(days=int(h["offset"]))] = h["name"]
+                out[base + timedelta(days=int(h["offset"]))] = h
         self._holiday_cache[year] = out
         return out
 
-    def holiday_name(self, d: date) -> str | None:
-        return self.holidays(d.year).get(d)
+    def holiday_name(self, d: date, lang: Lang | None = None) -> str | None:
+        h = self.holidays(d.year).get(d)
+        if not h:
+            return None
+        if lang is not None and h.get(f"name_{lang.code}"):
+            return h[f"name_{lang.code}"]
+        return h["name"]
 
-    def non_business_reason(self, d: date) -> str | None:
-        name = self.holiday_name(d)
+    def non_business_reason(self, d: date, lang: Lang | None = None) -> str | None:
+        lang = lang or load_lang(DEFAULT_LANG)
+        name = self.holiday_name(d, lang)
         if name:
-            return f"public holiday: {name}"
+            return lang.note("holiday", name=name)
         if d.weekday() in self.weekend:
-            return calendar.day_name[d.weekday()]
+            return lang.weekday_long(d)
         return None
 
     def is_business_day(self, d: date) -> bool:
-        return self.non_business_reason(d) is None
+        return d.weekday() not in self.weekend and d not in self.holidays(d.year)
 
     def roll_forward(self, d: date) -> date:
         while not self.is_business_day(d):
@@ -153,7 +252,6 @@ class Pack:
                 remaining -= 1
         return d
 
-    # -- rules --------------------------------------------------------------
     def rule(self, rule_id: str) -> dict:
         rules = self.data.get("counting_rules", {})
         if rule_id not in rules:
@@ -230,10 +328,11 @@ def add_period(start: date, amount: int, unit: str, pack: Pack | None = None) ->
     raise InputError(f"unknown unit {unit!r}; use days, weeks, months, years or business_days")
 
 
-def band(days: int) -> dict:
-    for name, label, lo, hi in BANDS:
+def band(days: int, lang: Lang | None = None) -> dict:
+    lang = lang or load_lang(DEFAULT_LANG)
+    for name, lo, hi in BANDS:
         if (lo is None or days >= lo) and (hi is None or days < hi):
-            return {"band": name, "label": label}
+            return {"band": name, "label": lang.band_label(name)}
     raise AssertionError("unreachable")
 
 
@@ -271,62 +370,65 @@ def next_occurrence(prev: date, recurrence: str, anchor_day: int | None = None) 
 # Composite calculations used by the skills
 # --------------------------------------------------------------------------
 
-def plan_do_by(pack: Pack, due: date, transit_days: int = 0) -> dict:
+def plan_do_by(pack: Pack, due: date, transit_days: int = 0, lang: Lang | None = None) -> dict:
     """The date the household plans to: transit subtracted, rolled back to a business day."""
+    lang = lang or load_lang(DEFAULT_LANG)
     notes = []
     d = due - timedelta(days=transit_days)
     if transit_days:
-        notes.append(f"{transit_days} day(s) allowed for delivery before {text_en(due)}")
-    reason = pack.non_business_reason(d)
+        notes.append(lang.note("transit", days=lang.unit("days", transit_days), date=lang.date(due)))
+    reason = pack.non_business_reason(d, lang)
     if reason:
         rolled = pack.roll_back(d)
-        notes.append(f"rolled back from {text_en(d)} ({reason})")
+        notes.append(lang.note("rolled_back", date=lang.date(d), reason=reason))
         d = rolled
     return {
         "do_by": d.isoformat(),
         "do_by_text": text_en(d),
-        "do_by_local": pack.text_local(d),
+        "do_by_local": lang.date(d),
         "do_by_note": "; ".join(notes),
     }
 
 
 def deadline(pack: Pack, start: date, amount: int, unit: str, rule_id: str,
-             transit_days: int = 0) -> dict:
+             transit_days: int = 0, lang: Lang | None = None) -> dict:
+    lang = lang or load_lang(DEFAULT_LANG)
     rule = pack.rule(rule_id)
     raw_end = add_period(start, amount, unit, pack)
     due = raw_end
     due_note = ""
     if rule.get("end_roll") == "forward":
-        reason = pack.non_business_reason(raw_end)
+        reason = pack.non_business_reason(raw_end, lang)
         if reason:
             due = pack.roll_forward(raw_end)
-            due_note = (f"{text_en(raw_end)} is not a working day ({reason}); "
-                        f"the deadline moves to {text_en(due)} under {rule.get('law', rule_id)}")
+            due_note = lang.note("moved_forward", date=lang.date(raw_end), reason=reason,
+                                 new_date=lang.date(due), law=rule.get("law", rule_id))
     result = {
-        "start": pack.describe(start),
+        "start": describe(start, lang),
         "amount": amount,
         "unit": unit,
         "rule": rule_id,
         "law": rule.get("law"),
-        "arithmetic": f"{text_en(start)} + {amount} {unit} = {text_en(raw_end)}",
-        "raw_end": pack.describe(raw_end),
+        "arithmetic": f"{lang.date(start)} + {lang.unit(unit, amount)} = {lang.date(raw_end)}",
+        "raw_end": describe(raw_end, lang),
         "due_date": due.isoformat(),
         "due_date_text": text_en(due),
-        "due_date_local": pack.text_local(due),
+        "due_date_local": lang.date(due),
         "due_note": due_note,
         "met_by": rule.get("met_by"),
+        "lang": lang.code,
     }
     # The plan never relies on the statutory forward roll: do_by is worked
     # back from the raw end of the period, so the forward roll stays margin.
-    result.update(plan_do_by(pack, raw_end, transit_days))
+    result.update(plan_do_by(pack, raw_end, transit_days, lang))
     if due != raw_end:
-        result["do_by_note"] = "; ".join(
-            n for n in (result["do_by_note"], "the statutory move forward is kept as margin, not as the plan") if n)
+        result["do_by_note"] = "; ".join(n for n in (result["do_by_note"], lang.note("margin")) if n)
     return result
 
 
 def statutory_dates(pack: Pack, year: int, ids: list[str] | None = None,
-                    transit_days: int = 0) -> list[dict]:
+                    transit_days: int = 0, lang: Lang | None = None) -> list[dict]:
+    lang = lang or load_lang(DEFAULT_LANG)
     out = []
     for item in pack.data.get("recurring", []):
         if ids and item["id"] not in ids:
@@ -339,18 +441,19 @@ def statutory_dates(pack: Pack, year: int, ids: list[str] | None = None,
             due_note = ""
             if rule.get("end_roll") == "forward" and not pack.is_business_day(raw):
                 due = pack.roll_forward(raw)
-                due_note = (f"{text_en(raw)} is not a working day; moves to {text_en(due)} "
-                            f"under {rule.get('law', item.get('counting'))}")
+                due_note = lang.note("moved_forward", date=lang.date(raw),
+                                     reason=pack.non_business_reason(raw, lang),
+                                     new_date=lang.date(due), law=rule.get("law", item.get("counting")))
             row = {
                 "id": item["id"],
-                "title": item.get("title"),
+                "title": item.get(f"title_{lang.code}") or item.get("title"),
                 "kind": item.get("kind"),
                 "category": item.get("category"),
                 "applies_when": item.get("applies_when"),
                 "statutory_date": raw.isoformat(),
                 "due_date": due.isoformat(),
                 "due_date_text": text_en(due),
-                "due_date_local": pack.text_local(due),
+                "due_date_local": lang.date(due),
                 "due_note": due_note,
                 "lead_time_days": item.get("lead_time_days"),
                 "law": item.get("law"),
@@ -359,10 +462,9 @@ def statutory_dates(pack: Pack, year: int, ids: list[str] | None = None,
             if item.get("window_opens"):
                 om, od = (int(x) for x in item["window_opens"].split("-"))
                 row["window_opens"] = date(year, om, od).isoformat()
-            row.update(plan_do_by(pack, raw, transit_days))
+            row.update(plan_do_by(pack, raw, transit_days, lang))
             if due != raw:
-                row["do_by_note"] = "; ".join(
-                    n for n in (row["do_by_note"], "the statutory move forward is kept as margin, not as the plan") if n)
+                row["do_by_note"] = "; ".join(n for n in (row["do_by_note"], lang.note("margin")) if n)
             out.append(row)
     out.sort(key=lambda r: (r["due_date"], r["id"]))
     return out
@@ -376,54 +478,61 @@ def _pack(args) -> Pack:
     return load_pack(getattr(args, "country", None), getattr(args, "pack", None))
 
 
+def _lang(args) -> Lang:
+    return load_lang(getattr(args, "lang", None))
+
+
 def cmd_holidays(args) -> dict:
-    pack = _pack(args)
+    pack, lang = _pack(args), _lang(args)
     hol = pack.holidays(args.year)
     return {
         "year": args.year,
         "pack": pack.label(),
+        "lang": lang.code,
         "holidays": [
-            {"date": d.isoformat(), "text": text_en(d), "local": pack.text_local(d), "name": n}
-            for d, n in sorted(hol.items())
+            {"date": d.isoformat(), "text": text_en(d), "local": lang.date(d),
+             "name": pack.holiday_name(d, lang)}
+            for d in sorted(hol)
         ],
         "law": pack.data.get("holidays", {}).get("law"),
     }
 
 
 def cmd_info(args) -> dict:
-    pack = _pack(args)
+    pack, lang = _pack(args), _lang(args)
     d = parse_date(args.date)
-    reason = pack.non_business_reason(d)
+    reason = pack.non_business_reason(d, lang)
     return {
-        **pack.describe(d),
+        **describe(d, lang),
         "business_day": reason is None,
         "reason": reason,
-        "previous_business_day": pack.describe(pack.roll_back(d)) if reason else None,
-        "next_business_day": pack.describe(pack.roll_forward(d)) if reason else None,
+        "previous_business_day": describe(pack.roll_back(d), lang) if reason else None,
+        "next_business_day": describe(pack.roll_forward(d), lang) if reason else None,
         "pack": pack.label(),
+        "lang": lang.code,
     }
 
 
 def cmd_deadline(args) -> dict:
-    pack = _pack(args)
-    res = deadline(pack, parse_date(args.start), args.amount, args.unit, args.rule, args.transit)
+    pack, lang = _pack(args), _lang(args)
+    res = deadline(pack, parse_date(args.start), args.amount, args.unit, args.rule, args.transit, lang)
     res["pack"] = pack.label()
     return res
 
 
 def cmd_window(args) -> dict:
-    pack = _pack(args)
+    pack, lang = _pack(args), _lang(args)
     w = pack.entry("response_windows", args.id)
     res = deadline(pack, parse_date(args.start), int(w["amount"]), w["unit"], w["counting"],
-                   args.transit)
-    res.update({"window": w["id"], "title": w.get("title"), "counted_from": w.get("from"),
-                "law": w.get("law"), "pack": pack.label(),
+                   args.transit, lang)
+    res.update({"window": w["id"], "title": w.get(f"title_{lang.code}") or w.get("title"),
+                "counted_from": w.get("from"), "law": w.get("law"), "pack": pack.label(),
                 "provenance": "country pack rule — verify"})
     return res
 
 
 def cmd_deemed(args) -> dict:
-    pack = _pack(args)
+    pack, lang = _pack(args), _lang(args)
     rule = pack.entry("deemed_delivery", args.id)
     start = parse_date(args.start)
     deemed = start + timedelta(days=int(rule["days"]))
@@ -431,70 +540,80 @@ def cmd_deemed(args) -> dict:
         "rule": rule["id"],
         "title": rule.get("title"),
         "counted_from": rule.get("from"),
-        "start": pack.describe(start),
-        "deemed_delivered": pack.describe(deemed),
-        "arithmetic": f"{text_en(start)} + {rule['days']} days = {text_en(deemed)}",
+        "start": describe(start, lang),
+        "deemed_delivered": describe(deemed, lang),
+        "arithmetic": f"{lang.date(start)} + {lang.unit('days', int(rule['days']))} = {lang.date(deemed)}",
         "law": rule.get("law"),
         "note": rule.get("note"),
         "pack": pack.label(),
+        "lang": lang.code,
         "provenance": "country pack rule — verify",
     }
 
 
 def cmd_do_by(args) -> dict:
-    pack = _pack(args)
+    pack, lang = _pack(args), _lang(args)
     due = parse_date(args.due)
     res = {"due_date": due.isoformat(), "due_date_text": text_en(due),
-           "due_date_local": pack.text_local(due), "pack": pack.label()}
-    res.update(plan_do_by(pack, due, args.transit))
+           "due_date_local": lang.date(due), "pack": pack.label(), "lang": lang.code}
+    res.update(plan_do_by(pack, due, args.transit, lang))
     return res
 
 
 def cmd_band(args) -> dict:
+    lang = _lang(args)
     today = parse_date(args.today) if args.today else date.today()
     d = parse_date(args.date)
     days = (d - today).days
     return {"today": today.isoformat(), "today_source": "argument" if args.today else "system clock",
-            "date": d.isoformat(), "text": text_en(d), "days": days, **band(days)}
+            "date": d.isoformat(), "text": text_en(d), "local": lang.date(d), "days": days,
+            "lang": lang.code, **band(days, lang)}
 
 
 def cmd_next(args) -> dict:
+    lang = _lang(args)
     prev = parse_date(args.due)
     nxt = next_occurrence(prev, args.recurrence, args.anchor_day)
     if nxt is None:
         return {"ok": False, "errors": [
             f"recurrence {args.recurrence!r} cannot be computed; ask the household for the next date"]}
     res = {"previous": prev.isoformat(), "recurrence": args.recurrence,
-           "next_due_date": nxt.isoformat(), "next_due_text": text_en(nxt)}
+           "next_due_date": nxt.isoformat(), "next_due_text": text_en(nxt),
+           "next_due_local": lang.date(nxt), "lang": lang.code}
     if args.country or args.pack:
-        pack = _pack(args)
-        res["next_due_local"] = pack.text_local(nxt)
-        res.update(plan_do_by(pack, nxt, args.transit))
+        res.update(plan_do_by(_pack(args), nxt, args.transit, lang))
     return res
 
 
 def cmd_cancel_by(args) -> dict:
-    pack = _pack(args)
+    pack, lang = _pack(args), _lang(args)
     term_end = parse_date(args.term_end)
     due = add_period(term_end, -args.notice, args.unit, pack)
     res = {
-        "term_end": pack.describe(term_end),
-        "notice": f"{args.notice} {args.unit}",
-        "arithmetic": f"{text_en(term_end)} - {args.notice} {args.unit} = {text_en(due)}",
+        "term_end": describe(term_end, lang),
+        "notice": lang.unit(args.unit, args.notice),
+        "arithmetic": f"{lang.date(term_end)} - {lang.unit(args.unit, args.notice)} = {lang.date(due)}",
         "due_date": due.isoformat(),
         "due_date_text": text_en(due),
-        "due_date_local": pack.text_local(due),
+        "due_date_local": lang.date(due),
         "pack": pack.label(),
+        "lang": lang.code,
     }
-    res.update(plan_do_by(pack, due, args.transit))
+    res.update(plan_do_by(pack, due, args.transit, lang))
     return res
 
 
 def cmd_recurring(args) -> dict:
-    pack = _pack(args)
+    pack, lang = _pack(args), _lang(args)
     ids = [i.strip() for i in args.ids.split(",")] if args.ids else None
-    return {"year": args.year, "pack": pack.label(),
-            "dates": statutory_dates(pack, args.year, ids, args.transit)}
+    return {"year": args.year, "pack": pack.label(), "lang": lang.code,
+            "dates": statutory_dates(pack, args.year, ids, args.transit, lang)}
+
+
+def cmd_amount(args) -> dict:
+    lang = _lang(args)
+    return {"value": args.value, "currency": args.currency, "lang": lang.code,
+            "text": lang.amount(args.value, args.currency)}
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -503,10 +622,15 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--version", action="version", version=VERSION)
     sub = p.add_subparsers(dest="command", required=True)
 
-    def with_pack(sp, required=True):
+    def with_lang(sp):
+        sp.add_argument("--lang", default=DEFAULT_LANG,
+                        help="language of the dates and notes in the output: en (default) or pl")
+        return sp
+
+    def with_pack(sp):
         sp.add_argument("--country", help="ISO country code of the pack, e.g. PL")
         sp.add_argument("--pack", help="path to a country pack JSON file")
-        return sp
+        return with_lang(sp)
 
     s = with_pack(sub.add_parser("holidays", help="public holidays in a year"))
     s.add_argument("--year", type=int, required=True)
@@ -542,7 +666,7 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--transit", type=int, default=0)
     s.set_defaults(func=cmd_do_by)
 
-    s = sub.add_parser("band", help="urgency band of a date")
+    s = with_lang(sub.add_parser("band", help="urgency band of a date"))
     s.add_argument("--date", required=True)
     s.add_argument("--today")
     s.set_defaults(func=cmd_band)
@@ -566,6 +690,11 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--ids", help="comma-separated ids; default all")
     s.add_argument("--transit", type=int, default=0)
     s.set_defaults(func=cmd_recurring)
+
+    s = with_lang(sub.add_parser("amount", help="an amount written the household's way"))
+    s.add_argument("--value", required=True, help='the amount as in the register, e.g. "1240.00"')
+    s.add_argument("--currency", required=True, help="ISO 4217 code, e.g. PLN")
+    s.set_defaults(func=cmd_amount)
     return p
 
 

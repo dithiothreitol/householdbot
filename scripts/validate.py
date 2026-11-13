@@ -271,6 +271,63 @@ def check_packs() -> None:
             warnings.append(f"{rel(md)}: review date differs from {js.name} ({data.get('reviewed')})")
 
 
+TRANSLATED_DOCS = ["README.md", "QUICKSTART.md", "householdbot/README.md", "householdbot/PRIVACY.md"]
+
+
+def check_languages() -> None:
+    i18n = REPO / "core" / "i18n"
+
+    def keys(d: dict, prefix: str = "") -> set:
+        out = set()
+        for k, v in d.items():
+            out.add(prefix + k)
+            if isinstance(v, dict) and k != "currency_symbols":
+                out |= keys(v, prefix + k + ".")
+        return out
+
+    base = json.loads((i18n / "en.json").read_text(encoding="utf-8"))
+    if not base.get("default"):
+        errors.append("core/i18n/en.json must be the default language")
+    langs = []
+    for f in sorted(i18n.glob("*.json")):
+        data = json.loads(f.read_text(encoding="utf-8"))
+        langs.append(f.stem)
+        if data.get("lang") != f.stem:
+            errors.append(f"{rel(f)}: 'lang' must be '{f.stem}'")
+        if f.stem != "en" and data.get("default"):
+            errors.append(f"{rel(f)}: only English is the default")
+        missing, extra = keys(base) - keys(data), keys(data) - keys(base)
+        if missing or extra:
+            errors.append(f"{rel(f)}: keys differ from en.json (missing {sorted(missing)}, extra {sorted(extra)})")
+        for unit, forms in (data.get("units") or {}).items():
+            if not isinstance(forms, list) or not forms:
+                errors.append(f"{rel(f)}: units.{unit} must be a list of plural forms")
+    for lang in langs:
+        for name in ("household-profile.md", "registers-README.md"):
+            p = REPO / "core" / "templates" / lang / name
+            if not p.exists():
+                errors.append(f"core/templates/{lang}/{name} missing")
+            elif name == "household-profile.md":
+                text = p.read_text(encoding="utf-8")
+                if "[PLACEHOLDER" not in text or "[DEFAULT" not in text:
+                    errors.append(f"{rel(p)}: keep the [PLACEHOLDER] and [DEFAULT] markers")
+    messages = SKILLS / "household-onboard" / "reference" / "messages.md"
+    if messages.exists():
+        text = messages.read_text(encoding="utf-8")
+        if text.count("**English**") != text.count("**Polski**"):
+            errors.append(f"{rel(messages)}: every setup text needs an English and a Polish version")
+    for doc in TRANSLATED_DOCS:
+        en = REPO / doc
+        pl = en.with_name(en.stem + ".pl.md")
+        if not pl.exists():
+            errors.append(f"{doc}: Polish translation {rel(pl)} missing")
+            continue
+        if f"]({pl.name})" not in en.read_text(encoding="utf-8")[:400]:
+            errors.append(f"{doc}: first lines must link to {pl.name}")
+        if f"]({en.name})" not in pl.read_text(encoding="utf-8")[:400]:
+            errors.append(f"{rel(pl)}: first lines must link to {en.name}")
+
+
 def check_identifiers() -> None:
     for p in committed_files():
         if p.suffix.lower() not in TEXT_EXT or p.stat().st_size > 2_000_000:
@@ -297,6 +354,7 @@ def main() -> int:
     check_directory_limits()
     check_evals(skills)
     check_packs()
+    check_languages()
     check_identifiers()
     for w in warnings:
         print(f"warning: {w}")

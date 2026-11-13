@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Seed the synthetic household into the eval workspace (the current folder).
 # Sourced by each case's setup.sh:
-#   . "$(dirname "${BASH_SOURCE[0]}")/../../fixtures/seed.sh" <full|empty|conflict|broken|none>
+#   . "$(dirname "${BASH_SOURCE[0]}")/../../fixtures/seed.sh" <full|full-en|empty|conflict|broken|none>
+# full, empty, conflict and broken write a Polish household; full-en writes it in English.
 # Everything it writes is invented; see make_household.py.
 set -e
 HB_FIXTURES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -21,6 +22,7 @@ if [ -z "$HB_PY" ]; then
 fi
 case "${1:-full}" in
   full)     "$HB_PY" "$HB_FIXTURES/make_household.py" . >/dev/null ;;
+  full-en)  "$HB_PY" "$HB_FIXTURES/make_household.py" . --lang en >/dev/null ;;
   empty)    "$HB_PY" "$HB_FIXTURES/make_household.py" . --empty >/dev/null ;;
   conflict) "$HB_PY" "$HB_FIXTURES/make_household.py" . --conflict >/dev/null ;;
   broken)   "$HB_PY" "$HB_FIXTURES/make_household.py" . --broken >/dev/null ;;

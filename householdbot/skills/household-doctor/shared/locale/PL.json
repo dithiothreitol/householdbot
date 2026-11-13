@@ -2,32 +2,91 @@
   "pack": "PL",
   "schema_version": 1,
   "reviewed": "2026-11-13",
-  "language": "pl",
+  "official_language": "pl",
   "currency": "PLN",
   "time_zone": "Europe/Warsaw",
-  "weekend": ["saturday", "sunday"],
-  "weekday_names": ["pon.", "wt.", "śr.", "czw.", "pt.", "sob.", "niedz."],
-  "date_format_local": "{wd} {dd}.{mm}.{yyyy}",
+  "weekend": [
+    "saturday",
+    "sunday"
+  ],
   "holidays": {
     "law": "ustawa z dnia 18 stycznia 1951 r. o dniach wolnych od pracy, art. 1 (t.j. Dz.U. 2025 poz. 296); 24 December added by Dz.U. 2024 poz. 1965 from 1 February 2025",
     "source": "https://api.sejm.gov.pl/eli/acts/DU/2025/296/text.pdf",
     "fixed": [
-      {"date": "01-01", "name": "Nowy Rok"},
-      {"date": "01-06", "name": "Święto Trzech Króli", "from_year": 2011},
-      {"date": "05-01", "name": "Święto Państwowe"},
-      {"date": "05-03", "name": "Święto Narodowe Trzeciego Maja"},
-      {"date": "08-15", "name": "Wniebowzięcie Najświętszej Maryi Panny"},
-      {"date": "11-01", "name": "Wszystkich Świętych"},
-      {"date": "11-11", "name": "Narodowe Święto Niepodległości"},
-      {"date": "12-24", "name": "Wigilia Bożego Narodzenia", "from_year": 2025},
-      {"date": "12-25", "name": "Boże Narodzenie (pierwszy dzień)"},
-      {"date": "12-26", "name": "Boże Narodzenie (drugi dzień)"}
+      {
+        "date": "01-01",
+        "name": "Nowy Rok",
+        "name_en": "New Year's Day"
+      },
+      {
+        "date": "01-06",
+        "name": "Święto Trzech Króli",
+        "name_en": "Epiphany",
+        "from_year": 2011
+      },
+      {
+        "date": "05-01",
+        "name": "Święto Państwowe",
+        "name_en": "Labour Day"
+      },
+      {
+        "date": "05-03",
+        "name": "Święto Narodowe Trzeciego Maja",
+        "name_en": "Constitution Day"
+      },
+      {
+        "date": "08-15",
+        "name": "Wniebowzięcie Najświętszej Maryi Panny",
+        "name_en": "Assumption Day"
+      },
+      {
+        "date": "11-01",
+        "name": "Wszystkich Świętych",
+        "name_en": "All Saints' Day"
+      },
+      {
+        "date": "11-11",
+        "name": "Narodowe Święto Niepodległości",
+        "name_en": "Independence Day"
+      },
+      {
+        "date": "12-24",
+        "name": "Wigilia Bożego Narodzenia",
+        "name_en": "Christmas Eve",
+        "from_year": 2025
+      },
+      {
+        "date": "12-25",
+        "name": "Boże Narodzenie (pierwszy dzień)",
+        "name_en": "Christmas Day"
+      },
+      {
+        "date": "12-26",
+        "name": "Boże Narodzenie (drugi dzień)",
+        "name_en": "Second Day of Christmas"
+      }
     ],
     "easter_relative": [
-      {"offset": 0, "name": "Wielkanoc (pierwszy dzień)"},
-      {"offset": 1, "name": "Poniedziałek Wielkanocny"},
-      {"offset": 49, "name": "Zielone Świątki"},
-      {"offset": 60, "name": "Boże Ciało"}
+      {
+        "offset": 0,
+        "name": "Wielkanoc (pierwszy dzień)",
+        "name_en": "Easter Sunday"
+      },
+      {
+        "offset": 1,
+        "name": "Poniedziałek Wielkanocny",
+        "name_en": "Easter Monday"
+      },
+      {
+        "offset": 49,
+        "name": "Zielone Świątki",
+        "name_en": "Pentecost Sunday"
+      },
+      {
+        "offset": 60,
+        "name": "Boże Ciało",
+        "name_en": "Corpus Christi"
+      }
     ]
   },
   "counting_rules": {
@@ -74,10 +133,10 @@
     {
       "id": "registered-letter-court",
       "title": "Registered letter from a court, not collected after two notices",
-      "days": 14,
+      "days": 15,
       "from": "the day the first notice was left",
-      "law": "KPC art. 139 § 1; rozporządzenie MS w sprawie doręczania pism sądowych (Dz.U. 2024 poz. 19) § 8 ust. 2",
-      "note": "Two 7-day collection periods. Courts treat the letter as delivered when the second period ends; that rule comes from case law, not from the code, so check the delivery date the court records. A first letter to a private defendant may be served by a bailiff instead (KPC art. 139¹); an electronic payment order counts as served at the PESEL-register address (KPC art. 505³⁴)."
+      "law": "KPC art. 139 § 1; court delivery regulation (Dz.U. 2024 poz. 19) § 6 to § 8; Supreme Court IV CKN 1026/00",
+      "note": "Each notice gives 7 days counted from the day after it; the letter counts as delivered on the last day of the second period, usually 15 days after the first notice (7 days after the second notice when its date is known). A first letter to a private defendant may be served by a bailiff (KPC art. 139¹ § 1); if the claimant proves the address, the original date stands (art. 139¹ § 3). An electronic payment order counts as served at the PESEL-register address (KPC art. 505³⁴)."
     },
     {
       "id": "e-delivery",
@@ -89,28 +148,146 @@
     }
   ],
   "response_windows": [
-    {"id": "appeal-administrative-decision", "title": "Appeal against an administrative decision (odwołanie)", "amount": 14, "unit": "days", "from": "delivery or announcement of the decision", "counting": "administrative", "law": "KPA art. 129 § 2"},
-    {"id": "complaint-administrative-ruling", "title": "Complaint against an administrative ruling (zażalenie na postanowienie)", "amount": 7, "unit": "days", "from": "delivery or announcement of the ruling", "counting": "administrative", "law": "KPA art. 141 § 2"},
-    {"id": "appeal-tax-decision", "title": "Appeal against a tax decision (odwołanie)", "amount": 14, "unit": "days", "from": "delivery of the decision", "counting": "tax", "law": "Ordynacja podatkowa art. 223 § 2 pkt 1"},
-    {"id": "objection-payment-order", "title": "Objection (sprzeciw) to a payment order in summary proceedings, delivered in Poland", "amount": 14, "unit": "days", "from": "delivery of the order", "counting": "court", "law": "KPC art. 480² § 2 pkt 1, art. 505 § 1"},
-    {"id": "objection-payment-order-epu", "title": "Objection (sprzeciw) to an electronic payment order (EPU, e-sąd)", "amount": 14, "unit": "days", "from": "delivery of the order", "counting": "court", "law": "KPC art. 480² § 2 pkt 1, art. 505²⁸ § 1"},
-    {"id": "pleas-order-for-payment", "title": "Pleas (zarzuty) against a payment order in writ proceedings (postępowanie nakazowe), delivered in the EU", "amount": 1, "unit": "months", "from": "delivery of the order", "counting": "court", "law": "KPC art. 480² § 2 pkt 3, art. 493 § 1"},
-    {"id": "ticket-fine-payment", "title": "Paying a fine issued on a ticket (mandat kredytowany)", "amount": 7, "unit": "days", "from": "accepting the ticket", "counting": "calendar", "law": "Kodeks postępowania w sprawach o wykroczenia art. 98 § 3"},
-    {"id": "consumer-withdrawal", "title": "Withdrawal from a distance or off-premises contract", "amount": 14, "unit": "days", "from": "taking possession of the goods, or concluding the contract for services", "counting": "civil", "law": "ustawa o prawach konsumenta art. 27 ust. 1, art. 28, art. 30 ust. 2 (sending the statement in time is enough)"},
-    {"id": "consumer-withdrawal-home-visit", "title": "Withdrawal from a contract made during an unarranged visit by the trader at home or during an excursion", "amount": 30, "unit": "days", "from": "taking possession of the goods, or concluding the contract for services", "counting": "civil", "law": "ustawa o prawach konsumenta art. 27 ust. 2, art. 28, art. 30 ust. 2"},
-    {"id": "trader-complaint-reply", "title": "Trader's reply to a consumer complaint (reklamacja); no reply in time means the complaint is accepted", "amount": 14, "unit": "days", "from": "the trader receiving the complaint", "counting": "civil", "law": "ustawa o prawach konsumenta art. 7a ust. 1 and 2"}
+    {
+      "id": "appeal-administrative-decision",
+      "title": "Appeal against an administrative decision (odwołanie)",
+      "amount": 14,
+      "unit": "days",
+      "from": "delivery or announcement of the decision",
+      "counting": "administrative",
+      "law": "KPA art. 129 § 2"
+    },
+    {
+      "id": "complaint-administrative-ruling",
+      "title": "Complaint against an administrative ruling (zażalenie na postanowienie)",
+      "amount": 7,
+      "unit": "days",
+      "from": "delivery or announcement of the ruling",
+      "counting": "administrative",
+      "law": "KPA art. 141 § 2"
+    },
+    {
+      "id": "appeal-tax-decision",
+      "title": "Appeal against a tax decision (odwołanie)",
+      "amount": 14,
+      "unit": "days",
+      "from": "delivery of the decision",
+      "counting": "tax",
+      "law": "Ordynacja podatkowa art. 223 § 2 pkt 1"
+    },
+    {
+      "id": "objection-payment-order",
+      "title": "Objection (sprzeciw) to a payment order in summary proceedings, delivered in Poland",
+      "amount": 14,
+      "unit": "days",
+      "from": "delivery of the order",
+      "counting": "court",
+      "law": "KPC art. 480² § 2 pkt 1, art. 505 § 1"
+    },
+    {
+      "id": "objection-payment-order-epu",
+      "title": "Objection (sprzeciw) to an electronic payment order (EPU, e-sąd)",
+      "amount": 14,
+      "unit": "days",
+      "from": "delivery of the order",
+      "counting": "court",
+      "law": "KPC art. 480² § 2 pkt 1, art. 505²⁸ § 1"
+    },
+    {
+      "id": "pleas-order-for-payment",
+      "title": "Pleas (zarzuty) against a payment order in writ proceedings (postępowanie nakazowe), delivered in the EU",
+      "amount": 1,
+      "unit": "months",
+      "from": "delivery of the order",
+      "counting": "court",
+      "law": "KPC art. 480² § 2 pkt 3, art. 493 § 1"
+    },
+    {
+      "id": "ticket-fine-payment",
+      "title": "Paying a fine issued on a ticket (mandat kredytowany)",
+      "amount": 7,
+      "unit": "days",
+      "from": "accepting the ticket",
+      "counting": "calendar",
+      "law": "Kodeks postępowania w sprawach o wykroczenia art. 98 § 3"
+    },
+    {
+      "id": "consumer-withdrawal",
+      "title": "Withdrawal from a distance or off-premises contract",
+      "amount": 14,
+      "unit": "days",
+      "from": "taking possession of the goods, or concluding the contract for services",
+      "counting": "civil",
+      "law": "ustawa o prawach konsumenta art. 27 ust. 1, art. 28, art. 30 ust. 2 (sending the statement in time is enough)"
+    },
+    {
+      "id": "consumer-withdrawal-home-visit",
+      "title": "Withdrawal from a contract made during an unarranged visit by the trader at home or during an excursion",
+      "amount": 30,
+      "unit": "days",
+      "from": "taking possession of the goods, or concluding the contract for services",
+      "counting": "civil",
+      "law": "ustawa o prawach konsumenta art. 27 ust. 2, art. 28, art. 30 ust. 2"
+    },
+    {
+      "id": "trader-complaint-reply",
+      "title": "Trader's reply to a consumer complaint (reklamacja); no reply in time means the complaint is accepted",
+      "amount": 14,
+      "unit": "days",
+      "from": "the trader receiving the complaint",
+      "counting": "civil",
+      "law": "ustawa o prawach konsumenta art. 7a ust. 1 and 2"
+    }
   ],
   "recurring": [
-    {"id": "pit-annual", "title": "Annual income tax return (PIT) for the previous year", "kind": "filing", "category": "tax", "dates": ["04-30"], "window_opens": "02-15", "counting": "tax", "lead_time_days": 30, "applies_when": "an adult had taxable income last year", "law": "ustawa o podatku dochodowym od osób fizycznych art. 45 ust. 1"},
-    {"id": "property-tax", "title": "Property tax instalment (podatek od nieruchomości); a yearly amount up to PLN 100 is paid once, by 15 March", "kind": "payment", "category": "home", "dates": ["03-15", "05-15", "09-15", "11-15"], "counting": "tax", "lead_time_days": 7, "applies_when": "the household owns a home, land or a garage", "law": "ustawa o podatkach i opłatach lokalnych art. 6 ust. 7 and 11a"},
-    {"id": "child-benefit-800", "title": "800+ child benefit application for the period from 1 June (filed by 30 April: paid without a gap from June)", "kind": "filing", "category": "children", "dates": ["04-30"], "window_opens": "02-01", "counting": "calendar", "lead_time_days": 30, "applies_when": "the household has a child under 18 and receives or wants 800+", "law": "ustawa o pomocy państwa w wychowywaniu dzieci art. 13 ust. 5, art. 18 ust. 1 and 2, art. 21 ust. 3 and 4"}
+    {
+      "id": "pit-annual",
+      "title": "Annual income tax return (PIT) for the previous year",
+      "kind": "filing",
+      "category": "tax",
+      "dates": [
+        "04-30"
+      ],
+      "window_opens": "02-15",
+      "counting": "tax",
+      "lead_time_days": 30,
+      "applies_when": "an adult had taxable income last year",
+      "law": "ustawa o podatku dochodowym od osób fizycznych art. 45 ust. 1"
+    },
+    {
+      "id": "property-tax",
+      "title": "Property tax instalment (podatek od nieruchomości); a yearly amount up to PLN 100 is paid once, by 15 March",
+      "kind": "payment",
+      "category": "home",
+      "dates": [
+        "03-15",
+        "05-15",
+        "09-15",
+        "11-15"
+      ],
+      "counting": "tax",
+      "lead_time_days": 7,
+      "applies_when": "the household owns a home, land or a garage",
+      "law": "ustawa o podatkach i opłatach lokalnych art. 6 ust. 7 and 11a"
+    },
+    {
+      "id": "child-benefit-800",
+      "title": "800+ child benefit application for the period from 1 June (filed by 30 April: paid without a gap from June)",
+      "kind": "filing",
+      "category": "children",
+      "dates": [
+        "04-30"
+      ],
+      "window_opens": "02-01",
+      "counting": "calendar",
+      "lead_time_days": 30,
+      "applies_when": "the household has a child under 18 and receives or wants 800+",
+      "law": "ustawa o pomocy państwa w wychowywaniu dzieci art. 13 ust. 5, art. 18 ust. 1 and 2, art. 21 ust. 3 and 4"
+    }
   ],
   "sources": {
-    "reviewed_with": "consolidated texts read through the Sejm ELI service on 2026-11-13; full list in PL.md, section Sources",
-    "uncertain": [
-      "the day an uncollected court letter counts as delivered (case law)",
-      "validity of a first category B driving licence issued from September 2026 (probation period)"
-    ]
+    "reviewed_with": "consolidated texts read through the Sejm ELI service and case law read through SAOS on 2026-11-13; full list in PL.md, section Sources",
+    "uncertain": []
   },
   "transit_buffer_days": {
     "instant": 0,

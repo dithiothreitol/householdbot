@@ -27,9 +27,11 @@ Every skill follows these rules before it reads or writes the record.
 ```
 
 Both registers are JSON with a `schema_version`. `record.py` (in the skill's
-`shared/scripts/`) creates, checks and writes them. The profile template ships
-in `household-onboard/shared/templates/`. Household data never goes into the
-plugin folder: it is replaced on every update.
+`shared/scripts/`) creates, checks and writes them. The profile templates ship
+in `shared/templates/en/` and `shared/templates/pl/`; a Polish profile has
+Polish headings that map one to one onto the English ones, and every skill
+reads either. Household data never goes into the plugin folder: it is
+replaced on every update.
 
 The household chooses where the folder lives. A folder inside a synced drive
 (Google Drive, OneDrive, Dropbox, iCloud) is how two adults share one record

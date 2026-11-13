@@ -15,12 +15,14 @@
     "not-advice"
   ],
   "bundles": {
-    "rules": {"bundle_to": "shared/rules.md"},
-    "pack": {"glob": "locale/*", "to_dir": "shared/locale"},
-    "scripts": {"files": {"scripts/dates.py": "shared/scripts/dates.py",
-                          "scripts/record.py": "shared/scripts/record.py"}},
-    "templates": {"files": {"templates/household-profile.md": "shared/templates/household-profile.md",
-                            "templates/registers-README.md": "shared/templates/registers-README.md"}}
+    "rules": [{"bundle_to": "shared/rules.md"}],
+    "pack": [{"glob": "locale/*", "base": "locale", "to_dir": "shared/locale"}],
+    "scripts": [
+      {"files": {"scripts/dates.py": "shared/scripts/dates.py",
+                 "scripts/record.py": "shared/scripts/record.py"}},
+      {"glob": "i18n/*.json", "base": "i18n", "to_dir": "shared/i18n"}
+    ],
+    "templates": [{"glob": "templates/*/*", "base": "templates", "to_dir": "shared/templates"}]
   },
   "skills": {
     "household-onboard": ["rules", "pack", "scripts", "templates"],

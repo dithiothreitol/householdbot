@@ -3,11 +3,14 @@ name: deadline-tracker
 description: >
   Shows what the household has to do and by when, from its register of
   payments, renewals, cancel-by dates, expiries, responses and dated tasks, and
-  keeps that register current. Computes a single deadline on request with the
-  country's holidays. Use when someone asks "what's due", "any deadlines",
-  "what did we miss", "when do we have to cancel", "how long do I have", "co
-  mamy do zapłacenia", "jakie terminy", or says "remind me", "add a deadline",
-  "I paid it", "zapłaciłem", "done", "we cancelled it".
+  keeps that register current. Computes any deadline counted from a delivery
+  or an event (an appeal, an objection, a withdrawal, a notice period) with the
+  country's holidays and counting rules, also without a record. Use when
+  someone asks "what's due", "any deadlines", "what did we miss", "when do we
+  have to cancel", "how long do I have", "until when can I appeal", "co mamy
+  do zapłacenia", "jakie terminy", "do kiedy", "ile mam czasu", "termin na
+  odwołanie", or says "remind me", "add a deadline", "I paid it",
+  "zapłaciłem", "done", "we cancelled it".
 argument-hint: "[--days N] [--missed] [--member NAME] [--category NAME] [--seed for the country pack's recurring reminders]"
 ---
 
@@ -35,6 +38,10 @@ Without Python, apply the same rules by hand: bands on `do_by`, weekdays
 checked against a calendar, every computed date tagged
 `model calculation — verify`.
 
+Dates and amounts come out in the household's language: `record.py` reads it
+from the profile, and `dates.py` takes `--lang pl` for Polish (English is the
+default).
+
 ## Step 0 — Find the record
 
 `record.py locate`, or look for `household-profile.md` in the working folder
@@ -54,8 +61,9 @@ Report in the household's language, grouped by band, overdue first:
 | Do by | What | Who | Amount | Source |
 |---|---|---|---|---|
 
-- *Do by*: the weekday and date in the local format. When `due_date`
-  differs, add it: `pt. 13.11.2026 (termin: pon. 16.11.2026)`.
+- *Do by*: the weekday and date in the household's language (`do_by_local`
+  from the script). When `due_date` differs, add it:
+  `Fri 13 Nov 2026 (due Mon 16 Nov 2026)` or `pt. 13.11.2026 (termin: pon. 16.11.2026)`.
 - *Source*: the provenance tag; anything tagged *verify* keeps the word.
 - An amount with its currency; a missing amount is left empty, never zero.
 - **Start now**: entries inside their lead time, even beyond the window.

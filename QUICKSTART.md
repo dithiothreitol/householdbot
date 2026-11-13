@@ -1,5 +1,7 @@
 # Quickstart
 
+**English** · [Polski](QUICKSTART.pl.md)
+
 Ten minutes from install to the first filed document.
 
 ## 1. Install
@@ -26,28 +28,31 @@ Drive, or save the files HouseholdBot gives you into your folder yourself.
 /householdbot:household-onboard
 ```
 
-Choose the quick setup (about two minutes): your country, who lives with you,
-and what takes the most time. Choose where the household folder lives; a
-folder in a synced drive lets two adults share it. HouseholdBot shows the
-profile and creates the folder only after you say yes.
+The first line asks for the language: English is the default, and "po polsku"
+switches to Polish. Then choose the quick setup (about two minutes): your
+country, who lives with you, and what takes the most time. Choose where the
+household folder lives; a folder in a synced drive lets two adults share it.
+HouseholdBot shows the profile and creates the folder only after you say yes.
 
 ## 3. File one paper
 
 Send a photo or PDF of a bill, a policy or a letter, or paste an email. You
 get back what it is, what it says, what it wants by when, and a proposal for
-where to file it. Say yes, and it is filed with its deadline.
+where to file it. Say yes, and it is filed with its deadline. A letter in
+another language is explained in yours, with the original quoted.
 
 ## 4. Use it
 
 | Say | What happens |
 |---|---|
-| "what's due" / "co mamy do zapłacenia" | deadlines by urgency, overdue first |
-| "I paid it" / "zapłaciłam" | closes the item and prepares next month's |
-| "where is the car insurance" / "gdzie jest polisa" | the document, the fact, the page |
+| "what's due" | deadlines by urgency, overdue first |
+| "I paid it" | closes the item and prepares next month's |
+| "where is the car insurance" | the document, the fact, the page |
 | "I got this on Tuesday, how long do I have?" | the deadline with holidays counted |
-| "weekly brief" / "przegląd tygodnia" | one page on the week |
+| "weekly brief" | one page on the week |
 | "we sold the car" | the profile change and the reminders it closes |
 | "check my record" | a health check of the folder |
+| "from now on in Polish" | switches the household's language |
 
 ## Python
 
