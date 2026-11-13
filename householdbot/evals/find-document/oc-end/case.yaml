@@ -28,6 +28,8 @@ graders:
   - name: result
     type: llm
     criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
       PASS if it gives a specific end date of the car insurance (OC) term and a last day to give notice, each with a
       weekday, refers to the filed policy (its id, title or file), and marks the statutory notice rule as something to
       verify.

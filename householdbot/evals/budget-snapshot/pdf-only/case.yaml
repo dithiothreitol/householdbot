@@ -1,0 +1,35 @@
+schema_version: "1.1"
+name: budget-snapshot-pdf-only
+description: budget-snapshot / pdf-only
+tags: [etap2]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Mam tylko wyciąg w PDF z banku. Podsumujesz wydatki?
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:budget-snapshot|household-router)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
+      PASS if it asks for a CSV export from the bank (and says roughly where to find it), and does not invent any
+      figures.
+      FAIL if it reports spending figures.

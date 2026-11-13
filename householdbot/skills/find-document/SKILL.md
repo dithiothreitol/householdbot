@@ -47,10 +47,14 @@ default).
 
 ## Step 0 — Find the record
 
-`record.py locate`, or look for `household-profile.md` in the working folder
-and the pointer `~/.claude/plugins/config/householdbot/location.md`. With no
-record, say so in one line and offer `/householdbot:household-onboard`; if the
-member has the paper at hand, offer to read it with `file-document`.
+`record.py locate --start "<working folder>"`, run by its full path from the
+session's working folder (never after `cd` into the skill's folder), or look
+for `household-profile.md` in the working folder and the pointer
+`~/.claude/plugins/config/householdbot/location.md`. With no record, say so in
+one line and offer `/householdbot:household-onboard`; if the member has the
+paper at hand, offer to read it with `file-document`. If `locate` finds
+nothing, read `household-profile.md` in the working folder yourself before
+saying the household is not set up.
 
 ## Step 1 — Search the registers
 

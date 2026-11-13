@@ -7,6 +7,8 @@
     "personal-data",
     "household-record",
     "dates-and-deadlines",
+    "money",
+    "voice",
     "absent-is-not-zero",
     "locale",
     "storage-scope",
@@ -15,24 +17,146 @@
     "not-advice"
   ],
   "bundles": {
-    "rules": [{"bundle_to": "shared/rules.md"}],
-    "pack": [{"glob": "locale/*", "base": "locale", "to_dir": "shared/locale"}],
-    "scripts": [
-      {"files": {"scripts/dates.py": "shared/scripts/dates.py",
-                 "scripts/record.py": "shared/scripts/record.py"}},
-      {"glob": "i18n/*.json", "base": "i18n", "to_dir": "shared/i18n"}
+    "rules": [
+      {
+        "bundle_to": "shared/rules.md"
+      }
     ],
-    "templates": [{"glob": "templates/*/*", "base": "templates", "to_dir": "shared/templates"}]
+    "pack": [
+      {
+        "glob": "locale/*",
+        "base": "locale",
+        "to_dir": "shared/locale"
+      }
+    ],
+    "scripts": [
+      {
+        "files": {
+          "scripts/dates.py": "shared/scripts/dates.py",
+          "scripts/record.py": "shared/scripts/record.py"
+        }
+      },
+      {
+        "glob": "i18n/*.json",
+        "base": "i18n",
+        "to_dir": "shared/i18n"
+      }
+    ],
+    "templates": [
+      {
+        "glob": "templates/*/*",
+        "base": "templates",
+        "to_dir": "shared/templates"
+      }
+    ],
+    "money": [
+      {
+        "files": {
+          "scripts/statement.py": "shared/scripts/statement.py"
+        }
+      },
+      {
+        "glob": "money/*.json",
+        "base": "money",
+        "to_dir": "shared/money"
+      }
+    ]
   },
   "skills": {
-    "household-onboard": ["rules", "pack", "scripts", "templates"],
-    "household-router": ["rules"],
-    "file-document": ["rules", "pack", "scripts"],
-    "find-document": ["rules", "scripts"],
-    "deadline-tracker": ["rules", "pack", "scripts"],
-    "weekly-brief": ["rules", "pack", "scripts"],
-    "household-customize": ["rules", "pack", "scripts", "templates"],
-    "household-doctor": ["rules", "pack", "scripts", "templates"]
+    "household-onboard": [
+      "rules",
+      "pack",
+      "scripts",
+      "templates"
+    ],
+    "household-router": [
+      "rules"
+    ],
+    "file-document": [
+      "rules",
+      "pack",
+      "scripts"
+    ],
+    "find-document": [
+      "rules",
+      "scripts"
+    ],
+    "deadline-tracker": [
+      "rules",
+      "pack",
+      "scripts"
+    ],
+    "weekly-brief": [
+      "rules",
+      "pack",
+      "scripts"
+    ],
+    "household-customize": [
+      "rules",
+      "pack",
+      "scripts",
+      "templates"
+    ],
+    "household-doctor": [
+      "rules",
+      "pack",
+      "scripts",
+      "templates"
+    ],
+    "inbox-triage": [
+      "rules",
+      "pack",
+      "scripts"
+    ],
+    "bills-due": [
+      "rules",
+      "pack",
+      "scripts"
+    ],
+    "contract-check": [
+      "rules",
+      "pack",
+      "scripts"
+    ],
+    "subscriptions-review": [
+      "rules",
+      "pack",
+      "scripts",
+      "money"
+    ],
+    "budget-snapshot": [
+      "rules",
+      "scripts",
+      "money"
+    ],
+    "tax-season-organizer": [
+      "rules",
+      "pack",
+      "scripts"
+    ],
+    "reply-to-letter": [
+      "rules",
+      "pack",
+      "scripts"
+    ],
+    "complaint-and-claim": [
+      "rules",
+      "pack",
+      "scripts"
+    ],
+    "cancel-or-switch": [
+      "rules",
+      "pack",
+      "scripts"
+    ],
+    "monthly-review": [
+      "rules",
+      "pack",
+      "scripts",
+      "money"
+    ]
   },
-  "plugin_copies": {"LICENSE": "LICENSE"}
+  "plugin_copies": {
+    "LICENSE": "LICENSE"
+  }
 }

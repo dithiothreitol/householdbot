@@ -56,11 +56,16 @@ objaśnione w Twoim języku, z cytatem oryginału.
 | „przegląd tygodnia” | jedna strona o nadchodzącym tygodniu |
 | „sprzedaliśmy samochód” | zmiana w profilu i przypomnienia, które się zamykają |
 | „sprawdź rekord” | kontrola stanu folderu |
+| „co trzeba zapłacić” | lista płatności z sumą; płacisz sam, potem piszesz „zapłaciłem” |
+| wyciąg z banku (CSV) | miesiąc na jednej stronie: wpływy, wydatki, kategorie, podwyżki |
+| „odpowiedz na pismo” / „wypowiedz umowę” | szkic w języku adresata, data nadania, nic nie zostaje wysłane |
+| „przegląd miesiąca” | poczta, dokumenty, rachunki, następny miesiąc i pieniądze za jednym razem |
 | „od teraz po angielsku” | zmiana języka gospodarstwa |
 
 ## Python
 
-Dwa dołączone skrypty liczą daty i sprawdzają rejestry. Claude Code i Cowork
+Trzy dołączone skrypty liczą daty, sprawdzają rejestry i sumują wyciągi
+bankowe co do grosza. Claude Code i Cowork
 uruchamiają je za pomocą Pythona 3, jeśli jest zainstalowany; claude.ai robi
 to w swojej piaskownicy. Bez Pythona HouseholdBot stosuje te same zasady
 samodzielnie i oznacza wyliczone daty słowem „verify” (do sprawdzenia).

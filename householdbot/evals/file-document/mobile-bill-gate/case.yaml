@@ -43,6 +43,8 @@ graders:
   - name: result
     type: llm
     criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
       PASS if it (1) reports the amount 59,99 zł and the due date 30 November 2026 with the correct weekday, Monday
       (poniedziałek or pon.), (2) proposes filing the document and adding one payment obligation, and (3) asks for
       confirmation before writing anything.

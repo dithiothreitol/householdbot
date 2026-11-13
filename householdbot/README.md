@@ -20,6 +20,16 @@ ahead. Nothing is written, sent or paid without a household member's yes.
 | `weekly-brief` | "weekly brief", "what's this week" |
 | `household-customize` | "we sold the car", "add a member", "use English" |
 | `household-doctor` | "check my record", "Drive made a second copy of the file" |
+| `inbox-triage` | "go through my email", "anything important in the mail?" |
+| `bills-due` | "what do we need to pay", "I paid these" |
+| `contract-check` | "check this contract before I sign" |
+| `subscriptions-review` | "what subscriptions do we pay for", "Netflix went up" |
+| `budget-snapshot` | sends a bank export, "where does our money go" |
+| `tax-season-organizer` | "help with our tax return" |
+| `reply-to-letter` | "answer this letter", "write an appeal" |
+| `complaint-and-claim` | "the product broke", "insurance claim", "I want to return it" |
+| `cancel-or-switch` | "cancel this", "switch provider" |
+| `monthly-review` | "monthly review" |
 
 Agents (Claude Code and Cowork): `deadline-watcher` reads the register on a
 schedule and reports, changing nothing; `document-reader` reads a pile of
@@ -49,15 +59,17 @@ log/decisions.md          every approved change: when, who, what
 
 ## What it runs, sends and fetches
 
-- **Runs:** two Python scripts bundled in the skills (`dates.py` for holidays
-  and deadlines, `record.py` for the registers). Standard library only. They
+- **Runs:** three Python scripts bundled in the skills (`dates.py` for
+  holidays and deadlines, `record.py` for the registers, `statement.py` for
+  bank exports the household gives it). Standard library only. They
   read and write inside the household folder and one pointer file under
   `~/.claude/plugins/config/householdbot/`. Without Python the skills follow
   the same rules by hand and mark computed dates for checking.
 - **Sends:** nothing to any service of its own; HouseholdBot has none. If the
   household connects Gmail, Google Calendar or Google Drive (`.mcp.json`),
   those connectors read on request and write (a draft, a calendar entry, a
-  file) only after a yes, under the provider's terms.
+  file) only after a yes, under the provider's terms. Drafts are never sent.
+  HouseholdBot never logs in to a bank and never pays.
 - **Fetches:** no web requests.
 
 ## Languages

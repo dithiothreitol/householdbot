@@ -28,6 +28,8 @@ graders:
   - name: result
     type: llm
     criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
       PASS if it proposes removing the Skoda Octavia from the vehicles in the profile, finds the open obligations
       about the car (the OC insurance notice date and the roadworthiness test) and proposes closing them, and asks for
       confirmation before changing anything. It may also mention duties after a sale such as notifying the insurer

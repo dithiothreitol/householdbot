@@ -28,6 +28,8 @@ graders:
   - name: result
     type: llm
     criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
       PASS if it proposes changing the profile's language from English (en) to Polish (pl) and asks for confirmation
       before editing the profile. It may already answer in Polish.
       FAIL if it says the profile was already changed, or if it does not propose storing the change in the profile.

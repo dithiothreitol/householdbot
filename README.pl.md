@@ -35,7 +35,7 @@ urzędów po polsku, z tłumaczeniem na angielski. Nowy język wymaga plików w
 ```
 .claude-plugin/marketplace.json   marketplace (jedna wtyczka)
 householdbot/                     wtyczka
-  skills/<skill>/SKILL.md         osiem skilli, każdy samowystarczalny
+  skills/<skill>/SKILL.md         osiemnaście skilli, każdy samowystarczalny
   skills/<skill>/shared/          generowane kopie reguł, pakietów krajowych, skryptów i szablonów
   agents/                         deadline-watcher (tylko odczyt), document-reader (bez narzędzi zapisu)
   evals/                          testy zachowania dla `claude plugin eval`, syntetyczne gospodarstwo
@@ -43,7 +43,9 @@ core/                             źródła wszystkiego, co trafia do skills/*/s
   rules/                          reguły, których przestrzega każdy skill
   locale/PL.md, PL.json           polski pakiet krajowy
   i18n/en.json, pl.json           języki: formaty dat i kwot, notatki, wpisy dziennika
-  scripts/dates.py, record.py     warstwa dowodowa (biblioteka standardowa Pythona)
+  scripts/dates.py, record.py,    warstwa dowodowa (biblioteka standardowa Pythona)
+    statement.py
+  money/categories.json           kategorie wydatków dla wyciągów bankowych
   templates/en/, templates/pl/    profil gospodarstwa i opis rejestrów w każdym języku
 scripts/sync.py                   kopiuje core/ do skilli
 scripts/validate.py               kontrole repozytorium
@@ -80,11 +82,12 @@ repozytorium w Claude Code. Oba dokumenty są po angielsku.
 
 ## Stan
 
-Wersja 0.1.1 obejmuje rdzeń w języku angielskim i polskim: konfigurację,
-archiwizację dokumentów, wyszukiwanie, terminy, przegląd tygodnia, zmiany
-profilu i naprawę rekordu, razem z polskim pakietem krajowym. Kolejne etapy
-dodadzą pieniądze i korespondencję (rachunki, umowy, abonamenty, wyciągi
-bankowe, odpowiedzi na pisma, reklamacje, wypowiedzenia), następnie dom,
+Wersja 0.2 obejmuje rdzeń oraz pieniądze i korespondencję, po angielsku i po
+polsku: konfigurację, archiwizację dokumentów, wyszukiwanie, terminy,
+przegląd tygodnia, zmiany profilu i naprawę rekordu, a także pocztę, rachunki
+i listy płatności, umowy, abonamenty, wyciągi bankowe, listę do rozliczenia
+PIT, odpowiedzi na pisma, reklamacje, wypowiedzenia i przegląd miesiąca,
+razem z polskim pakietem krajowym. Kolejne etapy dodadzą dom,
 rodzinę i codzienność (pojazdy, zdrowie, szkoła, przegląd polis, dokumenty
 tożsamości, zdarzenia życiowe, posiłki, zakupy i obowiązki), a na końcu
 kolejne kraje i obserwatora terminów działającego bez udziału domowników.

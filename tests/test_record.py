@@ -1,14 +1,16 @@
 """Unit tests for core/scripts/record.py on the synthetic household."""
 import io
 import json
+import os
 import shutil
 import sys
 import tempfile
 import unittest
 from contextlib import redirect_stdout
 from pathlib import Path
+from unittest import mock
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT =Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "core" / "scripts"))
 sys.path.insert(0, str(ROOT / "householdbot" / "evals" / "fixtures"))
 import record  # noqa: E402
@@ -109,6 +111,12 @@ class Due(RecordTestCase):
         self.assertNotIn("ob-2026-0009", bands)  # done
         dos = [i["do_by"] for i in items]
         self.assertEqual(dos, sorted(dos))
+
+    def test_payments_only_with_total(self):
+        code, out = run("due", self.home, "--today", TODAY, "--country", "PL", "--kind", "payment")
+        self.assertEqual({i["kind"] for i in out["items"]}, {"payment"})
+        self.assertEqual(out["totals"], {"PLN": "731.60"})
+        self.assertEqual(out["totals_text"], {"PLN": "731,60 zł"})
 
     def test_horizon(self):
         code, out = run("due", self.home, "--today", TODAY, "--horizon", "7")
@@ -336,6 +344,62 @@ class Languages(RecordTestCase):
         code, out = run("init", fresh, "--approved-by", "Anna", "--today", TODAY)
         self.assertEqual(out["lang"], "en")
         self.assertTrue((fresh / "registers" / "README.md").read_text(encoding="utf-8").startswith("# Registers"))
+
+
+class Locate(RecordTestCase):
+    """locate run from a skill's own folder must not report a missing household."""
+
+    def setUp(self):
+        super().setUp()
+        self._saved = (record.HERE, record.POINTER)
+        self._env = mock.patch.dict(os.environ, {}, clear=False)
+        self._env.start()
+        os.environ.pop("CLAUDE_PROJECT_DIR", None)
+        record.POINTER = self.tmp / "config" / "location.md"
+        plugin = self.tmp / "plugin"
+        (plugin / ".claude-plugin").mkdir(parents=True)
+        (plugin / ".claude-plugin" / "plugin.json").write_text("{}", encoding="utf-8")
+        self.skill = plugin / "skills" / "bills-due"
+        record.HERE = self.skill / "shared" / "scripts"
+        record.HERE.mkdir(parents=True)
+
+    def tearDown(self):
+        record.HERE, record.POINTER = self._saved
+        self._env.stop()
+        super().tearDown()
+
+    def test_working_folder_and_its_subfolders(self):
+        for start in (self.home, self.tmp):
+            code, out = run("locate", "--start", start)
+            self.assertTrue(out["found"], start)
+            self.assertEqual(Path(out["root"]), self.home.resolve())
+
+    def test_start_inside_plugin_gives_a_hint(self):
+        code, out = run("locate", "--start", self.skill)
+        self.assertFalse(out["found"])
+        self.assertIn("--start", out["hint"])
+
+    def test_outside_plugin_no_hint(self):
+        empty = self.tmp / "empty"
+        empty.mkdir()
+        code, out = run("locate", "--start", empty)
+        self.assertFalse(out["found"])
+        self.assertNotIn("hint", out)
+
+    def test_pointer_works_from_plugin_folder(self):
+        record.POINTER.parent.mkdir(parents=True)
+        record.POINTER.write_text(str(self.home) + "\n", encoding="utf-8")
+        code, out = run("locate", "--start", self.skill)
+        self.assertTrue(out["found"])
+        self.assertEqual(Path(out["root"]), self.home)
+
+    def test_pointer_to_missing_profile_is_named(self):
+        record.POINTER.parent.mkdir(parents=True)
+        record.POINTER.write_text(str(self.tmp / "gone") + "\n", encoding="utf-8")
+        code, out = run("locate", "--start", self.skill)
+        self.assertFalse(out["found"])
+        self.assertIn("pointer_target", out)
+        self.assertIn("hint", out)
 
 
 class Search(RecordTestCase):

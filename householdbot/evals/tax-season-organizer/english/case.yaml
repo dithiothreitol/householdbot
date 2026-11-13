@@ -1,0 +1,35 @@
+schema_version: "1.1"
+name: tax-season-organizer-english
+description: tax-season-organizer / english
+tags: [etap2]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Help us get ready for our 2026 tax return.
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:tax-season-organizer)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
+      PASS if the reply is in English, asks about income sources, names the information forms to collect (such as
+      PIT-11) and the filing deadline of 30 April 2027, and raises reliefs as questions without computing tax.
+      FAIL if the reply is in Polish, computes tax, or offers to file the return.

@@ -21,6 +21,16 @@ płaci bez zgody domownika.
 | `weekly-brief` | „przegląd tygodnia”, „co nas czeka w tym tygodniu” |
 | `household-customize` | „sprzedaliśmy samochód”, „dodaj domownika”, „przejdź na polski” |
 | `household-doctor` | „sprawdź rekord”, „dysk zrobił drugą kopię pliku” |
+| `inbox-triage` | „przejrzyj pocztę”, „co przyszło mailem” |
+| `bills-due` | „co trzeba zapłacić”, „zapłaciłem te rachunki” |
+| `contract-check` | „sprawdź umowę przed podpisaniem” |
+| `subscriptions-review` | „jakie mamy abonamenty”, „Netflix podrożał” |
+| `budget-snapshot` | wyciąg z banku, „na co idą pieniądze” |
+| `tax-season-organizer` | „pomóż z rozliczeniem PIT” |
+| `reply-to-letter` | „odpowiedz na pismo”, „napisz odwołanie” |
+| `complaint-and-claim` | „reklamacja”, „chcę zwrócić towar”, „odszkodowanie” |
+| `cancel-or-switch` | „wypowiedz umowę”, „zmiana operatora” |
+| `monthly-review` | „przegląd miesiąca” |
 
 Agenci (Claude Code i Cowork): `deadline-watcher` według harmonogramu czyta
 rejestr i przygotowuje raport, niczego nie zmieniając; `document-reader` czyta
@@ -52,8 +62,9 @@ log/decisions.md           każda zatwierdzona zmiana: kiedy, kto, co
 
 ## Co wtyczka uruchamia, wysyła i pobiera
 
-- **Uruchamia** dwa skrypty w Pythonie dołączone do skilli (`dates.py` liczy
-  święta i terminy, `record.py` obsługuje rejestry). Korzystają wyłącznie z
+- **Uruchamia** trzy skrypty w Pythonie dołączone do skilli (`dates.py` liczy
+  święta i terminy, `record.py` obsługuje rejestry, `statement.py` czyta
+  wyciągi bankowe przekazane przez gospodarstwo). Korzystają wyłącznie z
   biblioteki standardowej. Czytają i zapisują pliki w folderze gospodarstwa
   oraz jeden plik wskaźnika w `~/.claude/plugins/config/householdbot/`. Bez
   Pythona skille stosują te same zasady samodzielnie i oznaczają wyliczone
@@ -62,7 +73,8 @@ log/decisions.md           każda zatwierdzona zmiana: kiedy, kto, co
   HouseholdBot nie ma żadnej własnej usługi. Podłączone konta Gmail, Kalendarza
   Google lub Dysku Google (`.mcp.json`) czytają dane na prośbę domownika, a
   zapisują (szkic, wpis w kalendarzu, plik) dopiero po zgodzie, na warunkach
-  dostawcy.
+  dostawcy. Szkice nigdy nie są wysyłane. HouseholdBot nie loguje się do banku
+  i niczego nie płaci.
 - **Niczego nie pobiera** z internetu.
 
 ## Języki

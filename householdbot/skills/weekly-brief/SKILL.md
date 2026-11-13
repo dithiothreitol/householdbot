@@ -38,11 +38,14 @@ default).
 
 ## Step 0 — Find the record
 
-`record.py locate`, or look for `household-profile.md` in the working folder
-and the pointer `~/.claude/plugins/config/householdbot/location.md`. With no
-record there is nothing to brief from: say so and offer
-`/householdbot:household-onboard`. Read the profile for the language, who sees
-the brief, and the output preference.
+`record.py locate --start "<working folder>"`, run by its full path from the
+session's working folder (never after `cd` into the skill's folder), or look
+for `household-profile.md` in the working folder and the pointer
+`~/.claude/plugins/config/householdbot/location.md`. With no record there is
+nothing to brief from: say so and offer `/householdbot:household-onboard`.
+Read the profile for the language, who sees the brief, and the output
+preference. If `locate` finds nothing, read `household-profile.md` in the
+working folder yourself before saying the household is not set up.
 
 ## Step 1 — Deadlines
 

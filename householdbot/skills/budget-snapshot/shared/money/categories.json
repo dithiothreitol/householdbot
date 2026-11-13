@@ -1,0 +1,302 @@
+{
+  "version": 1,
+  "categories": {
+    "housing": {
+      "en": "Housing",
+      "pl": "Mieszkanie"
+    },
+    "utilities": {
+      "en": "Utilities",
+      "pl": "Media i telekomunikacja"
+    },
+    "food": {
+      "en": "Food and groceries",
+      "pl": "Jedzenie i zakupy spożywcze"
+    },
+    "transport": {
+      "en": "Transport",
+      "pl": "Transport"
+    },
+    "health": {
+      "en": "Health",
+      "pl": "Zdrowie"
+    },
+    "children": {
+      "en": "Children and school",
+      "pl": "Dzieci i szkoła"
+    },
+    "insurance": {
+      "en": "Insurance",
+      "pl": "Ubezpieczenia"
+    },
+    "subscriptions": {
+      "en": "Subscriptions",
+      "pl": "Abonamenty i subskrypcje"
+    },
+    "taxes": {
+      "en": "Taxes and fees",
+      "pl": "Podatki i opłaty"
+    },
+    "shopping": {
+      "en": "Shopping",
+      "pl": "Zakupy"
+    },
+    "leisure": {
+      "en": "Leisure",
+      "pl": "Rozrywka i wypoczynek"
+    },
+    "cash": {
+      "en": "Cash",
+      "pl": "Gotówka"
+    },
+    "transfers": {
+      "en": "Own transfers and savings",
+      "pl": "Przelewy własne i oszczędności"
+    },
+    "income": {
+      "en": "Income",
+      "pl": "Wpływy"
+    },
+    "other": {
+      "en": "Other",
+      "pl": "Inne"
+    }
+  },
+  "rules": [
+    {
+      "category": "income",
+      "match": [
+        "wynagrodzenie",
+        "pensja",
+        "salary",
+        "wyplata wynagrodzenia",
+        "swiadczenie wychowawcze",
+        "800+",
+        "zus emerytura",
+        "zus renta"
+      ],
+      "sign": "credit"
+    },
+    {
+      "category": "transfers",
+      "match": [
+        "przelew wlasny",
+        "przelew na rachunek wlasny",
+        "own transfer",
+        "lokata",
+        "oszczednosci",
+        "savings"
+      ]
+    },
+    {
+      "category": "cash",
+      "match": [
+        "wyplata z bankomatu",
+        "wyplata gotowki",
+        "bankomat",
+        "atm"
+      ]
+    },
+    {
+      "category": "taxes",
+      "match": [
+        "urzad skarbowy",
+        "podatek",
+        "us",
+        "urzad gminy",
+        "oplata za odpady",
+        "gospodarowanie odpadami",
+        "mandat",
+        "oplata abonamentowa",
+        "rtv"
+      ]
+    },
+    {
+      "category": "insurance",
+      "match": [
+        "pzu",
+        "warta",
+        "ergo hestia",
+        "hestia",
+        "allianz",
+        "link4",
+        "generali",
+        "uniqa",
+        "compensa",
+        "proama",
+        "ubezpieczenie",
+        "polisa",
+        "insurance"
+      ]
+    },
+    {
+      "category": "subscriptions",
+      "match": [
+        "netflix",
+        "spotify",
+        "disney",
+        "hbo",
+        "max.com",
+        "youtube",
+        "apple.com",
+        "icloud",
+        "google play",
+        "google one",
+        "amazon prime",
+        "canal+",
+        "player.pl",
+        "tidal",
+        "audioteka",
+        "legimi",
+        "chatgpt",
+        "openai",
+        "claude.ai",
+        "anthropic"
+      ]
+    },
+    {
+      "category": "utilities",
+      "match": [
+        "pge",
+        "tauron",
+        "energa",
+        "enea",
+        "e.on",
+        "eon",
+        "innogy",
+        "pgnig",
+        "gaz",
+        "wodociagi",
+        "woda",
+        "energia",
+        "orange",
+        "play",
+        "plus",
+        "polkomtel",
+        "t-mobile",
+        "upc",
+        "vectra",
+        "netia",
+        "internet",
+        "telefon"
+      ]
+    },
+    {
+      "category": "housing",
+      "match": [
+        "czynsz",
+        "wspolnota",
+        "spoldzielnia",
+        "najem",
+        "rent",
+        "kredyt hipoteczny",
+        "rata kredytu",
+        "kredytu hipotecznego",
+        "mortgage"
+      ]
+    },
+    {
+      "category": "food",
+      "match": [
+        "biedronka",
+        "lidl",
+        "zabka",
+        "auchan",
+        "carrefour",
+        "kaufland",
+        "netto",
+        "dino",
+        "stokrotka",
+        "lewiatan",
+        "aldi",
+        "frisco",
+        "piekarnia",
+        "groceries",
+        "supermarket"
+      ]
+    },
+    {
+      "category": "transport",
+      "match": [
+        "orlen",
+        "bp",
+        "shell",
+        "circle k",
+        "moya",
+        "amic",
+        "lotos",
+        "paliwo",
+        "pkp",
+        "intercity",
+        "koleje",
+        "jakdojade",
+        "uber",
+        "bolt",
+        "free now",
+        "parking",
+        "autostrada"
+      ]
+    },
+    {
+      "category": "health",
+      "match": [
+        "apteka",
+        "pharmacy",
+        "przychodnia",
+        "luxmed",
+        "medicover",
+        "enel-med",
+        "stomatolog",
+        "dentysta",
+        "lekarz"
+      ]
+    },
+    {
+      "category": "children",
+      "match": [
+        "przedszkole",
+        "szkola",
+        "zlobek",
+        "rada rodzicow",
+        "kolonie",
+        "oboz",
+        "zajecia dodatkowe"
+      ]
+    },
+    {
+      "category": "shopping",
+      "match": [
+        "allegro",
+        "amazon",
+        "zalando",
+        "empik",
+        "media expert",
+        "rtv euro agd",
+        "ikea",
+        "castorama",
+        "leroy merlin",
+        "obi",
+        "decathlon",
+        "rossmann",
+        "hebe"
+      ]
+    },
+    {
+      "category": "leisure",
+      "match": [
+        "kino",
+        "cinema city",
+        "multikino",
+        "helios",
+        "restauracja",
+        "pizzeria",
+        "kawiarnia",
+        "booking.com",
+        "airbnb",
+        "bilety",
+        "teatr"
+      ]
+    }
+  ],
+  "matching": "whole words or phrases, case and Polish letters ignored; household rules first, then these in order"
+}

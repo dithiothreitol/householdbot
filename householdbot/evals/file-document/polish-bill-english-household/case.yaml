@@ -43,6 +43,8 @@ graders:
   - name: result
     type: llm
     criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
       PASS if the reply is in English, reports the amount (PLN 59.99 or 59,99 zł) and the due date 30 November 2026
       with its weekday, Monday, proposes filing the bill with one payment obligation, and asks for confirmation before
       writing anything. Quoting Polish lines from the bill is fine.

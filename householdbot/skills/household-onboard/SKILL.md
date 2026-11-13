@@ -52,8 +52,12 @@ profile does not exist yet), and `dates.py` takes `--lang pl` for Polish.
 
 ## Step 0 — Check the current state
 
-Run `record.py locate` (or look for `household-profile.md` in the working
-folder and the pointer `~/.claude/plugins/config/householdbot/location.md`).
+Run `record.py locate --start "<working folder>"` by its full path from the
+session's working folder, never after `cd` into the skill's folder (or look
+for `household-profile.md` in the working folder and the pointer
+`~/.claude/plugins/config/householdbot/location.md`). If `locate` finds
+nothing, read `household-profile.md` in the working folder yourself before
+starting a new record.
 
 - **No record** → start below.
 - **Profile contains `<!-- SETUP PAUSED AT:`** → greet the user and offer to

@@ -2,16 +2,65 @@
   "lang": "en",
   "name": "English",
   "default": true,
-  "weekdays_short": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-  "weekdays_long": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-  "months_short": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+  "weekdays_short": [
+    "Mon",
+    "Tue",
+    "Wed",
+    "Thu",
+    "Fri",
+    "Sat",
+    "Sun"
+  ],
+  "weekdays_long": [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday"
+  ],
+  "months_short": [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec"
+  ],
   "date_format": "{wd} {d} {mon} {yyyy}",
   "decimal_separator": ".",
   "thousands_separator": ",",
   "amount_format": "{code} {number}",
   "currency_symbols": {},
-  "units": {"days": ["day", "days"], "weeks": ["week", "weeks"], "months": ["month", "months"],
-            "years": ["year", "years"], "business_days": ["business day", "business days"]},
+  "units": {
+    "days": [
+      "day",
+      "days"
+    ],
+    "weeks": [
+      "week",
+      "weeks"
+    ],
+    "months": [
+      "month",
+      "months"
+    ],
+    "years": [
+      "year",
+      "years"
+    ],
+    "business_days": [
+      "business day",
+      "business days"
+    ]
+  },
   "notes": {
     "transit": "{days} allowed for delivery before {date}",
     "rolled_back": "rolled back from {date} ({reason})",
@@ -19,10 +68,26 @@
     "margin": "the statutory move forward is kept as margin, not as the plan",
     "moved_forward": "{date} is not a working day ({reason}); the deadline moves to {new_date} under {law}"
   },
-  "quotes": ["\"", "\""],
-  "bands": {"overdue": "⚫ overdue", "now": "🔴 now", "soon": "🟠 soon", "coming": "🟡 coming", "later": "later"},
-  "statuses": {"open": "open", "done": "done", "cancelled": "cancelled", "lapsed": "lapsed (renewed without notice)",
-               "filed": "filed", "action-needed": "action needed", "superseded": "superseded"},
+  "quotes": [
+    "\"",
+    "\""
+  ],
+  "bands": {
+    "overdue": "⚫ overdue",
+    "now": "🔴 now",
+    "soon": "🟠 soon",
+    "coming": "🟡 coming",
+    "later": "later"
+  },
+  "statuses": {
+    "open": "open",
+    "done": "done",
+    "cancelled": "cancelled",
+    "lapsed": "lapsed (renewed without notice)",
+    "filed": "filed",
+    "action-needed": "action needed",
+    "superseded": "superseded"
+  },
   "log": {
     "header": "# Decisions log\n\nAppend-only. One line per approved change to the record: the date, who\napproved it as they stated it, and what changed. Written by record.py.\n\n",
     "line": "- {date} · approved by {who} · {what}",
@@ -38,6 +103,7 @@
     "register_documents": "documents",
     "register_obligations": "obligations",
     "do_by": "do by",
-    "no_date": "no date"
+    "no_date": "no date",
+    "category_rule": "added the category rule {match} → {category}"
   }
 }

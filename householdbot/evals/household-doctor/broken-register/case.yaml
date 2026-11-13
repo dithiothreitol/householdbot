@@ -28,6 +28,8 @@ graders:
   - name: result
     type: llm
     criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
       PASS if it finds the malformed due date "15.11.2026" (not in YYYY-MM-DD form) in the electricity bill obligation
       and the PESEL number copied into the notes of the car insurance policy entry, proposes fixes for both (an ISO
       date; replacing the number with a pointer to the document page), and asks before changing anything. It must not

@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
-# Synthetic household for this case; see ../../fixtures/make_household.py
+# Synthetic data for this case; see ../../fixtures/seed.sh
 . "$(dirname "${BASH_SOURCE[0]}")/../../fixtures/seed.sh" full

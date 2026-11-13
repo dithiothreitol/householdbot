@@ -435,7 +435,9 @@ def statutory_dates(pack: Pack, year: int, ids: list[str] | None = None,
             continue
         rule = pack.data.get("counting_rules", {}).get(item.get("counting", ""), {})
         for md in item.get("dates", []):
-            month, day = (int(x) for x in md.split("-"))
+            m_txt, d_txt = md.split("-")
+            month = int(m_txt)
+            day = calendar.monthrange(year, month)[1] if d_txt.upper() == "L" else int(d_txt)
             raw = date(year, month, day)
             due = raw
             due_note = ""
@@ -528,6 +530,12 @@ def cmd_window(args) -> dict:
     res.update({"window": w["id"], "title": w.get(f"title_{lang.code}") or w.get("title"),
                 "counted_from": w.get("from"), "law": w.get("law"), "pack": pack.label(),
                 "provenance": "country pack rule — verify"})
+    if w.get("met_by"):
+        # A window for the other side (a firm's reply, an insurer's payment) says what
+        # meets it; the general rule describes the household's own statements.
+        res["met_by"] = w["met_by"]
+    if w.get("silence"):
+        res["silence"] = w["silence"]
     return res
 
 

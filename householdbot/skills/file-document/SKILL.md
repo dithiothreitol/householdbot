@@ -53,11 +53,14 @@ default).
 
 ## Step 0 — Find the record
 
-`record.py locate`, or look for `household-profile.md` in the working folder
-and the pointer `~/.claude/plugins/config/householdbot/location.md`. Read the
-profile: language, country, members, providers, decision rules. With no
-record, or with `--read-only`, run Steps 1 to 7, present the result, and say
-that nothing was saved.
+`record.py locate --start "<working folder>"`, run by its full path from the
+session's working folder (never after `cd` into the skill's folder), or look
+for `household-profile.md` in the working folder and the pointer
+`~/.claude/plugins/config/householdbot/location.md`. Read the profile:
+language, country, members, providers, decision rules. With no record, or with
+`--read-only`, run Steps 1 to 7, present the result, and say that nothing was
+saved. If `locate` finds nothing, read `household-profile.md` in the working
+folder yourself before saying the household is not set up.
 
 ## Step 1 — Take the document in
 
@@ -113,7 +116,10 @@ register an amount is a string such as `"286.40"` with `currency: "PLN"`.
 
 Identifiers (national ID and tax numbers, policy, account, card and document
 numbers, case numbers that identify a person) are recorded as a pointer:
-`{"fact": "policy number", "value": "see page 1"}`. Never copy the value.
+`{"fact": "policy number", "value": "see page 1"}`. Never copy the value. The
+one exception is a bill's payment account: record its last four digits only
+(`{"fact": "payment account", "value": "ending 7781", "page": 1}`), so that
+`bills-due` can notice when a payee's account changes.
 
 ## Step 5 — Find what it asks for, by when
 

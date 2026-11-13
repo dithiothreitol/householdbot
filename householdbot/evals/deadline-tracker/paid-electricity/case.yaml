@@ -14,7 +14,7 @@ graders:
   - name: skill-used
     type: tool_used
     tool: Skill
-    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:deadline-tracker|household-router)"'
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:deadline-tracker|household-router|bills-due)"'
   - name: no-write
     type: tool_used
     tool: Write
@@ -28,6 +28,8 @@ graders:
   - name: result
     type: llm
     criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
       PASS if it identifies the open electricity bill (Example Energia, 286,40 zł) as the obligation to close,
       proposes adding next month's occurrence, and asks for confirmation before changing the register.
       FAIL if it says the register was already updated, or closes a different obligation.

@@ -172,11 +172,11 @@ Trzydzieści cztery skille (w tym trzy łańcuchy) i dwóch agentów.
 
 Agenci: `deadline-watcher`, `document-reader`.
 
-### Pieniądze i korespondencja (Etap 2)
+### Pieniądze i korespondencja (Etap 2, gotowe)
 
 | Skill | Zadanie |
 |---|---|
-| `inbox-triage` | poczta podzielona na: wymaga decyzji, do archiwum, załatwione; rachunki i pisma do `file-document` |
+| `inbox-triage` | poczta podzielona na: wymaga decyzji, do archiwum, nic do zrobienia, podejrzane; rachunki i pisma do `file-document`; skrzynka bez zmian bez zgody |
 | `bills-due` | stos rachunków, lista płatności do wykonania przez domownika; dwie osobne zgody |
 | `contract-check` | umowa lub oferta przed podpisem: okres, odnowienie, zmiany ceny, kary, prawo odstąpienia |
 | `subscriptions-review` | koszty cykliczne: podwyżki, nieużywane, koniec promocji, daty wypowiedzenia |
@@ -221,7 +221,7 @@ Do tego: cookbook `deadline-watcher`, drugi pakiet krajowy.
 
 ---
 
-## 5. Struktura repozytorium (stan po Etapie 1)
+## 5. Struktura repozytorium (stan po Etapie 2)
 
 ```
 .claude-plugin/marketplace.json        marketplace "householdbot"
@@ -230,27 +230,30 @@ README.md QUICKSTART.md (+ .pl.md) CONNECTORS.md CONTRIBUTING.md CLAUDE.md
 SECURITY.md CHANGELOG.md CODE_OF_CONDUCT.md NOTICE LICENSE .gitignore
 docs/development-plan.md
 core/                                  źródła wszystkiego, co trafia do skilli
-  rules/*.md                           11 reguł wspólnych
+  rules/*.md                           13 reguł wspólnych (od Etapu 2 także money, voice)
   locale/PL.md PL.json                 pakiet krajowy
   i18n/en.json pl.json                 języki: daty, kwoty, odmiana, notatki, dziennik
   scripts/dates.py record.py           warstwa dowodowa
+  scripts/statement.py                 wyciągi bankowe (Etap 2)
+  money/categories.json                kategorie wydatków w dwóch językach (Etap 2)
   templates/en/ templates/pl/          profil, opis rejestrów w każdym języku
   vendor.json                          który skill dostaje które pakiety
 scripts/sync.py validate.py make_icon.py
-tests/test_dates.py test_record.py     testy jednostkowe
+tests/test_dates.py test_record.py test_statement.py
 householdbot/                          wtyczka
   .claude-plugin/plugin.json icon.png   .mcp.json   README(.pl).md   PRIVACY(.pl).md   LICENSE
   hooks/hooks.json
   agents/deadline-watcher.md document-reader.md
   skills/<skill>/SKILL.md reference/*.md
   skills/<skill>/shared/               kopie generowane (rules.md, locale/, i18n/, scripts/, templates/)
-  evals/<skill>/<przypadek>/case.yaml setup.sh
-  evals/fixtures/make_household.py seed.sh
+  evals/<skill>/<przypadek>/case.yaml setup.sh [mocks/gmail/*.md]
+  evals/fixtures/make_household.py make_statement.py seed.sh
 ```
 
-Prognoza liczby plików: 8 skilli to 147 plików wtyczki (po Etapie 1.1). Przy 34 skillach
-około 34 × 8 plików skilli i 110 przypadków testowych daje około 450 plików,
-blisko limitu 512. Przegląd w Etapie 4 (patrz ryzyka).
+Liczba plików wtyczki: 147 po Etapie 1.1, 307 po Etapie 2 (18 skilli, z tego
+145 plików w `evals/`). Przy 34 skillach i około 110 przypadkach prognoza to
+około 600 plików, powyżej limitu 512. Decyzja zapada na początku Etapu 3
+(patrz ryzyka).
 
 ---
 
@@ -373,24 +376,68 @@ pakietu PL zostawione do sprawdzenia).
 - **Testy:** 65 jednostkowych (w tym zgodność z orzecznictwem dla listu
   sądowego), 31 przypadków zachowania (7 nowych dla języków).
 
-### Etap 2. Pieniądze i korespondencja (wersja 0.2)
+### Etap 2. Pieniądze i korespondencja (wersja 0.2) ✅
 
-Zakres: dziewięć skilli i łańcuch `monthly-review` z rozdziału 4.
-`statement.py` (rozbiór eksportu bankowego: separator, kodowanie, formaty
-polskich banków, obciążenia cykliczne, sumy co do grosza). Reguły wspólne
-`money` i `voice` (ton pism urzędowych). Rozszerzenie pakietu PL: dokumenty i
-ulgi do rozliczenia rocznego, prawa konsumenta, forma i doręczenie
-wypowiedzeń. Makiety konektora poczty (`evals/mocks/gmail/`). Przypadki
-testowe: co najmniej 30.
+Wykonane 13.11.2026:
 
-Kryteria akceptacji:
+- **A. Skille.** Dziewięć skilli i łańcuch `monthly-review`, każdy z
+  `reference/gotchas.md` i wariantem bez Pythona: `inbox-triage`,
+  `bills-due`, `contract-check`, `subscriptions-review`, `budget-snapshot`,
+  `tax-season-organizer`, `reply-to-letter`, `complaint-and-claim`,
+  `cancel-or-switch`. Router kieruje do nich prośby po polsku i po angielsku.
+- **B. `statement.py`.** Eksport CSV z banku: kodowanie UTF-8 lub
+  Windows-1250, dowolny separator, wiersze wstępne, polskie i angielskie
+  nazwy kolumn, jedna kolumna kwoty albo osobne obciążenia i uznania.
+  Maskowanie numerów kont, kart i PESEL; sumy w `Decimal` według miesięcy i
+  kategorii; kontrola salda bieżącego; miesiące bez transakcji zgłaszane jako
+  brak; płatności cykliczne z odpowiednikiem miesięcznym i rocznym oraz
+  podwyżki powyżej 5%; reguły kategorii gospodarstwa zapisywane po zgodzie.
+  Kategorie w `core/money/categories.json` z etykietami w obu językach.
+- **C. `record.py` i `dates.py`.** `due --kind/--category` z sumami według
+  walut; daty ustawowe na ostatni dzień miesiąca (`MM-L`); `window` podaje,
+  co dotrzymuje terminu (`met_by`) i co oznacza brak odpowiedzi (`silence`),
+  gdy pakiet to określa; `locate` uruchomione w folderze wtyczki zwraca
+  wskazówkę, a każdy skill uruchamia je z folderu roboczego sesji.
+- **D. Reguły wspólne.** `money` (lista płatności, dwie osobne zgody,
+  końcówka konta do wpłat porównywana z poprzednim rachunkiem, sumy wyłącznie
+  ze skryptu) i `voice` (pisma w języku adresata, ton formalny,
+  identyfikatory jako pola do uzupełnienia, nic nie jest wysyłane). W regule
+  językowej doszły polskie formy bez rodzaju gramatycznego, dopóki domownik
+  sam nie pokaże swoich.
+- **E. Pakiet PL.** Cztery sekcje zweryfikowane w tekstach jednolitych z ELI
+  Sejmu na 13.11.2026: rozliczenie roczne PIT, reklamacje i roszczenia,
+  wypowiedzenia (forma i doręczenie), płatności. 24 nowe okna terminów i 3
+  obowiązki cykliczne, każde z podstawą prawną. Szczegóły w rozdziale 8.
+- **F. Dane testowe.** `make_statement.py` z trzema układami eksportu
+  (polski bank z preambułą w Windows-1250, kolumny obciążeń i uznań,
+  angielski z tabulatorem) i wariantem z luką; atrapa skrzynki z ośmioma
+  wątkami (rachunek, zmiana konta z domeny podobnej do dostawcy, fałszywa
+  dopłata do paczki, kod jednorazowy, zgoda szkolna, odnowienie OC).
+- **G. Testy.** 86 jednostkowych (w tym 12 dla wyciągów i 5 dla `locate`),
+  62 przypadki zachowania (31 nowych).
 
-- ścieżka: skrzynka, rachunek, lista płatności; dwie osobne zgody potwierdzone testem
-- pismo urzędowe: poprawny termin z arytmetyką, projekt odpowiedzi nie zostaje wysłany
-- wyciąg: sumy zgodne co do grosza z danymi testowymi; brak danych zgłaszany jako brak, nie jako zero
-- wypowiedzenie: data nadania uwzględnia formę i czas doręczenia
+Odstępstwa od planu: atrapy poczty leżą w folderach przypadków
+(`mocks/gmail/`), każdy przypadek ma własny zestaw wątków; wyciągi w PDF są
+poza zakresem, skill prosi o eksport CSV; rachunek zapisuje cztery ostatnie
+cyfry konta do wpłat, co jest jedynym wyjątkiem od zasady „identyfikatory
+tylko jako wskaźniki” i służy wykrywaniu zmiany konta.
 
-Twój udział: eksport z własnego banku i dwa realne pisma w pilotażu.
+Kryteria akceptacji i ich spełnienie:
+
+- ścieżka rachunek, lista płatności, dwie osobne zgody: sesja wieloturowa
+  (rozdział 8) i przypadki `bills-due`
+- pismo urzędowe z terminem i arytmetyką, projekt niewysłany: przypadki
+  `reply-to-letter`, w tym bramka szkicu w skrzynce
+- wyciąg co do grosza, brak danych jako brak: testy jednostkowe dla trzech
+  układów i przypadek `statement-gap`
+- wypowiedzenie z formą i czasem doręczenia: sesja wieloturowa i przypadki
+  `cancel-or-switch`
+
+Wyniki: patrz rozdział 8.
+
+Twój udział (pilotaż): eksport CSV z własnego banku dla `budget-snapshot` i
+`subscriptions-review`, bieżące rachunki w `bills-due`, dwa realne pisma w
+`reply-to-letter` albo `complaint-and-claim`.
 
 ### Etap 3. Dom, rodzina i codzienność (wersja 0.3)
 
@@ -440,7 +487,56 @@ utworzenie repozytorium i zgłoszenie do katalogu z Twojego konta.
 
 ---
 
-## 8. Stan po Etapach 1 i 1.1
+## 8. Stan po Etapach 1, 1.1 i 2
+
+**Wersja 0.2.0 (Etap 2, pieniądze i korespondencja).**
+
+| Poziom | Wynik |
+|---|---|
+| 1. Struktura | `scripts/validate.py`: 0 błędów, 0 ostrzeżeń; `claude plugin validate --profile directory --strict`: przechodzi dla wtyczki i marketplace; 307 plików wtyczki z 512 |
+| 2. Rachunek | 86 testów jednostkowych zielonych: wyciągi w trzech układach co do grosza, maskowanie, saldo bieżące, luka w danych, podwyżki, reguły kategorii, `locate` z folderu wtyczki, okna terminów po stronie firmy, każde okno pakietu liczone bez błędu |
+| 3. Zachowanie | 62 przypadki (Sonnet, sędzia Sonnet, bez powłoki). Przebieg 1: 51/62, średnio 0,95, 6,68 USD. Przebieg końcowy: 58/62, średnio 0,98, 7,85 USD. Powtórki po poprawkach: cztery porażki po 3 razy, potem 13 przypadków skilli zmienionych po przebiegu końcowym: 16 z 17 przebiegów zielonych (szczegóły niżej) |
+| 4. Użycie | sesja `claude -p` ze skryptami (Windows): lista płatności 731,60 zł z progiem dwojga dorosłych i końcówką konta, pierwsza zgoda bez zapisu, „zapłaciłam” jako próba z drugą zgodą, zapis z „zgoda: Anna” i następne wystąpienia (woda do pt. 08.01.2027, cofnięte z soboty; prąd do czw. 17.12.2026); wcześniejsza sesja: wyciąg z zakresem i sumami zgodnymi z danymi testowymi, wypowiedzenie internetu (ostatni dzień pon. 23.11.2026, nadać do śr. 18.11.2026) z trzema wpisami po zgodzie; razem około 2 USD |
+
+**Przebiegi testów zachowania w Etapie 2.**
+
+| Przebieg | Wynik | Co ujawnił |
+|---|---|---|
+| 1 | 51/62, średnio 0,95, 6,68 USD | bez powłoki model nie znajdował pakietu krajowego i podawał przepisy z pamięci; szkic maila podpisany nazwiskiem z konta, na którym działała sesja; szkic w Gmailu utworzony przed pokazaniem treści; odwołanie zaadresowane do wójta; przegląd miesiąca bez dni tygodnia; wyciąg testowy niespójny z rekordem; dwa gradery Etapu 1 nie znały nowego skilla `bills-due` |
+| 2 (11 porażek) | 9/11, 1,84 USD | poprawki działają; odpowiedź o reklamacji do ubezpieczyciela przypisała uznanie milczenia do złego artykułu, bo pakiet podawał artykuły zbiorczo |
+| końcowy | 58/62, średnio 0,98, 7,85 USD | lista płatności bez wskazania, skąd wziąć numer konta do wody; trzy oceny sędziego niespójne między przebiegami |
+| 3 (4 przypadki po 3 razy) | `budget-snapshot` 3/3, `vague-start` 3/3, `bills-due` 1/3, odwołanie 0/3; 1,51 USD | rubryki w punktach, ze zdaniem o syntetycznym rekordzie, stabilizują ocenę; przy odwołaniu model raz wpisywał numer decyzji podany przez domownika, raz nie, a raz wpisał go i napisał, że go pominął, więc reguła numerów spraw została ujednolicona |
+| 4 (skille zmienione po przebiegu końcowym) | 16 z 17 przebiegów: `bills-due-payment-list` 3/3, odwołanie 2/3, pozostałe 11 przypadków `bills-due`, `reply-to-letter`, `cancel-or-switch`, `complaint-and-claim` zielone; 2,51 USD | jedyna porażka spełnia rubrykę w mojej ocenie; realny drobiazg: bez powłoki odpowiedź uznała, że nie znajdzie rekordu, zamiast przeczytać profil (dopisane do gotchas) |
+
+**Wnioski z Etapu 2.**
+
+1. Skill podaje ścieżkę każdego pliku, którego potrzebuje (pakiet krajowy).
+   Bez powłoki model nie szuka i uznaje, że pliku nie ma.
+2. Skrypt uruchomiony z folderu skilla nie widzi rekordu, dlatego skille
+   wołają go z folderu roboczego sesji z `--start`.
+3. Model widzi nazwisko właściciela konta i konfiguracji gita, więc podpis
+   pisma pochodzi wyłącznie z profilu albo jest polem do uzupełnienia.
+4. Okno terminu po stronie firmy potrzebuje własnych pól: co dotrzymuje
+   terminu i co oznacza milczenie. Reguła ogólna dla oświadczeń domownika
+   była myląca.
+5. Każdy nowy skill przejmuje część próśb, więc gradery `skill-used`
+   starszych przypadków poszerza się razem z dodaniem skilla.
+6. Rubryka w punktach, z listą tego, co nie jest błędem, stabilizuje sędziego.
+   Przy długich polskich odpowiedziach ocena tej samej jakości wahała się od
+   0/3 do 3/3.
+7. Dane testowe z różnych generatorów muszą się zgadzać (dostawca, kwoty,
+   własność domu); model słusznie zgłaszał rozbieżności.
+
+**Pakiet PL, uzupełnienie z Etapu 2.** Cztery sekcje zweryfikowane 13.11.2026
+w tekstach jednolitych z ELI Sejmu, z nowelizacjami w mocy na ten dzień:
+Ordynacja podatkowa od 1.10.2026 (Dz.U. 2026 poz. 846), Prawo energetyczne
+(Dz.U. 2026 poz. 516 i 900), KC art. 77 § 2 (forma dokumentowa wypowiedzenia
+umowy zawartej w formie pisemnej, dokumentowej albo elektronicznej). Cztery
+punkty nierozstrzygnięte, opisane w pakiecie bez twierdzenia i wypisane w
+`PL.json` (`sources.uncertain`): automatyczne złożenie zeznania przez Twój
+e-PIT dla PIT-28; skutek milczenia przy reklamacji usługi płatniczej; skutek
+milczenia przy reklamacji rozliczeń energii; krótsze niż ustawowe
+wypowiedzenie najmu lokalu w umowie.
 
 **Wersja 0.1.1 (Etap 1.1, dwujęzyczność).**
 
@@ -544,6 +640,10 @@ poprawionych, 2 nierozstrzygnięte.
 | Narzędzie tylko w jednym języku | D14, Etap 1.1 | zamknięta (nowa) |
 | Płatność cykliczna traci dzień zapasu w następnym wystąpieniu | `transit_buffer_days` | zamknięta (nowa) |
 | Podejrzana prośba o zmianę konta zapisywana jako notatka z numerem | reguła treści niezaufanej, `household-customize` | zamknięta (nowa) |
+| Skrypt uruchomiony w folderze skilla nie widzi rekordu | `record.py locate` ze wskazówką, krok 0 każdego skilla, test jednostkowy | zamknięta (Etap 2) |
+| Termin po stronie firmy liczony z regułą dla oświadczeń domownika | `met_by` i `silence` przy oknie w pakiecie | zamknięta (Etap 2) |
+| Formy rodzajowe w polskich odpowiedziach zgadywane | reguła językowa: formy bezosobowe, dopóki domownik nie pokaże swoich | zamknięta (Etap 2) |
+| Limit 512 plików przy pełnym zakresie | rozdział 5, ryzyka | decyzja na początku Etapu 3 |
 
 ---
 
@@ -557,7 +657,7 @@ poprawionych, 2 nierozstrzygnięte.
 | Realne dane trafią do repozytorium | dane syntetyczne, `.gitignore`, walidator odrzuca identyfikatory z poprawną sumą kontrolną |
 | Koszt testów zachowania | pojedyncze przypadki w trakcie, pełny przebieg na zamknięciu etapu, limit kosztu; Etap 1: około 0,10 USD na przypadek (Sonnet, sędzia Sonnet), cały etap z sesją wieloturową około 8 USD |
 | Brak Pythona u użytkownika | wariant bez skryptu z oznaczeniem `verify`, testowany przez eval na Windows |
-| Limit 512 plików przy 34 skillach | jeden `case.yaml` na przypadek; w Etapie 4 przegląd: mniej kopii na skill albo paczka wydania bez `evals/` |
+| Limit 512 plików przy 34 skillach | po Etapie 2 307 plików, prognoza dla 34 skilli około 600; na początku Etapu 3 wybór: testy zachowania poza folderem wtyczki (paczka wydania bez `evals/`) albo mniej kopii w `shared/` |
 | Nazwa trafi do ręcznej oceny w katalogu | opis i README jasno mówią, czym jest wtyczka; wstrzymanie nie jest odrzuceniem |
 | Rozrost zakresu przy 34 skillach | akceptacja etapu oparta na ścieżkach od początku do końca; minimalna poprzeczka skilla: SKILL.md, gotchas, trzy przypadki |
 | Anthropic wyda własną wtyczkę domową | projekt jest otwarty i badawczy; wartością pozostają pakiety krajowe, warstwa dowodowa i analiza wzorca |
@@ -577,6 +677,10 @@ Podjęte 13.11.2026:
 5. Dwujęzyczność: angielski domyślny, polski do wyboru (D14), z wersjami
    polskimi dokumentów dla użytkowników.
 
-Otwarte: brak decyzji blokujących Etap 2. Etap 2 startuje po Twoim pilotażu
-Etapu 1. Jeśli „angielski domyślny” ma oznaczać angielski także wtedy, gdy
-domownik bez profilu pisze po polsku, wystarczy zmiana jednej reguły (D14).
+Etap 2 wykonany 13.11.2026 na polecenie przejścia do niego przed pilotażem
+Etapu 1; pilotaże obu etapów można przeprowadzić razem.
+
+Otwarte: brak decyzji blokujących Etap 3, poza wyborem sposobu na limit 512
+plików (rozdział 10). Jeśli „angielski domyślny” ma oznaczać angielski także
+wtedy, gdy domownik bez profilu pisze po polsku, wystarczy zmiana jednej
+reguły (D14).

@@ -28,6 +28,8 @@ graders:
   - name: result
     type: llm
     criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
       PASS if it says that nothing is registered or due, and makes clear that this reflects an empty register (for
       example that no obligations or documents are recorded yet, or that mail is not connected) rather than
       claiming the household has nothing to do. Offering to add reminders, or asking about dates, is fine.

@@ -9,7 +9,7 @@ a statutory period. `permanent` means never proposed for disposal.
 
 | `type` | Extract | Typical obligations | Default `keep_until` |
 |---|---|---|---|
-| `bill` | issuer, period covered, amount, due date, how it is paid, meter readings if any, change against the previous bill | payment by due date; none if paid by direct debit (say so) | 6 years |
+| `bill` | issuer, period covered, amount, due date, how it is paid, the payment account's last four digits only, meter readings if any, change against the previous bill | payment by due date; none if paid by direct debit (say so) | 6 years |
 | `bank-statement` | bank, period, opening and closing balance | none | 6 years |
 | `contract` | provider, service, start, minimum term, renewal mechanism, notice period and method, price, price-change clause | cancel-by before each renewal; end of a promotional price | end of contract + 6 years |
 | `rental-agreement` | landlord or tenant, address, rent, deposit, term, notice period, who pays what | rent dates; notice date; deposit return | end of tenancy + 6 years |

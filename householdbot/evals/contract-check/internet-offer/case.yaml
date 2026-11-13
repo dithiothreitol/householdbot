@@ -1,0 +1,45 @@
+schema_version: "1.1"
+name: contract-check-internet-offer
+description: contract-check / internet-offer
+tags: [etap2]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Sprawdź tę ofertę zanim podpiszę online:
+
+    ---
+    Example Fiber Sp. z o.o. - Umowa o świadczenie usług internetu, wariant 1 Gb/s
+    Okres umowy: 24 miesiące od dnia aktywacji.
+    Cena: 59,00 zł/mies. przez pierwsze 12 miesięcy, od 13. miesiąca 89,00 zł/mies.
+    Opłata aktywacyjna: 99,00 zł.
+    Po upływie okresu umowy umowa przechodzi na czas nieokreślony, opłata 119,00 zł/mies.
+    W razie rozwiązania umowy przed upływem okresu Abonent zwraca ulgę przyznaną w umowie, proporcjonalnie do pozostałego okresu.
+    Zgody marketingowe: [ ] e-mail [ ] telefon
+    ---
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:contract-check)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      PASS if it sets out the 24-month term, the price of 59,00 zł for 12 months and 89,00 zł from month 13, the
+      activation fee, the switch to an indefinite contract at 119,00 zł after the term, and the early-termination
+      rule (returning the discount in proportion to the remaining time); mentions the right to withdraw from a
+      contract signed online (14 days, as something to verify); notes that the marketing consents are optional; and
+      turns concerns into questions rather than telling the member to sign or not to sign.
+      FAIL if it tells the member to sign or not to sign, misses the price after 12 months or the 119,00 zł after the
+      term, or claims to have signed anything.

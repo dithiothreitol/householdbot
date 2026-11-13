@@ -28,8 +28,14 @@ graders:
   - name: result
     type: llm
     criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
       PASS if the reply is in Polish, proposes one concrete way to start (for example sending photos or scans of the
       papers so they can be read and filed, one at a time or as a batch), and asks before doing anything.
-      FAIL if it claims anything was filed or saved, offers a menu of more than four options, or names a command that
-      does not exist. Valid commands start with /householdbot: and are household-onboard, household-router,
-      file-document, find-document, deadline-tracker, weekly-brief, household-customize, household-doctor.
+      Naming a skill with or without the /householdbot: prefix is fine, and listing the ways to hand papers over
+      (photos, scans, PDF files, a folder) counts as one way to start, not a menu.
+      FAIL if it claims anything was filed or saved, offers more than four different courses of action, or names a
+      command that does not exist. Valid skills are household-onboard, household-router, file-document,
+      find-document, deadline-tracker, weekly-brief, household-customize, household-doctor and the stage 2 skills
+      (inbox-triage, bills-due, contract-check, subscriptions-review, budget-snapshot, tax-season-organizer,
+      reply-to-letter, complaint-and-claim, cancel-or-switch, monthly-review).

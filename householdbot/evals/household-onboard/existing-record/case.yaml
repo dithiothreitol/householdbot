@@ -28,6 +28,8 @@ graders:
   - name: result
     type: llm
     criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
       PASS if it recognises that the household is already set up (it may mention Nowakowie, Brzozowo, or the members
       Anna, Piotr and Zosia), summarises the existing profile briefly, and asks what has changed or offers to change
       specific things, instead of starting a new interview.

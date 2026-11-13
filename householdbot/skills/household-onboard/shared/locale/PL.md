@@ -81,6 +81,112 @@ The window printed on the document controls. These are the usual ones.
 Court papers, enforcement notices and tax assessments get the one-line pointer
 to a professional (the not-advice rule).
 
+## Annual tax return (PIT)
+
+### Information forms from payers
+
+| Form | Who sends it | By when | Law |
+|---|---|---|---|
+| PIT-11 | An employer, or a payer of a contract of mandate (*umowa zlecenia*) or similar income | To the taxpayer by the end of February, to the tax office by the end of January, for the previous year | ustawa o PIT art. 39 ust. 1, art. 42 ust. 2 pkt 1, art. 42g ust. 1 |
+| PIT-40A | A pension authority (*organ rentowy*), such as ZUS or KRUS, with the annual tax calculation for a pension | Same dates | art. 34 ust. 7, art. 42g ust. 1 |
+| PIT-11A | A pension authority that does not make the annual calculation | Same dates | art. 34 ust. 8, art. 42g ust. 1 |
+| PIT-8C | A broker or other payer of income taxed without withholding, such as capital gains | Same dates | art. 39 ust. 3, art. 42a ust. 1, art. 42g ust. 1 |
+
+A deadline ending on a Saturday or a public holiday moves to the next working day (Ordynacja podatkowa art. 12 § 5).
+
+Some pensioners need no return. This applies when the only income is on the PIT-40A, no reliefs are claimed and the person does not file jointly; the PIT-40A then settles the year (ustawa o PIT art. 34 ust. 9).
+
+### Twój e-PIT
+
+| Rule | Law |
+|---|---|
+| From 15 February the tax office prepares the return in e-Urząd Skarbowy from the payers' forms and the advances paid. podatki.gov.pl lists PIT-37, PIT-38, PIT-36, PIT-36L, PIT-28, the PIT-OP statement and the PIT-DZ information. | ustawa o PIT art. 45cd ust. 1 |
+| Accepting it before the deadline, with or without changes, files it on the day of acceptance. | art. 45cd ust. 2 |
+| If the taxpayer does nothing, the return counts as filed on 30 April. This applies only when all the taxpayer's income appears on the payers' forms. There is no automatic filing when a pension PIT-40A settles the year or when the taxpayer filed a return of their own. For PIT-28 (lump-sum tax), check podatki.gov.pl before relying on it. | art. 45cd ust. 4 and 5 |
+
+### Filing together
+
+| Who | Rule | Law |
+|---|---|---|
+| Spouses (*wspólne rozliczenie małżonków*) | Joint filing needs marriage for the whole year (or from the wedding to the year's end) and joint property. One spouse may make the request in the return for both. It also works when one spouse had no income. It is not available when either spouse uses the 19% business tax, the lump-sum tax (*ryczałt*) or tonnage tax. | ustawa o PIT art. 6 ust. 2, 2a, 3 and 8 |
+| Single parent (*osoba samotnie wychowująca dzieci*) | Open to an unmarried, widowed, divorced or separated parent, or one whose spouse lost parental rights or is in prison. The parent must raise alone a minor child, an adult child receiving care allowance or social pension, or a student under 25. The tax is twice the tax on half the income. It is not available when the parent raises a child together with the other parent, including alternating care with 800+ split between them. | art. 6 ust. 4c, 4d, 4e and 4f |
+
+### Common reliefs and exemptions, and the proof to keep
+
+| Relief | Rule | Proof to keep | Law |
+|---|---|---|---|
+| Child relief (*ulga na dzieci*) | For each month of care, PLN 92.67 for each of the first two children, PLN 166.67 for the third and PLN 225 for the fourth and each next. With one child, the relief needs income up to PLN 112,000 (a married couple or a single parent) or PLN 56,000 (others). The part the tax cannot absorb is paid out, up to the social and health contributions. | Birth certificate, guardianship or foster-care ruling, school certificate for an adult child, shown on request | ustawa o PIT art. 27f ust. 1, 2, 5, 8 and 9 |
+| Thermo-modernisation (*ulga termomodernizacyjna*) | For the owner of a single-family house, covering the listed materials, devices and services. The cap is PLN 53,000 per taxpayer in total. The project must end within 3 years from the end of the year of the first expense. Grant-funded parts are excluded, and an unused amount carries forward for up to 6 years. | VAT invoices from a seller registered for VAT and not exempt | art. 26h ust. 1 to 7 |
+| Rehabilitation (*ulga rehabilitacyjna*) | Disability expenses listed in the act, such as home adaptation, equipment, rehabilitation stays and medicines above PLN 100 a month. Fixed amounts of up to PLN 2,280 a year each cover use of one's own car, a guide and an assistance dog. Only the part not reimbursed counts. | A disability certificate or pension decision, plus documents showing buyer, seller, item and amount; no receipts for the fixed amounts | art. 26 ust. 1 pkt 6, ust. 7 pkt 4, ust. 7a to 7d |
+| Internet | Up to PLN 760 a year, in two consecutive years only, if never used before | An invoice or other document in the taxpayer's name | art. 26 ust. 1 pkt 6a, ust. 6h, ust. 7 pkt 4 |
+| Donations (*darowizny*) | Public-benefit, religious and other listed purposes, together with blood donation up to 6% of income. Gifts to private persons do not count. The return shows the recipient's details. | A bank transfer confirmation for money; for goods, a document plus the recipient's acceptance | art. 26 ust. 1 pkt 9, ust. 5, ust. 6b, ust. 7 pkt 1 and 2 |
+| Blood donation (*honorowe krwiodawstwo*) | Litres given free, times the compensation rate set by regulation, within the 6% limit | A certificate from the blood-collection centre | art. 26 ust. 1 pkt 9 lit. c, ust. 7 pkt 3 |
+| IKZE pension account | Payments made in the year, up to the yearly limit under the IKE and IKZE act, deducted in the return | Payment confirmations | art. 26 ust. 1 pkt 2b, ust. 6g |
+| Zero PIT for the young (*ulga dla młodych*) | Wages, contracts of mandate, graduate internships, student apprenticeships and maternity benefit received before turning 26 | The payer's PIT-11, which shows the exempt amount | art. 21 ust. 1 pkt 148; art. 39 ust. 1 |
+| Zero PIT for returners (*ulga na powrót*) | The same kinds of income, plus business income, for 4 consecutive years after moving residence to Poland. The conditions are in ust. 43, among them no Polish residence in the 3 calendar years before the move. | Documents showing the conditions are met | art. 21 ust. 1 pkt 152, ust. 43 |
+| Zero PIT for families with four or more children | The same kinds of income, for a parent raising at least four children | Birth certificates and similar, shown on request | art. 21 ust. 1 pkt 153, ust. 47 |
+| Zero PIT for working seniors | Income from work, contracts of mandate, business or maternity benefit. It applies to a woman aged 60 or more or a man aged 65 or more who is entitled to a pension but does not draw it, and only when that income is subject to social insurance. | The payer's PIT-11 | art. 21 ust. 1 pkt 154 |
+| Shared cap | The four zero-PIT exemptions together cover at most PLN 85,528 a year | | art. 21 ust. 44 |
+
+### 1.5% for a public-benefit organisation (*1,5% podatku dla OPP*)
+
+| Rule | Law |
+|---|---|
+| Name one organisation by its KRS number, in a return filed on time or in a correction filed within one month after the deadline. Up to 1.5% of the tax due is then sent to it between May and July. | ustawa o PIT art. 45c ust. 1, 3 and 4 |
+| The tax must be paid in full within two months after the filing deadline. | art. 45c ust. 2 |
+| A pensioner whose PIT-40A settles the year names the organisation in a statement by 30 April. Without a new statement, last year's choice is used again. | art. 45c ust. 3a and 3c |
+
+### Correcting a return, refunds and keeping papers
+
+| Topic | Rule | Law |
+|---|---|---|
+| Correcting a return (*korekta zeznania*) | File a corrected return. A written explanation is optional. From 1 Oct 2026 it is required when the correction shows an overpayment above PLN 10,000. No correction can be filed during a tax audit or tax proceedings, for the matters they cover. | Ordynacja podatkowa art. 81 § 1, 2, 2a and 2b; art. 81b § 1 pkt 1 |
+| Time limit (*przedawnienie*) | The tax becomes time-barred 5 years after the end of the year in which it was due. For a return due on 30 April 2026, that is the end of 2031. | art. 70 § 1 |
+| Refund of an overpayment (*nadpłata*) from a return | 45 days from filing an electronic PIT return, 3 months from filing a paper one | art. 77 § 1 pkt 5 and 5a |
+| Refund after a correction filed by the 30 April deadline | 45 days from an electronic correction, 3 months from a paper one | art. 77 § 2 pkt 1 and 3 |
+| Refund after a correction filed later, from 1 Oct 2026 | The correction itself opens the overpayment case. The refund comes within 2 months of filing it, but not earlier than 45 days or 3 months from the original return. Corrections filed before 1 Oct 2026 follow the earlier rules. | art. 77 § 1 pkt 6 lit. a, art. 165 § 8a; Dz.U. 2026 poz. 846 art. 22 |
+| Keeping papers | Keep returns, the payers' forms and the proof for each relief until the tax is time-barred. The statutory duty to keep records for that time binds those who keep tax books, but the tax office can ask anyone for proof of a relief until then. | Ordynacja podatkowa art. 70 § 1, art. 86 § 1; ustawa o PIT art. 26 ust. 7, art. 27f ust. 5 |
+
+## Consumer complaints, returns and claims
+
+| Topic | Rule | Law |
+|---|---|---|
+| Goods not in line with the contract (*brak zgodności towaru z umową*) | The trader is liable for a lack of conformity that existed at delivery and shows up within 2 years, or longer if the stated shelf life is longer. A lack of conformity that shows up within those 2 years is presumed to have existed at delivery. | ustawa o prawach konsumenta art. 43c ust. 1 |
+| Order of remedies | First repair or replacement, at the trader's cost and within a reasonable time; the trader collects the goods. A price reduction or withdrawal is possible when the trader refuses or fails, the problem persists, it is serious enough, or the trader clearly will not fix it. There is no withdrawal for an insignificant lack of conformity, and any lack of conformity is presumed significant. | art. 43d ust. 1 to 5, art. 43e ust. 1 and 4 |
+| Money back | A price reduction is refunded within 14 days of the statement. After withdrawal, the price is refunded within 14 days of getting the goods back or proof of sending. The consumer may hold back payment until the trader acts. | art. 43e ust. 3 and 6, art. 43f |
+| Digital content and services | Content supplied once carries 2 years' liability, with the presumption running for 1 year. Content supplied continuously carries liability for the whole supply period. The first remedy is bringing it into conformity. | art. 43l ust. 1 and 3, art. 43m |
+| Trader's reply to a complaint (*reklamacja*) | 14 days from receipt, otherwise the complaint is accepted, unless another law says otherwise | art. 7a ust. 1 and 2 |
+| Voluntary guarantee (*gwarancja*) | Comes on top of the statutory rights and does not limit them. It lasts 2 years from handing over the item unless the guarantee states another period. | Kodeks cywilny art. 577 § 4, art. 577¹ § 2 pkt 1 |
+| After withdrawing from a distance or off-premises purchase | The trader refunds all payments, including standard delivery, within 14 days of receiving the statement, but may wait for the goods or proof of sending. The consumer returns the goods within 14 days of withdrawing (sending in time is enough) and pays only the direct return cost. | ustawa o prawach konsumenta art. 32 ust. 1 and 3, art. 34 ust. 1 and 2 |
+| Insurance claim (*roszczenie z umowy ubezpieczenia*) | The insurer pays within 30 days of the notice of the event. If the facts cannot be established in time, it pays within 14 days of when they could be, and the undisputed part within the 30 days. Within 7 days of the notice it starts handling the claim and says which documents it needs. Any refusal or lower payment comes in writing, with reasons and the legal basis. | Kodeks cywilny art. 817 § 1 and 2; ustawa o działalności ubezpieczeniowej i reasekuracyjnej art. 29 ust. 1, 4 and 5 |
+| Complaint to a bank, insurer or other financial firm | The firm replies on paper or electronically (art. 5 ust. 1) within 30 days of receipt, and sending in time is enough (art. 6). In particularly complex cases it may take up to 60 days if it explains why (art. 7). No reply in time means the complaint is accepted (art. 8). A reply accepting a claim names a payment date at most 30 days after the reply (art. 9 pkt 4). Disputes can go to the Financial Ombudsman (*Rzecznik Finansowy*, rf.gov.pl; art. 35). | ustawa o rozpatrywaniu reklamacji przez podmioty rynku finansowego art. 5 ust. 1, art. 6, 7, 8, 9 pkt 4, art. 35 |
+| Complaint about a payment service (transfer, card, payment account) | Reply within 15 working days, or up to 35 in particularly complex cases with an explanation; sending in time is enough. The act says nothing about a missing reply; do not treat silence as acceptance. | ustawa o usługach płatniczych art. 15a ust. 2 to 4 |
+| Telecom complaint (phone, internet, TV) | File within 12 months of the billing period with the outage, the faulty service or the wrong invoice. It can be in writing, oral, by phone or by email. No decision within 30 days means the complaint is accepted. After the complaint, the next step is court or out-of-court resolution by the President of UKE. | Prawo komunikacji elektronicznej art. 378 ust. 2, 3 and 5, art. 379 ust. 1, art. 383 |
+| Energy or gas complaint | Billing complaints are answered within 14 days. A complaint about a disconnection notice, filed within 14 days of the notice, stops the disconnection until it is decided, and such a complaint not decided within 14 days counts as accepted. Disputes can go to the Coordinator for negotiations (*Koordynator do spraw negocjacji*) at the President of URE. | electricity system regulation (t.j. Dz.U. 2025 poz. 919) § 49 pkt 8; gas system regulation (t.j. Dz.U. 2025 poz. 1382) § 41 pkt 2; Prawo energetyczne art. 6c ust. 1 and 2, art. 31a |
+
+## Giving notice: form and delivery
+
+| Topic | Rule | Law |
+|---|---|---|
+| When a notice takes effect | When it reaches the other party so that they could read it. An electronic one takes effect when it enters their means of electronic communication that way. Allow time for delivery. | Kodeks cywilny art. 61 § 1 and 2 |
+| Written form (*forma pisemna*) | A handwritten signature on the document; a qualified electronic signature counts the same | art. 78 § 1, art. 78¹ § 1 and 2 |
+| Documentary form (*forma dokumentowa*) | Any document, such as an email or a scan, that shows who made the statement | art. 77² and 77³ |
+| Ending a contract made in written, documentary or electronic form | Termination, withdrawal or ending by agreement needs documentary form only, unless a statute or the contract requires another form | art. 77 § 2 |
+| OC: two policies at once | When an automatically renewed OC policy overlaps another OC policy, the renewed one can be ended by written notice. The insurer may charge only for the time it carried the risk. | ustawa o ubezpieczeniach obowiązkowych, UFG i PBUK art. 28a ust. 1 and 2 |
+| OC: buying a used car | The seller's OC passes to the buyer and ends with its term without renewing. The buyer may end it earlier by written notice, from the date named (not before the notice) or else from the notice date. | art. 31 ust. 1 |
+| Energy and gas | An open-ended contract can be ended at no cost. A fixed-term one can be ended too, but the contract may set costs or compensation. For a household these cannot exceed the seller's direct economic losses, and the contract must state how they are calculated. The contract ends on the last day of the month after the month the notice reached the company, or on a later date the household names. | Prawo energetyczne art. 4j ust. 3, 3a, 3b, 3c and 4 |
+| Telecom | If the provider lets customers sign or change a contract in documentary form, it must also let them end it that way, for example by email. It confirms receipt within 1 working day. A consumer's fixed term is at most 24 months, and the provider must also offer a term of up to 12 months. The provider warns at least 30 days before an automatic renewal. A renewed contract can be ended at any time with one month's notice. Ending a fixed-term contract early costs at most the remaining subscription fees for the service and the remaining instalments for a subsidised device. | Prawo komunikacji elektronicznej art. 295 ust. 1 and 2, art. 301 ust. 1 and 2, art. 302 ust. 1 and 2, art. 304 ust. 1 and 3 |
+| Renting a home (*najem lokalu*) | An open-ended lease with monthly rent can be ended with 3 months' notice to the end of a calendar month; also read the notice terms in the contract. A fixed-term lease can be ended early only in the cases the contract lists. A landlord may give a tenant notice only for the reasons in the tenant protection act, in writing and stating the reason. | Kodeks cywilny art. 673 § 1 and 3, art. 688; ustawa o ochronie praw lokatorów art. 11 ust. 1 |
+| Closing a payment account | The holder may end the agreement at any time, with immediate effect unless the contract sets a notice period, which cannot exceed 1 month. There is no fee, except within 6 months of opening if the contract provides for one, capped at the bank's costs. | ustawa o usługach płatniczych art. 35 ust. 1, 3 and 4 |
+
+## Paying
+
+| Topic | Rule | Law |
+|---|---|---|
+| When a bank transfer counts as paid | A civil debt is paid when the creditor's account is credited, not when the household's account is debited, so send transfers early. Money is owed at the creditor's place. | Supreme Court I CSK 1094/14 (14.01.2016), following resolution III CZP 164/94 (4.01.1995); Kodeks cywilny art. 454 § 1 |
+| Tax paid by bank transfer | Counts on the day the payer's account is debited | Ordynacja podatkowa art. 60 § 1 pkt 2 |
+| Statutory late-payment interest (*odsetki ustawowe za opóźnienie*) | Due for any delay in paying money, even without loss. The rate is the NBP reference rate plus 5.5 percentage points unless another rate was agreed, and agreed late interest cannot exceed twice the statutory rate. The Minister of Justice publishes the rate in Monitor Polski. The latest notice on 2026-11-13 (M.P. 2026 poz. 367) gives 9.25% a year from 5 Mar 2026; check for a newer notice before using the rate. | Kodeks cywilny art. 481 § 1, 2, 2¹ and 2⁴ |
+
 ## Recurring household obligations
 
 Offer these when the profile shows they apply. Each becomes an obligation only
@@ -134,6 +240,16 @@ bank account numbers (NRB / IBAN).
   Polish, in the formal register (*Szanowni Państwo*, *Pan / Pani*), whatever
   language the household uses. An English-speaking household gets an English
   translation alongside, marked as a translation and not as the text to send.
+- An appeal against an administrative decision is addressed to the appeal
+  body and lodged through the office that issued the decision: the addressee
+  block reads *Samorządowe Kolegium Odwoławcze w [miasto] za pośrednictwem
+  Wójta Gminy [nazwa]* (or the body the instruction section names), and the
+  letter goes to that office (KPA art. 129 § 1). A tax decision follows the
+  same pattern through the head of the tax office (Ordynacja podatkowa
+  art. 223 § 1).
+- A consumer's purchase from a trader is a matter of *niezgodność towaru z
+  umową* under the consumer rights act (sections above); use that term in
+  drafts and answers, not *rękojmia*.
 - In English text, a Polish legal term keeps its Polish name in brackets the
   first time it appears: an appeal (*odwołanie*), a payment order (*nakaz
   zapłaty*), a notice slip (*awizo*).
@@ -196,6 +312,17 @@ service on 2026-11-13:
 - Regulation on driving licence documents, Dz.U. 2025 poz. 1073: https://api.sejm.gov.pl/eli/acts/DU/2025/1073/text.pdf
 - Communication on probation data in the driver register, Dz.U. 2026 poz. 743: https://api.sejm.gov.pl/eli/acts/DU/2026/743/text.pdf
 - KPC reform of 2023 (art. 139¹), Dz.U. 2023 poz. 614: https://api.sejm.gov.pl/eli/acts/DU/2023/614/text.html
+- Ustawa o rozpatrywaniu reklamacji przez podmioty rynku finansowego, o Rzeczniku Finansowym i o Funduszu Edukacji Finansowej, Dz.U. 2026 poz. 823: https://api.sejm.gov.pl/eli/acts/DU/2026/823/text.pdf
+- Ustawa o usługach płatniczych, Dz.U. 2026 poz. 623: https://api.sejm.gov.pl/eli/acts/DU/2026/623/text.pdf
+- Prawo komunikacji elektronicznej, Dz.U. 2024 poz. 1221, Chancellery unified text of 16.10.2026: https://api.sejm.gov.pl/eli/acts/DU/2024/1221/text/U/D20241221Lj.pdf
+- Prawo energetyczne, Dz.U. 2026 poz. 43: https://api.sejm.gov.pl/eli/acts/DU/2026/43/text.pdf
+- Prawo energetyczne amendments, Dz.U. 2026 poz. 516 and 900: https://api.sejm.gov.pl/eli/acts/DU/2026/516/text.pdf and https://api.sejm.gov.pl/eli/acts/DU/2026/900/text.pdf
+- Electricity system regulation, Dz.U. 2025 poz. 919: https://api.sejm.gov.pl/eli/acts/DU/2025/919/text.pdf
+- Gas system regulation, Dz.U. 2025 poz. 1382: https://api.sejm.gov.pl/eli/acts/DU/2025/1382/text.pdf
+- Ustawa o działalności ubezpieczeniowej i reasekuracyjnej, Dz.U. 2025 poz. 1526: https://api.sejm.gov.pl/eli/acts/DU/2025/1526/text.pdf
+- Ustawa o ochronie praw lokatorów, Dz.U. 2023 poz. 725: https://api.sejm.gov.pl/eli/acts/DU/2023/725/text.pdf
+- Ordynacja podatkowa amendment in force from 1.10.2026, Dz.U. 2026 poz. 846: https://api.sejm.gov.pl/eli/acts/DU/2026/846/text.pdf
+- Notice on statutory late-payment interest, M.P. 2026 poz. 367: https://api.sejm.gov.pl/eli/acts/MP/2026/367/text.pdf
 
 Official pages:
 
@@ -212,3 +339,7 @@ Official pages:
 - Police, new rules for novice drivers (18.09.2026): https://policja.pl/pol/aktualnosci/281897,Nowe-zasady-dla-poczatkujacych-kierowcow-wazne-wyjasnienie.html
 - NFZ, EKUZ: https://www.nfz.gov.pl/dla-pacjenta/nasze-zdrowie-w-ue/leczenie-w-krajach-unii-europejskiej-i-efta/wypoczynek-w-panstwach-czlonkowskich-ueefta-ekuz/
 - City of Warsaw, rules for new category B drivers from 4 Sep 2026: https://warszawa19115.pl/-/przewodnik-dla-nowych-kierowcow-ktorzy-uzyskali-po-raz-pierwszy-uprawnienia-kat.-b-poczawszy-od-4-wrzesnia-2026-r.
+- podatki.gov.pl, payer deadlines for PIT-11: https://podatki.gov.pl/poradniki-i-informatory/platnik
+- podatki.gov.pl, KAS reminder on PIT-11, PIT-8C and PIT-40A/11A (15.01.2026): https://podatki.gov.pl/aktualnosci/kas-przypomina-platniku-przeslij-pit-za-2025-rok-z-prawidlowymi-danymi-podatnika
+- Supreme Court, I CSK 1094/14 of 14.01.2016, via SAOS: https://www.saos.org.pl/judgments/244204
+- Court of Appeal Łódź, I ACa 1710/22 of 29.09.2023 (citing III CZP 164/94), via SAOS: https://www.saos.org.pl/judgments/493764

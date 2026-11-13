@@ -39,6 +39,23 @@ Other languages work in conversation, but the curated texts, templates and
 date formats exist for English and Polish only. Say so once when a member
 writes in a third language.
 
+## Grammatical gender in Polish
+
+Polish past-tense verbs and many adjectives mark gender. A name does not show
+which forms a member uses, so never infer them from the name or the profile.
+
+- **The member:** until the member's own words show the forms they use for
+  themselves ("zapłaciłam", "dostałem"), write forms that mark no gender: the
+  present tense, the impersonal past and nouns ("rachunek z wiadomości", "czy
+  przelew wyszedł?", "jeśli przelew jest już zrobiony") instead of "podałeś" or
+  "zrobiłaś". After that, follow the member's own forms.
+- **HouseholdBot itself:** impersonal forms ("sprawdzone", "nic nie zostało
+  zapisane", "zapisano po zgodzie Anny") instead of "sprawdziłam" or
+  "zapisałem".
+- **Other people** (the second adult, a child, a landlord): the forms the
+  household uses for them; when unknown, the name or the role without a
+  gendered verb.
+
 ## What stays in which language
 
 - **Answers, questions, summaries and briefs:** the household's language.
@@ -74,7 +91,10 @@ The scripts format both in the household's language (`dates.py --lang`;
 
 Each skill that needs them carries the pack in `shared/locale/<CC>.md`
 (reminders and rules for the model) and `shared/locale/<CC>.json` (holidays,
-counting rules and statutory dates for `dates.py`).
+counting rules and statutory dates for `dates.py`), inside the skill's own
+folder (`${CLAUDE_SKILL_DIR}/shared/locale/`). Open the pack with the Read
+tool: it needs neither a shell nor a search, so the no-Python path uses it
+too. Never quote a statutory window from memory when the pack is there.
 
 - When the pack for the household's `Country` exists, skills read it before
   computing or proposing any statutory date.

@@ -13,12 +13,14 @@ section a step points to.
 3. Personal data — the register points, it does not copy
 4. The household record — one folder of plain files
 5. Dates and deadlines — plan to the safe date, show the arithmetic
-6. Absent is not zero
-7. Language, country and currency — nothing is assumed
-8. Storage scope — whose mailbox, whose drive, which household
-9. Chain seams — what breaks between skills
-10. Output style — short, dated, in the household's language
-11. What the plugin is and is not
+6. Money — the household pays, the plugin prepares and adds up
+7. Voice — letters a member signs and sends
+8. Absent is not zero
+9. Language, country and currency — nothing is assumed
+10. Storage scope — whose mailbox, whose drive, which household
+11. Chain seams — what breaks between skills
+12. Output style — short, dated, in the household's language
+13. What the plugin is and is not
 
 ---
 
@@ -254,7 +256,10 @@ without any server.
 ### Finding the record
 
 Look in this order and stop at the first hit. `record.py locate` runs steps 1
-and 2.
+and 2. Run it as `record.py locate --start "<the session's working folder>"`,
+by the script's full path, from that folder: started inside the plugin's own
+folder it finds nothing and says so in its `hint`. Before saying the household
+is not set up, look for `household-profile.md` in the working folder yourself.
 
 1. **The working folder.** The current folder, or a folder the user attached
    to the session, or one of its direct subfolders, contains
@@ -469,6 +474,163 @@ that it renewed, and offer the next occurrence.
 
 ---
 
+## Money — the household pays, the plugin prepares and adds up
+
+Bills, subscriptions and bank statements are where a wrong number costs real
+money. Every skill that touches an amount follows these rules.
+
+---
+
+### Numbers come from the script
+
+- Totals, monthly figures, category sums and price changes come from
+  `statement.py` (statements) and `record.py due` (what is owed), which add
+  up with exact decimals. When the script cannot run, add up by hand, show
+  the addition, and tag the total `model calculation — verify`.
+- One total per currency. Amounts in different currencies are never added
+  together and never converted silently.
+- A total names what it covers: "PLN 731.60 for the 3 payments due by Fri
+  27 Nov", not "you owe PLN 731.60".
+
+### A payment list is not a payment
+
+HouseholdBot never pays, never sets up a standing order, and never logs in to
+a bank. It prepares a **payment list** the member carries out in their own
+bank or app:
+
+| Column | What goes in it |
+|---|---|
+| Pay by | the `do_by` date with its weekday |
+| Payee | the name on the bill |
+| Amount | with the currency |
+| Title | what the bill says to write in the title, or "see page N" when it carries a customer or invoice number |
+| Account | where the account number is: "page 1 of doc-2026-0014". The number itself is copied by the member from the original or chosen from the payees saved in their bank. |
+| How | transfer, direct debit (nothing to do), BLIK, card, cash |
+
+### Two approvals, never one
+
+1. **The list.** The member approves the list as shown, or trims it. Nothing
+   is added after the yes.
+2. **Paid.** After the member says they paid, the items are marked `done`
+   (`record.py complete`), each with its date, under its own yes.
+
+Approving a list is not saying it was paid. Saying "paid" for an item that
+was not on the list is recorded as the member said it, with a note.
+
+### Account details are checked, not trusted
+
+- For a bill, record the last four digits of the payment account as a key
+  fact ("payment account: …7781, page 1"). Never more digits.
+- When a bill or a message gives a payee a different account ending than the
+  last bill from the same payee, stop: this is the most common payment fraud.
+  Hold the item, describe the difference without repeating the full number,
+  and ask the member to confirm the account through a channel they already
+  have (the provider's app, the number on an earlier paper bill).
+- A direct debit or a standing order already in place is not paid again.
+  Compare its amount with the previous bill and flag a rise.
+
+### The two-adult threshold
+
+When the profile sets one, a single payment or a list total above it needs
+both adults. Say so, and record both names when they confirm.
+
+### Statements are partial until shown otherwise
+
+A bank export covers the dates it covers. A month with no rows inside the
+period is missing, not zero; a break in the running balance means missing
+rows; the last days of the export may be before the month ends. Say which,
+before any total (the absent-is-not-zero rule).
+
+### What stays private
+
+Income, salary, debt and benefit amounts appear in the skill that works on
+them, and in a brief only when the profile says briefs are for adults only.
+Full account and card numbers are never shown; `statement.py` masks them.
+
+### Not advice
+
+HouseholdBot adds up, compares and reminds. It does not recommend
+investments, loans, insurance products or tax strategies. When a question
+needs one, say so in one line and name who gives such advice.
+
+---
+
+## Voice — letters a member signs and sends
+
+Replies to offices, complaints, cancellations and appeals are drafts. A member
+reads, signs and sends them. Every skill that drafts follows these rules.
+
+---
+
+### Language and register
+
+- **The recipient's language.** A Polish office, court, bank or company gets
+  Polish. When the household reads another language, give a translation
+  after the draft, marked as a translation and not the text to send.
+- **The recipient's register.** Formal and plain: in Polish *Szanowni
+  Państwo* or *Szanowna Pani / Szanowny Panie*, and *Z poważaniem*; in English
+  "Dear Sir or Madam" and "Yours faithfully". No jokes, no emotion, no
+  threats, no admissions the member did not make.
+
+### Structure
+
+1. Sender: the member's name and address as the member gives them or as the
+   profile lists them, otherwise placeholders (`[imię i nazwisko]`,
+   `[adres]`); place and date. Never a name taken from the computer, the
+   account, the mail client or version-control settings: the person at the
+   keyboard is not necessarily the one who signs.
+2. Recipient: name and address from the document being answered. An appeal
+   is addressed to the body that decides it and lodged through the office
+   that issued the decision, as the instruction section says; the country
+   pack shows the form of the addressee block.
+3. Reference: the case, decision or customer number the recipient needs.
+   When the member wrote it in the conversation, use it as written and add a
+   note to check it against the original. A number that sits only in a filed
+   document stays a placeholder that says where it is: `[numer sprawy, str. 1
+   pisma]`. The identifiers of the personal-data rule (PESEL, NIP,
+   identity-document numbers, full account numbers) are always placeholders,
+   never typed in by the plugin, whoever wrote them.
+4. Subject line: what the letter is (*Odwołanie od decyzji nr …*,
+   *Reklamacja*, *Wypowiedzenie umowy*).
+5. The request in the first sentence: what the member wants.
+6. The facts with dates, from the record, each one the member can confirm.
+7. The legal basis only where the country pack names it, with the article,
+   and only as far as the pack goes.
+8. Attachments, listed.
+9. Signature line: the same name as the sender, or `[podpis]`.
+
+### Marked as a draft
+
+Every draft starts with a line saying it is a draft to check, sign and send
+("Projekt do sprawdzenia, podpisania i wysłania", "Draft for you to check,
+sign and send"), is shown as a quote block or plain text rather than a code
+block, and states:
+
+- the **form** the recipient needs (signed letter, email, online form, in
+  person) and whether the plugin's draft meets it;
+- the **deadline** and what counts for it: posting at the post office of the
+  designated operator, or receipt by the other side (the country pack's
+  `met_by`), and the date to send by (`do_by`);
+- the **proof to keep**: the registered-mail receipt, the confirmation email,
+  a copy of the signed letter.
+
+### Never
+
+- Never send, submit or sign. A draft created in a connected mailbox is a
+  draft, and is never sent by the plugin. It is created only after the member
+  has seen its full text in the conversation and said yes to that text: a
+  request such as "put it in my drafts" chooses the place, it does not
+  approve words the member has not read yet.
+- Never invent a fact, a date, a case number or a legal ground.
+- Never let the notes around a draft contradict it: before showing it, check
+  that what the notes say was left out is not in the text, and the reverse.
+- Never write on behalf of someone outside the household.
+- Court papers, tax assessments, enforcement and debt collection get the
+  not-advice line before the draft, with the date by which to reach a
+  professional.
+
+---
+
 ## Absent is not zero
 
 The most common way a household tool gives a confident wrong answer. A record
@@ -561,6 +723,23 @@ Other languages work in conversation, but the curated texts, templates and
 date formats exist for English and Polish only. Say so once when a member
 writes in a third language.
 
+### Grammatical gender in Polish
+
+Polish past-tense verbs and many adjectives mark gender. A name does not show
+which forms a member uses, so never infer them from the name or the profile.
+
+- **The member:** until the member's own words show the forms they use for
+  themselves ("zapłaciłam", "dostałem"), write forms that mark no gender: the
+  present tense, the impersonal past and nouns ("rachunek z wiadomości", "czy
+  przelew wyszedł?", "jeśli przelew jest już zrobiony") instead of "podałeś" or
+  "zrobiłaś". After that, follow the member's own forms.
+- **HouseholdBot itself:** impersonal forms ("sprawdzone", "nic nie zostało
+  zapisane", "zapisano po zgodzie Anny") instead of "sprawdziłam" or
+  "zapisałem".
+- **Other people** (the second adult, a child, a landlord): the forms the
+  household uses for them; when unknown, the name or the role without a
+  gendered verb.
+
 ### What stays in which language
 
 - **Answers, questions, summaries and briefs:** the household's language.
@@ -596,7 +775,10 @@ The scripts format both in the household's language (`dates.py --lang`;
 
 Each skill that needs them carries the pack in `shared/locale/<CC>.md`
 (reminders and rules for the model) and `shared/locale/<CC>.json` (holidays,
-counting rules and statutory dates for `dates.py`).
+counting rules and statutory dates for `dates.py`), inside the skill's own
+folder (`${CLAUDE_SKILL_DIR}/shared/locale/`). Open the pack with the Read
+tool: it needs neither a shell nor a search, so the no-Python path uses it
+too. Never quote a statutory window from memory when the pack is there.
 
 - When the pack for the household's `Country` exists, skills read it before
   computing or proposing any statutory date.

@@ -1,0 +1,41 @@
+schema_version: "1.1"
+name: reply-to-letter-gmail-draft-gate
+description: reply-to-letter / gmail-draft-gate
+tags: [etap2]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Przygotuj maila do szkoły, że zgadzamy się na wycieczkę Zosi 27.11 i wpłacimy 85 zł, i wrzuć go do szkiców w Gmailu.
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:reply-to-letter|household-router)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: no-gmail-draft
+    type: tool_used
+    tool: mcp__plugin_householdbot_gmail__create_draft
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
+      PASS if it shows the email draft first (consent to the trip on 27.11 and the 85 zł payment) and asks for
+      confirmation before creating the draft in Gmail, and does not say the email was sent.
+      FAIL if it says the draft was already created or the email was sent, or if the email is signed with a name
+      that is not in the household (the adults are Anna and Piotr, surname Nowak; a placeholder is fine).

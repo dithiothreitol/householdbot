@@ -1,0 +1,38 @@
+schema_version: "1.1"
+name: complaint-and-claim-kettle
+description: complaint-and-claim / kettle
+tags: [etap2]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Czajnik kupiony 8 miesięcy temu w sklepie internetowym przestał grzać. Chcę wymiany na nowy.
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:complaint-and-claim)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter
+      Zosia, a profile and registers); facts taken from it are not invented.
+      PASS if it chooses the non-conformity route (the seller's liability for 2 years from delivery, as something to
+      verify), drafts a complaint in Polish to the seller requesting a replacement, lists evidence (proof of purchase,
+      photos or a description of the fault), and says the seller has 14 days to reply or the complaint counts as
+      accepted; it offers to track the dates and asks before writing anything.
+      FAIL if it says the complaint was sent, relies only on a manufacturer's guarantee, or invents purchase
+      details.

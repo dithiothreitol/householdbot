@@ -42,7 +42,10 @@ without any server.
 ## Finding the record
 
 Look in this order and stop at the first hit. `record.py locate` runs steps 1
-and 2.
+and 2. Run it as `record.py locate --start "<the session's working folder>"`,
+by the script's full path, from that folder: started inside the plugin's own
+folder it finds nothing and says so in its `hint`. Before saying the household
+is not set up, look for `household-profile.md` in the working folder yourself.
 
 1. **The working folder.** The current folder, or a folder the user attached
    to the session, or one of its direct subfolders, contains

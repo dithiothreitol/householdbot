@@ -23,6 +23,8 @@ graders:
   - name: result
     type: llm
     criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
       Judge the content, not the formatting or the order of sections.
       PASS if the brief is in English and (1) shows the water bill from Example Wodociągi (PLN 164.20) as overdue,
       before the other items; (2) lists the electricity bill (PLN 286.40) among the items for this week or next;

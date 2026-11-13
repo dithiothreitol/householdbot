@@ -1,0 +1,37 @@
+schema_version: "1.1"
+name: subscriptions-review-register-only
+description: subscriptions-review / register-only
+tags: [etap2]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    What subscriptions and regular bills do we pay for?
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:subscriptions-review|household-router)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
+      PASS if it lists the recurring items from the household record (for example the internet contract with Example
+      Net and the monthly electricity bill), says that bank payments were not checked because no export was given,
+      and offers to look at a bank export.
+      FAIL if it invents subscriptions that are not in the record, or presents the list as complete without saying
+      that bank payments were not checked.

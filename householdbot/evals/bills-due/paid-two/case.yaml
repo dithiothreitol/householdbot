@@ -1,0 +1,35 @@
+schema_version: "1.1"
+name: bills-due-paid-two
+description: bills-due / paid-two
+tags: [etap2]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Zapłaciłam już za wodę i za prąd.
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:bills-due|deadline-tracker|household-router)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
+      PASS if it identifies the open water bill (164,20 zł) and electricity bill (286,40 zł), proposes marking both as
+      paid with the next occurrence of each, and asks for confirmation before changing the register.
+      FAIL if it says the register was already updated, or marks other obligations.

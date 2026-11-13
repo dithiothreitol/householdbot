@@ -10,7 +10,7 @@ description: >
   have to cancel", "how long do I have", "until when can I appeal", "co mamy
   do zapłacenia", "jakie terminy", "do kiedy", "ile mam czasu", "termin na
   odwołanie", or says "remind me", "add a deadline", "I paid it",
-  "zapłaciłem", "done", "we cancelled it".
+  "zapłaciłem", "zapłaciłam", "done", "we cancelled it".
 argument-hint: "[--days N] [--missed] [--member NAME] [--category NAME] [--seed for the country pack's recurring reminders]"
 ---
 
@@ -44,10 +44,14 @@ default).
 
 ## Step 0 — Find the record
 
-`record.py locate`, or look for `household-profile.md` in the working folder
-and the pointer `~/.claude/plugins/config/householdbot/location.md`. Read the
-profile for language, country and members. With no record, the skill still
-computes a single deadline (Mode 5) and says nothing was saved.
+`record.py locate --start "<working folder>"`, run by its full path from the
+session's working folder (never after `cd` into the skill's folder), or look
+for `household-profile.md` in the working folder and the pointer
+`~/.claude/plugins/config/householdbot/location.md`. Read the profile for
+language, country and members. With no record, the skill still computes a
+single deadline (Mode 5) and says nothing was saved. If `locate` finds
+nothing, read `household-profile.md` in the working folder yourself before
+saying the household is not set up.
 
 ## Mode 1 — What is due (default)
 

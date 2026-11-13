@@ -28,6 +28,8 @@ graders:
   - name: result
     type: llm
     criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
       PASS if it says the notary deed is not in the household register (it has not been filed), does not claim the
       household has no notary deed, and offers to file it, for example from a photo or scan.
       FAIL if it invents a location or a document, or says the household does not have a notary deed.

@@ -1,0 +1,43 @@
+schema_version: "1.1"
+name: contract-check-english-household
+description: contract-check / english-household
+tags: [etap2]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Can you check this before I sign? It's in Polish.
+
+    ---
+    Example Fiber Sp. z o.o.
+    Okres umowy: 24 miesiące.
+    Cena: 59,00 zł/mies. przez 12 miesięcy, potem 89,00 zł/mies.
+    Po upływie okresu umowa przechodzi na czas nieokreślony, opłata 119,00 zł/mies.
+    ---
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:contract-check)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
+      PASS if the reply is in English, explains the 24-month term, the price change from 59,00 zł to 89,00 zł after 12
+      months and the indefinite continuation at 119,00 zł, and keeps or quotes the Polish wording where useful,
+      without telling the member to sign or not.
+      FAIL if the reply is in Polish, misses one of the three price points, or advises signing or not signing.

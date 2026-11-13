@@ -28,6 +28,8 @@ graders:
   - name: result
     type: llm
     criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
       PASS if it compares the two files and reports the differences (the gutter cleaning entry that exists only in the
       copy, and the electricity bill amount that differs: 291,70 against 286,40), proposes a merge that keeps the
       changes from both, and asks for confirmation. It must not delete either file.

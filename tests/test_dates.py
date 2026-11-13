@@ -174,6 +174,16 @@ class Language(unittest.TestCase):
         self.assertEqual(keys(EN.data), keys(PLL.data))
 
 
+class MonthEnd(unittest.TestCase):
+    def test_last_day_of_february(self):
+        pack = dates.Pack({"pack": "T", "weekend": ["saturday", "sunday"], "holidays": {},
+                           "counting_rules": {"calendar": {"end_roll": "none"}},
+                           "recurring": [{"id": "x", "dates": ["02-L"], "counting": "calendar", "law": "t"}]}, "t")
+        self.assertEqual(dates.statutory_dates(pack, 2028)[0]["statutory_date"], "2028-02-29")
+        self.assertEqual(dates.statutory_dates(pack, 2027)[0]["statutory_date"], "2027-02-28")
+        self.assertEqual(dates.statutory_dates(pack, 2027)[0]["do_by"], "2027-02-26")  # Sunday rolled back
+
+
 class CommandLine(unittest.TestCase):
     def test_info(self):
         code, out = run("info", "2026-11-11", "--country", "PL")
@@ -191,6 +201,23 @@ class CommandLine(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertEqual(out["due_date"], "2026-11-17")
         self.assertEqual(out["provenance"], "country pack rule — verify")
+
+    def test_window_the_other_side_meets(self):
+        # 15 business days from Fri 13.11.2026: Fri 4.12.2026; the bank meets it by sending.
+        code, out = run("window", "--country", "PL", "--from", "2026-11-13",
+                        "--id", "payment-complaint-reply")
+        self.assertEqual(out["due_date"], "2026-12-04")
+        self.assertIn("sending its reply", out["met_by"])
+        self.assertIn("do not treat silence as acceptance", out["silence"])
+        code, out = run("window", "--country", "PL", "--from", "2026-11-13",
+                        "--id", "consumer-withdrawal")
+        self.assertIn("sending the statement", out["met_by"])
+
+    def test_every_pack_window_computes(self):
+        for item in PL.data["response_windows"]:
+            code, out = run("window", "--country", "PL", "--from", "2026-11-13", "--id", item["id"])
+            self.assertEqual(code, 0, item["id"])
+            self.assertTrue(out["law"], item["id"])
 
     def test_cancel_by(self):
         code, out = run("cancel-by", "--country", "PL", "--term-end", "2027-03-14",

@@ -1,0 +1,37 @@
+schema_version: "1.1"
+name: cancel-or-switch-internet
+description: cancel-or-switch / internet
+tags: [etap2]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Chcę wypowiedzieć umowę na internet z Example Net.
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:cancel-or-switch)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
+      PASS if it finds the Example Net contract in the record, says the notice must reach the provider at least 30 days
+      before the end of the fixed term (written statement), gives a date to send the letter by with its weekday that
+      leaves time for the post, drafts the notice in formal Polish with the contract number as a placeholder and a
+      request for written confirmation, names the proof to keep, and asks before adding any reminders.
+      FAIL if it says the notice was sent, invents a contract number, or writes reminders without asking.

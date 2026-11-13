@@ -218,7 +218,8 @@
       "unit": "days",
       "from": "taking possession of the goods, or concluding the contract for services",
       "counting": "civil",
-      "law": "ustawa o prawach konsumenta art. 27 ust. 1, art. 28, art. 30 ust. 2 (sending the statement in time is enough)"
+      "law": "ustawa o prawach konsumenta art. 27 ust. 1, art. 28, art. 30 ust. 2 (sending the statement in time is enough)",
+      "met_by": "sending the statement before the end of the last day (ustawa o prawach konsumenta art. 30 ust. 2)"
     },
     {
       "id": "consumer-withdrawal-home-visit",
@@ -227,7 +228,8 @@
       "unit": "days",
       "from": "taking possession of the goods, or concluding the contract for services",
       "counting": "civil",
-      "law": "ustawa o prawach konsumenta art. 27 ust. 2, art. 28, art. 30 ust. 2"
+      "law": "ustawa o prawach konsumenta art. 27 ust. 2, art. 28, art. 30 ust. 2",
+      "met_by": "sending the statement before the end of the last day (ustawa o prawach konsumenta art. 30 ust. 2)"
     },
     {
       "id": "trader-complaint-reply",
@@ -236,7 +238,236 @@
       "unit": "days",
       "from": "the trader receiving the complaint",
       "counting": "civil",
-      "law": "ustawa o prawach konsumenta art. 7a ust. 1 and 2"
+      "law": "ustawa o prawach konsumenta art. 7a ust. 1 and 2",
+      "silence": "no reply within the window means the complaint is accepted (ustawa o prawach konsumenta art. 7a ust. 2)"
+    },
+    {
+      "id": "financial-complaint-reply",
+      "title": "Reply of a bank, insurer or other financial firm to a complaint (reklamacja); no reply in time means the complaint is accepted",
+      "amount": 30,
+      "unit": "days",
+      "from": "the firm receiving the complaint",
+      "counting": "civil",
+      "law": "ustawa o rozpatrywaniu reklamacji przez podmioty rynku finansowego art. 6 and 8",
+      "met_by": "the firm sending its reply before the end of the last day (ustawa o rozpatrywaniu reklamacji przez podmioty rynku finansowego art. 6)",
+      "silence": "no reply within the window means the complaint is accepted (art. 8 of that act)"
+    },
+    {
+      "id": "financial-complaint-reply-extended",
+      "title": "Extended reply of a financial firm in a particularly complex case, after it explained the delay",
+      "amount": 60,
+      "unit": "days",
+      "from": "the firm receiving the complaint",
+      "counting": "civil",
+      "law": "ustawa o rozpatrywaniu reklamacji przez podmioty rynku finansowego art. 7 pkt 3 and art. 8",
+      "met_by": "the firm sending its reply before the end of the last day (ustawa o rozpatrywaniu reklamacji przez podmioty rynku finansowego art. 6)",
+      "silence": "no reply within the window means the complaint is accepted (art. 8 of that act)"
+    },
+    {
+      "id": "financial-complaint-payment",
+      "title": "Payment of a claim the financial firm accepted in its reply (at most this long after the reply)",
+      "amount": 30,
+      "unit": "days",
+      "from": "the date of the firm's reply",
+      "counting": "civil",
+      "law": "ustawa o rozpatrywaniu reklamacji przez podmioty rynku finansowego art. 9 pkt 4"
+    },
+    {
+      "id": "payment-complaint-reply",
+      "title": "Bank's reply to a complaint about a payment service (transfer, card, payment account)",
+      "amount": 15,
+      "unit": "business_days",
+      "from": "the provider receiving the complaint",
+      "counting": "civil",
+      "law": "ustawa o usługach płatniczych art. 15a ust. 2 and 4",
+      "met_by": "the firm sending its reply before the end of the last day (ustawa o usługach płatniczych art. 15a ust. 4)",
+      "silence": "the act sets no consequence for a missing reply; do not treat silence as acceptance — verify"
+    },
+    {
+      "id": "payment-complaint-reply-extended",
+      "title": "Extended reply to a payment-service complaint in a particularly complex case, after the provider explained the delay",
+      "amount": 35,
+      "unit": "business_days",
+      "from": "the provider receiving the complaint",
+      "counting": "civil",
+      "law": "ustawa o usługach płatniczych art. 15a ust. 3 and 4",
+      "met_by": "the firm sending its reply before the end of the last day (ustawa o usługach płatniczych art. 15a ust. 4)",
+      "silence": "the act sets no consequence for a missing reply; do not treat silence as acceptance — verify"
+    },
+    {
+      "id": "telecom-complaint-filing",
+      "title": "Filing a telecom complaint (phone, internet, TV); a later complaint is left unexamined",
+      "amount": 12,
+      "unit": "months",
+      "from": "the end of the billing period with the outage, the day of the faulty service, or delivery of the wrong invoice",
+      "counting": "civil",
+      "law": "Prawo komunikacji elektronicznej art. 378 ust. 2"
+    },
+    {
+      "id": "telecom-complaint-reply",
+      "title": "Telecom provider's decision on a complaint; no decision in time means the complaint is accepted",
+      "amount": 30,
+      "unit": "days",
+      "from": "filing the complaint",
+      "counting": "civil",
+      "law": "Prawo komunikacji elektronicznej art. 378 ust. 5",
+      "silence": "no decision within the window means the complaint is accepted (Prawo komunikacji elektronicznej art. 378 ust. 5)"
+    },
+    {
+      "id": "telecom-notice-after-renewal",
+      "title": "Notice period to end a telecom contract that renewed automatically after its fixed term",
+      "amount": 1,
+      "unit": "months",
+      "from": "the provider receiving the notice",
+      "counting": "civil",
+      "law": "Prawo komunikacji elektronicznej art. 302 ust. 1"
+    },
+    {
+      "id": "energy-complaint-reply",
+      "title": "Energy or gas company's reply to a billing complaint",
+      "amount": 14,
+      "unit": "days",
+      "from": "filing the complaint",
+      "counting": "civil",
+      "law": "electricity system regulation (t.j. Dz.U. 2025 poz. 919) § 49 pkt 8; gas system regulation (t.j. Dz.U. 2025 poz. 1382) § 41 pkt 2",
+      "silence": "the system regulations set no consequence for a missing reply to a billing complaint — verify"
+    },
+    {
+      "id": "energy-disconnection-complaint",
+      "title": "Complaint about a notice of intended disconnection; filed in time, supply continues until it is decided",
+      "amount": 14,
+      "unit": "days",
+      "from": "receiving the disconnection notice",
+      "counting": "civil",
+      "law": "Prawo energetyczne art. 6c ust. 1"
+    },
+    {
+      "id": "energy-disconnection-complaint-reply",
+      "title": "Energy company's decision on a complaint under art. 6c; no decision in time means the complaint is accepted",
+      "amount": 14,
+      "unit": "days",
+      "from": "filing the complaint",
+      "counting": "civil",
+      "law": "Prawo energetyczne art. 6c ust. 2",
+      "silence": "no decision within the window means the complaint is accepted (Prawo energetyczne art. 6c ust. 2)"
+    },
+    {
+      "id": "insurer-claim-acknowledgement",
+      "title": "Insurer starts handling a claim and says which documents it needs",
+      "amount": 7,
+      "unit": "days",
+      "from": "the insurer receiving notice of the event",
+      "counting": "civil",
+      "law": "ustawa o działalności ubezpieczeniowej i reasekuracyjnej art. 29 ust. 1"
+    },
+    {
+      "id": "insurer-claim-payment",
+      "title": "Insurer pays the claim (if the facts cannot be set in time: 14 days after they could be, and the undisputed part within 30 days)",
+      "amount": 30,
+      "unit": "days",
+      "from": "the insurer receiving notice of the event",
+      "counting": "civil",
+      "law": "Kodeks cywilny art. 817 § 1 and 2; ustawa o działalności ubezpieczeniowej i reasekuracyjnej art. 29 ust. 4 and 5"
+    },
+    {
+      "id": "withdrawal-refund",
+      "title": "Trader refunds all payments after a withdrawal from a distance or off-premises purchase (may wait for the goods or proof of sending)",
+      "amount": 14,
+      "unit": "days",
+      "from": "the trader receiving the withdrawal statement",
+      "counting": "civil",
+      "law": "ustawa o prawach konsumenta art. 32 ust. 1 and 3"
+    },
+    {
+      "id": "withdrawal-return-goods",
+      "title": "Consumer sends the goods back after withdrawing (sending in time is enough)",
+      "amount": 14,
+      "unit": "days",
+      "from": "withdrawing from the contract",
+      "counting": "civil",
+      "law": "ustawa o prawach konsumenta art. 34 ust. 1",
+      "met_by": "sending the goods back before the end of the last day (ustawa o prawach konsumenta art. 34 ust. 1)"
+    },
+    {
+      "id": "conformity-liability",
+      "title": "Trader's liability for goods not in line with the contract (lack of conformity presumed to exist at delivery within this time)",
+      "amount": 2,
+      "unit": "years",
+      "from": "delivery of the goods",
+      "counting": "civil",
+      "law": "ustawa o prawach konsumenta art. 43c ust. 1"
+    },
+    {
+      "id": "conformity-price-reduction-refund",
+      "title": "Trader refunds the amount of a price reduction for goods not in line with the contract",
+      "amount": 14,
+      "unit": "days",
+      "from": "the trader receiving the price-reduction statement",
+      "counting": "civil",
+      "law": "ustawa o prawach konsumenta art. 43e ust. 3"
+    },
+    {
+      "id": "conformity-withdrawal-refund",
+      "title": "Trader refunds the price after a withdrawal for goods not in line with the contract",
+      "amount": 14,
+      "unit": "days",
+      "from": "the trader receiving the goods back or proof of sending",
+      "counting": "civil",
+      "law": "ustawa o prawach konsumenta art. 43e ust. 6"
+    },
+    {
+      "id": "digital-content-liability",
+      "title": "Trader's liability for digital content or a digital service supplied once (presumption for the first year)",
+      "amount": 2,
+      "unit": "years",
+      "from": "supply of the content or service",
+      "counting": "civil",
+      "law": "ustawa o prawach konsumenta art. 43l ust. 1"
+    },
+    {
+      "id": "guarantee-default-period",
+      "title": "Voluntary guarantee (gwarancja) when the guarantee states no other period",
+      "amount": 2,
+      "unit": "years",
+      "from": "the item being handed over",
+      "counting": "civil",
+      "law": "Kodeks cywilny art. 577 § 4"
+    },
+    {
+      "id": "pit-refund-electronic",
+      "title": "Tax office refunds the overpayment from a PIT return filed electronically",
+      "amount": 45,
+      "unit": "days",
+      "from": "filing the return",
+      "counting": "tax",
+      "law": "Ordynacja podatkowa art. 77 § 1 pkt 5a"
+    },
+    {
+      "id": "pit-refund-paper",
+      "title": "Tax office refunds the overpayment from a PIT return filed on paper",
+      "amount": 3,
+      "unit": "months",
+      "from": "filing the return",
+      "counting": "tax",
+      "law": "Ordynacja podatkowa art. 77 § 1 pkt 5"
+    },
+    {
+      "id": "pit-refund-correction-on-time-electronic",
+      "title": "Refund after an electronic PIT correction filed by the filing deadline",
+      "amount": 45,
+      "unit": "days",
+      "from": "filing the correction",
+      "counting": "tax",
+      "law": "Ordynacja podatkowa art. 77 § 2 pkt 1 (as amended by Dz.U. 2026 poz. 846)"
+    },
+    {
+      "id": "pit-refund-correction-late",
+      "title": "Refund after a correction filed after the filing deadline (from 1 Oct 2026), not earlier than 45 days or 3 months from the original return",
+      "amount": 2,
+      "unit": "months",
+      "from": "filing the correction",
+      "counting": "tax",
+      "law": "Ordynacja podatkowa art. 77 § 1 pkt 6 lit. a and art. 165 § 8a (Dz.U. 2026 poz. 846)"
     }
   ],
   "recurring": [
@@ -283,11 +514,56 @@
       "lead_time_days": 30,
       "applies_when": "the household has a child under 18 and receives or wants 800+",
       "law": "ustawa o pomocy państwa w wychowywaniu dzieci art. 13 ust. 5, art. 18 ust. 1 and 2, art. 21 ust. 3 and 4"
+    },
+    {
+      "id": "pit-information-forms",
+      "title": "Payers' information forms for last year should have arrived (PIT-11, PIT-11A, PIT-40A, PIT-8C)",
+      "kind": "task",
+      "category": "tax",
+      "dates": [
+        "02-L"
+      ],
+      "counting": "tax",
+      "lead_time_days": 0,
+      "applies_when": "someone in the household had wages, contract income, a pension or investment income last year",
+      "law": "ustawa o podatku dochodowym od osób fizycznych art. 42g ust. 1 pkt 2, with art. 34 ust. 7 and 8, art. 39 ust. 1 and 3, art. 42 ust. 2 pkt 1, art. 42a ust. 1"
+    },
+    {
+      "id": "pit-twoj-e-pit-check",
+      "title": "Check the pre-filled Twój e-PIT before it counts as filed on 30 April",
+      "kind": "task",
+      "category": "tax",
+      "dates": [
+        "04-30"
+      ],
+      "window_opens": "02-15",
+      "counting": "tax",
+      "lead_time_days": 14,
+      "applies_when": "a taxpayer in the household relies on the pre-filled return and all their income is on payers' forms",
+      "law": "ustawa o podatku dochodowym od osób fizycznych art. 45cd ust. 1, 2, 4 and 5"
+    },
+    {
+      "id": "pit-1-5-pensioner-statement",
+      "title": "Statement naming a public-benefit organisation for 1.5% (pensioner whose PIT-40A settles the year)",
+      "kind": "filing",
+      "category": "tax",
+      "dates": [
+        "04-30"
+      ],
+      "counting": "tax",
+      "lead_time_days": 14,
+      "applies_when": "a pensioner whose PIT-40A settles the year wants to choose or change the organisation",
+      "law": "ustawa o podatku dochodowym od osób fizycznych art. 45c ust. 3a and 3c"
     }
   ],
   "sources": {
     "reviewed_with": "consolidated texts read through the Sejm ELI service and case law read through SAOS on 2026-11-13; full list in PL.md, section Sources",
-    "uncertain": []
+    "uncertain": [
+      "Twój e-PIT automatic filing on 30 April for PIT-28 (filed under the lump-sum tax act, not read)",
+      "deemed acceptance of a payment-service complaint: ustawa o usługach płatniczych art. 15a has no such rule; whether the financial-complaints act art. 8 applies is unsettled",
+      "deemed acceptance of an energy billing complaint: Prawo energetyczne art. 6c ust. 2 covers disconnection and prosumer complaints; the system regulations give 14 days without deemed acceptance",
+      "whether a home lease may set a shorter notice than Kodeks cywilny art. 688 (3 months to the end of a month)"
+    ]
   },
   "transit_buffer_days": {
     "instant": 0,

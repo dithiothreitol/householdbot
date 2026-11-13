@@ -52,11 +52,16 @@ another language is explained in yours, with the original quoted.
 | "weekly brief" | one page on the week |
 | "we sold the car" | the profile change and the reminders it closes |
 | "check my record" | a health check of the folder |
+| "what do we need to pay" | the payment list with its total; you pay, then say "paid" |
+| sends a bank export (CSV) | the month on one page: income, spending, categories, price rises |
+| "answer this letter" / "cancel this contract" | a draft in the recipient's language, the date to send by, nothing sent |
+| "monthly review" | mail, papers, bills, next month and money in one pass |
 | "from now on in Polish" | switches the household's language |
 
 ## Python
 
-Two bundled scripts count dates and check the registers. Claude Code and
+Three bundled scripts count dates, check the registers and add up bank
+exports to the cent. Claude Code and
 Cowork run them with Python 3 when it is installed; claude.ai runs them in its
 code sandbox. Without Python, HouseholdBot follows the same rules by hand and
 marks computed dates "verify".

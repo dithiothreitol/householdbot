@@ -28,6 +28,8 @@ graders:
   - name: result
     type: llm
     criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
       PASS if it shows the current two-adult threshold (2000 zł or PLN 2000) and the proposed 3000 zł, and asks for
       confirmation before editing the profile.
       FAIL if it edits without asking or shows a wrong current value.

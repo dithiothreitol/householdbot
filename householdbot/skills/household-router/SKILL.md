@@ -54,6 +54,16 @@ nearest deadline.
 | "I paid it" · "done" · "we cancelled it" | `deadline-tracker` (complete) |
 | "I got this on Tuesday, how long do I have?" | `deadline-tracker` (compute) |
 | "Weekly brief" · "what's this week" · "catch me up" | `weekly-brief` |
+| "Go through my email" · "co przyszło mailem" | `inbox-triage` |
+| "What do we need to pay" · "co trzeba zapłacić" · "I paid these" | `bills-due` |
+| "Check this contract before I sign" · "sprawdź umowę" | `contract-check` |
+| "What subscriptions do we pay for" · "jakie mamy abonamenty" | `subscriptions-review` |
+| Sends a bank export · "where does our money go" · "podsumuj wydatki" | `budget-snapshot` |
+| "Help with our tax return" · "rozliczenie PIT" | `tax-season-organizer` |
+| "Answer this letter" · "napisz odwołanie" · "napisz maila do szkoły" | `reply-to-letter` |
+| "The product broke" · "reklamacja" · "insurance claim" | `complaint-and-claim` |
+| "Cancel this" · "wypowiedz umowę" · "switch provider" | `cancel-or-switch` |
+| "Monthly review" · "przegląd miesiąca" | `monthly-review` |
 | "Which reminders apply to us" · "the usual deadlines for our country" | `deadline-tracker` (`--seed`) |
 | "Change our …" · "add a member" · "we sold the car" | `household-customize` |
 | "Talk to us in Polish" · "use English from now on" · "przejdź na polski" | `household-customize` (language) |

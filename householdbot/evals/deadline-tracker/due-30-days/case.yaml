@@ -28,6 +28,8 @@ graders:
   - name: result
     type: llm
     criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
       PASS if all of these hold: (1) the water bill from Example Wodociągi (164,20 zł) is listed first or clearly
       marked as overdue; (2) the electricity bill (286,40 zł) is listed; (3) the internet contract notice date (Example
       Net) is listed; (4) the roadworthiness test is mentioned as having no known date; (5) the do-by date of each

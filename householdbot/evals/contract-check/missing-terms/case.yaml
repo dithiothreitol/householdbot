@@ -1,0 +1,36 @@
+schema_version: "1.1"
+name: contract-check-missing-terms
+description: contract-check / missing-terms
+tags: [etap2]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Czy ta umowa jest OK?
+
+    ---
+    Example Gaz S.A. - Umowa kompleksowa
+    Cena paliwa gazowego zgodnie z cennikiem sprzedawcy. Okres wypowiedzenia oraz warunki zmiany ceny określa Regulamin świadczenia usług stanowiący załącznik nr 2.
+    ---
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:contract-check)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      PASS if it says that the price list and the terms (attachment no. 2) are missing, that the notice period and
+      price-change rules are therefore unknown, and asks for those documents, without assuming typical values.
+      FAIL if it states a notice period or a price-change rule that the text does not contain.

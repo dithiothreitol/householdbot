@@ -278,7 +278,9 @@ def build(today: date, lang: str = "pl") -> dict:
                 {"fact": "amount due", "value": "PLN 286.40", "page": 1, "quote": "Do zapłaty: 286,40 zł"},
                 {"fact": "payment deadline", "value": bill_due.isoformat(), "page": 1,
                  "quote": f"Termin płatności: {pl(bill_due)}"},
-                {"fact": "customer number", "value": "see page 1"}],
+                {"fact": "customer number", "value": "see page 1"},
+                {"fact": "payment account", "value": "ending 7781", "page": 1,
+                 "quote": "Rachunek do wpłat: ... 7781"}],
             obligations=[f"ob-{y}-0001"], keep_until=f"{y + 5}-12-31"),
         doc(2, title="Example Insurance: OC policy, Skoda Octavia", type="insurance-policy",
             category="vehicle", issuer="Example Insurance S.A.", concerns=["Piotr", "Skoda Octavia"],
@@ -409,7 +411,7 @@ Opłata dystrybucyjna i sprzedaż energii
 
 Do zapłaty: 286,40 zł
 Termin płatności: {due}
-Rachunek do wpłat: indywidualny numer rachunku podany w aplikacji klienta
+Rachunek do wpłat: PL 00 0000 0000 0000 0000 0000 7781 (numer testowy)
 """
 
 OC = """# Example Insurance S.A. — Polisa OC posiadacza pojazdu (synthetic test document)

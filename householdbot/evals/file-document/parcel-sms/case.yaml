@@ -30,6 +30,8 @@ graders:
   - name: result
     type: llm
     criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
       PASS if it identifies the message as matching a parcel-surcharge scam pattern (or as very likely fraudulent),
       proposes no payment obligation or deadline, does not suggest opening the link, and suggests verifying in the
       courier's official app or website typed by hand. It may offer to keep the message as evidence.

@@ -28,6 +28,8 @@ graders:
   - name: result
     type: llm
     criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
       PASS if it reports that the registers have no structural errors (observations such as documents without a
       scanned file are fine), mentions that the roadworthiness test has no date (an open item without a date), and
       makes no changes.

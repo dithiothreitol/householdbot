@@ -1,0 +1,56 @@
+schema_version: "1.1"
+name: reply-to-letter-appeal-draft
+description: reply-to-letter / appeal-draft
+tags: [etap2]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Chcę się odwołać od tej decyzji, odebrałem ją 05.11.2026. Uważam, że opłata jest za wysoka, bo zjazd ma 3 m szerokości, a nie 5 m.
+
+    ---
+    Wójt Gminy Brzozowo
+    Decyzja nr GK.6220.14.2026 z dnia 30.10.2026
+    w sprawie opłaty za zajęcie pasa drogowego (zjazd do posesji o szerokości 5 m), 450,00 zł
+    Pouczenie: Od niniejszej decyzji służy odwołanie do Samorządowego Kolegium Odwoławczego za pośrednictwem Wójta Gminy Brzozowo w terminie 14 dni od dnia jej doręczenia.
+    ---
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:reply-to-letter)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
+      Today in the test is Friday 13 November 2026, but accept the other branch if the answer says the deadline passed.
+      PASS if all of these hold:
+      1. The deadline is Thursday 19 November 2026 (14 days from delivery on 5 November 2026), or the answer says
+         it has passed and what can still be done or whom to ask.
+      2. It says that posting at the designated operator (Poczta Polska) or filing at the office by the last day
+         counts. Recommending an earlier sending date as a safety margin is advice, not an error.
+      3. The draft is in formal Polish and addressed to the Samorządowe Kolegium Odwoławcze through
+         (za pośrednictwem) the Wójt Gminy Brzozowo.
+      4. The draft states that the driveway is 3 m wide, not 5 m.
+      5. Personal data (name, address, PESEL) are placeholders. The decision number may appear as the member
+         gave it (GK.6220.14.2026), ideally with a note to check it, or as a placeholder.
+      6. Nothing was sent or signed.
+      Legal requests in the draft (for example to set the fee anew or to return the case for reconsideration) and
+      inferences from the 3 m width are not invented facts.
+      FAIL if the appeal is addressed only to the Wójt as the deciding body, a measurement, a document or a date the
+      member did not give is presented as fact, a PESEL or similar identifier is typed in, the notes contradict the draft (for example they
+      say a number was left out while it is in the text), or it says the appeal was sent.

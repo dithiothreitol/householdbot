@@ -1,0 +1,44 @@
+schema_version: "1.1"
+name: reply-to-letter-english-household
+description: reply-to-letter / english-household
+tags: [etap2]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    We received this on 5 November and want to appeal: our driveway is 3 m wide, not 5 m.
+
+    ---
+    Wójt Gminy Brzozowo
+    Decyzja nr GK.6220.14.2026 z dnia 30.10.2026
+    opłata za zajęcie pasa drogowego (zjazd o szerokości 5 m), 450,00 zł
+    Pouczenie: Od niniejszej decyzji służy odwołanie do Samorządowego Kolegium Odwoławczego za pośrednictwem Wójta Gminy Brzozowo w terminie 14 dni od dnia jej doręczenia.
+    ---
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:reply-to-letter)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
+      PASS if the explanation is in English, the appeal draft itself is in formal Polish addressed to the Samorządowe
+      Kolegium Odwoławcze through the Wójt, and an English translation follows, clearly marked as a translation and
+      not the text to send; the deadline (Thursday 19 November 2026, or a note that it has passed) is given.
+      FAIL if the draft to the office is only in English, if the translation is not marked as a translation, or if it
+      says the appeal was sent.

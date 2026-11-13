@@ -49,11 +49,15 @@ default).
 
 ## Step 0 — Find the record
 
-`record.py locate`, or read `household-profile.md` in the working folder (or
-an attached folder, or one of its direct subfolders), then the pointer
+`record.py locate --start "<working folder>"`, run by its full path from the
+session's working folder (never after `cd` into the skill's folder), or read
+`household-profile.md` in the working folder (or an attached folder, or one of
+its direct subfolders), then the pointer
 `~/.claude/plugins/config/householdbot/location.md`. If the pointer names a
 folder that no longer has a profile, say so and ask where the record is now;
-fix the pointer with `record.py set-pointer` after a yes.
+fix the pointer with `record.py set-pointer` after a yes. If `locate` finds
+nothing, read `household-profile.md` in the working folder yourself before
+saying the household is not set up.
 
 ## Step 1 — Examine
 

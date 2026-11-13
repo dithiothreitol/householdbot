@@ -14,7 +14,7 @@ graders:
   - name: skill-used
     type: tool_used
     tool: Skill
-    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:household-router|find-document|deadline-tracker)"'
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:household-router|find-document|deadline-tracker|bills-due)"'
   - name: no-write
     type: tool_used
     tool: Write
@@ -28,6 +28,8 @@ graders:
   - name: result
     type: llm
     criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
       PASS if it states the amount 286,40 zł (PLN 286.40) for the Example Energia electricity bill and gives a payment
       date together with its weekday, without changing any file.
       FAIL if the amount is different, no date is given, or it says something was saved.

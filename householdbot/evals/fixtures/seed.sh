@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 # Seed the synthetic household into the eval workspace (the current folder).
-# Sourced by each case's setup.sh:
-#   . "$(dirname "${BASH_SOURCE[0]}")/../../fixtures/seed.sh" <full|full-en|empty|conflict|broken|none>
-# full, empty, conflict and broken write a Polish household; full-en writes it in English.
-# Everything it writes is invented; see make_household.py.
+# Sourced by each case's setup.sh with one or more modes:
+#   . "$(dirname "${BASH_SOURCE[0]}")/../../fixtures/seed.sh" full statement
+# Household modes: full | full-en | empty | conflict | broken | none
+#   (full, empty, conflict and broken write a Polish household; full-en writes it in English)
+# Statement modes, written to inbox/wyciag.csv:
+#   statement (Polish layout, Windows-1250) | statement-gap (middle month missing) | statement-en (English layout)
+# Everything it writes is invented; see make_household.py and make_statement.py.
 set -e
 HB_FIXTURES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 HB_PY=""
@@ -20,12 +23,18 @@ if [ -z "$HB_PY" ]; then
   echo "seed.sh: no Python 3.8+ found on PATH" >&2
   exit 1
 fi
-case "${1:-full}" in
-  full)     "$HB_PY" "$HB_FIXTURES/make_household.py" . >/dev/null ;;
-  full-en)  "$HB_PY" "$HB_FIXTURES/make_household.py" . --lang en >/dev/null ;;
-  empty)    "$HB_PY" "$HB_FIXTURES/make_household.py" . --empty >/dev/null ;;
-  conflict) "$HB_PY" "$HB_FIXTURES/make_household.py" . --conflict >/dev/null ;;
-  broken)   "$HB_PY" "$HB_FIXTURES/make_household.py" . --broken >/dev/null ;;
-  none)     : ;;
-  *) echo "seed.sh: unknown mode $1" >&2; exit 1 ;;
-esac
+[ "$#" -eq 0 ] && set -- full
+for mode in "$@"; do
+  case "$mode" in
+    full)          "$HB_PY" "$HB_FIXTURES/make_household.py" . >/dev/null ;;
+    full-en)       "$HB_PY" "$HB_FIXTURES/make_household.py" . --lang en >/dev/null ;;
+    empty)         "$HB_PY" "$HB_FIXTURES/make_household.py" . --empty >/dev/null ;;
+    conflict)      "$HB_PY" "$HB_FIXTURES/make_household.py" . --conflict >/dev/null ;;
+    broken)        "$HB_PY" "$HB_FIXTURES/make_household.py" . --broken >/dev/null ;;
+    statement)     "$HB_PY" "$HB_FIXTURES/make_statement.py" inbox/wyciag.csv --format a >/dev/null ;;
+    statement-gap) "$HB_PY" "$HB_FIXTURES/make_statement.py" inbox/wyciag.csv --format b --gap >/dev/null ;;
+    statement-en)  "$HB_PY" "$HB_FIXTURES/make_statement.py" inbox/statement.csv --format c >/dev/null ;;
+    none)          : ;;
+    *) echo "seed.sh: unknown mode $mode" >&2; exit 1 ;;
+  esac
+done

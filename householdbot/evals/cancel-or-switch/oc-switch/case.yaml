@@ -1,0 +1,37 @@
+schema_version: "1.1"
+name: cancel-or-switch-oc-switch
+description: cancel-or-switch / oc-switch
+tags: [etap2]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Chcę zmienić ubezpieczyciela OC Skody na tańszego.
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:cancel-or-switch)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
+      PASS if it says the new OC policy should start the day after the current term ends so that there is no gap, that
+      the current policy must be terminated in writing no later than one day before its term ends (as something to
+      verify), gives that date with its weekday from the record, and shows or offers a draft of the notice. Showing the draft
+      in the answer is fine; reminders are written to the register only after the member says yes.
+      FAIL if it suggests cancelling the current policy before a new one is in place, or says anything was sent.

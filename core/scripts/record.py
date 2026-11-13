@@ -36,6 +36,7 @@ import sys
 import time
 import unicodedata
 from datetime import date, datetime
+from decimal import Decimal
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -625,19 +626,50 @@ def pack_or_none(args):
 # Commands
 # --------------------------------------------------------------------------
 
+def plugin_root() -> Path | None:
+    """The plugin folder this script belongs to, when it runs from a skill's copy."""
+    for p in HERE.parents:
+        if (p / ".claude-plugin" / "plugin.json").exists():
+            return p
+    return None
+
+
+def inside_plugin(path: Path) -> bool:
+    """True when a search would start in the plugin's own folders, not the household's."""
+    root = plugin_root()
+    if root is None:
+        return False
+    try:
+        path.resolve().relative_to(root.resolve())
+        return True
+    except ValueError:
+        return False
+
+
 def cmd_locate(args) -> dict:
     start = Path(args.start or os.getcwd()).expanduser().resolve()
-    candidates = [start] + ([p for p in sorted(start.iterdir()) if p.is_dir()] if start.is_dir() else [])
-    for c in candidates:
-        if (c / PROFILE).exists():
-            return {"found": True, "root": str(c), "how": "working folder"}
+    starts = [start]
+    project = os.environ.get("CLAUDE_PROJECT_DIR")
+    if project and Path(project).resolve() != start:
+        starts.append(Path(project).resolve())
+    for s in starts:
+        candidates = [s] + ([p for p in sorted(s.iterdir()) if p.is_dir()] if s.is_dir() else [])
+        for c in candidates:
+            if (c / PROFILE).exists():
+                return {"found": True, "root": str(c), "how": "working folder"}
+    result = {"found": False, "searched": str(start), "pointer": str(POINTER)}
     if POINTER.exists():
-        target = Path(POINTER.read_text(encoding="utf-8").strip().splitlines()[0].strip()).expanduser()
-        if (target / PROFILE).exists():
+        lines = POINTER.read_text(encoding="utf-8").strip().splitlines()
+        target = Path(lines[0].strip()).expanduser() if lines else None
+        if target is not None and (target / PROFILE).exists():
             return {"found": True, "root": str(target), "how": f"pointer {POINTER}"}
-        return {"found": False, "pointer": str(POINTER), "pointer_target": str(target),
-                "note": "the pointer names a folder without household-profile.md"}
-    return {"found": False, "searched": str(start), "pointer": str(POINTER)}
+        result.update({"pointer_target": str(target) if target else "",
+                       "note": "the pointer names a folder without household-profile.md"})
+    if inside_plugin(start):
+        result["hint"] = ("the search started inside the plugin's own folder; run locate with "
+                          "--start <the session's working folder> before deciding the household "
+                          "is not set up")
+    return result
 
 
 def cmd_set_pointer(args) -> dict:
@@ -958,8 +990,14 @@ def cmd_due(args) -> dict:
     items, no_date, beyond = [], [], 0
     counts = {b[0]: 0 for b in dates.BANDS}
     warnings = []
+    kinds = set(args.kind.split(",")) if getattr(args, "kind", None) else None
+    categories = set(args.category.split(",")) if getattr(args, "category", None) else None
     for o in data["obligations"]:
         if not isinstance(o, dict) or o.get("status") != "open":
+            continue
+        if kinds and o.get("kind") not in kinds:
+            continue
+        if categories and o.get("category") not in categories:
             continue
         plan = o.get("do_by") or o.get("due_date")
         if not is_date(plan):
@@ -1004,11 +1042,17 @@ def cmd_due(args) -> dict:
             row["note"] = computed_note
         items.append(row)
     items.sort(key=lambda r: (r["do_by"], r["due_date"] or "", r["id"] or ""))
+    totals: dict = {}
+    for r in items:
+        if r.get("amount") and r.get("currency") and MONEY_RE.match(str(r["amount"])):
+            totals[r["currency"]] = totals.get(r["currency"], Decimal("0")) + Decimal(r["amount"])
     if not pack:
         warnings.append("no --country: missing do_by dates are not computed")
     return {"today": today.isoformat(), "today_source": "argument" if args.today else "system clock",
             "today_local": lang.date(today), "lang": lang.code,
             "horizon_days": args.horizon, "items": items, "no_date": no_date,
+            "totals": {c: f"{v:.2f}" for c, v in sorted(totals.items())},
+            "totals_text": {c: lang.amount(v, c) for c, v in sorted(totals.items())},
             "counts": counts, "beyond_horizon": beyond, "warnings": warnings}
 
 
@@ -1364,6 +1408,8 @@ def build_parser() -> argparse.ArgumentParser:
 
     s = common(sub.add_parser("due", help="open obligations by urgency"), pack=True)
     s.add_argument("--horizon", type=int, default=90, help="days ahead to list; default 90")
+    s.add_argument("--kind", help="only these kinds, comma-separated (payment, renewal, ...)")
+    s.add_argument("--category", help="only these categories, comma-separated")
     s.set_defaults(func=cmd_due)
 
     s = common(sub.add_parser("find", help="search documents and obligations"))
