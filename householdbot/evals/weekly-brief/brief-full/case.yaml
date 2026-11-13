@@ -1,0 +1,33 @@
+schema_version: "1.1"
+name: weekly-brief-brief-full
+description: weekly-brief / brief-full
+tags: [etap1]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Przegląd tygodnia, proszę.
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:weekly-brief)"'
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      Judge the content, not the formatting or the order of sections.
+      PASS if the brief is in Polish and (1) shows the water bill from Example Wodociągi (164,20 zł) as overdue, in
+      an overdue section that comes before the other items; (2) lists the electricity bill (286,40 zł) among the
+      items for this week or next; (3) singles out one item as the most important; and (4) contains no personal
+      identification numbers (PESEL, identity card, passport, bank account or card numbers). HouseholdBot's own
+      register ids such as doc-2026-0003 or ob-2026-0001 are not personal identifiers and are fine. Offering to mark
+      items as paid later is fine.
+      FAIL if (1), (2) or (3) is missing, or if it states that something has been paid or marked as paid.

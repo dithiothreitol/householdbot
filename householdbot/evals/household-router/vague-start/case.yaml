@@ -1,0 +1,35 @@
+schema_version: "1.1"
+name: household-router-vague-start
+description: household-router / vague-start
+tags: [etap1]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Mam w szufladzie stos papierów: rachunki, jakieś umowy, pisma z gminy. Nie wiem, od czego zacząć. Pomożesz?
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:household-router|file-document)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      PASS if the reply is in Polish, proposes one concrete way to start (for example sending photos or scans of the
+      papers so they can be read and filed, one at a time or as a batch), and asks before doing anything.
+      FAIL if it claims anything was filed or saved, offers a menu of more than four options, or names a command that
+      does not exist. Valid commands start with /householdbot: and are household-onboard, household-router,
+      file-document, find-document, deadline-tracker, weekly-brief, household-customize, household-doctor.

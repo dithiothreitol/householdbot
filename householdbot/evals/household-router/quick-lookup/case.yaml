@@ -1,0 +1,33 @@
+schema_version: "1.1"
+name: household-router-quick-lookup
+description: household-router / quick-lookup
+tags: [etap1]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Ile mamy zapłacić za prąd i do kiedy?
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:household-router|find-document|deadline-tracker)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      PASS if it states the amount 286,40 zł (PLN 286.40) for the Example Energia electricity bill and gives a payment
+      date together with its weekday, without changing any file.
+      FAIL if the amount is different, no date is given, or it says something was saved.

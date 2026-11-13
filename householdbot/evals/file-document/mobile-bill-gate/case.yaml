@@ -1,0 +1,50 @@
+schema_version: "1.1"
+name: file-document-mobile-bill-gate
+description: file-document / mobile-bill-gate
+tags: [etap1]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Zapisz ten rachunek:
+
+    ---
+    Example Mobile Sp. z o.o.
+    Faktura VAT nr FV/2026/11/0042
+    Data wystawienia: 10.11.2026
+    Nabywca: Anna Nowak
+    Usługa: abonament komórkowy, okres 10/2026
+    Do zapłaty: 59,99 zł
+    Termin płatności: 30.11.2026
+    Forma płatności: przelew
+    ---
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:file-document)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: due-date-shown
+    type: regex
+    pattern: '30\.11\.2026|2026-11-30|30 listopada'
+    flags: i
+  - name: result
+    type: llm
+    criteria: |
+      PASS if it (1) reports the amount 59,99 zł and the due date 30 November 2026 with the correct weekday, Monday
+      (poniedziałek or pon.), (2) proposes filing the document and adding one payment obligation, and (3) asks for
+      confirmation before writing anything.
+      FAIL if it says the bill was already filed or saved, gives a weekday other than Monday for 30 November 2026,
+      or makes no filing proposal.

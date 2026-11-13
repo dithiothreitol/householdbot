@@ -1,0 +1,35 @@
+schema_version: "1.1"
+name: deadline-tracker-due-30-days
+description: deadline-tracker / due-30-days
+tags: [etap1]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Co mamy do zrobienia w najbliższych 30 dniach?
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:deadline-tracker|household-router)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      PASS if all of these hold: (1) the water bill from Example Wodociągi (164,20 zł) is listed first or clearly
+      marked as overdue; (2) the electricity bill (286,40 zł) is listed; (3) the internet contract notice date (Example
+      Net) is listed; (4) the roadworthiness test is mentioned as having no known date; (5) the do-by date of each
+      listed item is shown with its weekday (incidental dates in explanations may omit it).
+      FAIL if any of these is missing, or if last month's already paid electricity bill (301,15 zł) is listed as due.

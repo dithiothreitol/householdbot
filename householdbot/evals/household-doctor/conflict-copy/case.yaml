@@ -1,0 +1,35 @@
+schema_version: "1.1"
+name: household-doctor-conflict-copy
+description: household-doctor / conflict-copy
+tags: [etap1]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Dysk Google zrobił drugi plik z zobowiązaniami: obligations (1).json. Co z tym zrobić?
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:household-doctor|household-router)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      PASS if it compares the two files and reports the differences (the gutter cleaning entry that exists only in the
+      copy, and the electricity bill amount that differs: 291,70 against 286,40), proposes a merge that keeps the
+      changes from both, and asks for confirmation. It must not delete either file.
+      FAIL if it deletes or overwrites a file without approval, or says the copy can simply be deleted without
+      comparing.

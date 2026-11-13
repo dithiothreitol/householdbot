@@ -1,0 +1,35 @@
+schema_version: "1.1"
+name: household-doctor-clean-check
+description: household-doctor / clean-check
+tags: [etap1]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Sprawdź, czy z naszym rekordem wszystko w porządku.
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:household-doctor)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      PASS if it reports that the registers have no structural errors (observations such as documents without a
+      scanned file are fine), mentions that the roadworthiness test has no date (an open item without a date), and
+      makes no changes.
+      FAIL if it reports a schema or format error that does not exist, says it could not find or read the record,
+      or changes files.

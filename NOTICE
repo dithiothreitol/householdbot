@@ -1,0 +1,13 @@
+HouseholdBot
+Copyright 2026 Dariusz Tyszka
+
+This product is licensed under the Apache License, Version 2.0.
+
+Its structure follows patterns published by Anthropic in the open-source
+repositories anthropics/knowledge-work-plugins and anthropics/claude-for-legal,
+both licensed under the Apache License, Version 2.0. Several shared rules
+(untrusted content, absent is not zero, chain seams, approval gates) adapt
+ideas from those repositories; the text was written for this project.
+
+HouseholdBot is an independent project and is not affiliated with or endorsed
+by Anthropic. "Claude" is a trademark of Anthropic, PBC.

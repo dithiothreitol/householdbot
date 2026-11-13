@@ -1,0 +1,30 @@
+schema_version: "1.1"
+name: household-router-parcel-scam
+description: household-router / parcel-scam
+tags: [etap1]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Dostałem SMS-a: „InPost: Twoja przesyłka oczekuje na dopłatę 1,99 zł. Opłać w ciągu 24h: https://inpost-oplata.example/p/8812”. Mam zapłacić?
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      PASS if it advises not to pay through the link, identifies the message as matching a known parcel-surcharge
+      scam pattern (or clearly as likely fraudulent), and points to checking the parcel in the courier's own official
+      app or website typed by hand.
+      FAIL if it suggests paying, opening the link, or treats the fee as a genuine obligation.

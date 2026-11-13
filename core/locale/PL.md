@@ -1,0 +1,194 @@
+# Country pack — Poland (PL)
+
+**Reviewed:** 2026-11-13. **Language:** pl. **Currency:** PLN. **Time zone:** Europe/Warsaw.
+
+Each line below is a reminder of a rule as understood at the review date.
+Dates, amounts and procedures change. The letter in hand, its instruction
+section (*pouczenie*), and the official source control. Everything taken from
+this file reaches the household tagged `country pack rule — verify`.
+
+---
+
+## Public holidays
+
+Fixed: 1 Jan, 6 Jan, 1 May, 3 May, 15 Aug, 1 Nov, 11 Nov, 24 Dec (from 2025),
+25 Dec, 26 Dec.
+
+Movable: Easter Sunday, Easter Monday, Pentecost Sunday (49 days after Easter),
+Corpus Christi (the Thursday 60 days after Easter).
+
+Every Sunday is also a day free from work.
+
+Law: ustawa z 18.01.1951 o dniach wolnych od pracy, art. 1. The act of
+6.12.2024 (Dz.U. 2024 poz. 1965) added 24 Dec from 1 Feb 2025. Saturday is not
+a public holiday, but deadline rules treat it like one (below), and most
+offices are closed.
+
+## How deadlines are counted
+
+| Area | Rule | Law |
+|---|---|---|
+| Administrative proceedings | The day of the event is not counted. A deadline ending on a public holiday, a Sunday or a Saturday ends on the next day that is none of these. | KPA art. 57 § 1 and § 4 |
+| Tax proceedings | Same rule, unless a tax act says otherwise. | Ordynacja podatkowa art. 12 § 1 and § 5 |
+| Civil law, contracts and civil court cases | A deadline in days ends with the last day; the starting day is not counted. A deadline in weeks, months or years ends on the day matching the starting day, or on the last day of the month when that month has no such day. If the end falls on a public holiday or a Saturday, it ends on the next day that is neither. Court deadlines are counted the same way. | Kodeks cywilny art. 111, 112, 115; KPC art. 165 § 1 |
+
+These rules move a deadline forward. The plugin still plans to the rolled-back
+`do_by` date (the dates rule).
+
+## Deemed delivery
+
+- **Registered letter from an office or a tax office, not collected.** The post
+  office holds it for 14 days and leaves two notices. It counts as delivered on
+  the last day of those 14 days, and the response window runs from then. Law:
+  KPA art. 44; Ordynacja podatkowa art. 150.
+- **Registered letter from a court, not collected.** Each of the two notices
+  gives 7 days to collect it, and courts treat the letter as delivered when the
+  second period ends. Law: KPC art. 139 § 1. When it is the first letter in a
+  case against a private person, the court may have the claimant serve it
+  through a bailiff instead (KPC art. 139¹). An electronic payment order counts
+  as delivered when the notices were left at the address in the PESEL register
+  (KPC art. 505³⁴).
+- **e-Doręczenia.** A message from a public body counts as delivered when it
+  is opened. If it is not opened, it counts as delivered on the day after the
+  14 days that start when it reaches the delivery box. Law: ustawa o
+  doręczeniach elektronicznych art. 41 ust. 1 pkt 3 and art. 42. Offices send
+  to the e-delivery address first when the person has one (KPA art. 39 § 1;
+  Ordynacja podatkowa art. 144 § 1a).
+
+A household that has not checked its post or its delivery box may already be
+inside a response window. Ask when the letter actually arrived.
+
+## Common response windows
+
+The window printed on the document controls. These are the usual ones.
+
+| Document | Window | Law |
+|---|---|---|
+| Appeal against an administrative decision | 14 days from delivery | KPA art. 129 § 2 |
+| Appeal against a tax decision | 14 days from delivery | Ordynacja podatkowa art. 223 § 2 pkt 1 |
+| Objection (*sprzeciw*) to a court payment order (*nakaz zapłaty*) from the ordinary or the electronic (e-sąd) payment-order procedure | 2 weeks from delivery in Poland | KPC art. 480² § 2 pkt 1, art. 505 § 1, art. 505²⁸ § 1 |
+| Pleas (*zarzuty*) against a court payment order issued on documents such as a bill of exchange, an official document or a signed acknowledgement of the debt (*postępowanie nakazowe*) | 1 month from delivery in Poland or elsewhere in the EU | KPC art. 480² § 2 pkt 3, art. 493 § 1 |
+| Paying a fine issued on a ticket (*mandat kredytowany*) | 7 days from accepting it | Kodeks postępowania w sprawach o wykroczenia art. 98 § 3 |
+| Withdrawing from a distance or off-premises purchase | 14 days; 30 days for a contract made during an unarranged visit by the trader to the home or during an organised trip. For goods the days run from receiving them, otherwise from signing. Sending the notice in time is enough. | ustawa o prawach konsumenta art. 27, 28, 30 ust. 2 |
+| Trader's reply to a consumer complaint | 14 days from receipt, otherwise treated as accepted, unless another law sets a different time | ustawa o prawach konsumenta art. 7a ust. 1 and 2 |
+
+Court papers, enforcement notices and tax assessments get the one-line pointer
+to a professional (the not-advice rule).
+
+## Recurring household obligations
+
+Offer these when the profile shows they apply. Each becomes an obligation only
+after the household confirms it.
+
+| Applies when | Obligation | When | Law or source |
+|---|---|---|---|
+| Any adult with taxable income | Annual income tax return (PIT) | 15 Feb to 30 Apr for the previous year; a return sent earlier counts as filed on 15 Feb | ustawa o PIT art. 45 ust. 1 |
+| Owns a home, land or a garage | Property tax, also farm and forest tax | Instalments by 15 Mar, 15 May, 15 Sep, 15 Nov; a yearly amount up to PLN 100 is paid once, by the first instalment date | ustawa o podatkach i opłatach lokalnych art. 6 ust. 7 and 11a; ustawa o podatku rolnym art. 6a ust. 6 and 10a; ustawa o podatku leśnym art. 6 ust. 3 and 7a |
+| Owns a registered vehicle | Compulsory liability insurance (OC): the 12-month contract renews by itself unless the owner gives the insurer written notice no later than one day before the term ends; it does not renew if the premium for the ending term is unpaid | Cancel-by is the day before the term ends | ustawa o ubezpieczeniach obowiązkowych, UFG i PBUK art. 28 ust. 1 and ust. 2 pkt 1 |
+| Owns a passenger car | Periodic roadworthiness test | First within 3 years of first registration, second within 5 years of first registration and at most 2 years after the first, then every year; a car running on gas is tested every year | Prawo o ruchu drogowym art. 81 ust. 6 |
+| Has a child under 18 | 800+ child benefit application for the period 1 Jun to 31 May | Online only, from 1 Feb; an application filed by 30 Apr is decided and paid by 30 Jun; entitlement runs from the month of filing, so filing by 30 Jun keeps June | ustawa o pomocy państwa w wychowywaniu dzieci art. 13 ust. 5, art. 18 ust. 1 and 2, art. 21 ust. 3 and 4 |
+| Has a radio or TV set registered | Broadcast licence fee (abonament RTV) | In advance, by the 25th day of each month; a payment for several months or the whole year is made by the 25th day of the first month it covers | ustawa o opłatach abonamentowych art. 3 ust. 4 |
+| Any household | Waste collection fee | Dates set by the municipality; ask, or read the municipality's notice | ustawa o utrzymaniu czystości i porządku w gminach art. 6l ust. 1; uchwała rady gminy |
+| Owns a house | Chimney flues (smoke, flue gas and ventilation) and gas installation check | At least once a year, single-family houses included | Prawo budowlane art. 62 ust. 1 pkt 1 lit. c and ust. 2 |
+| Owns a house | Building condition check, including electrical and lightning protection | At least every 5 years | Prawo budowlane art. 62 ust. 1 pkt 2 |
+| New heat source installed | Declaration to the central register of building emissions (CEEB) | Within 14 days of first use; a new declaration within 14 days of a change | ustawa o wspieraniu termomodernizacji i remontów oraz o centralnej ewidencji emisyjności budynków art. 27g ust. 1 and 4 |
+
+## Documents with an expiry date
+
+Register the expiry as an obligation with `kind: expiry` and a lead time.
+
+| Document | Validity | Suggested lead time |
+|---|---|---|
+| Identity card (dowód osobisty) | 10 years; 5 years when issued to a child under 12 (ustawa o dowodach osobistych art. 7 ust. 1 and 2). A card issued before 2 Aug 2021 is valid until its printed date, but not after 3 Aug 2031 (Dz.U. 2021 poz. 1000, art. 4) | 60 days |
+| Passport | 10 years; 5 years when issued to a child under 12 (ustawa o dokumentach paszportowych art. 17 ust. 1 and 2) | 180 days, because many countries require 6 months of validity |
+| Driving licence issued from 19 Jan 2013 | The date printed in field 4b: up to 15 years for categories AM, A1, A2, A, B1, B, B+E and T, and up to 5 years for C and D categories (ustawa o kierujących pojazdami art. 13 ust. 1). A first category B licence issued from September 2026 may run only for the probation period, so field 4b decides | 60 days |
+| Driving licence issued up to 18 Jan 2013 | Valid for its own period, but no longer than its exchange date; exchanges run from 19 Jan 2028 to 18 Jan 2033 on dates set by the transport minister (ustawa o kierujących pojazdami art. 124 ust. 4 and 6) | 60 days before the date set for it |
+| European Health Insurance Card (EKUZ) | The date printed on the card, while the holder keeps NFZ cover | 30 days before travel |
+
+## Where things are done
+
+Name the channel; never open a link taken from a message.
+
+| Matter | Official channel |
+|---|---|
+| Taxes, the pre-filled return (Twój e-PIT) | e-Urząd Skarbowy (urzadskarbowy.gov.pl), information at podatki.gov.pl |
+| Identity, vehicle and driver data, official documents | mObywatel, gov.pl |
+| Social insurance, child benefit applications | PUE / eZUS and the mZUS app, zus.pl |
+| Health records, prescriptions, referrals | Internetowe Konto Pacjenta, pacjent.gov.pl |
+| Official electronic mail | e-Doręczenia, edoreczenia.gov.pl |
+| Court payment orders issued electronically | e-sąd, e-sad.gov.pl |
+
+Identifiers on Polish papers that are never reproduced
+(the personal-data rule): PESEL, NIP, identity card and passport numbers, full
+bank account numbers (NRB / IBAN).
+
+## Writing for a Polish household
+
+Dates in prose as `pt. 20.11.2026` alongside the ISO form in registers.
+Decimal comma and a space as the thousands separator in prose: `PLN 1 240,00`.
+Formal address (*Pan / Pani*) in drafts to offices and companies.
+
+## Scam patterns
+
+Name the pattern when a message matches one (the untrusted-content rule).
+
+- **Parcel surcharge.** An SMS or email about a held parcel and a small fee
+  payable through a link.
+- **Tax refund or arrears.** A message "from the tax office" with a link to
+  confirm details or pay. The Ministry of Finance and the tax administration
+  do not send emails about a tax refund asking to confirm identity or bank
+  details.
+- **Energy or gas disconnection.** A threat of disconnection today unless a
+  small arrear is paid through a link.
+- **BLIK code request.** A message from a known contact's account asking for a
+  payment code.
+- **"Bank security department" call.** A caller asking to move money to a
+  "safe account" or to install remote-access software.
+- **Relative in trouble.** A call or message claiming a family member needs
+  money urgently, collected by a third person.
+- **Marketplace buyer.** A "buyer" sending a link to "receive payment" that
+  asks for card details.
+
+## Sources
+
+Consolidated texts (*tekst jednolity*) and acts, read through the Sejm ELI
+service on 2026-11-13:
+
+- Ustawa o dniach wolnych od pracy, Dz.U. 2025 poz. 296: https://api.sejm.gov.pl/eli/acts/DU/2025/296/text.pdf
+- Act adding 24 Dec, Dz.U. 2024 poz. 1965: https://api.sejm.gov.pl/eli/acts/DU/2024/1965/text.html
+- Kodeks postępowania administracyjnego, Dz.U. 2025 poz. 1691: https://api.sejm.gov.pl/eli/acts/DU/2025/1691/text.pdf
+- Ordynacja podatkowa, Dz.U. 2026 poz. 622: https://api.sejm.gov.pl/eli/acts/DU/2026/622/text.pdf
+- Kodeks cywilny, Dz.U. 2026 poz. 795: https://api.sejm.gov.pl/eli/acts/DU/2026/795/text.pdf
+- Kodeks postępowania cywilnego, Dz.U. 2026 poz. 468: https://api.sejm.gov.pl/eli/acts/DU/2026/468/text.pdf
+- Court delivery regulation, Dz.U. 2024 poz. 19: https://api.sejm.gov.pl/eli/acts/DU/2024/19/text.html
+- Ustawa o doręczeniach elektronicznych, Dz.U. 2026 poz. 3: https://api.sejm.gov.pl/eli/acts/DU/2026/3/text.pdf
+- Kodeks postępowania w sprawach o wykroczenia, Dz.U. 2026 poz. 1336: https://api.sejm.gov.pl/eli/acts/DU/2026/1336/text.pdf
+- Ustawa o prawach konsumenta, Dz.U. 2026 poz. 1244: https://api.sejm.gov.pl/eli/acts/DU/2026/1244/text.pdf
+- Ustawa o podatku dochodowym od osób fizycznych, Dz.U. 2026 poz. 592: https://api.sejm.gov.pl/eli/acts/DU/2026/592/text.pdf
+- Ustawa o podatkach i opłatach lokalnych, Dz.U. 2025 poz. 707: https://api.sejm.gov.pl/eli/acts/DU/2025/707/text.pdf
+- Ustawa o podatku rolnym, Dz.U. 2025 poz. 1344: https://api.sejm.gov.pl/eli/acts/DU/2025/1344/text.pdf
+- Ustawa o podatku leśnym, Dz.U. 2025 poz. 176: https://api.sejm.gov.pl/eli/acts/DU/2025/176/text.pdf
+- Ustawa o ubezpieczeniach obowiązkowych, UFG i PBUK, Dz.U. 2026 poz. 783: https://api.sejm.gov.pl/eli/acts/DU/2026/783/text.pdf
+- Prawo o ruchu drogowym, Dz.U. 2024 poz. 1251: https://api.sejm.gov.pl/eli/acts/DU/2024/1251/text.pdf
+- Ustawa o pomocy państwa w wychowywaniu dzieci, Dz.U. 2026 poz. 508: https://api.sejm.gov.pl/eli/acts/DU/2026/508/text.pdf
+- Ustawa o opłatach abonamentowych, Dz.U. 2025 poz. 1585: https://api.sejm.gov.pl/eli/acts/DU/2025/1585/text.pdf
+- Ustawa o utrzymaniu czystości i porządku w gminach, Dz.U. 2025 poz. 733: https://api.sejm.gov.pl/eli/acts/DU/2025/733/text.pdf
+- Prawo budowlane, Dz.U. 2026 poz. 524: https://api.sejm.gov.pl/eli/acts/DU/2026/524/text.pdf
+- Ustawa o wspieraniu termomodernizacji i remontów oraz o centralnej ewidencji emisyjności budynków, Dz.U. 2026 poz. 920: https://api.sejm.gov.pl/eli/acts/DU/2026/920/text.pdf
+- Ustawa o dowodach osobistych, Dz.U. 2025 poz. 1753: https://api.sejm.gov.pl/eli/acts/DU/2025/1753/text.pdf
+- Act of 14.04.2021 amending the identity card act, Dz.U. 2021 poz. 1000: https://api.sejm.gov.pl/eli/acts/DU/2021/1000/text.html
+- Ustawa o dokumentach paszportowych, Dz.U. 2026 poz. 196: https://api.sejm.gov.pl/eli/acts/DU/2026/196/text.pdf
+- Ustawa o kierujących pojazdami, Dz.U. 2025 poz. 1226: https://api.sejm.gov.pl/eli/acts/DU/2025/1226/text.pdf
+- Act of 17.10.2025 amending road traffic and driver rules, Dz.U. 2025 poz. 1676: https://api.sejm.gov.pl/eli/acts/DU/2025/1676/text.pdf
+
+Official pages:
+
+- Twój e-PIT: https://podatki.gov.pl/twoj-e-pit
+- Tax administration warning on false emails: https://www.podatki.gov.pl/aktualnosci/uwaga-na-falszywe-e-maile
+- ZUS, 800+ applications for the new period: https://www.zus.pl/-/mo%C5%BCna-ju%C5%BC-sk%C5%82ada%C4%87-wnioski-o-800-na-nowy-okres-%C5%9Bwiadczeniowy
+- mObywatel: https://www.gov.pl/web/mobywatel
+- Internetowe Konto Pacjenta: https://pacjent.gov.pl/
+- e-Doręczenia: https://www.gov.pl/web/e-doreczenia and https://edoreczenia.gov.pl/
+- e-sąd (EPU): https://www.e-sad.gov.pl/
+- NFZ, EKUZ: https://www.nfz.gov.pl/dla-pacjenta/nasze-zdrowie-w-ue/leczenie-w-krajach-unii-europejskiej-i-efta/wypoczynek-w-panstwach-czlonkowskich-ueefta-ekuz/
+- City of Warsaw, rules for new category B drivers from 4 Sep 2026: https://warszawa19115.pl/-/przewodnik-dla-nowych-kierowcow-ktorzy-uzyskali-po-raz-pierwszy-uprawnienia-kat.-b-poczawszy-od-4-wrzesnia-2026-r.

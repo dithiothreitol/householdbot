@@ -1,0 +1,117 @@
+<!--
+THIS FILE IS A TEMPLATE.
+
+It ships with HouseholdBot and is replaced on every update. Household data
+never goes here. `household-onboard` copies this structure into the household
+folder as `household-profile.md` and fills it from the setup interview.
+
+Rules for every skill and agent:
+1. Find the household folder as the household-record rule describes and read
+   `household-profile.md` from there, not from this file.
+2. `[PLACEHOLDER]` means the household has not answered yet. A skill that
+   needs that value asks for it once and offers to store it.
+3. `[DEFAULT]` means a working value chosen by the quick setup. Use it, and
+   name the default when it shapes an answer.
+4. A line starting with `<!-- SETUP PAUSED AT:` means the interview was
+   interrupted. Offer to resume from that section.
+-->
+
+# Household profile
+
+*Written by the setup interview. Edit this file directly at any time: every
+skill reads it before doing anything, so a correction here is a correction
+everywhere.*
+
+---
+
+## Household
+
+- **Label:** [PLACEHOLDER — a short name for this household, e.g. "Kowalscy, Radzymin"]
+- **Country:** [PLACEHOLDER — ISO 3166 two-letter code]
+- **Language:** [PLACEHOLDER — language the household reads]
+- **Currency:** [PLACEHOLDER — ISO 4217 code]
+- **Time zone:** [PLACEHOLDER — IANA name]
+- **Set up on:** [PLACEHOLDER — YYYY-MM-DD]
+- **Profile schema:** 1
+
+**What takes the most time or worry:** [PLACEHOLDER — in the household's own words]
+
+---
+
+## Members
+
+Store the minimum: a name or label, a role, and a birth year only for a child
+whose reminders depend on age.
+
+| Name | Role | Handles | Notes |
+|---|---|---|---|
+| [PLACEHOLDER] | adult | [PLACEHOLDER — e.g. taxes, car, insurance] | |
+| [PLACEHOLDER] | adult / child | | |
+
+---
+
+## Homes
+
+| Label | Owned or rented | Town | Heating | Notes |
+|---|---|---|---|---|
+| [PLACEHOLDER — e.g. "Flat, Radzymin"] | [PLACEHOLDER] | [PLACEHOLDER] | [PLACEHOLDER] | |
+
+## Vehicles
+
+| Label | Owner | Insurance term ends | Roadworthiness test due |
+|---|---|---|---|
+| [PLACEHOLDER — or "none"] | | | |
+
+---
+
+## Providers
+
+Names only. Account and customer numbers stay on the documents.
+
+| Category | Provider | Paid how | Notes |
+|---|---|---|---|
+| Bank | [PLACEHOLDER] | | |
+| Electricity | [PLACEHOLDER] | | |
+| Gas / heating | [PLACEHOLDER] | | |
+| Water / waste | [PLACEHOLDER] | | |
+| Internet / TV | [PLACEHOLDER] | | |
+| Mobile | [PLACEHOLDER] | | |
+| Home insurance | [PLACEHOLDER] | | |
+| Health | [PLACEHOLDER] | | |
+| School / childcare | [PLACEHOLDER] | | |
+
+---
+
+## Decision rules
+
+- **Two-adult threshold:** [DEFAULT — none; one adult approves any amount]
+- **Never without asking:** [DEFAULT — paying, sending, signing, cancelling, submitting]
+- **Who sees the weekly brief:** [DEFAULT — adults only]
+- **Documents kept for:** [DEFAULT — 6 years unless the document type says longer; identity, property, court and tax-decision papers permanently]
+
+---
+
+## Connected tools
+
+| Category | Status | Account of | Without it |
+|---|---|---|---|
+| Mail | [PLACEHOLDER ✓ / ✗ / ⚪ untested] | | Documents arrive as uploads, photos or pasted text |
+| Calendar | [PLACEHOLDER ✓ / ✗ / ⚪ untested] | | Deadlines are reported in the brief; no calendar entries are proposed |
+| Document storage | [PLACEHOLDER ✓ / ✗ / ⚪ untested] | | The household folder is a local or synced folder |
+
+*Re-check: `/householdbot:household-onboard --check-integrations`*
+
+---
+
+## Rhythm
+
+- **Weekly brief:** [DEFAULT — on request; say "weekly brief"]
+- **Scheduled:** [DEFAULT — no; nothing runs unless a household member asks]
+- **Output preference:** [DEFAULT — short answer in chat, brief saved as Markdown in briefs/]
+
+---
+
+## Country pack
+
+- **Loaded:** [PLACEHOLDER — e.g. "PL, reviewed 2026-11-13" or "none"]
+- **Statutory reminders accepted:** [PLACEHOLDER — list of confirmed recurring obligations, or "none yet"]

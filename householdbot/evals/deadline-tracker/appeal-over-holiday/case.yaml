@@ -1,0 +1,30 @@
+schema_version: "1.1"
+name: deadline-tracker-appeal-over-holiday
+description: deadline-tracker / appeal-over-holiday
+tags: [etap1]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Decyzję z urzędu gminy odebrałem 28 października 2026. Mam 14 dni na odwołanie. Do kiedy najpóźniej?
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:deadline-tracker|household-router)"'
+  - name: thursday-12-nov
+    type: regex
+    pattern: '12\.11\.2026|2026-11-12|12 listopada'
+    flags: i
+  - name: result
+    type: llm
+    criteria: |
+      The answer depends on the day the test runs, so accept either branch below.
+      PASS if it notes that 11 November 2026, where the 14 days end, is a public holiday in Poland (Independence
+      Day), gives Thursday 12 November 2026 (czwartek) as the last day of the legal deadline, marks the calculation
+      or the rule as something to verify, and then EITHER recommends acting earlier (for example by Tuesday
+      10 November 2026) OR, if it says the deadline has already passed, names what can still be done (such as a
+      request to reinstate the deadline) or points to a professional.
+      FAIL if it gives 11 November as the final day without noting the holiday, gives a wrong weekday, or omits the
+      holiday.

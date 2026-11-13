@@ -1,0 +1,31 @@
+schema_version: "1.1"
+name: weekly-brief-brief-no-record
+description: weekly-brief / brief-no-record
+tags: [etap1]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Zrób mi przegląd tygodnia.
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:weekly-brief|household-router)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      PASS if it says that no household record was found (the household is not set up yet) and offers the setup
+      (household-onboard), without inventing any deadlines or bills.
+      FAIL if it lists any obligation or claims to have read a record.

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "householdbot",
+  "description": "HouseholdBot: an open-source plugin that runs a household's paperwork from a conversation. Files documents, tracks deadlines and renewals, and writes a weekly brief, with approval before anything is written, sent or paid.",
+  "owner": {
+    "name": "Dariusz Tyszka"
+  },
+  "plugins": [
+    {
+      "name": "householdbot",
+      "displayName": "HouseholdBot",
+      "source": "./householdbot",
+      "description": "Runs a household's paperwork from a conversation: files letters, bills, contracts and policies into one record the household owns, tracks deadlines, renewals and cancel-by dates with the country's holidays, and briefs you on the week ahead. Works from photos, PDFs and pasted messages; connectors are optional. Nothing is written, sent or paid without your approval.",
+      "author": {
+        "name": "Dariusz Tyszka"
+      }
+    }
+  ]
+}

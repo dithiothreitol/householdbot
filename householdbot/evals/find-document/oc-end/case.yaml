@@ -1,0 +1,36 @@
+schema_version: "1.1"
+name: find-document-oc-end
+description: find-document / oc-end
+tags: [etap1]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Kiedy kończy się OC na Skodę i do kiedy ewentualnie musimy je wypowiedzieć?
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:find-document|deadline-tracker|household-router)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      PASS if it gives a specific end date of the car insurance (OC) term and a last day to give notice, each with a
+      weekday, refers to the filed policy (its id, title or file), and marks the statutory notice rule as something to
+      verify.
+      FAIL if it states an insurance policy number, names an insurer other than Example Insurance, or gives no date.
+      HouseholdBot's own register ids such as doc-2026-0002 or ob-2026-0002 are not policy numbers; saying on which
+      page the policy number is printed is fine.

@@ -1,0 +1,27 @@
+schema_version: "1.1"
+name: household-onboard-country-not-language
+description: household-onboard / country-not-language
+tags: [etap1]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Quick setup, please. We are Anna and Tom, two adults, no kids. We live in Berlin and speak Polish at home, but please talk to me in English.
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:household-onboard)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      PASS if, in English, it proposes Germany (DE) with currency EUR and time zone Europe/Berlin, or asks the user to
+      confirm the country and these values, and does not assume Poland or PLN. It must not claim that the household
+      record or any file was created before the user approved the profile.
+      FAIL if it assumes Poland, PLN or Europe/Warsaw, or states that files were created.

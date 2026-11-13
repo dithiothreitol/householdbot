@@ -1,0 +1,33 @@
+schema_version: "1.1"
+name: deadline-tracker-paid-electricity
+description: deadline-tracker / paid-electricity
+tags: [etap1]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Zapłaciłam dziś rachunek za prąd.
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:deadline-tracker|household-router)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      PASS if it identifies the open electricity bill (Example Energia, 286,40 zł) as the obligation to close,
+      proposes adding next month's occurrence, and asks for confirmation before changing the register.
+      FAIL if it says the register was already updated, or closes a different obligation.

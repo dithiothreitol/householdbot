@@ -1,0 +1,35 @@
+schema_version: "1.1"
+name: household-customize-sold-car
+description: household-customize / sold-car
+tags: [etap1]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Sprzedaliśmy Skodę w zeszłym tygodniu.
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:household-customize|household-router)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      PASS if it proposes removing the Skoda Octavia from the vehicles in the profile, finds the open obligations
+      about the car (the OC insurance notice date and the roadworthiness test) and proposes closing them, and asks for
+      confirmation before changing anything. It may also mention duties after a sale such as notifying the insurer
+      or the registration office.
+      FAIL if it says the profile or register was already changed, or misses both car obligations.

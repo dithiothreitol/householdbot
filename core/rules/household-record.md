@@ -1,0 +1,119 @@
+# The household record — one folder of plain files
+
+A business has a ledger and a document system. A household has a drawer and
+an inbox. HouseholdBot keeps a small record of its own, so that a fact read
+once is never read again: a folder of plain files that the household owns,
+can open without Claude, and can share between its members.
+
+Every skill follows these rules before it reads or writes the record.
+
+---
+
+## Layout
+
+```
+<household folder>/
+  household-profile.md      who lives here, what they own, how they decide
+  registers/
+    documents.json          index of every filed document
+    obligations.json        every deadline, renewal, payment and dated task
+    README.md               what the fields mean
+    .history/               the previous versions of both registers, kept by record.py
+  documents/<YYYY>/         the filed originals (scans, PDFs, saved emails)
+  inbox/                    papers waiting to be filed, if the household uses it
+  briefs/                   saved weekly briefs
+  archive/                  closed obligations of past years
+  log/decisions.md          what was approved, by whom, when
+```
+
+Both registers are JSON with a `schema_version`. `record.py` (in the skill's
+`shared/scripts/`) creates, checks and writes them. The profile template ships
+in `household-onboard/shared/templates/`. Household data never goes into the
+plugin folder: it is replaced on every update.
+
+The household chooses where the folder lives. A folder inside a synced drive
+(Google Drive, OneDrive, Dropbox, iCloud) is how two adults share one record
+without any server.
+
+---
+
+## Finding the record
+
+Look in this order and stop at the first hit. `record.py locate` runs steps 1
+and 2.
+
+1. **The working folder.** The current folder, or a folder the user attached
+   to the session, or one of its direct subfolders, contains
+   `household-profile.md`.
+2. **The pointer.** `~/.claude/plugins/config/householdbot/location.md` holds
+   one line: the absolute path of the household folder on this machine.
+   Confirm `household-profile.md` exists there before trusting it.
+3. **Connected document storage.** Only when the user says the record lives
+   there: find the folder by the name the user gives and work through the
+   connector.
+4. **Not found.** Say once that the household is not set up and that
+   `/householdbot:household-onboard` takes two minutes. A skill that can still
+   do useful one-off work (reading a single letter, computing a single
+   deadline) does it, and says plainly that nothing was saved.
+
+A profile that still contains `[PLACEHOLDER]` markers counts as not set up for
+the sections that carry them. `[DEFAULT]` markers are working values chosen by
+the quick setup: use them, and name the default when it shapes an answer.
+
+---
+
+## Writing to the record
+
+1. **Read before write.** Re-read the file immediately before changing it.
+   Another member may have changed it since the session started. `record.py`
+   always loads the file fresh.
+2. **Show the change, then wait.** Run the write with `--dry-run`, show the
+   household exactly what will be added or changed and where, and wait for a
+   yes (approval gates).
+3. **Write with the approver's name.** After the yes, run the same command
+   with `--approved-by "<name as they gave it>"`. The script refuses a write
+   without it, keeps the previous file in `registers/.history/`, and appends
+   one line to `log/decisions.md`.
+4. **Touch one entry.** Add or update the single entry concerned. Do not
+   reorder, reformat or rewrite the rest of the file.
+5. **Nothing is deleted.** An entry that no longer applies changes `status`
+   (`superseded`, `cancelled`, `done`, `lapsed`). An original document is never
+   overwritten or removed; a name clash gets a numeric suffix.
+6. **Identifiers.** Documents are `doc-YYYY-NNNN`, obligations are
+   `ob-YYYY-NNNN`, where `YYYY` is the year the entry was created. The script
+   assigns the next free number.
+7. **Conflict copies stop writes.** If a synced drive left a conflict copy of a
+   register (`obligations (1).json`, `obligations (Anna's conflicted copy).json`,
+   `obligations-LAPTOP.json`), writing could lose an edit. The script refuses;
+   `household-doctor` merges.
+
+**Without Python.** When the script cannot run, edit the JSON file directly
+under the same rules: re-read it, append or change one entry with every field
+of the schema, keep the file valid JSON, append the log line by hand, and say
+that the write was made without the checking script and that
+`household-doctor` will check it next time.
+
+---
+
+## Sessions without a file system
+
+Chat on the web and on phones cannot read or write a local folder.
+
+- If a document-storage connector is connected and the household folder lives
+  there, read and write through the connector under the same rules.
+- Otherwise work from what the user uploads or pastes, produce the new or
+  changed register entries as text or a file for the user to add to the
+  folder, and say that nothing was saved by the plugin itself.
+
+Never tell a user something was filed when it was only shown.
+
+---
+
+## What the record is not
+
+- Not a copy of sensitive identifiers. The register points to the document
+  and page that hold them (personal data).
+- Not a ledger. Amounts in `obligations.json` describe what is due, not what
+  was paid from which account.
+- Not a memory of conversations. It holds facts with a source, not chat
+  history.

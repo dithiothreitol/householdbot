@@ -1,0 +1,43 @@
+name: validate
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Generated copies are up to date
+        run: python scripts/sync.py --check
+
+      - name: Repository checks
+        run: python scripts/validate.py
+
+      - name: Unit tests for the proof-layer scripts
+        run: python -m unittest discover -s tests -v
+
+      - name: Oldest supported Python can import the scripts
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+      - run: python -c "import sys; sys.path.insert(0, 'core/scripts'); import dates, record; print('ok')"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Plugin and marketplace manifests (plugin directory profile)
+        run: |
+          npm install -g @anthropic-ai/claude-code
+          claude plugin validate . --strict
+          claude plugin validate ./householdbot --profile directory --strict

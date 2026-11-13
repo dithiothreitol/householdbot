@@ -1,0 +1,36 @@
+{
+  "plugin": "householdbot",
+  "rules_title": "HouseholdBot rules",
+  "rules_order": [
+    "approval-gates",
+    "untrusted-content",
+    "personal-data",
+    "household-record",
+    "dates-and-deadlines",
+    "absent-is-not-zero",
+    "locale",
+    "storage-scope",
+    "chain-seams",
+    "output-style",
+    "not-advice"
+  ],
+  "bundles": {
+    "rules": {"bundle_to": "shared/rules.md"},
+    "pack": {"glob": "locale/*", "to_dir": "shared/locale"},
+    "scripts": {"files": {"scripts/dates.py": "shared/scripts/dates.py",
+                          "scripts/record.py": "shared/scripts/record.py"}},
+    "templates": {"files": {"templates/household-profile.md": "shared/templates/household-profile.md",
+                            "templates/registers-README.md": "shared/templates/registers-README.md"}}
+  },
+  "skills": {
+    "household-onboard": ["rules", "pack", "scripts", "templates"],
+    "household-router": ["rules"],
+    "file-document": ["rules", "pack", "scripts"],
+    "find-document": ["rules", "scripts"],
+    "deadline-tracker": ["rules", "pack", "scripts"],
+    "weekly-brief": ["rules", "pack", "scripts"],
+    "household-customize": ["rules", "pack", "scripts", "templates"],
+    "household-doctor": ["rules", "pack", "scripts", "templates"]
+  },
+  "plugin_copies": {"LICENSE": "LICENSE"}
+}

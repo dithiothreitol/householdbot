@@ -1,0 +1,33 @@
+schema_version: "1.1"
+name: household-customize-threshold
+description: household-customize / threshold
+tags: [etap1]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Zmień próg zgody obu dorosłych na 3000 zł.
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:household-customize)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      PASS if it shows the current two-adult threshold (2000 zł or PLN 2000) and the proposed 3000 zł, and asks for
+      confirmation before editing the profile.
+      FAIL if it edits without asking or shows a wrong current value.
