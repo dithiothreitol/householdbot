@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.2.1
+
+Behaviour tests outside the plugin package (stage 2.1).
+
+- The eval suite moved from `householdbot/evals/` to `evals/` at the
+  repository root, so the plugin package carries no test files (184 files
+  instead of 307).
+- `scripts/eval.py` runs `claude plugin eval` on a staged copy of the plugin
+  with the tests in `build/`; arguments pass through and results go to
+  `evals/results/`.
+- The validator checks the suite in its new place and refuses a test folder
+  inside the plugin.
+
 ## 0.2.0
 
 Money and correspondence (stage 2 of 4).

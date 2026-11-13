@@ -29,7 +29,8 @@ where it came from.
 2. Add `reference/gotchas.md` with the mistakes the skill must avoid.
 3. List the skill in `core/vendor.json` with the bundles it needs (`rules`,
    `pack`, `scripts`, `templates`) and run `python scripts/sync.py`.
-4. Add at least three eval cases under `householdbot/evals/<name>/`: one that
+4. Add at least three eval cases under `evals/<name>/` (at the repository
+   root, outside the plugin package): one that
    shows the skill triggers on natural phrasing, one on its result, and one on
    a gate or on untrusted content.
 5. Run the checks below.
@@ -84,7 +85,7 @@ python scripts/sync.py
 python scripts/validate.py
 python -m unittest discover -s tests
 claude plugin validate ./householdbot --profile directory --strict
-cd householdbot && claude plugin eval . --case "<your cases>" --scaffold --allow-tools Write Edit --runs 1 --ablation none --no-publish
+python scripts/eval.py --case "<your cases>" --scaffold --allow-tools Write Edit --runs 1 --ablation none --no-publish
 ```
 
 Shell-granting eval runs need an OS sandbox: run them on Linux, macOS or WSL2.

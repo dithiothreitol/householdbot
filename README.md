@@ -39,7 +39,8 @@ householdbot/                     the plugin
   skills/<skill>/SKILL.md         eighteen skills, each self-sufficient
   skills/<skill>/shared/          generated copies of rules, country packs, scripts, templates
   agents/                         deadline-watcher (read-only), document-reader (no write tools)
-  evals/                          behaviour tests for `claude plugin eval`, synthetic household
+evals/                            behaviour tests for `claude plugin eval`, synthetic household;
+                                  kept outside the plugin package, run by scripts/eval.py
 core/                             sources of everything under skills/*/shared/
   rules/                          the rules every skill follows
   locale/PL.md, PL.json           the Polish country pack
@@ -74,7 +75,7 @@ python scripts/sync.py                       # after editing anything in core/
 python scripts/validate.py                   # repository checks
 python -m unittest discover -s tests         # proof-layer tests
 claude plugin validate ./householdbot --profile directory --strict
-cd householdbot && claude plugin eval . --scaffold --allow-tools Write Edit --no-publish
+python scripts/eval.py --scaffold --allow-tools Write Edit --no-publish   # tests run on a staged copy in build/
 ```
 
 [CONTRIBUTING.md](CONTRIBUTING.md) covers new skills and country packs.

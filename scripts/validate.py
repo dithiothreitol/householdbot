@@ -211,7 +211,10 @@ def check_directory_limits() -> None:
 
 
 def check_evals(skills: set[str]) -> None:
-    root = PLUGIN / "evals"
+    if (PLUGIN / "evals").exists():
+        errors.append("householdbot/evals/ exists: behaviour tests live in evals/ at the repository root, "
+                      "outside the plugin package (run them with python scripts/eval.py)")
+    root = REPO / "evals"
     counts = {s: 0 for s in skills}
     cases = {p.parent for p in [*root.rglob("prompt.md"), *root.rglob("case.yaml")]}
     for case in sorted(cases):

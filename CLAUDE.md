@@ -13,8 +13,12 @@
   `householdbot/skills/household-onboard/reference/messages.md`. A change to
   a user-facing document (`README`, `QUICKSTART`, the plugin `README` and
   `PRIVACY`) goes into both the English file and its `.pl.md` translation.
-- `householdbot/evals/<skill>/<case>/case.yaml` are behaviour tests; the
-  synthetic household comes from `householdbot/evals/fixtures/make_household.py`.
+- `evals/<skill>/<case>/case.yaml` are behaviour tests, kept at the
+  repository root so the plugin package carries no test files. The
+  synthetic household and bank exports come from `evals/fixtures/`.
+  `claude plugin eval` reads cases only inside a plugin, so
+  `python scripts/eval.py` copies the plugin and the tests into `build/`
+  and runs there; arguments pass through, results go to `evals/results/`.
 - `docs/development-plan.md` is the staged plan (in Polish). Read the current
   stage before starting work, and update it when a stage closes.
 
@@ -28,7 +32,7 @@ python -m unittest discover -s tests
 
 Before a stage closes, also run
 `claude plugin validate ./householdbot --profile directory --strict` and the
-eval suite (`cd householdbot && claude plugin eval . --scaffold --allow-tools Write Edit --no-publish`).
+eval suite (`python scripts/eval.py --scaffold --allow-tools Write Edit --no-publish`).
 On Windows, eval runs cannot grant Bash (no OS sandbox), so they exercise the
 skills' no-Python path; the scripts are covered by the unit tests.
 

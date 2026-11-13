@@ -38,7 +38,8 @@ householdbot/                     wtyczka
   skills/<skill>/SKILL.md         osiemnaście skilli, każdy samowystarczalny
   skills/<skill>/shared/          generowane kopie reguł, pakietów krajowych, skryptów i szablonów
   agents/                         deadline-watcher (tylko odczyt), document-reader (bez narzędzi zapisu)
-  evals/                          testy zachowania dla `claude plugin eval`, syntetyczne gospodarstwo
+evals/                            testy zachowania dla `claude plugin eval`, syntetyczne gospodarstwo;
+                                  poza paczką wtyczki, uruchamiane przez scripts/eval.py
 core/                             źródła wszystkiego, co trafia do skills/*/shared/
   rules/                          reguły, których przestrzega każdy skill
   locale/PL.md, PL.json           polski pakiet krajowy
@@ -73,7 +74,7 @@ python scripts/sync.py                       # po każdej zmianie w core/
 python scripts/validate.py                   # kontrole repozytorium
 python -m unittest discover -s tests         # testy warstwy dowodowej
 claude plugin validate ./householdbot --profile directory --strict
-cd householdbot && claude plugin eval . --scaffold --allow-tools Write Edit --no-publish
+python scripts/eval.py --scaffold --allow-tools Write Edit --no-publish   # testy na kopii w build/
 ```
 
 [CONTRIBUTING.md](CONTRIBUTING.md) opisuje dodawanie skilli, pakietów

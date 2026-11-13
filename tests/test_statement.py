@@ -13,7 +13,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "core" / "scripts"))
-sys.path.insert(0, str(ROOT / "householdbot" / "evals" / "fixtures"))
+sys.path.insert(0, str(ROOT / "evals" / "fixtures"))
 import statement  # noqa: E402
 import make_statement  # noqa: E402
 import make_household  # noqa: E402

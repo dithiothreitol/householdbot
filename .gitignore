@@ -3,7 +3,6 @@ __pycache__/
 *.pyc
 
 # Eval runs: reports and sandboxes stay local
-householdbot/evals/results/
 evals/results/
 results.json
 
@@ -15,6 +14,7 @@ Household/
 *.household/
 
 # Local tooling
+build/
 .env
 .venv/
 .vscode/

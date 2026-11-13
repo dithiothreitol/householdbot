@@ -239,21 +239,21 @@ core/                                  źródła wszystkiego, co trafia do skill
   templates/en/ templates/pl/          profil, opis rejestrów w każdym języku
   vendor.json                          który skill dostaje które pakiety
 scripts/sync.py validate.py make_icon.py
+scripts/eval.py                        testy zachowania na kopii wtyczki w build/ (Etap 2.1)
 tests/test_dates.py test_record.py test_statement.py
+evals/<skill>/<przypadek>/case.yaml setup.sh [mocks/gmail/*.md]
+evals/fixtures/make_household.py make_statement.py seed.sh
 householdbot/                          wtyczka
   .claude-plugin/plugin.json icon.png   .mcp.json   README(.pl).md   PRIVACY(.pl).md   LICENSE
   hooks/hooks.json
   agents/deadline-watcher.md document-reader.md
   skills/<skill>/SKILL.md reference/*.md
   skills/<skill>/shared/               kopie generowane (rules.md, locale/, i18n/, scripts/, templates/)
-  evals/<skill>/<przypadek>/case.yaml setup.sh [mocks/gmail/*.md]
-  evals/fixtures/make_household.py make_statement.py seed.sh
 ```
 
-Liczba plików wtyczki: 147 po Etapie 1.1, 307 po Etapie 2 (18 skilli, z tego
-145 plików w `evals/`). Przy 34 skillach i około 110 przypadkach prognoza to
-około 600 plików, powyżej limitu 512. Decyzja zapada na początku Etapu 3
-(patrz ryzyka).
+Liczba plików wtyczki: 147 po Etapie 1.1, 307 po Etapie 2 (z testami
+zachowania w środku), 184 po Etapie 2.1, gdy testy wyszły poza paczkę. Przy 34
+skillach prognoza to około 350 plików, poniżej limitu 512.
 
 ---
 
@@ -263,7 +263,7 @@ około 600 plików, powyżej limitu 512. Decyzja zapada na początku Etapu 3
 |---|---|---|---|
 | 1. Struktura | manifesty, frontmatter, samowystarczalność skilli, aktualność kopii, limity katalogu, uprawnienia agentów, kształt testów, pakiety krajowe, identyfikatory i sekrety w plikach | `scripts/validate.py`, `claude plugin validate --profile directory --strict` | po każdej zmianie, w CI |
 | 2. Rachunek | święta, terminy, cofanie, pasma, cykliczność, rejestry, scalanie, archiwizacja | `python -m unittest` | po zmianie skryptu, w CI |
-| 3. Zachowanie | wyzwalanie skilli, poprawność wyniku, zatrzymanie na bramce, odporność na wstrzyknięcie i oszustwa | `claude plugin eval` | w trakcie: pojedyncze przypadki; na zamknięciu etapu pełny przebieg |
+| 3. Zachowanie | wyzwalanie skilli, poprawność wyniku, zatrzymanie na bramce, odporność na wstrzyknięcie i oszustwa | `claude plugin eval` przez `scripts/eval.py` | w trakcie: pojedyncze przypadki; na zamknięciu etapu pełny przebieg |
 | 4. Użycie | pełna ścieżka wieloturowa, realne dokumenty | sesja `claude -p` na danych syntetycznych, pilotaż | po każdym etapie |
 
 Ograniczenia ustalone w Etapie 1:
@@ -438,6 +438,26 @@ Wyniki: patrz rozdział 8.
 Twój udział (pilotaż): eksport CSV z własnego banku dla `budget-snapshot` i
 `subscriptions-review`, bieżące rachunki w `bills-due`, dwa realne pisma w
 `reply-to-letter` albo `complaint-and-claim`.
+
+### Etap 2.1. Testy zachowania poza paczką wtyczki (wersja 0.2.1) ✅
+
+Wykonane 13.11.2026 według Twojej decyzji z tego dnia („testy zachowania poza
+paczką wtyczki”).
+
+- Testy przeniesione z `householdbot/evals/` do `evals/` w katalogu głównym
+  repozytorium. Paczka wtyczki nie zawiera żadnego pliku testowego: 184 pliki
+  zamiast 307.
+- `claude plugin eval` przyjmuje katalog testów tylko wewnątrz wtyczki
+  (`--eval-dir must stay inside the plugin root`), dlatego `scripts/eval.py`
+  kopiuje wtyczkę i testy do `build/eval/householdbot/` i uruchamia polecenie
+  na kopii. Argumenty przechodzą bez zmian, wyniki trafiają do
+  `evals/results/`. `build/` i `evals/results/` są w `.gitignore`.
+- Walidator sprawdza testy w nowym miejscu i zgłasza błąd, gdy
+  `householdbot/evals/` pojawi się ponownie. Testy jednostkowe biorą dane
+  syntetyczne z `evals/fixtures/`.
+- Sprawdzone: walidatory i 86 testów jednostkowych zielone, przypadek
+  `household-router-parcel-scam` uruchomiony przez `scripts/eval.py` przechodzi
+  (0,05 USD).
 
 ### Etap 3. Dom, rodzina i codzienność (wersja 0.3)
 
@@ -643,7 +663,7 @@ poprawionych, 2 nierozstrzygnięte.
 | Skrypt uruchomiony w folderze skilla nie widzi rekordu | `record.py locate` ze wskazówką, krok 0 każdego skilla, test jednostkowy | zamknięta (Etap 2) |
 | Termin po stronie firmy liczony z regułą dla oświadczeń domownika | `met_by` i `silence` przy oknie w pakiecie | zamknięta (Etap 2) |
 | Formy rodzajowe w polskich odpowiedziach zgadywane | reguła językowa: formy bezosobowe, dopóki domownik nie pokaże swoich | zamknięta (Etap 2) |
-| Limit 512 plików przy pełnym zakresie | rozdział 5, ryzyka | decyzja na początku Etapu 3 |
+| Limit 512 plików przy pełnym zakresie | testy zachowania poza paczką, `scripts/eval.py` | zamknięta (Etap 2.1) |
 
 ---
 
@@ -657,7 +677,7 @@ poprawionych, 2 nierozstrzygnięte.
 | Realne dane trafią do repozytorium | dane syntetyczne, `.gitignore`, walidator odrzuca identyfikatory z poprawną sumą kontrolną |
 | Koszt testów zachowania | pojedyncze przypadki w trakcie, pełny przebieg na zamknięciu etapu, limit kosztu; Etap 1: około 0,10 USD na przypadek (Sonnet, sędzia Sonnet), cały etap z sesją wieloturową około 8 USD |
 | Brak Pythona u użytkownika | wariant bez skryptu z oznaczeniem `verify`, testowany przez eval na Windows |
-| Limit 512 plików przy 34 skillach | po Etapie 2 307 plików, prognoza dla 34 skilli około 600; na początku Etapu 3 wybór: testy zachowania poza folderem wtyczki (paczka wydania bez `evals/`) albo mniej kopii w `shared/` |
+| Limit 512 plików przy 34 skillach | testy zachowania poza paczką (Etap 2.1): 184 pliki przy 18 skillach, prognoza około 350 przy 34; walidator ostrzega od 450 |
 | Nazwa trafi do ręcznej oceny w katalogu | opis i README jasno mówią, czym jest wtyczka; wstrzymanie nie jest odrzuceniem |
 | Rozrost zakresu przy 34 skillach | akceptacja etapu oparta na ścieżkach od początku do końca; minimalna poprzeczka skilla: SKILL.md, gotchas, trzy przypadki |
 | Anthropic wyda własną wtyczkę domową | projekt jest otwarty i badawczy; wartością pozostają pakiety krajowe, warstwa dowodowa i analiza wzorca |
@@ -676,11 +696,11 @@ Podjęte 13.11.2026:
 4. Cztery etapy w czterech sesjach z pilotażem po każdym.
 5. Dwujęzyczność: angielski domyślny, polski do wyboru (D14), z wersjami
    polskimi dokumentów dla użytkowników.
+6. Testy zachowania poza paczką wtyczki (Etap 2.1).
 
 Etap 2 wykonany 13.11.2026 na polecenie przejścia do niego przed pilotażem
 Etapu 1; pilotaże obu etapów można przeprowadzić razem.
 
-Otwarte: brak decyzji blokujących Etap 3, poza wyborem sposobu na limit 512
-plików (rozdział 10). Jeśli „angielski domyślny” ma oznaczać angielski także
+Otwarte: brak decyzji blokujących Etap 3. Jeśli „angielski domyślny” ma oznaczać angielski także
 wtedy, gdy domownik bez profilu pisze po polsku, wystarczy zmiana jednej
 reguły (D14).
