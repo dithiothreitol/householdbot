@@ -56,7 +56,9 @@ documents with no write tools and returns a structured extraction.
 1. Install: in Claude Code, `/plugin marketplace add dithiothreitol/householdbot`
    (or the path of a local copy) then `/plugin install householdbot@householdbot`.
    In Cowork, add the marketplace under Customize > Plugins, or upload
-   `householdbot.plugin` from a release.
+   `householdbot.plugin` from a release. In OpenAI Codex,
+   `codex plugin marketplace add dithiothreitol/householdbot` then
+   `codex plugin add householdbot@householdbot`.
 2. Run `/householdbot:household-onboard`. The quick setup takes about two
    minutes and ends with one real document filed.
 3. From then on, send a photo or PDF of any paper, or ask "what's due".

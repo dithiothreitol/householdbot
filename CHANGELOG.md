@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.0.0-rc.2
+
+Codex and ChatGPT. The same plugin now also ships in the open Agent Plugins
+format, next to the Claude one.
+
+- `householdbot/plugin.json`: the portable manifest (Agent Plugins schema)
+  with the OpenAI extension: display name, descriptions, category, privacy
+  policy, sample prompts, and `household-onboard` as the onboarding skill.
+- `.agents/plugins/marketplace.json` makes the repository a Codex
+  marketplace: `codex plugin marketplace add dithiothreitol/householdbot`,
+  then `codex plugin add householdbot@householdbot`. Checked with Codex CLI
+  0.153: all 34 skills appear as `householdbot:<skill>`.
+- The skills give the member the command their app uses:
+  `/householdbot:<skill>` in Claude Code and Cowork, `$householdbot:<skill>`
+  in Codex, the plugin picked with `@` in ChatGPT.
+- `scripts/validate.py` keeps the two manifests and the two marketplaces in
+  step (name, version, description, licence, links, onboarding skill).
+
 ## 1.0.0-rc.1
 
 Reach, hardening and release (stage 4 of 4). The release candidate of 1.0;

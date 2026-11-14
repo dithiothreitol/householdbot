@@ -691,6 +691,29 @@ Your part:
    and the submission at https://claude.ai/directory/manage (Submit new >
    Plugin bundle).
 
+**Publication (14 Nov 2026, after approval).** The public repository
+https://github.com/dithiothreitol/householdbot with a bilingual README
+written as a landing page (keywords in the title and the description, 20
+GitHub topics, badges, an FAQ), issue forms that require synthetic data,
+private vulnerability reporting, and release v1.0.0-rc.1 built by CI (the
+plugin package, its checksum, 34 skill zips, notes in English and Polish).
+CI on GitHub passes; the Ubuntu 26.04 image no longer has Python 3.9, so the
+oldest-version check uses 3.10. Installation from the public marketplace
+was checked in an isolated configuration.
+
+**Version 1.0.0-rc.2 (the same day): Codex and ChatGPT.** Codex accepts
+plugins in the Claude format, and OpenAI recommends the portable
+`plugin.json` manifest (the Agent Plugins format with an
+`extensions.com.openai` block) for new packages. The plugin now has both
+manifests and both marketplace files (`.claude-plugin/` and
+`.agents/plugins/`), which the validator keeps in step. Codex CLI 0.153
+installs it with `codex plugin marketplace add dithiothreitol/householdbot`
+and `codex plugin add householdbot@householdbot`, and shows the model all 34
+skills as `householdbot:<skill>` (checked with `codex debug prompt-input` in
+an isolated configuration, without running the model). Still to do: a
+Codex session on synthetic data, the `ANTHROPIC_API_KEY` secret, the
+submissions to the Claude and OpenAI directories, the pilot.
+
 ---
 
 ## 8. Status after Stages 1, 1.1, 2, 3 and 4

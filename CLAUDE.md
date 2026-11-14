@@ -4,6 +4,11 @@
 
 - `householdbot/` is the plugin. `skills/<skill>/SKILL.md` and
   `skills/<skill>/reference/` are written by hand.
+- Two manifests, one plugin: `householdbot/.claude-plugin/plugin.json` for
+  Claude and the portable `householdbot/plugin.json` for Codex and ChatGPT,
+  with the same name, version and description; `.agents/plugins/marketplace.json`
+  mirrors `.claude-plugin/marketplace.json`. A version bump changes both;
+  `scripts/validate.py` checks they agree.
 - `householdbot/skills/<skill>/shared/` is **generated** by `scripts/sync.py`
   from `core/`. Never edit it; edit `core/` and run the sync.
 - `core/vendor.json` says which skill gets which bundle.

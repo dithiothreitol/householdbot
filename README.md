@@ -1,4 +1,4 @@
-# HouseholdBot: an open-source Claude plugin for household paperwork and life admin
+# HouseholdBot: an open-source Claude Code and Codex plugin for household paperwork and life admin
 
 **English** · [Polski](README.pl.md)
 
@@ -6,17 +6,20 @@
 [![Validate](https://github.com/dithiothreitol/householdbot/actions/workflows/validate.yml/badge.svg)](https://github.com/dithiothreitol/householdbot/actions/workflows/validate.yml)
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-D97757)](https://code.claude.com/docs/en/plugins)
+[![Codex plugin](https://img.shields.io/badge/Codex-plugin-412991)](https://learn.chatgpt.com/docs/plugins)
 [![Agent Skills](https://img.shields.io/badge/Agent%20Skills-34-6E56CF)](householdbot/skills)
 [![Languages](https://img.shields.io/badge/languages-English%20%7C%20Polski-2ea44f)](#languages-and-countries)
 
 **HouseholdBot** is a [Claude Code plugin](https://code.claude.com/docs/en/plugins)
-with 34 [Agent Skills](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview)
+and a [Codex plugin](https://learn.chatgpt.com/docs/plugins) with 34
+[Agent Skills](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview)
 that runs a household's paperwork from a conversation. It reads bills,
 letters, contracts and insurance policies, files them in a folder you own,
 tracks every deadline with its legal basis and weekday, drafts replies,
 appeals and cancellations, and sums up the week ahead. It works in Claude
-Code, Cowork and claude.ai, speaks English and Polish, and knows the public
-holidays and statutory deadlines of Poland and of England and Wales.
+Code, Cowork, claude.ai and OpenAI Codex, speaks English and Polish, and knows
+the public holidays and statutory deadlines of Poland and of England and
+Wales.
 
 Nothing is written, sent, signed or paid without a household member's yes.
 
@@ -101,6 +104,18 @@ the desktop app's Code tab):
 The setup asks for your language and country, who lives with you, and where
 the household folder lives. Then send a photo or PDF of one bill or letter.
 
+In [OpenAI Codex](https://learn.chatgpt.com/docs/plugins) (CLI):
+
+```
+codex plugin marketplace add dithiothreitol/householdbot
+codex plugin add householdbot@householdbot
+```
+
+Start a new session in the folder for your household papers and ask "set up
+HouseholdBot", or type `$householdbot:household-onboard`.
+
+- **ChatGPT desktop app**: in Codex or Work, open the Plugins Directory and
+  install HouseholdBot from its marketplace.
 - **Cowork**: add the marketplace under *Customize > Plugins*, or download
   `householdbot.plugin` from the [latest release](https://github.com/dithiothreitol/householdbot/releases)
   and choose *Upload plugin*.
@@ -207,7 +222,14 @@ See [PRIVACY.md](householdbot/PRIVACY.md) and [SECURITY.md](SECURITY.md).
 | Claude desktop app, Code tab | *+ > Add plugins* in a local session | skills, agents, scripts, local folder |
 | Cowork | *Customize > Plugins* or *Upload plugin* | skills, agents and hooks; scheduled tasks can use the plugin |
 | claude.ai | the plugin, or single skill zips from a release | skills, scripts in the code sandbox, the folder through Google Drive |
+| OpenAI Codex CLI | `codex plugin marketplace add`, `codex plugin add` | skills and scripts in the Codex sandbox, local folder |
+| ChatGPT desktop app (Codex, Work) | the Plugins Directory, from the HouseholdBot marketplace | skills; scripts where the session can run them |
 | Phone | Remote Control of a Claude Code session | as the session it drives |
+
+In Codex the 34 skills and the scripts work as in Claude Code. The read-only
+agents and the bundled connector settings are Claude features; in Codex,
+Gmail, Google Calendar and Google Drive connect through the apps your Codex
+setup offers.
 
 For an unattended weekly deadline check,
 [managed-agent-cookbooks/deadline-watcher](managed-agent-cookbooks/deadline-watcher)
@@ -252,6 +274,12 @@ a country pack, which `pack-builder` can build from official sources.
 dates exact. Without Python the skills still work, show their arithmetic and
 mark it for checking.
 
+**Does it work with Codex or ChatGPT?** Yes. The same repository is a Codex
+plugin marketplace: `codex plugin marketplace add dithiothreitol/householdbot`,
+then `codex plugin add householdbot@householdbot`. The skills follow the
+open Agent Skills standard, so the instructions, gates and scripts are the
+same in Claude and in Codex.
+
 **Can two adults share it?** Yes, through a folder in a synced drive. Writes
 stop while a sync-conflict copy exists, and `household-doctor` merges it.
 
@@ -261,8 +289,11 @@ open-source project.
 ## Repository layout
 
 ```
-.claude-plugin/marketplace.json   the marketplace (one plugin)
+.claude-plugin/marketplace.json   the marketplace for Claude Code (one plugin)
+.agents/plugins/marketplace.json  the same marketplace for Codex
 householdbot/                     the plugin
+  .claude-plugin/plugin.json      manifest for Claude
+  plugin.json                     portable manifest for Codex and ChatGPT (Agent Plugins format)
   skills/<skill>/SKILL.md         thirty-four skills, each self-sufficient
   skills/<skill>/shared/          generated copies of rules, country packs, scripts, templates
   agents/                         deadline-watcher and document-reader, read tools only
@@ -313,8 +344,8 @@ Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md).
 
 ## Status
 
-Version 1.0.0-rc.1 is the release candidate of 1.0; version 1.0 follows the
-pilot in a real household. See the [CHANGELOG](CHANGELOG.md) and the
+Version 1.0.0-rc.2 is a release candidate of 1.0 and the first with the Codex
+plugin format; version 1.0 follows the pilot in a real household. See the [CHANGELOG](CHANGELOG.md) and the
 [releases](https://github.com/dithiothreitol/householdbot/releases).
 
 ## License

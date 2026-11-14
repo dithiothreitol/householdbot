@@ -1,0 +1,46 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "householdbot",
+  "version": "1.0.0-rc.2",
+  "description": "Runs a household's paperwork from a conversation: files letters, bills, contracts and policies into one record the household owns, tracks deadlines, renewals and cancel-by dates with the country's holidays, and briefs you on the week ahead. Works in English or Polish, from photos, PDFs and pasted messages; connectors are optional. Nothing is written, sent or paid without your approval.",
+  "author": {
+    "name": "Dariusz Tyszka",
+    "url": "https://github.com/dithiothreitol"
+  },
+  "homepage": "https://github.com/dithiothreitol/householdbot",
+  "repository": "https://github.com/dithiothreitol/householdbot",
+  "license": "Apache-2.0",
+  "keywords": [
+    "bills",
+    "deadlines",
+    "documents",
+    "family",
+    "home",
+    "household",
+    "life-admin",
+    "paperwork",
+    "personal-admin",
+    "renewals"
+  ],
+  "extensions": {
+    "com.openai": {
+      "onboardingSkill": "./skills/household-onboard/SKILL.md",
+      "interface": {
+        "displayName": "HouseholdBot",
+        "shortDescription": "Household paperwork, bills and deadlines, with your approval",
+        "longDescription": "HouseholdBot files letters, bills, contracts and policies in a folder the household owns, tracks every deadline with its legal basis and weekday, drafts replies, appeals and cancellations, and sums up the week. English and Polish; country rules for Poland and for England and Wales. Nothing is written, sent, signed or paid without a household member's yes.",
+        "developerName": "Dariusz Tyszka",
+        "category": "Productivity",
+        "capabilities": ["Read", "Write"],
+        "websiteURL": "https://github.com/dithiothreitol/householdbot",
+        "privacyPolicyURL": "https://github.com/dithiothreitol/householdbot/blob/main/householdbot/PRIVACY.md",
+        "defaultPrompt": [
+          "Set up HouseholdBot for our household",
+          "What's due in the next two weeks?",
+          "I got a letter: file it and tell me the deadline"
+        ],
+        "brandColor": "#2E7D5B"
+      }
+    }
+  }
+}

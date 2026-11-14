@@ -36,6 +36,21 @@ plików, które przygotowuje HouseholdBot.
 sterować z telefonu sesją Claude Code na komputerze, w której wtyczka jest
 zainstalowana.
 
+**OpenAI Codex** (CLI):
+
+```
+codex plugin marketplace add dithiothreitol/householdbot
+codex plugin add householdbot@householdbot
+```
+
+Otwórz nową sesję Codexa w folderze na domowe dokumenty (albo zezwól na zapis
+do niego, gdy Codex zapyta), a potem napisz „skonfiguruj HouseholdBota” albo
+wpisz `$householdbot:household-onboard`. Skrypty działają w piaskownicy
+Codexa.
+
+**Aplikacja ChatGPT na komputer**: w Codex albo Work otwórz katalog wtyczek
+(Plugins), wybierz marketplace HouseholdBota i zainstaluj wtyczkę.
+
 ## 2. Konfiguracja
 
 ```

@@ -101,6 +101,47 @@ def check_manifests() -> None:
     changelog = REPO / "CHANGELOG.md"
     if changelog.exists() and f"## {plugin.get('version')}" not in changelog.read_text(encoding="utf-8"):
         warnings.append(f"CHANGELOG.md has no section for version {plugin.get('version')}")
+    check_openai_manifests(plugin)
+
+
+def check_openai_manifests(plugin: dict) -> None:
+    """The portable manifest (Codex, ChatGPT) and the Codex marketplace agree with the Claude ones."""
+    portable_path = PLUGIN / "plugin.json"
+    market_path = REPO / ".agents" / "plugins" / "marketplace.json"
+    try:
+        portable = json.loads(portable_path.read_text(encoding="utf-8"))
+        market = json.loads(market_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        errors.append(f"OpenAI manifest unreadable: {exc}")
+        return
+    for key in ("name", "version", "description", "license", "homepage", "repository"):
+        if portable.get(key) != plugin.get(key):
+            errors.append(f"{rel(portable_path)}: '{key}' differs from .claude-plugin/plugin.json")
+    if not str(portable.get("$schema", "")).startswith("https://agent-plugins.org/schemas/"):
+        errors.append(f"{rel(portable_path)}: '$schema' must name the Agent Plugins schema")
+    openai = (portable.get("extensions") or {}).get("com.openai") or {}
+    onboarding = openai.get("onboardingSkill")
+    if onboarding and not (PLUGIN / onboarding).is_file():
+        errors.append(f"{rel(portable_path)}: onboardingSkill {onboarding} does not exist")
+    shown = openai.get("interface") or {}
+    for key in ("displayName", "shortDescription", "category", "privacyPolicyURL"):
+        if not shown.get(key):
+            errors.append(f"{rel(portable_path)}: extensions.com.openai.interface.{key} is missing")
+    if market.get("name") != plugin.get("name"):
+        errors.append(f"{rel(market_path)}: name must be '{plugin.get('name')}', as in .claude-plugin/marketplace.json")
+    entry = next((p for p in market.get("plugins", []) if p.get("name") == plugin.get("name")), None)
+    if not entry:
+        errors.append(f"{rel(market_path)} has no entry for plugin {plugin.get('name')}")
+        return
+    source = entry.get("source") or {}
+    path = source.get("path", "") if isinstance(source, dict) else str(source)
+    if not path.startswith("./") or (REPO / path).resolve() != PLUGIN.resolve():
+        errors.append(f"{rel(market_path)}: source path {path!r} must be ./{PLUGIN.name}")
+    policy = entry.get("policy") or {}
+    if policy.get("installation") not in ("AVAILABLE", "INSTALLED_BY_DEFAULT", "NOT_AVAILABLE"):
+        errors.append(f"{rel(market_path)}: policy.installation is missing or unknown")
+    if not policy.get("authentication") or not entry.get("category"):
+        errors.append(f"{rel(market_path)}: policy.authentication and category are required")
 
 
 def check_skills() -> set[str]:

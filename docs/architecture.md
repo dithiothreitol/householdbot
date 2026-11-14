@@ -289,6 +289,14 @@ These findings are about the pattern, not about households alone.
 | Cowork (Claude desktop) | **Customize > Plugins**, or **Upload plugin** with `householdbot.plugin` from a release | skills, agents and hooks; local files when the session runs on the computer; scheduled tasks can use the plugin |
 | claude.ai (web) | the plugin, or single skills uploaded as zips from a release | skills; scripts in the code sandbox; the record through the Google Drive connector; agents and hooks are ignored |
 | Mobile apps | no plugin install; Remote Control drives a session on the computer | as the session it drives |
+| OpenAI Codex CLI | `codex plugin marketplace add`, then `codex plugin add` | skills and scripts in the Codex sandbox; the agents and the bundled connector settings are Claude features |
+| ChatGPT desktop app (Codex, Work) | the Plugins Directory, from the repository's marketplace | skills; scripts where the session can run them |
+
+The same plugin folder serves both ecosystems: `.claude-plugin/plugin.json`
+for Claude, and the portable `plugin.json` (Agent Plugins format, with the
+OpenAI extension) for Codex and ChatGPT. The skills follow the open Agent
+Skills standard, so one `SKILL.md` works in both; only the command a member
+types differs (`/householdbot:<skill>` against `$householdbot:<skill>`).
 
 Proactivity follows the surface: a weekly brief can be a Cowork scheduled
 task or a desktop scheduled task while the app is open, and the unattended

@@ -39,6 +39,13 @@ is built to be acted on in under a minute.
 Members by first name. Companies by the name on their letterhead. Never an
 identifier from the personal-data list; point to the document and page.
 
+## Naming a skill to the member
+
+The skills name each other as Claude Code commands (`/householdbot:household-onboard`).
+Give the member the form their app uses: `/householdbot:<skill>` in Claude
+Code and Cowork, `$householdbot:<skill>` in Codex, and in ChatGPT the
+plugin picked with `@` and the task in plain words ("set up HouseholdBot").
+
 A fact taken from a filed document names that document by its register id
 and title, with the page: "doc-2026-0002, Example Insurance: OC policy, page
 1". The member can then open it, and the next answer can find it again.

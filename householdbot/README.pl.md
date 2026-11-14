@@ -58,7 +58,9 @@ uporządkowany wyciąg.
 1. Instalacja: w Claude Code `/plugin marketplace add dithiothreitol/householdbot`
    (albo ścieżka lokalnej kopii), a następnie
    `/plugin install householdbot@householdbot`. W Cowork dodajesz marketplace
-   w Customize > Plugins albo wgrywasz `householdbot.plugin` z wydania.
+   w Customize > Plugins albo wgrywasz `householdbot.plugin` z wydania. W
+   OpenAI Codex: `codex plugin marketplace add dithiothreitol/householdbot`, a
+   następnie `codex plugin add householdbot@householdbot`.
 2. Uruchom `/householdbot:household-onboard`. Szybka konfiguracja trwa około
    dwóch minut i kończy się zarchiwizowaniem pierwszego prawdziwego dokumentu.
 3. Od tej chwili wystarczy wysłać zdjęcie lub PDF dowolnego pisma albo zapytać

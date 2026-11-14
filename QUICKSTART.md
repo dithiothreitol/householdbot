@@ -33,6 +33,20 @@ files HouseholdBot gives you into your folder yourself.
 **Phone**: plugins are not installed on a phone. Remote Control lets the
 phone drive a Claude Code session on your computer, which has the plugin.
 
+**OpenAI Codex** (CLI):
+
+```
+codex plugin marketplace add dithiothreitol/householdbot
+codex plugin add householdbot@householdbot
+```
+
+Start a new Codex session in the folder for your household papers (or allow
+writes to it when Codex asks), then ask "set up HouseholdBot" or type
+`$householdbot:household-onboard`. The scripts run in Codex's sandbox.
+
+**ChatGPT desktop app**: in Codex or Work, open the Plugins Directory, choose
+the HouseholdBot marketplace and install the plugin.
+
 ## 2. Set up
 
 ```

@@ -1,0 +1,20 @@
+{
+  "name": "householdbot",
+  "interface": {
+    "displayName": "HouseholdBot"
+  },
+  "plugins": [
+    {
+      "name": "householdbot",
+      "source": {
+        "source": "local",
+        "path": "./householdbot"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
