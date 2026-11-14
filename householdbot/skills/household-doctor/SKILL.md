@@ -105,9 +105,14 @@ is clean, say so with the counts from `stats`.
 For each register conflict copy:
 
 1. `record.py merge "<root>" --copy "<copy path>" --dry-run`.
-2. Show: entries added on the other device, entries updated (the newer
-   `updated` wins), ids renumbered because both devices used the same number,
-   and any entry changed on both sides on the same day.
+2. Show: entries added on the other device (`added_from_copy`), entries
+   updated (the newer `updated` wins) with every changed field, old and new,
+   from `changes_from_copy` (a status turned `done` is named, never summed
+   up as "1 updated"), ids renumbered because both devices used the same
+   number, and any entry changed on both sides on the same day. An entry the
+   copy carries that fails the register's checks stops the merge
+   (`errors`); show it and fix it in the copy first. `merge` takes only a
+   conflict copy that `validate` lists.
 3. For a same-day change, show both versions field by field and ask which to
    keep; pass `--resolve <id>=main` or `--resolve <id>=copy`.
 4. On yes: run it with `--approved-by "<name>"`. The copy is moved into

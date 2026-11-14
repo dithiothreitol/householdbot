@@ -41,6 +41,12 @@ Napisz „po polsku”." or "Prefer English? Say \"in English\".").
 Pick the **single best match**. If two are close, pick the one with the
 nearest deadline.
 
+A death in the family ("zmarł mój tata, nie wiem, od czego zacząć"): the
+answer opens with one plain sentence of sympathy ("Bardzo mi przykro z powodu
+śmierci Twojego taty."), with nothing before it, and goes straight to
+`life-event` without asking about the route; that skill gives only the next
+two or three steps.
+
 | The member says something like | Route to |
 |---|---|
 | "Set us up" · "get started" · "what can you do" (first session) | `household-onboard` |
@@ -52,6 +58,7 @@ nearest deadline.
 | "I paid it" · "done" · "we cancelled it" | `deadline-tracker` (complete) |
 | "I got this on Tuesday, how long do I have?" | `deadline-tracker` (compute) |
 | "Weekly brief" · "what's this week" · "catch me up" | `weekly-brief` |
+| "Dashboard" · "everything at a glance" · "stan wszystkiego" · "jak wygląda nasze gospodarstwo" | `household-dashboard` |
 | "Go through my email" · "co przyszło mailem" | `inbox-triage` |
 | "What do we need to pay" · "co trzeba zapłacić" · "I paid these" | `bills-due` |
 | "Check this contract before I sign" · "sprawdź umowę" | `contract-check` |
@@ -76,8 +83,10 @@ nearest deadline.
 | "We're moving" · "urodziło się dziecko" · "kupiłem auto" · "zmarł" · "zmieniam pracę" | `life-event` |
 | "Annual review" · "przegląd roczny" · "co można wyrzucić z papierów" | `annual-review` |
 | "Which reminders apply to us" · "the usual deadlines for our country" | `deadline-tracker` (`--seed`) |
+| "No pack for our country" · "we live in Scotland" · "pakiet krajowy" · "sprawdź pakiet" | `pack-builder` |
 | "Change our …" · "add a member" · "we sold the car" | `household-customize` |
 | "Talk to us in Polish" · "use English from now on" · "przejdź na polski" | `household-customize` (language) |
+| "Make this a skill" · "automate this for us" · "zrób z tego skill" | `build-skill` |
 | "Check my record" · "something is wrong with the files" · a sync conflict | `household-doctor` |
 | "Check my connections" | `household-onboard` (`--check-integrations`) |
 

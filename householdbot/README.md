@@ -43,16 +43,20 @@ ahead. Nothing is written, sent or paid without a household member's yes.
 | `chore-rotation` | "who does what this week", "split the chores" |
 | `life-event` | "we're moving", "we had a baby", "I bought a car", "my father died" |
 | `annual-review` | "annual review", "what can we shred" |
+| `household-dashboard` | "dashboard", "everything at a glance" |
+| `build-skill` | "make this a skill", "automate this for us" |
+| `pack-builder` | "there is no pack for our country", "check our pack" |
 
 Agents (Claude Code and Cowork): `deadline-watcher` reads the register on a
-schedule and reports, changing nothing; `document-reader` reads a pile of
+schedule and reports, with read tools only; `document-reader` reads a pile of
 documents with no write tools and returns a structured extraction.
 
 ## Start
 
-1. Install: in Claude Code, `/plugin marketplace add <path or repository>`
-   then `/plugin install householdbot@householdbot`. In Cowork, add the
-   marketplace and install the plugin.
+1. Install: in Claude Code, `/plugin marketplace add dithiothreitol/householdbot`
+   (or the path of a local copy) then `/plugin install householdbot@householdbot`.
+   In Cowork, add the marketplace under Customize > Plugins, or upload
+   `householdbot.plugin` from a release.
 2. Run `/householdbot:household-onboard`. The quick setup takes about two
    minutes and ends with one real document filed.
 3. From then on, send a photo or PDF of any paper, or ask "what's due".
@@ -79,14 +83,19 @@ log/decisions.md          every approved change: when, who, what
   `statement.py` for bank exports the household gives it, `chores.py` for
   fair chore plans). Standard library only. They
   read and write inside the household folder and one pointer file under
-  `~/.claude/plugins/config/householdbot/`. Without Python the skills follow
-  the same rules by hand and mark computed dates for checking.
+  `~/.claude/plugins/config/householdbot/`, and refuse a path that leads out of
+  the household folder. Text from documents reaches them on standard input,
+  never on a command line. `build-skill` writes one new skill folder under
+  `~/.claude/skills/` when the member approves that place. Without Python the
+  skills follow the same rules by hand and mark computed dates for checking.
 - **Sends:** nothing to any service of its own; HouseholdBot has none. If the
   household connects Gmail, Google Calendar or Google Drive (`.mcp.json`),
   those connectors read on request and write (a draft, a calendar entry, a
   file) only after a yes, under the provider's terms. Drafts are never sent.
   HouseholdBot never logs in to a bank and never pays.
-- **Fetches:** no web requests.
+- **Fetches:** the scripts make no web requests. `pack-builder` asks Claude
+  to read official legislation and government pages with its own web tools,
+  when the session has them, to build a country pack.
 
 ## Languages
 
@@ -102,7 +111,9 @@ Polish office is drafted in Polish with an English translation.
 
 Country packs hold public holidays, deadline counting rules, response windows
 and recurring obligations, each with its law and a review date. Included:
-Poland (`PL`, reviewed 2026-11-13). Without a pack, HouseholdBot works from
+Poland (`PL`, reviewed 2026-11-13) and England and Wales (`GB`, reviewed
+2026-11-14). For another country or region, `pack-builder` builds the
+household's own pack from official sources, kept in the household folder. Without a pack, HouseholdBot works from
 what documents state and what the household says.
 
 ## Privacy

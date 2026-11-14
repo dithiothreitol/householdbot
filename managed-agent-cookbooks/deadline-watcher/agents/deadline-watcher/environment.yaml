@@ -1,0 +1,12 @@
+# The sandbox that every thread of a session shares. Networking is `limited`
+# with nothing allowed: no hosts, no package registries, no MCP servers. The
+# calculator's shell can reach nothing, and the plugin's scripts are
+# standard-library Python that need no installs. API-created environments
+# default to unrestricted networking, so this file must say `limited`.
+name: householdbot-deadline-watcher
+config:
+  type: cloud
+  networking:
+    type: limited
+    allow_package_managers: false
+    allow_mcp_servers: false

@@ -40,6 +40,11 @@ python3 "${CLAUDE_SKILL_DIR}/shared/scripts/dates.py" deadline --country <CC> --
 Window ids in the Polish pack: `guarantee-default-period`,
 `heating-system-check-20-100kw`, `building-defect-discovery`,
 `building-defect-repair-claim`, `contract-for-work-claims`.
+In the GB pack: `gas-safety-check`, `gas-safety-record-copy`,
+`eicr-inspection`, `eicr-copy`, `deposit-protection`,
+`party-wall-notice-reply`, `contract-claim-limitation`.
+Another pack has its own ids: they are in `shared/locale/<CC>.json`, and
+`dates.py` lists the known ids when it is given one it does not know.
 
 `${CLAUDE_SKILL_DIR}` is this skill's folder; where it was not substituted,
 use the folder this SKILL.md was read from. Use `python` or `py -3` where
@@ -172,7 +177,7 @@ row stays, scope first, even when a quote is silent on it:
 - **Flags, as questions:** a large advance before any work, a cash advance
   with no receipt mentioned, an account different from the one on the
   contract, a finish date not stated, a warranty on the work not stated, an
-  invoice not promised (the pack's "Annual tax return (PIT)" says which
+  invoice not promised (the pack's "Annual tax return" section says which
   reliefs need one), a scope written as "as needed".
 - **The household chooses.** No ranking and no "take B". A total above the
   two-adult threshold in the profile (read in Step 0, also for a quick

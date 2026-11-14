@@ -1,0 +1,123 @@
+{
+  "lang": "en",
+  "name": "English",
+  "default": true,
+  "weekdays_short": [
+    "Mon",
+    "Tue",
+    "Wed",
+    "Thu",
+    "Fri",
+    "Sat",
+    "Sun"
+  ],
+  "weekdays_long": [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday"
+  ],
+  "months_short": [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec"
+  ],
+  "date_format": "{wd} {d} {mon} {yyyy}",
+  "decimal_separator": ".",
+  "thousands_separator": ",",
+  "amount_format": "{code} {number}",
+  "amount_format_symbol": "{symbol}{number}",
+  "currency_symbols": {
+    "GBP": "£",
+    "EUR": "€",
+    "USD": "$"
+  },
+  "units": {
+    "days": [
+      "day",
+      "days"
+    ],
+    "weeks": [
+      "week",
+      "weeks"
+    ],
+    "months": [
+      "month",
+      "months"
+    ],
+    "years": [
+      "year",
+      "years"
+    ],
+    "business_days": [
+      "business day",
+      "business days"
+    ]
+  },
+  "notes": {
+    "transit": "{days} allowed for delivery before {date}",
+    "rolled_back": "rolled back from {date} ({reason})",
+    "holiday": "public holiday: {name}",
+    "margin": "the statutory move forward is kept as margin, not as the plan",
+    "moved_forward": "{date} is not a working day ({reason}); the deadline moves to {new_date} under {law}",
+    "first_day_counts": "the first day counts"
+  },
+  "quotes": [
+    "\"",
+    "\""
+  ],
+  "bands": {
+    "overdue": "⚫ overdue",
+    "now": "🔴 now",
+    "soon": "🟠 soon",
+    "coming": "🟡 coming",
+    "later": "later"
+  },
+  "statuses": {
+    "open": "open",
+    "done": "done",
+    "cancelled": "cancelled",
+    "lapsed": "lapsed (renewed without notice)",
+    "filed": "filed",
+    "action-needed": "action needed",
+    "superseded": "superseded"
+  },
+  "log": {
+    "header": "# Decisions log\n\nAppend-only. One line per approved change to the record: the date, who\napproved it as they stated it, and what changed. Written by record.py.\n\n",
+    "line": "- {date} · approved by {who} · {what}",
+    "created_record": "created the household record",
+    "add": "added {entry} to {register}",
+    "update": "changed {id}: {changes}",
+    "complete": "marked {id} as {status}",
+    "complete_on": "marked {id} as {status} on {date}",
+    "next": "added the next occurrence {entry}",
+    "archive": "moved {count} closed obligation(s) dated before {before} to archive/: {detail}",
+    "merge": "merged {copy} into {register}: {added} added, {updated} updated, {renumbered} renumbered",
+    "migrate": "brought {register} to the current schema: {steps}",
+    "register_documents": "documents",
+    "register_obligations": "obligations",
+    "do_by": "do by",
+    "no_date": "no date",
+    "category_rule": "added the category rule {match} → {category}",
+    "chores_created": "created the chores register (taking part: {people})",
+    "chore_added": "added chore {id} “{title}”",
+    "chore_changed": "changed chore {id}: {changes}",
+    "chore_retired": "stopped planning chore {id} “{title}”",
+    "chore_person": "chores: {name} ({detail})",
+    "chore_plan_saved": "saved the chore plan for {weeks}",
+    "chore_swap": "chore swap in {week}: {chore} ×{count} from {giver} to {to}"
+  },
+  "substitute_day": "substitute day"
+}

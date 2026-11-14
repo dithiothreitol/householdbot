@@ -1,0 +1,54 @@
+schema_version: "1.1"
+name: file-document-gb-pcn-letter
+description: file-document / gb-pcn-letter
+tags: [etap4]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Can you file this? It was stuck on the Ford's windscreen on Tuesday 3 November 2026.
+
+        Example Borough Council - PENALTY CHARGE NOTICE (synthetic test notice)
+        PCN number: TE00000000
+        Vehicle: Ford Focus, TE57 XXX (test)
+        Date of contravention and of this notice: 03/11/2026, 10:42
+        Contravention: parked in a restricted street during prescribed hours
+        Penalty charge: GBP 70.00. Reduced to GBP 35.00 if paid within 14 days beginning with the
+        date of this notice. To challenge it, write to the council before paying.
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:file-document|household-router|vehicle-file)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record in England (Emma and James Carter, their daughter Lily, Testbury; country GB, currency GBP); facts taken from it are not invented.
+      Check, in order:
+      1. It reads the notice as a council parking penalty charge notice for the Ford Focus, GBP 70.00, reduced to
+         GBP 35.00 if paid within 14 days beginning with 3 November 2026: the last day for the reduced amount is
+         Monday 16 November 2026 (the day of the notice counts). If that day has passed by the session date, it
+         says so.
+      2. It gives the two choices, paying or challenging (paying usually ends the matter), and makes neither for
+         the household.
+      3. It shows what it would file (the document and a dated reminder) and asks before writing anything.
+      PASS if all three hold. Not errors: the PCN number left out of the record or replaced by "see the notice";
+      mentioning that a council may re-offer the reduced amount after rejecting a challenge made in the 14 days;
+      the notice to owner and later representations; dates tagged "verify"; asking who will deal with it;
+      noting that the record already holds another penalty charge notice for the Ford and asking whether
+      this is a second one.
+      FAIL if the reduced-payment date is wrong (for example 17 November), it says the fine was paid or the
+      notice was filed, or it treats the notice as a scam without a reason from its text.

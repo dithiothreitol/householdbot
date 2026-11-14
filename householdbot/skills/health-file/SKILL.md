@@ -29,8 +29,10 @@ Member: "do kiedy jest ważne skierowanie Zosi?"
 `dates.py` counts validity windows. Run them with Python 3:
 
 ```
-python3 "${CLAUDE_SKILL_DIR}/shared/scripts/record.py" find "<household folder>" --query "<person>" --category health
-python3 "${CLAUDE_SKILL_DIR}/shared/scripts/dates.py" window --country PL --from <date issued> --id <window id from the pack> --lang pl
+python3 "${CLAUDE_SKILL_DIR}/shared/scripts/record.py" find "<household folder>" --query-file - --category health <<'HB_END'
+<person>
+HB_END
+python3 "${CLAUDE_SKILL_DIR}/shared/scripts/dates.py" window --country <CC> --from <date issued> --id <window id from the pack> --lang <lang>
 ```
 
 Window ids in the Polish pack: `prescription-paper`, `e-prescription`,
@@ -40,6 +42,10 @@ Window ids in the Polish pack: `prescription-paper`, `e-prescription`,
 `waiting-list-reinstatement`, `physiotherapy-referral-registration`,
 `spa-referral-paper-sending`, `spa-referral-nfz-decision`,
 `sick-leave-address-change`, `sickness-benefit-claim`.
+In the GB pack: `prescription-validity`, `prescription-controlled-drug`,
+`referral-to-treatment-18-weeks`, `subject-access-reply`.
+Another pack has its own ids: they are in `shared/locale/<CC>.json`, and
+`dates.py` lists the known ids when it is given one it does not know.
 
 `${CLAUDE_SKILL_DIR}` is this skill's folder; where it was not substituted,
 use the folder this SKILL.md was read from. Use `python` or `py -3` where

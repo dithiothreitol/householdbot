@@ -1,0 +1,47 @@
+schema_version: "1.1"
+name: deadline-tracker-gb-county-court
+description: deadline-tracker / gb-county-court
+tags: [etap4]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    We've had a county court claim from Example Credit Ltd and we want to defend it. The response pack says the particulars of claim are deemed served on Monday 14 December 2026. What will our deadlines be?
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:deadline-tracker|household-router|reply-to-letter)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record in England (Emma and James Carter, their daughter Lily, Testbury; country GB, currency GBP); facts taken from it are not invented.
+      Check, in order:
+      1. Acknowledgment of service: 14 days after service of the particulars. That period ends on Monday
+         28 December 2026, a bank holiday (the Boxing Day substitute day) when the court office is closed, so
+         filing on Tuesday 29 December 2026 is still in time; it plans to file before the holidays (by
+         Thursday 24 December 2026 or earlier) rather than relying on that.
+      2. Defence: 28 days after service of the particulars once an acknowledgment is filed, which is Monday
+         11 January 2027 (14 days, ending with the acknowledgment deadline, without one).
+      3. It points once to independent advice (Citizens Advice, a solicitor or similar) and still gives the
+         dates.
+      4. It writes nothing to the record without a yes; offering to add reminders is fine.
+      PASS if all four hold. Not errors: dates tagged "verify"; weekday names; mentioning default judgment,
+      Money Claim Online, or an extension of up to 28 days agreed with the claimant (CPR 15.5); counting by hand
+      without the script; citing CPR 2.8, 10.3 or 15.4; asking to check the deemed service date against the
+      claim form, or a second set of dates clearly marked as applying only to a different service date.
+      FAIL if a deadline date for service on Monday 14 December 2026 is wrong, the plan relies on the
+      bank-holiday move, or it says something was saved.

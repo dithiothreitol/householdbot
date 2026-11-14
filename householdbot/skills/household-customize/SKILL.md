@@ -30,7 +30,9 @@ Member: "we sold the Skoda"
 it with Python 3:
 
 ```
-python3 "${CLAUDE_SKILL_DIR}/shared/scripts/record.py" find "<household folder>" --query "Skoda"
+python3 "${CLAUDE_SKILL_DIR}/shared/scripts/record.py" find "<household folder>" --query-file - <<'HB_END'
+Skoda
+HB_END
 ```
 
 `${CLAUDE_SKILL_DIR}` is this skill's folder; where it was not substituted,

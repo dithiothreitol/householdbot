@@ -64,7 +64,10 @@ the member shows and say nothing is saved.
 ## Step 1 — Collect
 
 - Open obligations of kind `payment` with `do_by` within the window (default
-  14 days, `--days N`), overdue first.
+  14 days, `--days N`), overdue first. Overdue means the due date has passed.
+  An item whose planned date (`do_by`) has passed while its due date has not
+  is "pay now, due <weekday, date>", never "overdue"; and a last day is always
+  the due date, never the plan date.
 - Papers in `inbox/` or bills the member mentions that are not filed yet:
   offer `file-document` first, so the bill is in the record before it is paid.
 - Payments made by direct debit: listed as "nothing to do", with the amount.
@@ -74,7 +77,8 @@ the member shows and say nothing is saved.
 - **Account ending.** Compare the payment account's last four digits on the
   newest bill with the previous bill from the same payee (their `key_facts`).
   A different ending, or bank details changed by an email or letter, is held:
-  say what differs without repeating a full number, and ask the member to
+  say what differs without repeating a full number, not even in a quote of
+  the bill's account line ("ending 7781" against "ending 4410"), and ask the member to
   confirm through a channel they already have. The item stays off the list
   until confirmed.
 - **Amount.** Compare with the previous occurrence in the series; flag a rise

@@ -7,22 +7,34 @@ minut.
 
 ## 1. Instalacja
 
-**Claude Code**
+**Claude Code** (terminal lub IDE)
 
 ```
-/plugin marketplace add <ścieżka lub repozytorium GitHub z HouseholdBotem>
+/plugin marketplace add dithiothreitol/householdbot
 /plugin install householdbot@householdbot
 ```
 
-**Cowork (aplikacja Claude na komputer)**: w ustawieniach wtyczek dodaj
-marketplace, zainstaluj HouseholdBota i udostępnij sesji folder, w którym mają
-leżeć domowe dokumenty.
+Działa też lokalna kopia tego repozytorium: wystarczy podać jej ścieżkę w
+`/plugin marketplace add`.
 
-**claude.ai i aplikacje mobilne**: skille działają w czacie, gdy wtyczka jest
-zainstalowana na koncie, a wykonywanie kodu jest włączone. Czat nie otwiera
+**Aplikacja Claude na komputer, karta Code**: w sesji lokalnej wybierz
+**+ > Add plugins** i dodaj ten sam marketplace.
+
+**Cowork (aplikacja Claude na komputer)**: dodaj marketplace w **Customize >
+Plugins** albo pobierz `householdbot.plugin` z najnowszego wydania i wybierz
+**Upload plugin**. Udostępnij sesji folder, w którym mają leżeć domowe
+dokumenty.
+
+**claude.ai (przeglądarka)**: zainstaluj wtyczkę na swoim koncie albo wgraj
+pojedyncze skille z wydania (`skills/<skill>.zip`) w ustawieniach skilli i
+włącz wykonywanie kodu, dzięki któremu działają skrypty. Czat nie otwiera
 folderów na komputerze, dlatego folder gospodarstwa najlepiej trzymać na
 podłączonym Dysku Google; drugą możliwością jest samodzielne zapisywanie
 plików, które przygotowuje HouseholdBot.
+
+**Telefon**: na telefonie nie instaluje się wtyczek. Remote Control pozwala
+sterować z telefonu sesją Claude Code na komputerze, w której wtyczka jest
+zainstalowana.
 
 ## 2. Konfiguracja
 
@@ -66,11 +78,30 @@ objaśnione w Twoim języku, z cytatem oryginału.
 | „co nas czeka w tym tygodniu” | kalendarze rodziny obok siebie, kolizje nazwane wprost |
 | „co można wyrzucić z papierów” | dokumenty po terminie przechowywania; niszczysz sam, nic nie jest usuwane za Ciebie |
 | „od teraz po angielsku” | zmiana języka gospodarstwa |
+| „pulpit” / „stan wszystkiego” | jedna strona o całym gospodarstwie: terminy, pieniądze, dokumenty i to, czego rekord jeszcze nie obejmuje |
+| „zrób z tego skill” | własny skill dla powtarzalnej czynności, zapisany po Twojej zgodzie |
+| „zbuduj pakiet krajowy dla Niemiec” | pakiet ze źródeł urzędowych, sprawdzony i zapisany w Twoim folderze |
+
+## Przegląd tygodnia według harmonogramu
+
+- **Cowork**: utwórz cotygodniowe zadanie zaplanowane (Scheduled na pasku
+  bocznym) z poleceniem „przegląd tygodnia”. Zadania zaplanowane korzystają z
+  zainstalowanych wtyczek; zadanie, które potrzebuje folderu gospodarstwa na
+  komputerze, działa tylko wtedy, gdy komputer jest włączony.
+- **Aplikacja Claude na komputer, karta Code**: zadanie zaplanowane w folderze
+  gospodarstwa działa, gdy aplikacja jest otwarta, a komputer nie śpi.
+- **Bez włączonego komputera**: cookbook agenta zarządzanego
+  (`managed-agent-cookbooks/deadline-watcher`) wykonuje cotygodniowy przegląd
+  terminów na platformie Anthropic na kopii rejestrów. Jego README opisuje, co
+  zostaje przesłane.
+- **W pozostałych miejscach** nic nie uruchamia się samo: wystarczy w
+  poniedziałek powiedzieć „przegląd tygodnia” albo pozwolić HouseholdBotowi
+  wpisać terminy do kalendarza.
 
 ## Python
 
-Trzy dołączone skrypty liczą daty, sprawdzają rejestry i sumują wyciągi
-bankowe co do grosza. Claude Code i Cowork
+Cztery dołączone skrypty liczą daty, sprawdzają rejestry, sumują wyciągi
+bankowe co do grosza i układają plan obowiązków. Claude Code i Cowork
 uruchamiają je za pomocą Pythona 3, jeśli jest zainstalowany; claude.ai robi
 to w swojej piaskownicy. Bez Pythona HouseholdBot stosuje te same zasady
 samodzielnie i oznacza wyliczone daty słowem „verify” (do sprawdzenia).

@@ -31,7 +31,7 @@ send; `shared/scripts/record.py` finds the contract and writes the tracking
 entries. Run them with Python 3 and today's date:
 
 ```
-python3 "${CLAUDE_SKILL_DIR}/shared/scripts/dates.py" cancel-by --country PL --term-end 2027-01-14 --notice 30 --unit days --transit 5
+python3 "${CLAUDE_SKILL_DIR}/shared/scripts/dates.py" cancel-by --country <CC> --term-end 2027-01-14 --notice 30 --unit days --transit 5
 ```
 
 `${CLAUDE_SKILL_DIR}` is this skill's folder; where it was not substituted,
@@ -62,8 +62,8 @@ country and members.
 
 ## Step 1 — The contract and its terms
 
-`record.py find "<root>" --query "<provider>"` for the contract and its
-renewal obligation. Read the original for:
+`record.py find "<root>" --query-file -`, with the provider's name on
+standard input, for the contract and its renewal obligation. Read the original for:
 
 - the end of the current term, and what happens after it (renews for the same
   term, continues indefinitely, ends);

@@ -28,7 +28,8 @@ household this record describes.
    connector can tell. Say so if they can.
 6. **Stay inside the household folder.** File operations go to the household
    folder and its subfolders. A skill does not read or write elsewhere on the
-   machine except the pointer file and files the user names.
+   machine except the pointer file, a skill folder under `~/.claude/skills/`
+   whose path the member approved (`build-skill`), and files the user names.
 
 ## Saying it
 

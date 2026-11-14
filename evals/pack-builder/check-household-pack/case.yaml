@@ -1,0 +1,48 @@
+schema_version: "1.1"
+name: pack-builder-check-household-pack
+description: pack-builder / check-household-pack
+tags: [etap4]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Przeprowadzamy się do Berlina. W folderze jest nasz pakiet packs/DE. Sprawdź go, zanim zaczniemy go używać, i podaj, jakie święta wychodzą w 2027 roku.
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:pack-builder|household-router)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented. It also holds a synthetic household pack,
+      packs/DE.json and packs/DE.md, with three planted defects.
+      PASS if all of these hold:
+      1. The reply is in Polish and finds the three defects: the response window that names a counting rule
+         the pack does not define ("administrative"), the recurring broadcast-fee entry with no law, and the
+         missing sources (DE.md has no Sources section; saying that the pack names no sources counts).
+      2. It lists the 2027 holidays the pack's rules give, with weekdays: Fri 1 Jan, Fri 26 Mar (Good Friday),
+         Mon 29 Mar (Easter Monday), Sat 1 May, Thu 6 May (Ascension Day), Mon 17 May (Whit Monday), Sun 3 Oct,
+         Sat 25 Dec, Sun 26 Dec; and it asks a person to compare them with the official list.
+      3. It proposes fixes and asks before changing either file; the missing law and the counting rule are to
+         be researched in official texts, not supplied from memory as settled fact.
+      4. Nothing is written in this turn.
+      Not errors: noting that Berlin has a holiday of its own and suggesting a regional pack (DE-BE) or a scope
+      note; noting the empty holiday source; holiday dates worked out by hand and marked to verify; naming a
+      likely act as a lead to check in the official text; noting that the profile's country is still PL.
+      FAIL if it calls the pack ready to use, misses two or more of the defects, gets more than one 2027 holiday
+      date wrong, changes a file, or writes a law into the broadcast-fee entry as settled fact.

@@ -33,7 +33,7 @@ pack; `shared/scripts/record.py` checks and writes the registers. Run them
 with Python 3, passing today's date from the session:
 
 ```
-python3 "${CLAUDE_SKILL_DIR}/shared/scripts/dates.py" window --country PL --from 2026-11-03 --id appeal-administrative-decision
+python3 "${CLAUDE_SKILL_DIR}/shared/scripts/dates.py" window --country <CC> --from 2026-11-03 --id appeal-administrative-decision
 ```
 
 `${CLAUDE_SKILL_DIR}` is this skill's folder; where it was not substituted,
@@ -148,8 +148,8 @@ which to reach one. Then carry on filing.
 
 ## Step 6 — Check it against the record
 
-- `record.py find "<root>" --query "<issuer> <type>"` for the issuer's earlier
-  documents and open obligations.
+- `record.py find "<root>" --query-file -`, with the issuer and the type on
+  standard input, for the issuer's earlier documents and open obligations.
 - **Duplicate.** The dry run in Step 8 refuses a file already filed (same
   fingerprint) and warns on the same issuer, type and date. Say it is already
   filed as `doc-…` and stop, unless the member says it is a different
@@ -182,12 +182,12 @@ Dry-run every write first and show the result:
 
 ```
 record.py next-id "<root>" --kind doc
-record.py add "<root>" --register obligations --file - --country PL --today <today> --dry-run <<'JSON'
+record.py add "<root>" --register obligations --file - --country <CC> --today <today> --dry-run <<'HB_END'
 { the obligation }
-JSON
-record.py add "<root>" --register documents --file - --original "<path>" --today <today> --dry-run <<'JSON'
-{ the document }
-JSON
+HB_END
+record.py add "<root>" --register documents --file - --today <today> --dry-run <<'HB_END'
+{ the document, with "original": "<path of the file it arrived in>" }
+HB_END
 ```
 
 Then one question that keeps the two decisions apart: **filing** (the document

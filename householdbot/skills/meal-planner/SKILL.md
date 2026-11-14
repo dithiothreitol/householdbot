@@ -29,7 +29,7 @@ Member: "zaplanuj obiady na przyszły tydzień"
 `dates.py` gives the dates of the week. Run them with Python 3:
 
 ```
-python3 "${CLAUDE_SKILL_DIR}/shared/scripts/dates.py" info <the Monday> --lang pl
+python3 "${CLAUDE_SKILL_DIR}/shared/scripts/dates.py" info <the Monday> --lang <lang>
 ```
 
 `${CLAUDE_SKILL_DIR}` is this skill's folder; where it was not substituted,
@@ -61,7 +61,7 @@ off) and offer to store the answers through `household-customize`.
 Foods to keep off the plan are health data (personal-data rule). Use them to
 leave a food out; never write who or why in the plan, the list or the answer
 ("no peanuts", nothing more). With such a food in the household, say once that
-labels are read for every product.
+labels are read for every product, with no reason added.
 
 ## Step 2 — What is at home
 
@@ -74,8 +74,9 @@ what the household buys anyway.
 
 One table: day with weekday, meal, the dish, minutes to cook, a rough cost.
 Weekdays within the stated time; longer cooking at weekends; a soup or a dish
-that lasts two days where the household likes it; the dislikes of each person
-respected without comment. The total rough cost against the budget, with the
+that lasts two days where the household likes it; the likes and dislikes of
+each person respected without comment and without naming whose they are. The
+total rough cost against the budget, with the
 addition shown and tagged as an estimate. Offer swaps ("Tuesday: another
 dish?") and change only what the member asks.
 
@@ -96,6 +97,10 @@ is at home and on the staples list already bought, and hand them to
   added because the plugin thinks it healthier.
 - **Health data stays out** of the plan file, the list, the calendar and any
   brief: foods only, never who or why.
+- **No names in the plan's notes.** Foods left out are named as foods ("no
+  mushrooms, no peanuts"), never with a person or a reason; likes and
+  dislikes are applied without saying which dish is for whom ("two soups for
+  Piotr").
 - **Show, then wait, then write** the plan; the shopping list has its own yes.
 - **A yes before the plan is shown approves nothing.** "Zapisz od razu",
   "akceptuję z góry" or "just save it" before the member has seen the plan:

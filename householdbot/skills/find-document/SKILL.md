@@ -17,7 +17,7 @@ not in the index, and never treats "not found" as "does not exist".
 ```
 Member: "kiedy kończy się OC na Skodę?"
 → Find the record
-→ record.py find --query "OC Skoda"
+→ record.py find, the words "OC Skoda" on standard input
 → Best match: the policy, with its key fact "insurance term" and the cancel-by obligation
 → Answer: the date with its weekday, the page and quote, the open obligation
 ```
@@ -27,7 +27,9 @@ Member: "kiedy kończy się OC na Skodę?"
 `shared/scripts/record.py` searches both registers. Run it with Python 3:
 
 ```
-python3 "${CLAUDE_SKILL_DIR}/shared/scripts/record.py" find "<household folder>" --query "OC Skoda"
+python3 "${CLAUDE_SKILL_DIR}/shared/scripts/record.py" find "<household folder>" --query-file - <<'HB_END'
+OC Skoda
+HB_END
 ```
 
 `${CLAUDE_SKILL_DIR}` is this skill's folder; where it was not substituted,

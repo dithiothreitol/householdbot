@@ -29,7 +29,7 @@ Member: "muszę odpowiedzieć na to pismo z gminy"
 finds the letter and writes the obligation. Run them with Python 3:
 
 ```
-python3 "${CLAUDE_SKILL_DIR}/shared/scripts/dates.py" window --country PL --from <delivery date> --id appeal-administrative-decision --lang pl
+python3 "${CLAUDE_SKILL_DIR}/shared/scripts/dates.py" window --country <CC> --from <delivery date> --id appeal-administrative-decision --lang <lang>
 ```
 
 `${CLAUDE_SKILL_DIR}` is this skill's folder; where it was not substituted,
@@ -113,6 +113,10 @@ posted to, the office.
 
 When the household reads another language than the recipient's, add a
 translation after the draft, marked as a translation and not the text to send.
+Only the draft is in the recipient's language: everything around it (the
+deadline, the notes, the questions, the translation) is in the household's
+language, the profile's *Language*. An English household appealing a Polish
+decision reads English everywhere except the Polish draft.
 
 ## Step 5 — Sending and tracking
 

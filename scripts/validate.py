@@ -19,6 +19,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "core" / "scripts"))
 sys.dont_write_bytecode = True
+import dates  # noqa: E402
 import record  # noqa: E402
 
 PLUGIN = REPO / "householdbot"
@@ -84,7 +85,7 @@ def check_manifests() -> None:
         errors.append("marketplace.json has no entry for plugin " + str(plugin.get("name")))
     elif (REPO / entry.get("source", "")).resolve() != PLUGIN.resolve():
         errors.append(f"marketplace source {entry.get('source')} does not point to {rel(PLUGIN)}")
-    if not re.match(r"^\d+\.\d+\.\d+$", plugin.get("version", "")):
+    if not re.match(r"^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$", plugin.get("version", "")):
         errors.append("plugin.json version must be semver")
     for name in (".mcp.json", "hooks/hooks.json"):
         p = PLUGIN / name
@@ -173,8 +174,9 @@ def check_cross_refs(skills: set[str]) -> None:
         tools = {t.strip() for t in fm.get("tools", "").split(",") if t.strip()}
         if a == "document-reader" and tools - {"Read", "Glob", "Grep"}:
             errors.append(f"agents/{a}.md: a reader of untrusted documents gets read tools only, has {sorted(tools)}")
-        if a == "deadline-watcher" and tools & {"Write", "Edit", "NotebookEdit", "WebFetch"}:
-            errors.append(f"agents/{a}.md: the watcher is read-only, has {sorted(tools)}")
+        if a == "deadline-watcher" and tools - {"Read", "Glob", "Grep"}:
+            errors.append(f"agents/{a}.md: the watcher runs unattended and gets read tools only "
+                          f"(a shell could be steered by text in the register), has {sorted(tools)}")
 
 
 def check_sync() -> None:
@@ -248,43 +250,21 @@ def check_evals(skills: set[str]) -> None:
 
 
 def check_packs() -> None:
+    """The same check the pack-builder skill runs (dates.py check-pack), for every bundled pack."""
     for js in sorted((REPO / "core" / "locale").glob("*.json")):
         data = json.loads(js.read_text(encoding="utf-8"))
-        for key in ("pack", "reviewed", "weekend", "holidays", "counting_rules"):
-            if key not in data:
-                errors.append(f"{rel(js)}: missing '{key}'")
-        for rid, rule in (data.get("counting_rules") or {}).items():
-            if rule.get("end_roll") not in ("forward", "none"):
-                errors.append(f"{rel(js)}: rule {rid} needs end_roll forward or none")
-        for section in ("response_windows", "recurring", "deemed_delivery"):
-            for item in data.get(section, []):
-                if section != "deemed_delivery" and item.get("counting") not in data.get("counting_rules", {}):
-                    errors.append(f"{rel(js)}: {section} {item.get('id')} uses unknown rule {item.get('counting')}")
-                if not item.get("law"):
-                    errors.append(f"{rel(js)}: {section} {item.get('id')} names no law")
-        windows = {w.get("id") for w in data.get("response_windows", [])}
-        for ev in data.get("life_events", []):
-            for wid in ev.get("windows", []):
-                if wid not in windows:
-                    errors.append(f"{rel(js)}: life event {ev.get('id')} names unknown window {wid}")
-            if not ev.get("title"):
-                errors.append(f"{rel(js)}: life event {ev.get('id')} has no title")
-        for item in data.get("retention", []):
-            if not item.get("law") and not item.get("suggested"):
-                errors.append(f"{rel(js)}: retention {item.get('id')} needs a law or \"suggested\": true")
+        if data.get("pack") != js.stem:
+            errors.append(f"{rel(js)}: 'pack' must be '{js.stem}'")
         md = js.with_suffix(".md")
         if not md.exists():
             errors.append(f"{rel(js)}: no matching {md.name}")
-            continue
-        text = md.read_text(encoding="utf-8")
-        for heading in ("Public holidays", "How deadlines are counted", "Scam patterns", "Sources"):
-            if f"## {heading}" not in text:
-                errors.append(f"{rel(md)}: missing section '## {heading}'")
-        if f"Reviewed:** {data.get('reviewed')}" not in text:
-            warnings.append(f"{rel(md)}: review date differs from {js.name} ({data.get('reviewed')})")
+        result = dates.check_pack(data, md.read_text(encoding="utf-8") if md.exists() else None)
+        errors.extend(f"{rel(js)}: {e}" for e in result["errors"])
+        warnings.extend(f"{rel(js)}: {w}" for w in result["warnings"])
 
 
-TRANSLATED_DOCS = ["README.md", "QUICKSTART.md", "householdbot/README.md", "householdbot/PRIVACY.md"]
+TRANSLATED_DOCS = ["README.md", "QUICKSTART.md", "CONNECTORS.md", "householdbot/README.md",
+                   "householdbot/PRIVACY.md"]
 
 
 def check_languages() -> None:
@@ -359,10 +339,23 @@ def check_identifiers() -> None:
                 errors.append(f"{rel(p)}: {f}; test data must be synthetic")
 
 
+def check_cookbooks() -> None:
+    """The managed-agent cookbooks: tool scope per tier, sandbox, paths, prompt in step with the plugin."""
+    for helper in sorted((REPO / "managed-agent-cookbooks").glob("*/cookbook.py")):
+        res = subprocess.run([sys.executable, "-B", str(helper), "check"],
+                             capture_output=True, text=True, encoding="utf-8")
+        if "needs PyYAML" in res.stderr:
+            warnings.append(f"{rel(helper)}: not checked, PyYAML missing (pip install pyyaml)")
+        elif res.returncode:
+            found = [ln[7:] for ln in res.stdout.splitlines() if ln.startswith("ERROR: ")]
+            errors.extend(f"{rel(helper)}: {e}" for e in found or [res.stderr.strip()[-300:]])
+
+
 def main() -> int:
     check_manifests()
     skills = check_skills()
     check_cross_refs(skills)
+    check_cookbooks()
     check_sync()
     check_directory_limits()
     check_evals(skills)

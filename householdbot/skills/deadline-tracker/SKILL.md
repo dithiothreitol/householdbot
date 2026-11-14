@@ -1,10 +1,11 @@
 ---
 name: deadline-tracker
 description: >
-  Lists what is due by urgency, adds and closes reminders, and counts any
-  deadline from a delivery or an event with holidays. Use for: "what's due",
-  "remind me", "I paid it", "until when can I appeal", "co mamy do zrobienia",
-  "do kiedy", "termin na odwołanie", "przypomnij".
+  Use for: "what's due", "what are our deadlines", "how long do we have to
+  reply", "until when can I appeal", "remind me", "I paid it", "co mamy do
+  zrobienia", "do kiedy", "termin na odwołanie", "przypomnij". Lists what is
+  due, adds and closes reminders, counts any deadline from a delivery or an
+  event with the holidays.
 argument-hint: "[--days N] [--missed] [--member NAME] [--category NAME] [--seed for the country pack's recurring reminders]"
 ---
 
@@ -21,7 +22,7 @@ place, `registers/obligations.json`, and reports from it.
 them with Python 3 and always pass today's date from the session:
 
 ```
-python3 "${CLAUDE_SKILL_DIR}/shared/scripts/record.py" due "<household folder>" --today 2026-11-13 --country PL
+python3 "${CLAUDE_SKILL_DIR}/shared/scripts/record.py" due "<household folder>" --today 2026-11-13 --country <CC>
 ```
 
 `${CLAUDE_SKILL_DIR}` is this skill's folder; where it was not substituted,
@@ -91,10 +92,17 @@ From a handoff or from what a member says.
 2. Check for an open entry in the same `series` with `record.py find`; update
    it instead of adding a parallel one.
 3. `record.py add "<root>" --register obligations --file - --country <CC> --today <today> --dry-run`,
-   the entry on standard input.
+   the entry on standard input as a here-document, never in a file written
+   to prepare it:
+   ```
+   python3 "${CLAUDE_SKILL_DIR}/shared/scripts/record.py" add "<root>" --register obligations --file - --country <CC> --today <today> --dry-run <<'HB_END'
+   {"title": "...", "kind": "task", "category": "other", "owner": "...", "due_date": "YYYY-MM-DD", "provenance": "told by household member", "law": "..."}
+   HB_END
+   ```
    The script assigns the id and computes `do_by`.
 4. Show the entry in plain words with the arithmetic, wait for the yes, run it
-   again with `--approved-by "<name>"`.
+   again with `--approved-by "<name>"` and the same here-document. The script
+   keeps a backup and writes the line in `log/decisions.md` itself.
 
 If a calendar is connected, offer once to propose calendar entries for the
 new obligation: one on `do_by`, one on the lead-time date. The entry title
@@ -128,9 +136,15 @@ law and add one line pointing to a professional.
 ## Mode 5 — Compute one deadline
 
 "I got this on Tuesday and have 14 days" →
-`dates.py deadline --country <CC> --from <delivery date> --amount 14 --unit days --rule <rule>`,
-or `dates.py window --id <window>` for a window the pack names. Rules:
-`administrative`, `tax`, `civil`, `court`, `calendar`.
+`dates.py deadline --country <CC> --from <delivery date> --amount 14 --unit days --rule <rule>`.
+Rules: `administrative`, `tax`, `civil`, `court`, `calendar`.
+
+A window the pack names (a court defence, an appeal, a registration): find it
+with `dates.py windows --country <CC> --query "<one or two words you choose:
+defence, appeal>"`, then count it with `dates.py window --country <CC> --id
+<id> --from <date>`. Without Python, search `shared/locale/<CC>.json` with
+Grep for one such word. A rule is "not in the pack" only after that search
+finds nothing; a long search result read in part proves nothing.
 
 Answer with the arithmetic, the `due_date` (the law may move it forward from a
 weekend or holiday) and the `do_by` (the plan, worked back from the unmoved

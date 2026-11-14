@@ -15,6 +15,7 @@ Household/
 
 # Local tooling
 build/
+dist/
 .env
 .venv/
 .vscode/

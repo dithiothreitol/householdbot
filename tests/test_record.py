@@ -185,8 +185,9 @@ class Writes(RecordTestCase):
         copy.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
         code, out = run("merge", self.home, "--copy", "registers/obligations (1).json", "--dry-run", "--today", TODAY)
         self.assertEqual(code, 0, out)
-        self.assertEqual(out["added_from_copy"], ["ob-2026-0010"])
+        self.assertEqual([e["id"] for e in out["added_from_copy"]], ["ob-2026-0010"])
         self.assertEqual(out["replaced_by_newer_copy"], ["ob-2026-0001"])
+        self.assertIn("amount", out["changes_from_copy"]["ob-2026-0001"])
         self.assertEqual(out["id_collisions"][0]["copy_entry_renumbered_to"], "ob-2026-0011")
         code, out = run("merge", self.home, "--copy", "registers/obligations (1).json",
                         "--approved-by", "Anna", "--today", TODAY)

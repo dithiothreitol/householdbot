@@ -72,7 +72,8 @@ missing shell never means a missing record. Read the profile's members and
   only certain people (`who`), always the same person (`fixed`). Ask for the
   minimum age as a question ("from what age should someone clean the
   bathroom?"); never decide it.
-- Add with `chores.py add --json '{...}' --dry-run`, show the whole list,
+- Add with `chores.py add --file - --dry-run` and the chore as JSON on
+  standard input (a here-document ending in `HB_END`), show the whole list,
   write after a yes. Change with `update`, stop planning with `retire` (the
   history stays).
 
@@ -115,7 +116,8 @@ child), answer the child: by name, in short, kind sentences and a child's
 words. No script names, options, week numbers, rule quotes or notes about the
 shell. Say what happens next in their terms: a swap needs the other person to
 agree (for a swap with Dad, Dad says yes) and an adult to approve it before it
-is saved; offer to prepare it so that an adult can say yes. When this week's
+is saved; offer to prepare it so that an adult can say yes ("I can get the
+swap ready now; when Dad says yes, it goes in"). When this week's
 plan is not saved yet, say so simply ("this week's plan isn't written down
 yet; once Mum or Dad approves it, the swap goes in"). Never a scolding, never
 "you have to". The tone is encouraging: what is done, what is next.

@@ -85,6 +85,7 @@ def backup(root: Path) -> str | None:
         return None
     hist = root / "registers" / ".history"
     hist.mkdir(parents=True, exist_ok=True)
+    record.ensure_inside(root, hist)
     dst = hist / f"chores-{datetime.now().strftime('%Y%m%dT%H%M%S%f')}.json"
     shutil.copy2(src, dst)
     for old in sorted(hist.glob("chores-*.json"))[:-record.HISTORY_KEEP]:
@@ -333,7 +334,7 @@ def write(root: Path, data: dict, args, summary: str, today: date) -> dict:
         return {"dry_run": True, "summary": summary}
     record.require_writable(root, args)
     saved = backup(root)
-    record.atomic_write_json(root / CHORES, data)
+    record.atomic_write_json(root / CHORES, data, root)
     record.append_log(root, today, args.approved_by.strip(), [summary], record.lang_for(args, root))
     return {"written": CHORES.as_posix(), "backup": saved, "summary": summary}
 
@@ -363,10 +364,12 @@ def cmd_add(args) -> dict:
     root = record.root_of(args.root)
     today = record.today_from(args)
     data = load(root)
+    if not (args.json or args.file):
+        raise ChoreError("give the chore with --file - (standard input) or --json")
     try:
-        entry = json.loads(args.json)
+        entry = json.loads(args.json if args.json else record.read_text_input(args.file))
     except json.JSONDecodeError as exc:
-        raise ChoreError(f"--json is not valid JSON: {exc}")
+        raise ChoreError(f"the chore is not valid JSON: {exc}")
     entry = dict(CHORE_DEFAULTS, **{k: v for k, v in entry.items() if k != "id"})
     entry["id"] = next_id(data)
     data["chores"].append(entry)
@@ -545,7 +548,8 @@ def build_parser() -> argparse.ArgumentParser:
     s = common(sub.add_parser("init", help="create registers/chores.json from the profile's members"), True)
     s.set_defaults(func=cmd_init)
     s = common(sub.add_parser("add", help="add one chore"), True)
-    s.add_argument("--json", required=True)
+    s.add_argument("--json", help="the chore as a JSON object")
+    s.add_argument("--file", help="a file holding the chore as JSON, or - for stdin")
     s.set_defaults(func=cmd_add)
     s = common(sub.add_parser("update", help="change fields of one chore"), True)
     s.add_argument("--id", required=True)

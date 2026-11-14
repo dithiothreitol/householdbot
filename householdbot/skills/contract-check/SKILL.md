@@ -29,7 +29,7 @@ Member sends an internet offer and its terms
 Python 3:
 
 ```
-python3 "${CLAUDE_SKILL_DIR}/shared/scripts/dates.py" window --country PL --from <date of signing or delivery> --id consumer-withdrawal
+python3 "${CLAUDE_SKILL_DIR}/shared/scripts/dates.py" window --country <CC> --from <date of signing or delivery> --id consumer-withdrawal
 ```
 
 `${CLAUDE_SKILL_DIR}` is this skill's folder; where it was not substituted,

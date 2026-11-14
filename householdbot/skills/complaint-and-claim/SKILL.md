@@ -31,7 +31,7 @@ Member: "czajnik z Allegro przestał działać po 8 miesiącach"
 tracking entries. Run them with Python 3:
 
 ```
-python3 "${CLAUDE_SKILL_DIR}/shared/scripts/dates.py" window --country PL --from <date the trader received it> --id trader-complaint-reply
+python3 "${CLAUDE_SKILL_DIR}/shared/scripts/dates.py" window --country <CC> --from <date the trader received it> --id trader-complaint-reply
 ```
 
 Window ids in the Polish pack: `trader-complaint-reply`, `conformity-liability`,
@@ -42,6 +42,16 @@ Window ids in the Polish pack: `trader-complaint-reply`, `conformity-liability`,
 `energy-disconnection-complaint`. The result's `met_by` says what meets the
 window (sending or receipt) and `silence` what a missing reply means; quote
 both, never assume them.
+In the GB pack: `distance-cancellation-goods`,
+`distance-cancellation-services`, `cancellation-refund`,
+`cancellation-return-goods`, `short-term-right-to-reject`, `reject-refund`,
+`goods-fault-presumption`, `final-rejection-no-deduction`,
+`contract-claim-limitation`, `financial-complaint-final-response`,
+`payment-complaint-reply`, `financial-ombudsman-referral`,
+`energy-complaint-deadlock`, `energy-ombudsman-referral`,
+`telecom-complaint-adr`, `app-fraud-claim`.
+Another pack has its own ids: they are in `shared/locale/<CC>.json`, and
+`dates.py` lists the known ids when it is given one it does not know.
 
 `${CLAUDE_SKILL_DIR}` is this skill's folder; where it was not substituted,
 use the folder this SKILL.md was read from. Use `python` or `py -3` where

@@ -40,6 +40,10 @@ python3 "${CLAUDE_SKILL_DIR}/shared/scripts/dates.py" cancel-by --country <CC> -
 Window ids in the Polish pack: `compulsory-policy-renewal-document`,
 `insurance-claim-limitation`, `farm-holder-change-notice`,
 `insurer-claim-acknowledgement`, `insurer-claim-payment`.
+In the GB pack: `insurance-cooling-off`, `protection-insurance-cooling-off`,
+`financial-complaint-final-response`, `financial-ombudsman-referral`.
+Another pack has its own ids: they are in `shared/locale/<CC>.json`, and
+`dates.py` lists the known ids when it is given one it does not know.
 
 `${CLAUDE_SKILL_DIR}` is this skill's folder; where it was not substituted,
 use the folder this SKILL.md was read from. Use `python` or `py -3` where
@@ -93,6 +97,9 @@ from the policies the member shows and say nothing is saved.
 
 - *Cover*: what the policy says it covers, with the page; quotes stay in the
   policy's language, with a translation when the household reads another.
+  The register's key facts summarise the policy; when they do not give the
+  cover, open the policy itself (the entry's `file`, with the Read tool) and
+  take it from there. "Cover not stated" only when the policy does not say.
 - *Premium*: per year, with the currency; instalments named.
 - *Renews*: "by itself", "does not renew" or "not stated", from the policy's
   own words, never assumed.

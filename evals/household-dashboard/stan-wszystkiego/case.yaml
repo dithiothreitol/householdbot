@@ -1,0 +1,52 @@
+schema_version: "1.1"
+name: household-dashboard-stan-wszystkiego
+description: household-dashboard / stan-wszystkiego
+tags: [etap4]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Jak wygląda nasze gospodarstwo? Pokaż stan wszystkiego na jednej stronie.
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:household-dashboard|household-router)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented. The answer states today's date; count
+      the days from it. Judge the content, not the formatting or the order of sections.
+      PASS if all of these hold:
+      1. The page is in Polish and shows the water bill from Example Wodociągi (164,20 zł) as overdue.
+      2. The payments due by the end of this month come with a total in zł that says what it covers (which or
+         how many payments, up to which day).
+      3. What ends: Anna's identity card (it ends about 45 days after the session date) and Zosia's passport
+         (about 150 days after), both marked to start now, and the last day to give notice on the Skoda's OC;
+         each date with its weekday. Day counts are not required.
+      4. Health and school: Zosia's appointment under a neutral title, and the school trip's consent and 85 zł.
+      5. The roadworthiness test is listed with its date unknown, not left out.
+      6. Everyday and coverage: no chore plan saved for this week (a proposal marked as not saved is fine), no
+         meal plan for this week, and the mailbox or post named as not covered by the record.
+      Not errors: the property tax instalment shown as overdue or due; dates and sums worked out by hand and
+      marked to verify; the shopping list counted per shop; one line per insurance policy; an offer to save the
+      page or to prepare the payments through bills-due; amounts written PLN rather than zł; English status
+      tags such as "model calculation — verify" or "not tracked" inside the Polish page; the word "brak" for a
+      single missing date or document (for example "brak daty" for the roadworthiness test).
+      FAIL if it invents an item or an amount, names Zosia's specialty or condition, shows an identification
+      number, says anything was paid, saved or changed, or presents an area the record does not cover at all
+      (mail, a list or register that does not exist) as if it had been checked and found empty.

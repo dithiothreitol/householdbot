@@ -1,0 +1,1052 @@
+# Country pack — United Kingdom: England and Wales (GB)
+
+**Reviewed:** 2026-11-14. **Language:** en. **Currency:** GBP. **Time zone:** Europe/London.
+**Scope:** England and Wales. Where Wales has its own rule the text says so.
+Scotland and Northern Ireland have their own bank holidays and much of their
+own law; they are outside this pack (`pack-builder` can build `GB-SCT` or
+`GB-NIR`).
+
+Each line below is a reminder of a rule as understood at the review date.
+Dates, amounts and procedures change. The letter in hand, its notes on how to
+respond, and the official source control. Everything taken from this file
+reaches the household tagged `country pack rule — verify`.
+
+---
+
+## Public holidays
+
+England and Wales share one list of bank and public holidays. gov.uk publishes
+it for the coming years, also as JSON (gov.uk/bank-holidays.json).
+
+| Holiday | Rule | Law |
+|---|---|---|
+| New Year's Day | 1 January; on a Saturday or Sunday, the next weekday | Royal proclamation each year under the Banking and Financial Dealings Act 1971 (BFDA) s.1(3); for 2026 the proclamation of 9 Jul 2025, for 2027 that of 8 Jul 2026 |
+| Good Friday | The Friday before Easter Sunday | Not a bank holiday under the Act in England and Wales; listed by gov.uk and named next to bank holidays in court rules (CPR 2.8(4), 6.2(b)) |
+| Easter Monday | The Monday after Easter Sunday | BFDA s.1(1), Sch 1 para 1 |
+| Early May bank holiday | First Monday in May | Royal proclamation each year, BFDA s.1(3) |
+| Spring bank holiday | Last Monday in May | BFDA Sch 1 para 1 |
+| Summer bank holiday | Last Monday in August | BFDA Sch 1 para 1 |
+| Christmas Day | 25 December; on a Saturday or Sunday, a substitute weekday | Not a bank holiday under the Act in England and Wales, as for Good Friday; substitute days by proclamation |
+| Boxing Day | 26 December; on a Saturday or Sunday, a substitute weekday | BFDA Sch 1 para 1: 26 December if not a Sunday, and 27 December in a year in which 25 or 26 December is a Sunday |
+
+Christmas Day and Good Friday are bank holidays under the Act in Scotland but
+not elsewhere in the United Kingdom (BFDA Sch 1 para 2; Office of the
+Parliamentary Counsel, Drafting Guidance 8.1.17).
+
+**Substitute days.** When 1 January, 25 December or 26 December falls on a
+Saturday or Sunday, the next weekday that is not already a holiday is a bank
+holiday. The Act itself provides only 27 December when 25 or 26 December is a
+Sunday. The other substitute days come from the yearly proclamation, which
+either appoints an extra day (s.1(3)) or puts another day in place of a
+scheduled one (s.1(2)). For 2026, Saturday 26 December is replaced by Monday
+28 December. With Christmas on a Saturday (2021, 2027) the bank holidays are
+Monday 27 and Tuesday 28 December; with Christmas on a Sunday (2022) they are
+Monday 26 and Tuesday 27 December. Law: BFDA s.1(2) and (3), Sch 1 para 1;
+proclamations of 9 Jul 2025 and 8 Jul 2026.
+
+**Moved and one-off days.** A proclamation may move a bank holiday in a given
+year (s.1(2)) or add a special day (s.1(3)). Since 2020: the early May bank
+holiday moved to Friday 8 May 2020; the spring bank holiday moved to Thursday
+2 June 2022, with an extra bank holiday for the Platinum Jubilee on Friday 3
+June 2022; Monday 19 September 2022 for the State Funeral of Queen Elizabeth
+II; Monday 8 May 2023 for the coronation of King Charles III. Source: the gov.uk
+list.
+
+**Next dates.** Christmas Day Friday 25 December 2026, Boxing Day (substitute)
+Monday 28 December 2026, New Year's Day Friday 1 January 2027, Good Friday 26
+March 2027, Easter Monday 29 March 2027.
+
+**Payments due on a bank holiday.** No one can be made to pay or act on a bank
+holiday when they could not be made to on Christmas Day or Good Friday; paying
+or acting on the next day it can be required counts as compliance (BFDA
+s.1(4)). This covers bank holidays only, not ordinary weekends.
+
+Scotland and Northern Ireland have different bank holidays (BFDA Sch 1 paras 2
+and 3) and are outside this pack.
+
+## How deadlines are counted
+
+| Area | Rule | Law |
+|---|---|---|
+| Civil courts | A period in days is counted in clear days: the day it starts and the day of the closing event are left out. Particulars due "within 14 days of service" of a claim form served on 2 October are due by 16 October. In a period of 5 days or less, Saturdays, Sundays, bank holidays, Christmas Day and Good Friday do not count. When a step at the court office (filing) falls due on a day the office is closed, it is in time on the next day the office is open; this does not move a step that is served on the other party. A "month" in a judgment, order or court document is a calendar month. | CPR 2.8(1) to (5), 2.10 |
+| Tribunals | First-tier Tribunal, Social Entitlement Chamber (benefits): an act due on or by a day must be done by 5pm; if the time for it ends on a day that is not a working day, it is in time on the next working day. Tax Chamber: the same, but before 5pm. Working days exclude Saturdays, Sundays, Christmas Day, Good Friday and bank holidays. No such rule was found for councils, the Valuation Office Agency, the Valuation Tribunal or parking adjudicators; their windows are treated as fixed. | Tribunal Procedure (First-tier Tribunal) (Social Entitlement Chamber) Rules 2008 r.12; Tribunal Procedure (First-tier Tribunal) (Tax Chamber) Rules 2009 r.12 |
+| HMRC | No move for weekends or bank holidays. An online return must be in by 11:59pm on 31 January; a paper return by 31 October. A payment must reach HMRC's account by the deadline. When the deadline falls on a weekend or bank holiday, a payment made other than by Faster Payments or card must reach HMRC on the last working day before. 31 January 2027 is a Sunday, so a Bacs payment or cheque for it must arrive by Friday 29 January 2027. | TMA 1970 s.8(1D), s.59A(2), s.59B(4); gov.uk Self Assessment deadlines; gov.uk Pay your Self Assessment tax bill |
+| Contracts and consumer law | No general rule moves an end date that falls on a weekend or bank holiday. Weekends and bank holidays count like other days unless the provision says otherwise. The contract or the specific statute decides. | No general statutory rule; Office of the Parliamentary Counsel, Drafting Guidance 8.1.15 (legislation treats weekends and bank holidays like other days unless it says so) |
+| How statutes word a period | "Beginning with" a day counts that day. "After" or "from" an event usually leaves the event's day out, so 30 days after 1 June ends on 1 July. In an Act or regulation "month" means calendar month. A period of months beginning with a day ends at the end of the day before the corresponding date: one month beginning with 6 April ends with 5 May. A period of months after an event ends on the corresponding date (the corresponding date rule, Dodds v Walker): one month after 6 April ends on 6 May. When the last month has no such date (one month after 31 January), the period is taken to end on the last day of that month (the Drafting Guidance cites University of Cambridge v Murray). | Interpretation Act 1978 s.5, s.23(1), Sch 1 ("Month"); Drafting Guidance 8.1.2 to 8.1.4, 8.1.19 and notes |
+
+Where a rule moves a deadline forward, the plugin still plans to the earlier
+date.
+
+**What meets a deadline.** A court document sent by email under Practice
+Direction 5B counts when HMCTS records it as received; one received from 4pm
+to 11.59pm counts as received and filed on the next day the court office is
+open, and the sender carries the risk of timing (PD 5B paras 4.2 and 4.3). In
+the County Court an emailed step is one email of at most 10 MB and 25 printed
+sheets (para 2.3). A defence or other form filed through Money Claim Online is
+filed when the Civil National Business Centre receives it, and after 4pm it
+counts on the next day the Centre is open (PD 7C para 5.2B). CE-File, used in
+the High Court, the Court of Appeal and some other courts, records the time on
+the submission confirmation; for a document that needs a fee, the filing time
+is when the fee is paid (PD 5C para 3.5, in force from 1 Oct 2025). A notice of
+appeal to the Social Entitlement Chamber must be received by the tribunal by
+5pm on the last day (r.12(1), r.22(2)). An HMRC online return counts when
+submitted, by 11:59pm on the deadline day (gov.uk). A cheque to HMRC counts as
+paid on the day HMRC receives it if the bank pays it on first presentation
+(TMA 1970 s.70A). When an Act allows a notice to be served by post, posting a
+properly addressed, prepaid letter is service, and it counts as delivered when
+it would arrive in the ordinary course of post, unless the contrary is proved
+(Interpretation Act 1978 s.7). Otherwise the contract or the statute decides
+whether sending or receipt counts; a consumer's cancellation of a distance or
+off-premises contract is in time if it is sent before the period ends
+(Consumer Contracts (Information, Cancellation and Additional Charges)
+Regulations 2013 reg 32(5)).
+
+**Transit times used for planning.** Faster Payments usually reach HMRC the
+same or next day, including weekends and bank holidays; CHAPS the same working
+day; Bacs takes 3 working days; a Direct Debit 3 working days, or 5 the first
+time (gov.uk Pay your Self Assessment tax bill). Royal Mail's universal
+service routing times are D+1 for First Class and D+3 for Second Class
+(Postal Services (Universal Postal Service) Order 2012 Sch 1 paras 2 and 3);
+since 28 Jul 2025 Second Class letters are delivered on alternate weekdays
+(HMRC Enquiry Manual EM1506). The pack's buffers: 0 days for online forms and
+instant payments, 1 day for bank transfers, 5 days for domestic post, 10 days
+for international post (a planning margin, not a service standard).
+
+## Deemed delivery
+
+**Court documents (Civil Procedure Rules).** A "business day" is any day
+except Saturday, Sunday, a bank holiday, Good Friday or Christmas Day (CPR
+6.2(b)).
+
+| Document and method | Deemed served | Law |
+|---|---|---|
+| Claim form served in the UK, any permitted method | The second business day after the step: posting (First Class or next-business-day service), delivering or leaving it at the address, personal service, or sending the email | CPR 6.14, 7.5(1) |
+| Other document, First Class post or next-business-day service | The second day after posting, if that is a business day; otherwise the next business day | CPR 6.26 row 1 |
+| Other document, delivered to or left at the permitted address | That day, if a business day and before 4.30pm; otherwise the next business day | CPR 6.26 row 3 |
+| Other document, email or other electronic method | The day it is sent, if a business day and before 4.30pm; otherwise the next business day | CPR 6.26 row 5 |
+| Other document, personal service | That day, if before 4.30pm on a business day; otherwise the next business day | CPR 6.26 row 6 |
+
+**Other notices.**
+
+| Sender and method | Deemed delivered | Law |
+|---|---|---|
+| Any notice an Act allows to be served by post | Served by properly addressing, prepaying and posting it; delivered when it would arrive in the ordinary course of post, unless the contrary is proved | Interpretation Act 1978 s.7 |
+| HMRC, by post | HMRC may post to the usual or last known address, and section 7 applies. HMRC's manuals use different working assumptions: EM1506 takes 1 working day for First Class and up to 3 for Second Class; SAM31030 takes 2 and 4 working days. | TMA 1970 s.115(2); Interpretation Act 1978 s.7 |
+| Council, by post (council tax and other notices) | Posting to the last known address is allowed and section 7 applies; the council tax regulations set no day count | Local Government Act 1972 s.233(2) and (4) |
+| Council penalty charge notice, notice to owner or charge certificate, England | Only First Class post may be used; served on the second working day after posting. Working days exclude weekends, New Year's Day, Good Friday, Christmas Day and other bank holidays. | Civil Enforcement of Road Traffic Contraventions (Approved Devices, Charging Guidelines and General Provisions) (England) Regulations 2022 reg 3(2) to (4) |
+| Private parking notice to keeper | Presumed delivered on the second working day after posting, unless the contrary is proved | Protection of Freedoms Act 2012 Sch 4 paras 8(6), 9(6) |
+| Police notice of intended prosecution, or request to name the driver | Served under the Criminal Procedure Rules: First Class post on the second business day after posting; a computer-produced letter is taken as posted First Class on the business day after it was produced | Road Traffic Offenders Act 1988 s.1(1ZA); Road Traffic Act 1988 s.172(7) and (7A); Criminal Procedure Rules 2025 r.4.11(2)(b) and (3) |
+| DWP benefit decision, by post | Treated as given on the day it is posted to the last known address; a letter to DWP counts on the day DWP receives it | Universal Credit, Personal Independence Payment, Jobseeker's Allowance and Employment and Support Allowance (Decisions and Appeals) Regulations 2013 reg 3 |
+
+Response windows run from the deemed date. An acknowledgment of service is due
+14 days after the deemed service of the particulars of claim (CPR 10.3), and
+representations against a notice to owner are due within 28 days beginning
+with its deemed service (2022 Appeals Regulations reg 6(2)). Some windows run
+from an earlier date, so delay in the post shortens them: an HMRC appeal runs
+from the date the notice was issued (TMA 1970 s.31A), and a DWP mandatory
+reconsideration from the day the decision was posted (2013 regulations regs 3
+and 5). A household that has not opened its post may already be inside a
+window. Ask when the letter actually arrived and what date it bears.
+
+## Common response windows
+
+The window printed on the document controls. These are the usual ones.
+
+| Document | Window | Law |
+|---|---|---|
+| County Court claim: acknowledgment of service | 14 days after service of the particulars of claim (when the particulars came with the claim form, 14 days after service of the claim form) | CPR 10.3(1) |
+| County Court claim: defence | 14 days after service of the particulars of claim, or 28 days if an acknowledgment of service was filed. The parties may agree up to 28 more days, and the defendant tells the court in writing. | CPR 15.4(1), 15.5 |
+| County Court claim: admission | Once particulars are served, the defendant may admit (Part 14), defend (Part 15) or acknowledge service (Part 10). There is no separate period for an admission: without an acknowledgment, defence or admission within the acknowledgment period, the claimant may ask for default judgment. | CPR 9.2, 10.2, 14.2 |
+| Default judgment and setting it aside | One-line pointer to a professional | CPR Parts 12 and 13 |
+| Particulars of claim when the claim form says they will follow | The claimant serves them within 14 days after serving the claim form | CPR 7.4(1)(b) |
+| HMRC amendment, closure notice or assessment | Appeal in writing to the officer named, within 30 days after the date the notice was issued | TMA 1970 s.31(1), s.31A(1) to (4) |
+| HMRC simple assessment (a tax bill without a return) | Query it within 60 days after the date of issue; appeal within 30 days after HMRC's final response to the query | TMA 1970 s.31AA(3), s.31A(4A) |
+| HMRC penalty for a late return or late payment | Appeal within 30 days after the penalty notice was issued; pay within 30 days beginning with the day it was issued | Finance Act 2009 Sch 55 paras 18(2), 20, 21; Sch 56 paras 11(2), 13, 14; TMA 1970 s.31A |
+| DWP or HMRC benefit decision (Universal Credit, PIP, Child Benefit and others) | The request for mandatory reconsideration must be received within one month of the date of notification; 14 days more if a written statement of reasons was asked for in time. For Universal Credit, PIP and new-style JSA and ESA, the date of notification is the day the letter was posted. gov.uk: "within one month of the date on your decision letter". | 2013 Decisions and Appeals Regulations reg 2, reg 3, reg 5(1)(b); Child Benefit: Child Benefit and Guardian's Allowance (Decisions and Appeals) Regulations 2003 reg 5(2)(b), as amended by SI 2023/179; other benefits outside the 2013 Regulations: Social Security and Child Support (Decisions and Appeals) Regulations 1999 reg 3(1)(b); gov.uk Mandatory reconsideration |
+| Benefit appeal after mandatory reconsideration | The tribunal must receive the notice of appeal within 1 month after the reconsideration notice was sent, by 5pm; a last day that is not a working day moves to the next working day | Social Entitlement Chamber Rules 2008 r.22(2)(d)(i), r.12 |
+| Council tax discount that no longer applies (for example a single person discount) | Tell the council in writing within 21 days beginning with the day there is first reason to believe it; the council may charge £70 (England) for failing without reasonable excuse | Council Tax (Administration and Enforcement) Regulations 1992 reg 16(1); Local Government Finance Act 1992 Sch 3 para 1(2) |
+| Council tax reduction, change of circumstances (England) | Tell the council within 21 days beginning with the day of the change, or as soon as reasonably practicable after it, whichever is later | Council Tax Reduction Schemes (Prescribed Requirements) (England) Regulations 2012 Sch 8 para 9(2) |
+| Council tax liability, discount or exemption dispute | Write to the council first. Appeal to the Valuation Tribunal for England within 2 months of the council's decision notice, or within 4 months of the household's letter if the council has not answered within 2 months | Valuation Tribunal for England (Council Tax and Rating Appeals) (Procedure) Regulations 2009 reg 21(2) and (3); Valuation Tribunal Service guidance |
+| Council tax band (England) | A proposal to the Valuation Office Agency within 6 months of first becoming the taxpayer, or within 6 months of a notice that the VOA altered the band. The VOA decides within 4 months beginning with the day the proposal was served. Appeal to the Valuation Tribunal for England within 3 months beginning with the day the decision notice was served. In Wales the appeal goes to the Valuation Tribunal for Wales, within 4 months. | Council Tax (Alteration of Lists and Appeals) (England) Regulations 2009 regs 4(4) to (6), 9(1), 10(2); gov.uk Challenge your Council Tax band |
+| Council penalty charge notice (parking in England; bus lane and moving traffic outside London) | Reduced by the discount if paid within 14 days beginning with service (21 days for a camera notice sent by post). The charge is due within 28 days; a notice fixed to the car runs from the day of the contravention. Unpaid after 28 days, a notice to owner may follow. | 2022 General Regulations reg 2 ("the applicable date"), reg 10(2)(a), reg 20, Sch 2 paras 2 and 3 |
+| Representations against a notice to owner or a postal penalty charge notice | Within 28 days beginning with service (later ones may be disregarded). The council must decide within 56 days of receiving them, or the representations count as accepted. | Civil Enforcement of Road Traffic Contraventions (Representations and Appeals) (England) Regulations 2022 regs 5, 6(2), (3) and (7) |
+| Appeal after the council rejects representations | Within 28 days beginning with service of the notice of rejection, to London Tribunals (London) or the Traffic Penalty Tribunal (England outside London, and Wales) | 2022 Appeals Regulations reg 7(2); gov.uk Appeal against a penalty charge notice |
+| Private parking charge | Pointer only. The keeper becomes liable only if the notice to keeper meets the Act: without a windscreen notice it must be delivered within 14 days beginning with the day after the parking ended; after a windscreen notice, within the 28 days that follow the first 28 days. The keeper has 28 days beginning with the day after the notice to pay or name the driver. | Protection of Freedoms Act 2012 Sch 4 paras 8 and 9 |
+| Speeding and similar offences: notice of intended prosecution | Served on the driver or registered keeper within 14 days of the offence, unless the driver was warned at the time, a summons was served within those 14 days, an accident happened owing to the vehicle's presence on the road, or a fixed penalty notice was given. Compliance is presumed unless the contrary is proved. | Road Traffic Offenders Act 1988 s.1(1) and (3), s.2(1) and (2) |
+| Request to name the driver | Give the information within 28 days beginning with the day the notice was served | Road Traffic Act 1988 s.172(2) and (7) |
+| Fixed penalty | Conditional offer (camera cases): no proceedings for 28 days following its issue, the time to pay. Fixed penalty notice: at least 21 days following its date, or longer if the notice says so | Road Traffic Offenders Act 1988 s.75(7)(c), s.52(3)(a) |
+
+Court papers, enforcement letters, tax assessments and benefit appeals get the
+one-line pointer to a professional (the not-advice rule).
+
+## Annual tax return (Self Assessment)
+
+The tax year runs from 6 April to 5 April. The dates below are for the return
+for the year ended 5 April 2026 unless stated.
+
+### Who files and when
+
+| Topic | Rule | Law |
+|---|---|---|
+| Who must file | Those HMRC asks to file, and those who must tell HMRC they are chargeable: for example a sole trader with income over £1,000, a partner, someone with Capital Gains Tax to pay, or someone liable to the High Income Child Benefit Charge who does not pay it through PAYE. Untaxed income such as rent, tips, savings interest, dividends or foreign income may also need a return. | TMA 1970 s.7, s.8(1); gov.uk Self Assessment: who must send a tax return |
+| Telling HMRC (registering) | By 5 October after the end of the tax year, when the person has not filed before or did not file for the previous year. Section 7(3) lists when no notice is needed: broadly, all income taxed through PAYE or at source with no tax due above the basic rate, no chargeable gains, and no extra charge such as the High Income Child Benefit Charge. Owing only the Winter Fuel Payment charge (from 2025-26) does not create the duty. A late notice can bring a "failure to notify" penalty based on the tax still unpaid on 31 January. | TMA 1970 s.7(1), (1C)(a), (3) to (6) (s.7(3)(c) amended by Finance Act 2026 Sch 10); Finance Act 2008 Sch 41 paras 1 and 7; gov.uk Self Assessment penalties |
+| Paper return | By 31 October (2026 for the 2025-26 year) | TMA 1970 s.8(1D)(a) |
+| Online return | By 31 January (11:59pm on 31 January 2027) | s.8(1D)(b); gov.uk |
+| Notice to file given late | Notice given after 31 July: paper return within 3 months beginning with the date of the notice, online return by 31 January. Notice given after 31 October: any return within 3 months beginning with the date of the notice. | s.8(1F) and (1G) |
+| Paying | The balance by 31 January. When the notice to file came after 31 October although HMRC was told by 5 October, the balance is due 3 months after the notice. | TMA 1970 s.59B(3) and (4) |
+| Payments on account | Two payments, by 31 January in the tax year and 31 July after it, each half of last year's Self Assessment tax. They do not apply when last year's bill was under £1,000 or more than 80% of the tax was paid at source. They can be reduced by a claim (form SA303 or online). | TMA 1970 s.59A(1) to (4); gov.uk payments on account |
+| Paying through the tax code (coding out) | A balance under £3,000 is collected through the PAYE tax code over 12 months if the person pays tax through PAYE and filed on paper by 31 October or online by 30 December; the person may ask HMRC not to. | TMA 1970 s.59B(2)(b); gov.uk Pay your Self Assessment tax bill: through your tax code |
+
+### Penalties
+
+| Situation | Penalty | Law |
+|---|---|---|
+| Return late | £100; after 3 months, £10 a day for up to 90 days (£900); after 6 months, 5% of the tax due or £300, whichever is greater; after 12 months, another 5% or £300, more if information was deliberately withheld | Finance Act 2009 Sch 55 paras 3 to 6 |
+| Tax paid late | 5% of the tax unpaid at 30 days, 6 months and 12 months, plus interest | Finance Act 2009 Sch 56 para 3; gov.uk Self Assessment penalties |
+| Making Tax Digital for Income Tax users, from the 2026-27 tax year | A point for each missed deadline; at 4 points, £200, and £200 for each later miss. No points for late quarterly updates for 2026-27. Late payment: nothing up to 15 days late; for 2026-27, 3% of the tax owed at day 15 and 3% at day 30, then 10% a year from day 31 (4% and 4% for 2027-28). In the first year the penalty starts only after 30 days. Payments on account are outside these penalties. | Finance Act 2021 Schs 24 and 26, brought into force by S.I. 2026/370 reg 3; gov.uk Penalties for Making Tax Digital for Income Tax |
+| Everyone else filing a personal return | The Finance Act 2009 penalties above still apply, including to the 2025-26 return due on 31 January 2027 even for those now in Making Tax Digital. HMRC says the new penalties will apply to everyone who submits a personal Self Assessment return from April 2027. | gov.uk Penalties for Making Tax Digital for Income Tax (guidance) |
+
+A penalty must be paid within 30 days beginning with the day the notice is
+issued, and an appeal goes to HMRC within 30 days after that date (see Common
+response windows).
+
+### Changing a return and claiming back tax
+
+| Topic | Rule | Law |
+|---|---|---|
+| Amending a return | Within 12 months after the filing date: by 31 January 2027 for the 2024-25 return, by 31 January 2028 for 2025-26 | TMA 1970 s.9ZA(2) and (3) |
+| Overpayment relief | A written claim within 4 years after the end of the tax year, with the content HMRC lists, signed by the taxpayer | TMA 1970 Sch 1AB para 3(1); gov.uk If you need to change your return |
+| Other claims for relief | Within 4 years after the end of the tax year, unless the Taxes Acts set another period | TMA 1970 s.43(1) |
+
+### Making Tax Digital for Income Tax
+
+| Topic | Rule | Law |
+|---|---|---|
+| Who is in | Sole traders and landlords registered for Self Assessment whose qualifying income from self-employment and property is over £50,000 for 2024-25 must use it from 6 April 2026; over £30,000 for 2025-26, from 6 April 2027; over £20,000 for 2026-27, from 6 April 2028. HMRC writes to those concerned, but the duty applies without a letter. Exemptions exist, for example for the digitally excluded. Partnerships come later. | Income Tax (Digital Obligations) Regulations 2026 (S.I. 2026/336) regs 21 to 27, in force from 1 Apr 2026; gov.uk Check when to sign up |
+| Quarterly updates | Through compatible software, cumulative from 6 April, by 7 August, 7 November, 7 February and 7 May | S.I. 2026/336 regs 9 and 12 |
+| Year end | The tax return is still due by 31 January after the tax year, and the tax is paid by then | TMA 1970 s.8(1D)(b), s.59B(4); gov.uk |
+
+### Charges and allowances often met in a return
+
+| Topic | Rule | Law |
+|---|---|---|
+| High Income Child Benefit Charge | Applies when Child Benefit is paid for a child living with the person and their adjusted net income is over £60,000 (from 2024-25, so for 2025-26 and 2026-27). The charge is 1% of the Child Benefit for each £200 over £60,000, the whole of it from £80,000. Between partners, the one with the higher income pays. | Income Tax (Earnings and Pensions) Act 2003 ss.681B and 681C; gov.uk High Income Child Benefit Charge |
+| Paying the charge through PAYE | Possible for someone with no other reason to file a return, for the current or previous tax year, on or before 31 January after the tax year; after that date it goes through Self Assessment | gov.uk High Income Child Benefit Charge: pay through PAYE (guidance) |
+| Marriage Allowance | A spouse or civil partner with income below the personal allowance transfers 10% of the personal allowance (£1,260 with a £12,570 allowance) to a basic-rate partner, cutting the partner's tax by up to £252; it can be backdated to 6 April 2022 | Income Tax Act 2007 ss.55A to 55E, s.55B(4)(b); gov.uk Marriage Allowance |
+| Gift Aid | A charity claims basic-rate tax on a donation covered by a declaration. A higher-rate taxpayer claims the difference in the return or through the tax code, and may treat a gift as made in the previous tax year if the return for that year is filed on time. | Income Tax Act 2007 s.426; gov.uk Gift Aid |
+
+### Forms from employers and pension payers
+
+| Form | Rule | Law |
+|---|---|---|
+| P60 | Given to everyone employed on 5 April and taxed through PAYE, before 1 June (so by 31 May) | Income Tax (Pay As You Earn) Regulations 2003 reg 67(1) |
+| P11D statement | Benefits and expenses, given to the employee before 7 July (so by 6 July); a former employee may ask for one up to 3 years after the tax year | reg 94(1), (4) and (5) |
+| P45 | Parts 1A, 2 and 3 given to the employee on the day the job ends, or without unreasonable delay | reg 36(1) and (2) |
+
+### Keeping records
+
+| Who | Keep until | Law |
+|---|---|---|
+| Anyone required to file, without a business or letting | The first anniversary of 31 January after the tax year, about 22 months after the year ends; longer while HMRC is enquiring into the return. gov.uk adds at least 15 months after sending a late return. | TMA 1970 s.12B(1), (2)(b); gov.uk Keeping your pay and tax records |
+| Self-employed, partners and landlords | The fifth anniversary of 31 January after the tax year; letting property counts as a trade here | TMA 1970 s.12B(2)(a), (6)(a) |
+| Penalty for not keeping records | Up to £3,000 | TMA 1970 s.12B(5) |
+
+## Consumer complaints, returns and claims
+
+### Cancelling a purchase made online, by phone or away from the trader's premises
+
+| Topic | Rule | Law |
+|---|---|---|
+| Right to cancel | 14 days, with no reason needed. Goods: the days run from the day after the goods reach the household or a person it named (not the carrier). For one order delivered in parts, they run from the last part; for regular deliveries, from the first. Services, and digital content not on a physical medium: from the day after the contract is made. | Consumer Contracts (Information, Cancellation and Additional Charges) Regulations 2013 (CCRs) reg. 29(1), 30 |
+| How to cancel | Any clear statement, or the model cancellation form. Sending it before the period ends is enough. In a dispute, the household must show it cancelled in time. | CCRs reg. 32(3), (5) and (6) |
+| Cancellation information missing | If the trader never gave the information on the right to cancel, the period ends 12 months after its normal end. If the trader gives the information within those 12 months, the period ends 14 days after the household receives it. | CCRs reg. 31 |
+| No right to cancel | Goods made to the household's specification or clearly personalised, goods that go off quickly, newspapers and magazines (subscriptions excepted), public auctions, and urgent repairs the household asked for. Also accommodation, transport, car hire, catering or leisure booked for a set date. The right ends once sealed hygiene goods, or sealed recordings or software, are unsealed after delivery. | CCRs reg. 28(1) and (3) |
+| A service started within the 14 days | The trader starts only at the household's express request. If the household then cancels, it pays for what was supplied up to the cancellation. The right ends once the service is fully performed, if the household acknowledged that it would lose it (not for gas, electricity, water or district heating). The household pays nothing if the trader gave no cancellation information. | CCRs reg. 36(1), (2), (4) to (6) |
+| Digital content (downloads, streaming) | The right ends once supply starts, if the household agreed to an early start and acknowledged that it would lose the right. | CCRs reg. 37(1) and (2) |
+| Refund after cancelling | All payments, including standard delivery, without undue delay. Goods the trader does not collect: within 14 days after it gets them back, or after the household shows it sent them, whichever is earlier. Otherwise within 14 days after the trader is told. Same means of payment, no fee. The trader may deduct for handling beyond what a shop would allow. | CCRs reg. 34 |
+| Returning the goods | The household sends off or hands over the goods within 14 days after telling the trader. It pays the direct cost of return, unless the trader agreed to pay or did not say that the household pays. No return is needed when the trader offered to collect. | CCRs reg. 35 |
+
+### Faulty goods, services and digital content
+
+| Topic | Rule | Law |
+|---|---|---|
+| What goods must be | The contract is read as requiring goods of satisfactory quality, fit for a purpose the household made known, and as described, among other terms, plus anything the contract itself states. | Consumer Rights Act 2015 (CRA) s. 9 to 11, 19(1) |
+| Short-term right to reject | A full refund for goods that do not conform. 30 days, counted from the day after the last of: ownership passing, delivery, and the trader saying installation is done. Goods expected to perish sooner: until then. The days stop running while the household waits for a repair or replacement it asked for or agreed to; if that fails, at least 7 more days remain. | CRA s. 19(3), 20, 22 |
+| Repair or replacement | The household may require either. The trader does it within a reasonable time, without significant inconvenience, and pays the costs, including labour, materials and postage. Not available if impossible, or disproportionate compared with the other remedy. | CRA s. 23(2) and (3) |
+| Price reduction or final right to reject | One of the two, and only after one repair or one replacement that did not work, when neither is possible, or when the trader did not do it within a reasonable time. | CRA s. 24(5) |
+| Deduction for use | A refund after final rejection may be cut for the use the household had. No deduction within 6 months, counted from the day after delivery (or after ownership passing or installation, if later), except for motor vehicles. | CRA s. 24(8) to (12) |
+| Faults within 6 months | A fault that shows within 6 months of delivery is taken to have existed at delivery, unless the trader shows otherwise or this does not fit the goods or the fault. This helps with repair, replacement, price reduction and final rejection. | CRA s. 19(14) and (15) |
+| Returning rejected goods and the refund | The household makes the goods available for collection. The trader pays reasonable return costs, except the household's cost of taking them back in person to where it received them. The refund comes within 14 days beginning with the day the trader agrees it is due, by the same means of payment, with no fee. | CRA s. 20(7), (8), (15) to (17) |
+| Services | A service must be performed with reasonable care and skill. If it is not, the household may require repeat performance within a reasonable time at the trader's cost. A price reduction, up to the full price, is available when repeat performance is impossible or not done in time; it is refunded within 14 days beginning with the day the trader agrees. | CRA s. 49(1), 54(3), 55, 56 |
+| Digital content | Repair or replacement, or a price reduction. There is no right to reject, and the contract cannot be ended for these faults. A fault within 6 months of supply is taken to have existed at supply. | CRA s. 42(2), (8) to (10) |
+| Unfair terms | An unfair term in a consumer contract does not bind the household. | CRA s. 62(1) and (4) |
+| Time limit for court claims | 6 years from the breach, such as delivery of faulty goods or a poor service. 12 years for a contract made by deed. | Limitation Act 1980 s. 5, 8 |
+| Small claims | Most money claims up to £10,000 go to the small claims track of the county court (a pointer; court steps are in the court rules). | Civil Procedure Rules 26.9(4) |
+
+### Paying by card
+
+| Topic | Rule | Law |
+|---|---|---|
+| Section 75 claim | When the household paid with a credit card, or with a loan the trader arranged with a lender, it has the same claim for misrepresentation or breach of contract against the lender as against the trader. It covers a single item with a cash price over £100 and up to £30,000 (limits set in 1983). A debit card is not credit, so section 75 does not apply. | Consumer Credit Act 1974 s. 75(1) and (3)(b), s. 12(b) and (c) |
+| Chargeback | A request by the card issuer to reverse a card payment under the card scheme's rules, for debit and credit cards. No statute sets it. The scheme's rules set the conditions and time limits; ask the card issuer promptly. | none (card-scheme rules) |
+
+### Complaints and ombudsmen
+
+| Sector | Rule | Law |
+|---|---|---|
+| Bank, insurer or other FCA-regulated firm | The firm acknowledges the complaint in writing and states its time limit. Within 8 weeks of receiving it, the firm sends a final response, or a written reply explaining why it needs longer and that the household may now go to the Financial Ombudsman Service. After a final response, or after 8 weeks without one, the household may refer the complaint to the ombudsman, free of charge. | FCA Handbook DISP 1.6.1R, 1.6.2R, 2.8.1R |
+| Payment services and e-money (transfers, card payments, direct debits) | Final response within 15 business days of receipt. In exceptional circumstances, a holding reply within 15 business days gives the reasons and a deadline, and the final response comes within 35 business days of receipt. The same times apply under the Payment Services Regulations to complainants outside the ombudsman's reach. | DISP 1.6.1R(1)(b)(i), 1.6.2AR; Payment Services Regulations 2017 reg. 101 |
+| Referring to the Financial Ombudsman Service | Within 6 months of the date the firm sent its final response, which must mention this limit. The ombudsman counts calendar months: a response sent on 7 May allows until 7 November, one sent on 30 August until 28 February. A late complaint may still be heard in exceptional circumstances, when the final response was not valid, or when the firm agrees. The complaint to the firm must generally be made within 6 years of the event or 3 years of becoming aware of it. | DISP 2.8.2R; Financial Ombudsman Service, Time limits |
+| Energy supplier | The supplier has 8 weeks to resolve the complaint. When it cannot resolve it, or when the 8 weeks end, it must tell the household in writing that the dispute can go to the Energy Ombudsman, free of charge. A deadlock letter allows that step before the 8 weeks end. The Energy Ombudsman takes a dispute within 12 months of the deadlock letter. | Gas and Electricity (Consumer Complaints Handling Standards) Regulations 2008 reg. 2 and 6; Energy Ombudsman rules |
+| Old energy bills (back-billing) | A supplier may bill only for electricity reasonably used, and standing charges accrued, in the 12 months before the bill, unless the household obstructed correct billing. For gas, verify the matching condition in the gas supply licence. | Electricity supply licence standard condition 21BA |
+| Phone, broadband, pay TV | For a complaint first raised on or after 8 April 2026, the provider has 6 weeks (8 weeks for an earlier complaint). The provider then tells the household of its right to go to the provider's ADR scheme, the Communications Ombudsman or CISAS, free of charge. A deadlock letter allows that step earlier. | Ofcom General Condition C4, as modified by Ofcom's statement of 8 July 2025 |
+| Other traders | No Act sets a general deadline for a trader's reply to a complaint. Since 6 April 2026, alternative dispute resolution (ADR) providers are accredited under the Digital Markets, Competition and Consumers Act 2024 and set their own time limits for referrals; the ADR Regulations 2015 were revoked that day. | DMCC Act 2024 Part 4 Chapter 4, Sch. 26 para. 10; SI 2026/284 |
+
+## Giving notice: form and delivery
+
+| Topic | Rule | Law |
+|---|---|---|
+| When a notice takes effect | The usual contract position is that a notice counts when it reaches the other party. The contract's notice clause decides the method, the address and whether email is allowed; read it before sending. | contract terms |
+| Notices under an Act sent by post | Where an Act allows or requires service by post, a properly addressed, prepaid and posted letter counts as served when it would be delivered in the ordinary course of post, unless the contrary is proved. No fixed number of days applies. | Interpretation Act 1978 s. 7 |
+| Proof of sending | Keep a sent email when the contract allows email, with the reply if any. Royal Mail Signed For records a signature on delivery, and Special Delivery Guaranteed is tracked. A certificate of posting proves the date of posting, not delivery; a Post Office branch gives one automatically with Signed For and Special Delivery Guaranteed, and on request for other letters. These are postal services, not legal rules. | Royal Mail retail compensation policy |
+| Phone, broadband, pay TV: end of the fixed term | The provider sends an end-of-contract notification by text, email or letter. Ofcom states it comes 10 to 40 days before the fixed term ends. It gives the end date, the current services and price, any change after the end date, the notice period and the provider's best tariffs. Customers out of contract get best-tariff information at least once a year. | Ofcom General Condition C1; Ofcom, Companies must tell customers about their best deals |
+| Phone, broadband, pay TV: price rises and other changes | A contract made from 17 January 2025 must state any price rise during the contract in pounds and pence, with the date it applies. The rule does not cap prices. For any other change to the household's disadvantage, including a price rise the contract does not set out, the provider gives at least one month's notice on a durable medium, and the household may leave within one month after it without an early termination charge. | Ofcom General Condition C1.14 to C1.16 |
+| Phone, broadband, pay TV: after the fixed term | A contract that rolled on after its fixed term can be ended with no more than one month's notice. The household pays only the service fees for the notice period. | Ofcom General Condition C1 (C1.21 and C1.22 in the October 2024 consolidated text) |
+| Broadband and landline switching (One Touch Switch) | Launched on 12 September 2024; Ofcom says it is available to most customers. The household contacts only the new provider, which arranges the switch. The process is free, and the old provider may not charge for a notice period after the switch date. | Ofcom General Condition C7 (C7.8, C7.20) |
+| Energy: fixed tariff | No exit fee during the switching window, which starts when the supplier sends the end-of-term renewal statement or 49 days before the fixed term ends, whichever is earlier. No notice is needed to end a fixed-term contract or to switch. No exit fee applies when the supplier gives notice of a price rise or another change to the household's disadvantage. | Electricity supply licence standard condition 24.3(c), 24.8, 24.17 (gas supply licence: matching condition) |
+| Energy: contract with no fixed term | The household may give notice at any time; any notice period is at most 28 days. A switch can be cancelled within 14 days. | Electricity supply licence standard condition 24.6 and 24.7; CCRs reg. 29, 30; Ofgem, Switch your home energy supplier |
+| Gyms and other subscriptions | The subscription contract rules of the DMCC Act 2024 were not in force on 14 November 2026; draft regulations give 1 January 2027. Until then the contract's own notice terms apply. A term that is unfair does not bind the household, and a membership taken out online or by phone has the 14-day right to cancel. | DMCC Act 2024 Part 4 Chapter 2 (not in force); CRA s. 62; CCRs reg. 29, 30 |
+| Renting from a private landlord in England: tenancies | Since 1 May 2026 most tenancies are assured periodic tenancies with no fixed term, and existing assured shorthold tenancies converted on that day. Section 21 "no fault" notices ended for private tenancies; a notice served before 1 May 2026 lapsed unless court proceedings started within its time limit, at the latest 3 months after 1 May 2026. | Renters' Rights Act 2025 s. 1, 2, Sch. 6 para. 1 and 4; SI 2026/421 reg. 2 |
+| Renting from a private landlord in England: tenant's notice | At least 2 months' notice in writing, unless the landlord agrees in writing to a shorter period (with all joint tenants). Any written means works, such as a letter, email or text; a tenancy term fixing the means has no effect. gov.uk ties the end date to the rent day: the day rent is due or the day before. One joint tenant can end a joint tenancy; withdrawing a notice needs the landlord's written agreement. | Protection from Eviction Act 1977 s. 5(1), (1ZA) to (1ZD) and 5A, inserted by Renters' Rights Act 2025 s. 20 and 21; gov.uk, Renters' Rights Act overview for tenants |
+| Renting from a council or housing association | The tenancy changes of the Renters' Rights Act were not in force for social housing on 14 November 2026; different rules apply. | SI 2026/421 reg. 2 |
+| Renting in Wales | The Renting Homes (Wales) Act 2016 governs occupation contracts from 1 December 2022. For example, a landlord's notice without a reason under section 173 gives at least 6 months. | Renting Homes (Wales) Act 2016 s. 173, 174 |
+
+## Paying
+
+| Topic | Rule | Law |
+|---|---|---|
+| Direct Debit Guarantee | The payee gives at least 10 working days' notice of a change in amount, date or frequency, unless agreed otherwise. If the payee or the bank makes an error, the payer gets a full and immediate refund from the bank; a refund not due must be paid back. A Direct Debit can be cancelled at any time through the bank. It is a scheme guarantee offered by all banks that accept Direct Debits, not a statute. | Direct Debit Guarantee, as published by billers (for example Reading Borough Council's page, updated 24 Jul 2026) |
+| Faster Payments, CHAPS, Bacs | Faster Payments usually arrive the same or next day, including weekends and bank holidays; CHAPS the same working day within the bank's cut-off; Bacs 3 working days | gov.uk Pay your Self Assessment tax bill: make an online or telephone bank transfer |
+| Confirmation of Payee | An account-name check that helps make sure a bank transfer goes to the right person or business. The PSR's directions extended it to more payment firms, with over 350 more joining by the end of October 2024. | Payment Systems Regulator Specific Directions 17 and 17a; PSR "APP fraud reimbursement protections" page |
+| Authorised push payment (APP) fraud reimbursement | For payments by Faster Payments or CHAPS from 7 Oct 2024, by individuals, microenterprises and charities. Report to the bank within 13 months of the payment. The bank reimburses within 5 business days of the claim, or reaches an outcome within 35 business days if it stops the clock for information. The maximum is £85,000 per claim; the bank may deduct an excess of up to £100, but not from a vulnerable customer. No reimbursement for a complicit or grossly negligent customer; the gross negligence exception does not apply to vulnerable customers. Credit unions, municipal banks and national savings banks are outside the scheme. Disputes go to the Financial Ombudsman Service. | PSR Specific Direction 20 (Faster Payments) and 21 (CHAPS); PSR "APP fraud reimbursement protections" page |
+| Council tax instalments | The bill sets 10 monthly instalments when it is issued by 30 April, fewer when issued later. A written request gives 12 monthly instalments, for this year or the next (fewer when the new bill for this year is issued after 15 April). The months run without a break, and the council sets the day of the month. | Council Tax (Administration and Enforcement) Regulations 1992 reg 21(1) and (1A) to (1D), Sch 1 para 2(3), (3A) and (4) |
+| Paying HMRC on time | The money must reach HMRC's account by the deadline. Same or next day: online banking or Faster Payments, CHAPS, debit or corporate credit card, at a bank with an HMRC paying-in slip. 3 working days: Bacs, or a Direct Debit already set up. 5 working days: a first Direct Debit. A cheque must reach HMRC by the deadline and counts on the day received if paid on first presentation. The payment reference for Self Assessment is the 10-digit UTR followed by K. | gov.uk Pay your Self Assessment tax bill; TMA 1970 s.70A |
+
+## Life events
+
+Each table lists the steps of one event. A step with a deadline becomes an
+obligation with a `do_by` date (the dates rule); a step without one becomes a
+task. The `life_events` list in GB.json carries the same steps. Short names
+used below: VERA 1994 is the Vehicle Excise and Registration Act 1994; RTA 1988
+is the Road Traffic Act 1988; the 2002 Regulations are the Road Vehicles
+(Registration and Licensing) Regulations 2002; BDRA 1953 is the Births and
+Deaths Registration Act 1953; IHTA 1984 is the Inheritance Tax Act 1984.
+
+### Buying a used car
+
+| Step | Rule | Law |
+|---|---|---|
+| Vehicle tax | Tax the vehicle before it is used or kept on a public road. Tax does not pass from the seller: when a vehicle is transferred, the seller's licence counts as no longer in force. Tax it online or by phone with the reference number on the green new keeper slip, or declare it off the road (SORN) if it will not be used. Using or keeping an untaxed vehicle is an offence, and the registered keeper commits a separate offence while it stays untaxed. | VERA 1994 s. 29(1), (2B) and (4), s. 31A(1) and (4); gov.uk "Sold, bought or transferred a vehicle" |
+| Insurance | A vehicle may be driven on a road or other public place only with third-party insurance for that driver. Once the vehicle is registered to the buyer, the keeper commits an offence while it is uninsured, unless an exception applies, such as a vehicle kept off the road after the required notification. | RTA 1988 s. 143(1) and (2), s. 144A(1), s. 144B(5) |
+| MOT | A car first registered 3 or more years ago needs a test certificate issued within the last 12 months to be used on a road. Test results are on the online MOT history. | RTA 1988 s. 47(1) and (2); gov.uk "Check MOT history" |
+| Log book (V5C) | The seller gives the buyer the part of the V5C marked for the new keeper (the green new keeper slip) and tells DVLA at once, online or on the rest of the V5C. DVLA records the change and sends the buyer a new V5C. | 2002 Regulations reg. 22(2) and (5) |
+| New V5C | It usually arrives within 5 to 7 working days when the seller told DVLA online, otherwise within 4 weeks. Contact DVLA after 4 weeks. Tell DVLA within 6 weeks of the change if it has not come; after that a replacement costs £25. | gov.uk "Vehicle registration: new and used vehicles" and "Sold, bought or transferred a vehicle" (guidance); fee: 2002 Regulations reg. 22(3) |
+| No V5C at all | DVLA advises against buying a vehicle without a V5C. Without one, the new keeper applies for a new V5C on form V62 with the £25 fee. | gov.uk "Vehicle registration: new and used vehicles"; 2002 Regulations reg. 22(3) |
+
+### Selling a car
+
+| Step | Rule | Law |
+|---|---|---|
+| Tell DVLA | The registered keeper tells DVLA at once, online with the 11-digit reference number from the latest V5C, or by posting the V5C. The notice gives the buyer's name and address and the date of sale. The keeper hands the buyer the green new keeper slip. After telling DVLA online, the rest of the V5C is destroyed. Breaking the regulations is an offence. | 2002 Regulations reg. 22(2); VERA 1994 s. 59(1) and (2); gov.uk "Sold your vehicle to a private individual or business" |
+| Vehicle tax refund | The seller's vehicle tax ends with the transfer. DVLA refunds each full month left, counted from the date it gets the information, by cheque and without a separate claim. A vehicle tax Direct Debit is cancelled automatically. Contact DVLA if the cheque has not arrived after 8 weeks. | VERA 1994 s. 19(1), (3)(f), (3A) and (7), s. 29(4); gov.uk "Cancel your vehicle tax and get a refund" |
+| The buyer's tax | The buyer taxes the vehicle before driving it; the tax does not pass with the sale. | VERA 1994 s. 29(1) and (4) |
+| Sale to a motor trader | Separate notification rules apply. | 2002 Regulations reg. 23 |
+| Insurance | No statute sets a notice to the insurer when a car is sold; the policy terms apply. | Policy terms |
+
+### Moving house
+
+| Step | Rule | Law |
+|---|---|---|
+| Council tax | Liability is worked out day by day and falls on the resident, in a fixed order (freeholder, leaseholder, tenant, licensee, other resident, then owner). Tell the council for the old address and the council for the new one, so each charges only its own days. | Local Government Finance Act 1992 s. 2(1), s. 6(1) and (2) |
+| Electoral register | Registration does not follow a move: register again at the new address (gov.uk "Register to vote"). The registration officer may require an application by a set date and impose a civil penalty if it is ignored. gov.uk: a person asked to register who does not could be fined up to £1,000. | Representation of the People Act 1983 s. 9E(4) and (7); Representation of the People (England and Wales) Regulations 2001 reg. 23(1) and (3); gov.uk "The electoral register and the open register" |
+| Driving licence | When the address on the licence stops being correct, the holder surrenders it to DVLA at once for a new one. It is free. Failing to do so without reasonable cause is an offence; gov.uk gives a fine of up to £1,000. The holder may drive while the new licence is on its way. | RTA 1988 s. 99(4), (5) and (7); gov.uk "Change the address on your driving licence" |
+| Vehicle log book (V5C) | The registered keeper tells DVLA the new address at once, usually free. gov.uk gives a fine of up to £1,000. If the tax is due within 4 weeks, tax first with the current V5C. A new V5C follows; contact DVLA after 4 weeks, and after 6 weeks without telling DVLA a replacement costs £25. | 2002 Regulations reg. 18(1), (1A) and (1B); VERA 1994 s. 59(1) and (2); gov.uk "Change the address on your vehicle log book (V5C)" |
+| TV Licence | A licence covers the place named in it, so the address is changed with TV Licensing. The fee from 1 Apr 2026 is £180 (£60.50 for black and white only). | Communications (Television Licensing) Regulations 2004 reg. 3(1), Sch. 1 (sums substituted by SI 2026/104); gov.uk "TV Licence" |
+| HMRC | After the move, update the address in the HMRC online account. One update covers Income Tax, National Insurance, Child Benefit and State Pension; business tax is updated separately. | gov.uk "Tell HMRC you've changed your address" (guidance) |
+| GP | Register with a surgery near the new home; no ID or proof of address is needed. The old surgery is told automatically. | nhs.uk "How to register with a GP surgery" (reviewed 28 Jul 2025) |
+| School (England) | A parent can apply for a school place at any time. The council's website explains how in-year applications work; the council or the school handles them. Wales has its own admissions code. | School Admissions Code 2021 paras. 2.23 and 2.25 |
+| Post | Royal Mail redirection is an optional paid service; no law requires it. | None |
+
+### Birth of a child
+
+| Step | Rule | Law |
+|---|---|---|
+| Registration | The mother and father, or another qualified informant if they cannot, give the registrar the details within 42 days of the birth and sign the register. This is done at the register office for the district where the baby was born; another office can pass the details on. One informant's registration discharges the others. After 42 days the registrar can require a qualified informant to attend. | BDRA 1953 s. 2(1), s. 4; gov.uk "Register a birth" |
+| NHS number | Assigned soon after birth through the birth notification; no application is needed. Register the baby with a GP. | nhs.uk "What is an NHS number?" (reviewed 16 May 2023) |
+| Child Benefit | Claim from 48 hours after registering the birth. A claim reaches back at most 3 months, so a claim within 3 months of the birth keeps the payments from the start. Weekly rates from 6 Apr 2026: £27.05 for the eldest or only child, £17.90 for each other child. | Child Benefit and Guardian's Allowance (Administration) Regulations 2003 reg 6(1) |
+| Sure Start Maternity Grant | A one-off £500 when the claimant or partner gets a qualifying benefit, such as Universal Credit. It is usually only for a first child, or for a multiple birth when there are already children. Claim from 11 weeks before the expected week of birth until 6 months after the birth. England and Wales only. | Social Fund Maternity and Funeral Expenses (General) Regulations 2005 reg. 5(1), (2) and (6); Social Security (Claims and Payments) Regulations 1987 reg. 19(1), Sch. 4 para. 8; gov.uk "Sure Start Maternity Grant" |
+| Paternity leave | An employee who is the father, or the mother's spouse, civil partner or partner, may take one week, two weeks together, or two separate weeks, at any time from the birth until 52 weeks after it. Since 6 Apr 2026 it is a right from the first day of employment. Notice of entitlement goes to the employer by the end of the 15th week before the expected week of birth, and notice of each period at least 28 days before it, or as soon as reasonably practicable. | Paternity and Adoption Leave Regulations 2002 reg. 4(1) and (2), reg. 5(1) and (2), reg. 6(1) to (4) (qualifying period removed from 6 Apr 2026 by SI 2026/15, made under the Employment Rights Act 2025); gov.uk "Paternity pay and leave: eligibility" |
+| Statutory Paternity Pay | From 6 Apr 2026, £194.32 a week or 90% of average weekly earnings, whichever is lower. Pay still needs 26 weeks' continuous employment up to the qualifying week (the 15th week before the expected week) and average earnings of at least £129 a week. | Social Security Contributions and Benefits Act 1992 s. 171ZA(2) and (3); Statutory Paternity Pay (General) Regulations 2002 reg. 2 (sum from SI 2026/148); gov.uk "Paternity pay and leave: eligibility" and "Pay" |
+| Shared Parental Leave | The mother gives her employer written notice of entitlement and intention at least 8 weeks before her first period of shared parental leave. Each parent books periods by written notice at least 8 weeks before the first period in that notice starts. | Shared Parental Leave Regulations 2014 reg. 8(1), reg. 12(1) to (3) |
+| Free prescriptions (England) | A maternity exemption certificate runs from one month before NHSBSA receives the application until 12 months after the expected date of birth, or 12 months after the birth when the application comes later. It can be extended when the baby is born late. | National Health Service (Charges for Drugs and Appliances) Regulations 2015 reg. 10(1)(d), reg. 15(2) and (2A) |
+
+### Changing job
+
+| Step | Rule | Law |
+|---|---|---|
+| P45 | When the job ends, the employer completes form P45 and gives the employee parts 1A, 2 and 3 on the last day, or without unreasonable delay. The employee keeps part 1A and gives parts 2 and 3 to the new employer. | Income Tax (Pay As You Earn) Regulations 2003 reg. 36(1) and (2); gov.uk "P45" |
+| Starter checklist | Without a P45, the new employee fills in the starter checklist (form P46 in the regulations), including which statement A, B or C applies. | Income Tax (Pay As You Earn) Regulations 2003 reg. 46(1) to (2A); gov.uk "P45" |
+| Tax code | Check the code in the HMRC app or the online account once the new job starts. | gov.uk "Tax codes" (guidance) |
+| Workplace pension | The new employer enrols an eligible jobholder automatically. The jobholder may opt out with the scheme's opt-out notice within one month beginning with the later of joining the scheme and receiving the enrolment information; for a personal pension scheme the month begins when the agreement is treated as made. If the notice is invalid, the employer says why and the period becomes 6 weeks. After a valid opt-out the jobholder counts as never having joined, and the employer refunds the contributions within one month of receiving the notice, or by the end of the second pay period after it when payroll had closed. | Pensions Act 2008 s. 8; Occupational and Personal Pension Schemes (Automatic Enrolment) Regulations 2010 reg. 9(1) to (3) and (7), reg. 11 |
+| Final pay | Statutory holiday not taken in the leave year so far is paid out on leaving, pro rata unless a relevant agreement sets the sum. | Working Time Regulations 1998 reg. 14(1) to (3) |
+
+### Death of a close relative
+
+| Step | Rule | Law |
+|---|---|---|
+| Medical certificate | Since 9 Sep 2024 a medical examiner checks the cause of death, and the medical certificate is sent to the registrar. The family waits for the medical examiner's office to confirm that the death can be registered. | Medical Certificate of Cause of Death Regulations 2024; Medical Examiners (England) Regulations 2024; Medical Examiners (Wales) Regulations 2024; gov.uk "An overview of the death certification reforms" |
+| Registration | A relative, or another qualified informant in the order the Act sets, gives the registrar the details within 5 days of the relevant date: the day the registrar is notified that the medical examiner has confirmed the cause of death, or the day a coroner's investigation is discontinued. The 5 days do not run from the death. Written notice of the death sent to the registrar with the certificate within the 5 days extends the time to 14 days. The duty does not apply while a coroner's investigation continues. The registrar issues the certificate for burial or cremation (the "green form"). | BDRA 1953 s. 16(2) to (4), s. 17(2) to (4), s. 18; gov.uk "What to do after someone dies: register the death" |
+| Tell Us Once | The registrar gives a reference number. Used within 28 days, it reports the death to HMRC, DWP, HM Passport Office, DVLA (driving licence, up to 5 vehicles, vehicle tax) and the council (council tax, Housing Benefit, electoral register, Blue Badge). It does not reach banks, insurers, utilities, landlords, TV Licensing or most private pensions. | gov.uk "Tell Us Once" (guidance) |
+| Will and probate | Probate is the right to deal with the estate. It may not be needed when the person only had savings, or held money or property jointly with others. The estate's value is reported first; probate cannot be applied for until then. | gov.uk "Applying for probate" (guidance) |
+| Inheritance Tax: payment | Tax on the death is due six months after the end of the month of death; interest runs after that. Personal representatives pay their tax when they deliver the account, so in practice part of it is paid before probate. Tax on land, some shares and businesses may be paid in ten yearly instalments. | IHTA 1984 s. 226(1) and (2), s. 227(1); gov.uk "Valuing the estate of someone who's died" |
+| Inheritance Tax: account | The personal representatives deliver an account (form IHT400) within 12 months from the end of the month of death, or within 3 months of first acting as such if that ends later. No account is needed for an excepted estate; the conditions are in reg. 4 of the excepted estates regulations. | IHTA 1984 s. 216(1) and (6)(a); Inheritance Tax (Delivery of Accounts) (Excepted Estates) Regulations 2004 reg. 3(1) and 4 |
+| Bereavement Support Payment | For a surviving spouse, civil partner or cohabiting partner. A claim within 3 months of the death brings the one-off payment and all 18 monthly payments; a claim within 12 months keeps the one-off payment but loses earlier monthly payments; after 21 months usually nothing is paid. Rates confirmed from 6 Apr 2026: higher rate £3,500 then 18 payments of £350; standard rate £2,500 then 18 payments of £100. | Social Security (Claims and Payments) Regulations 1987 reg. 19(2), (3)(gb) and (3BA); Bereavement Support Payment Regulations 2017 reg. 3 (sums confirmed by SI 2026/148); gov.uk "Bereavement Support Payment: what you'll get" |
+| Funeral Expenses Payment | For a person on a qualifying benefit who pays for the funeral. Claim from the death until 6 months after the funeral, even while waiting for a decision on the qualifying benefit. Money the claimant gets from the estate is set against it. | Social Security (Claims and Payments) Regulations 1987 reg. 19(1), Sch. 4 para. 9; Social Fund Maternity and Funeral Expenses (General) Regulations 2005 reg. 10; gov.uk "Funeral Expenses Payment" |
+| Vehicle and driving licence | Tell Us Once informs DVLA. Without it, write to DVLA and enclose the driving licence; no death certificate is needed. A relative keeping the vehicle tells DVLA with the new keeper slip and a letter, and taxes it in their own name before using it: vehicle tax cannot be transferred. DVLA cancels the old tax and any Direct Debit and refunds full months. | gov.uk "Telling DVLA after someone dies" (guidance); VERA 1994 s. 29(1) |
+| Bank accounts | Tell each bank or building society. Joint accounts and the deceased's own accounts are dealt with under the bank's terms and its bereavement process. | No statute in this pack |
+
+## Recurring household obligations
+
+Offer these when the profile shows they apply. Each becomes an obligation only
+after the household confirms it.
+
+| Applies when | Obligation | When | Law or source |
+|---|---|---|---|
+| New income to declare, no return filed for the last year | Register for Self Assessment (notify chargeability) | By 5 October after the tax year | TMA 1970 s.7(1), (1C)(a) |
+| Files Self Assessment on paper | Paper return | By 31 October | TMA 1970 s.8(1D)(a) |
+| Pays tax through PAYE and owes less than £3,000 | Online return so the balance is collected through the tax code | By 30 December | gov.uk Pay through your tax code; TMA 1970 s.59B(2)(b) |
+| Files Self Assessment | Online return | By 31 January (11:59pm) | TMA 1970 s.8(1D)(b) |
+| Owes tax under Self Assessment | Balancing payment and, where they apply, the first payment on account | By 31 January | TMA 1970 s.59A(2)(a), s.59B(4) |
+| Payments on account apply | Second payment on account | By 31 July | TMA 1970 s.59A(2)(b) |
+| Sole trader or landlord in Making Tax Digital for Income Tax | Quarterly update | By 7 August, 7 November, 7 February and 7 May | S.I. 2026/336 reg 12 |
+| Employed or drawing a PAYE pension on 5 April | P60 should have arrived | By 31 May | PAYE Regulations 2003 reg 67(1) |
+| Has benefits or expenses from the employer | P11D statement should have arrived | By 6 July | PAYE Regulations 2003 reg 94(1) |
+| Liable to the High Income Child Benefit Charge, no other reason to file | Pay it through PAYE for the last tax year, or it must go through Self Assessment | By 31 January after the tax year | ITEPA 2003 ss.681B to 681C; gov.uk (guidance) |
+| Liable for council tax | New council tax year from 1 April; the bill shows the band, discounts and instalment dates. Councils set the amounts before 11 March and serve the bill as soon as practicable after; the instalment day is the council's choice, so the household registers the dates from its own bill. | Bill from March; instalments from April (usually) | Local Government Finance Act 1992 s.30(6); Council Tax (Administration and Enforcement) Regulations 1992 reg 19, Sch 1 para 2(4) |
+| Watches or records live TV, or uses BBC iPlayer | TV Licence, renewed yearly; it runs for the period stated on the licence. £180 (£60.50 black and white) for licences issued from 1 Apr 2026. Watching without one is an offence, with a fine of up to £1,000. | Expiry date on the licence | Communications Act 2003 s.363, s.364(4); Communications (Television Licensing) (Amendment) Regulations 2026 reg 3; gov.uk TV Licence |
+| Owns a vehicle | Vehicle tax and MOT | See the vehicle section (part C) | DVLA |
+
+## Documents with an expiry date
+
+Register the expiry as an obligation with `kind: expiry` and a lead time.
+
+| Document | Validity | Suggested lead time |
+|---|---|---|
+| Adult passport | 10 years. Since 10 Sep 2018 HM Passport Office no longer adds unused months from the old passport (up to 9 months were added before). HM Passport Office guidance "Types of British passports" (8 Dec 2025) | 180 days, because some destinations need validity beyond the return date (see Travel documents) |
+| Child passport (under 16) | 5 years (gov.uk "Get a passport for your child") | 180 days |
+| Photocard driving licence | The photocard is renewed every 10 years (its administrative validity), even though the entitlement lasts to age 70; the holder must surrender an out-of-date photocard, and failing to do so without reasonable cause is an offence. DVLA sends a reminder. From age 70 a licence lasts 3 years at a time: DVLA sends form D46P 90 days before the 70th birthday or the expiry, and online renewal is free at 70 and over. RTA 1988 s. 99(1)(a), (2A), (2B)(b) and (5); gov.uk "Renew your driving licence" and "Renew your driving licence if you're 70 or over" | 60 days; at 70 and after, 90 days |
+| Paper counterpart and old paper licences | The paper counterpart has had no legal status since 8 Jun 2015 and can be destroyed; the photocard stays valid. A paper licence issued before 31 Mar 2000 is still valid. gov.uk news "Driving licence counterpart abolished" | None |
+| Blue Badge | 3 years from issue. In England it is shorter when tied to an award of a mobility benefit, and a badge for a child of 3 or under runs to the day after the 3rd birthday. Disabled Persons (Badges for Motor Vehicles) (England) Regulations 2000 reg. 6(2); Wales: Disabled Persons (Badges for Motor Vehicles) (Wales) Regulations 2000 reg. 6(2) | 60 days |
+| GHIC (and an old UK EHIC) | Up to 5 years, free from the NHS. An existing EHIC can be used until the expiry date printed on it. A new card can be requested up to 9 months before the old one expires; unofficial websites charge a fee. nhs.uk "GHIC" (reviewed 12 Dec 2023) | Up to 9 months before expiry, and at least 30 days before travel |
+| MOT certificate | One year. First needed by the 3rd anniversary of registration. A test passed up to a month (minus a day) before the current certificate runs out keeps the same renewal date. Every result is entered in the MOT database. gov.uk: a fine of up to £1,000 for driving without a valid MOT. RTA 1988 s. 47(1) and (2), s. 48(2); Motor Vehicles (Tests) Regulations 1981 reg. 15(2); gov.uk "Getting an MOT" | 30 days |
+| Vehicle tax | 12 months, or 6 months, from the first day of the month it starts. A Direct Debit can be monthly, 6-monthly or yearly; monthly and 6-monthly payments carry a 5% surcharge. DVLA posts a V11 reminder to those paying for 6 or 12 months. A Direct Debit renews automatically without a V11, but only if the MOT is valid when the tax runs out and DVLA has a keeper on record. A vehicle kept off the road untaxed needs a SORN and cannot be used until taxed again; full months of tax left are refunded. VERA 1994 s. 3(1) and (2), s. 29(2B); 2002 Regulations reg. 26, Sch. 4; gov.uk "Vehicle tax Direct Debit payments" and "Make a SORN" | 14 days |
+| TV Licence | The expiry date printed on the licence. Fee from 1 Apr 2026: £180. Communications (Television Licensing) Regulations 2004 Sch. 1 (sums from SI 2026/104); gov.uk "TV Licence" | 30 days |
+| Biometric residence permit (BRP) | All BRPs have expired and eVisas have replaced them. An expired BRP may be used only to sign in to view the eVisa and get a share code, to create a UKVI account, or to apply to extend permission, for 24 months after the expiry date printed on it or until 31 Dec 2026, whichever comes first. A lost or stolen BRP must still be reported. gov.uk "Biometric residence permits (BRPs)" (guidance) | Before 31 Dec 2026, check that the UKVI account gives access to the eVisa |
+| EU Settlement Scheme status | Digital status (eVisa), with no physical document. Settled status is indefinite leave; pre-settled status is 5 years' limited leave. The Home Office can extend limited leave, or grant settled status, without an application. Since 2025 it converts eligible pre-settled holders automatically; children under 18, non-EEA family members and joining family members are not converted automatically, and their pre-settled status is extended by 5 years instead. From 9 Apr 2026 it also removes pre-settled status from people who have clearly stopped living in the UK, after contacting them through the email and phone number on their UKVI account. Immigration Rules Appendix EU paras. EU2, EU3 and EU4; Home Office "EUSS status automation update" (9 Apr 2026) | Keep the UKVI account email, phone number and passport details current |
+| NHS exemption and prepayment certificates (England) | See Health papers. | 30 days |
+
+## Health papers
+
+| Topic | Rule | Law |
+|---|---|---|
+| How long a prescription lasts | A prescription-only medicine can be dispensed within six months beginning with the appropriate date. For an NHS prescription this is the later of the signing date and any "not before" date the prescriber wrote. A repeatable prescription must be dispensed for the first time within those six months, then as its directions say; one that does not say how many times may be dispensed twice (an oral contraceptive up to six times within the six months). | Human Medicines Regulations 2012 reg. 217(5) to (7) |
+| Controlled drugs | A prescription for a controlled drug in Schedule 2, 3 or 4 cannot be dispensed later than 28 days after the appropriate date. For instalments, the first one must be supplied within the 28 days. For a Schedule 2 drug the pharmacist may ask the person collecting it for identification. | Misuse of Drugs Regulations 2001 reg. 16(1)(d) and (e), (4), (5), (6) and (7) |
+| Repeat dispensing | A repeatable prescription is dispensed in batches; in England each batch issue carries the prescription charge unless the patient is exempt. | Human Medicines Regulations 2012 reg. 217(5)(b); National Health Service (Charges for Drugs and Appliances) Regulations 2015 reg. 3(2) |
+| Prescription charge (England) | £9.90 per item since 1 May 2024, unchanged on 14 Nov 2026. No charge for people under 16, under 19 in qualifying full-time education, aged 60 or over, or holding a valid exemption or prepayment certificate, among others. | National Health Service (Charges for Drugs and Appliances) Regulations 2015 reg. 3(1), reg. 10(1); NHSBSA "Help with health costs" (HC11, April 2026) |
+| Wales | Prescriptions written in Wales are free (since 1 Apr 2007). An English prescription dispensed in Wales is charged unless the patient shows a Welsh entitlement card. | National Health Service (Free Prescriptions and Charges for Drugs and Appliances) (Wales) Regulations 2007 reg. 1, reg. 3(1) and (2) |
+| Prescription prepayment certificate (PPC, England) | Covers all NHS prescriptions for 3 months (£32.05) or 12 months (£114.50, or ten monthly Direct Debits of £11.45), prices since 1 May 2024. It can start up to one month before or after the application date. NHSBSA may send a reminder; renewing is the holder's responsibility. | National Health Service (Charges for Drugs and Appliances) Regulations 2015 reg. 16(2), (3) and (6); NHSBSA HC11 |
+| Maternity exemption certificate (England) | See Birth of a child: valid until 12 months after the expected date of birth, or 12 months after the birth. | reg. 10(1)(d), reg. 15(2) and (2A) of the 2015 Regulations |
+| Medical exemption certificate (England) | Valid from one month before NHSBSA receives the application, for the period the Secretary of State sets. NHSBSA: 10 years for the listed conditions on applications received from 16 Jul 2026, 5 years for cancer treatment; certificates on earlier applications usually last 5 years. A reminder comes about a month before expiry. | reg. 10(1)(e) and (f), reg. 15(3) and (4) of the 2015 Regulations; NHSBSA "Medical exemption certificates" |
+| Dental charges (England) | One charge per course of treatment, by band. From 1 Apr 2026: Band 1 £27.90, Band 2 £76.60, Band 3 £332.10. Exemptions are listed in NHSBSA HC11. Wales has its own charges, changed on 1 Apr 2026. | National Health Service (Dental Charges) Regulations 2005 reg. 4 (sums from SI 2026/265); NHSBSA "What are the NHS dental charges?" |
+| Copies of health records | A GP surgery or hospital must answer a subject access request within one month beginning with the latest of: receiving the request, receiving identity information it asked for, and payment of any fee allowed. It may extend by two further months for complex or numerous requests, by notice with reasons within the first month. The clock stops while it waits for clarification it reasonably needs. The first copy is free; a fee is allowed only for further copies or for manifestly unfounded or excessive requests. The search must be reasonable and proportionate. | UK GDPR Art. 12(3), (5) and (6), Art. 12A, Art. 15(1A) and (3) (Art. 12A inserted by the Data (Use and Access) Act 2025 s. 76, in force 5 Feb 2026) |
+| Waiting for treatment (England) | Consultant-led treatment after a referral is meant to start within 18 weeks beginning with the day the provider receives the referral. When the patient tells the provider or the integrated care board that it will not, the board (or NHS England) must take all reasonable steps to offer an earlier appointment with another suitable provider. The 92% standard binds the system, not each case. Wales has its own targets. | National Health Service Commissioning Board and Clinical Commissioning Groups (Responsibilities and Standing Rules) Regulations 2012 reg. 44, reg. 45(3), reg. 46 to 48; NHS Constitution for England |
+| Sickness: the first 7 days | The employer cannot require medical evidence for the first 7 days of a spell of sickness; the employee self-certifies. Notice of sickness is given in the way and by the time the employer has set, otherwise within 7 days. | Statutory Sick Pay (Medical Evidence) Regulations 1985 reg. 2(2); Statutory Sick Pay (General) Regulations 1982 reg. 7(1) and (4) |
+| Fit note | After the first 7 days, medical evidence is a statement from a healthcare professional (the fit note). | Statutory Sick Pay (Medical Evidence) Regulations 1985 reg. 2(1)(a) |
+| Statutory Sick Pay from 6 Apr 2026 | SSP is paid from the first day of sickness: a single day can be a period of incapacity and the three waiting days are gone. The lower earnings limit no longer applies. The weekly rate is £123.25 or 80% of normal weekly earnings, whichever is lower, up to 28 times the weekly rate per period. | Social Security Contributions and Benefits Act 1992 s. 152(2), s. 155(1) (omitted), s. 155(4), s. 157(1), Sch. 11 para. 2(c) (omitted) (Employment Rights Act 2025 s. 10 and 11, in force 6 Apr 2026 under SI 2026/373; rate from SI 2026/148) |
+
+## Children and school
+
+| Topic | Rule | Law |
+|---|---|---|
+| Compulsory school age | Starts on the first prescribed day after the 5th birthday (31 December, 31 March or 31 August), or on the birthday itself when it falls on one of those days: in practice the term after the 5th birthday. Ends on the school leaving date, the last Friday in June, of the school year in which the child turns 16. | Education Act 1996 s. 8(2) to (4); Education (Start of Compulsory School Age) Order 1998 art. 2; Education (School Leaving Date) Order 1997 art. 2 |
+| Reception and deferred entry (England) | Schools offer a full-time place from the September after the 4th birthday. Parents may defer the start until later in that school year, but not beyond compulsory school age or the start of the final term, and may ask for part-time attendance until then. Parents of a summer-born child (born 1 April to 31 August) may wait until the September after the 5th birthday and ask for a reception place instead of year 1; the admission authority decides each case and gives reasons. | School Admissions Code 2021 paras. 2.17 to 2.20 and footnote 57 |
+| Applying for a place (England) | One application to the home council, in the school year before entry: by 31 October for secondary school, by 15 January for primary school. The council sends offers on national offer day: 1 March for secondary, 16 April for primary, or the next working day. The council's scheme says how late applications are handled. | School Admissions (Admission Arrangements and Co-ordination of Admission Arrangements) (England) Regulations 2012 reg. 30, Sch. 2 para. 2(2); School Admissions Code 2021 para. 2.12 |
+| Appeals (England) | The refusal letter gives the reason, the right of appeal and the deadline, which must allow at least 20 school days from the notification. Normal-round appeals are heard within 40 school days of that deadline, in-year appeals within 30 school days of lodging. Appellants get at least 10 school days' notice of the hearing and the decision letter within 5 school days where possible. Admission authorities publish their appeals timetable by 28 February. Not in the JSON: school days are not a counting unit, so plan to the date printed in the letter. | School Admission Appeals Code 2022 paras. 2.1 to 2.3, 2.5 and 2.7 |
+| Term-time absence fines (England) | Since 19 Aug 2024 a penalty notice to a parent costs £80 if paid within 21 days beginning with receipt, otherwise £160, payable within 28 days of receipt. A second notice for the same child within 3 years costs £160 with no reduction. No third notice can follow within 3 years; the council considers other action instead. If the penalty is not paid in time, the council prosecutes or withdraws the notice. A school must consider a notice when 10 sessions of unauthorised absence occur within 10 school weeks. | Education Act 1996 s. 444A; Education (Penalty Notices) (England) Regulations 2007 reg. 4, 5, 9, 9A and 12A (as amended by SI 2013/757, SI 2024/210 and SI 2024/717) |
+| Free school meals (England) | Pupils in reception, year 1 and year 2 get free lunches. From 17 Aug 2026, for the 2026 to 2027 school year, a pupil whose parent (or who) gets Universal Credit is eligible whatever the household earns; the law sets this for maintained schools and pupil referral units, and DfE guidance applies the same duty to academies and free schools. Free meals need a request to the school or council. | Education Act 1996 s. 512ZB(2), (4A) and (4D) (inserted by the Children's Wellbeing and Schools Act 2026 s. 32, commenced by SI 2026/803); DfE "Free school meals" guidance (updated 7 Oct 2026) |
+| Child Benefit at 16 | Child Benefit runs until the 31 August after the 16th birthday, then up to age 20 while the young person is in full-time non-advanced education (such as A levels or T levels) or approved training begun before 19. The claimant tells HMRC online that the young person is staying on; otherwise payments stop on that 31 August. | Child Benefit (General) Regulations 2006 reg. 3 and 4; gov.uk "Child Benefit for children 16 to 19" |
+| Tax-Free Childcare (UK) | For every £8 paid into the childcare account the government adds £2, up to £500 every 3 months per child (£1,000 for a disabled child), for a child aged 11 or under (16 or under if disabled). Each entitlement period lasts 3 months; the parent reconfirms eligibility in the account every 3 months or the top-ups stop. The date depends on the account, so it is not a fixed calendar date. | Childcare Payments Act 2014 s. 5(1), s. 19(5); gov.uk "Tax-Free Childcare" |
+| Free Childcare for Working Parents (England) | Up to 30 hours a week for 38 weeks a year, for a child aged 9 months to 4 years. A parent's declaration (the code) lasts 3 months and is reconfirmed every 3 months. Hours start on 1 January, 1 April or 1 September after the code takes effect, so the deadlines are 31 December, 31 March and 31 August; applications open when the child is 23 weeks old. Not available when a parent or partner expects adjusted net income over £100,000. | Childcare (Free of Charge for Working Parents) (England) Regulations 2022 reg. 25(1), reg. 27(1); gov.uk "30 hours free childcare" and "Free Childcare for Working Parents: when to apply" |
+| Wales | School admissions, free school meals and funded childcare follow Welsh rules; the England rows above do not apply there. | None |
+
+## Keeping and shredding documents
+
+How long to keep papers. Where no law sets a period, the pack suggests one and says why ("suggested"). Nothing is shredded by the plugin; `annual-review` lists papers past their date and the household decides.
+
+| Papers | Keep | From | Basis |
+|---|---|---|---|
+| Records behind a Self Assessment return without self-employment or letting (payslips, P60, P45, P11D, interest and dividend statements, Gift Aid and pension contribution records) | 1 years | 31 January after the end of the tax year (the online filing date) | TMA 1970 s.12B(1) and (2)(b). About 22 months after the tax year ends. Longer while HMRC is enquiring into the return; for a return sent late, gov.uk says at least 15 months after sending it. Failing to keep records can cost a penalty of up to £3,000 (s.12B(5)). |
+| Records behind a Self Assessment return with self-employment, a partnership or letting income | 5 years | 31 January after the end of the tax year (the online filing date) | TMA 1970 s.12B(1), (2)(a) and (6)(a). Letting property counts as carrying on a trade for this rule. Longer while HMRC is enquiring into the return. gov.uk example: records for a 2022-23 return filed by 31 January 2024 are kept until at least the end of January 2029. |
+| P60, P45, P11D statements and payslips of an employee or pensioner outside Self Assessment | 4 years | the end of the tax year they relate to (5 April) | TMA 1970 s.43(1); suggested. No period is set for an employee outside Self Assessment. A claim for relief or overpaid tax can be made up to 4 years after the end of the tax year, and these documents support it. Anyone who files a return keeps them under TMA 1970 s.12B instead. |
+| Bank and building society statements | see note | the period of the item they prove | suggested. No period is set for a household. Keep a statement while it is the proof for another item in this list: 1 or 5 years after 31 January when it supports a tax return (TMA 1970 s.12B; gov.uk lists bank statements among records to keep); 6 years when it proves payment of a contract debt (Limitation Act 1980 s.5). |
+| Council tax bills (demand notices) and proof of payment | 6 years | the date each instalment fell due | Council Tax (Administration and Enforcement) Regulations 1992 reg 34(3); suggested. A council cannot apply for a liability order for a sum more than 6 years after it became due; the bills and proof of payment answer any claim of arrears within that time. |
+| Paid household bills and receipts under contracts (energy, phone, rent, purchases) | 6 years | the payment | Limitation Act 1980 s.5; suggested. Suggestion. A claim on a simple contract cannot be brought more than 6 years after the cause of action accrued; proof of payment answers a later claim for the same bill. |
+| Receipts, invoices, order confirmations and guarantees for goods and services | 6 years | delivery of the goods or performance of the service | Limitation Act 1980 s. 5; Consumer Rights Act 2015 s. 19, 54; suggested. No law makes a household keep receipts. A claim for faulty goods or a poor service is a contract claim, which must reach court within 6 years of the breach, usually delivery or performance. Keep a guarantee for its full term if longer, and everything until any complaint is settled. A card statement shows a purchase paid by credit card for a section 75 claim. |
+| Contracts and terms, notices given or received with proof of sending, and complaint letters (final responses, deadlock letters) | 6 years | the end of the contract or the settlement of the dispute, whichever is later | Limitation Act 1980 s. 5 and 8; FCA Handbook DISP 2.8.2R; suggested. Contract claims: 6 years from the breach (s. 5); a contract made by deed, such as a mortgage deed: 12 years (s. 8). The Financial Ombudsman Service needs the referral within 6 months of the final response and looks at complaints made to the firm within 6 years of the event or 3 years of becoming aware, so keep the dated final response letter. |
+| Insurance policies, schedules, renewal notices and claim correspondence | 6 years | the end of the cover or the closing of a claim, whichever is later | Limitation Act 1980 s. 5; suggested. A claim against the insurer under the policy is a contract claim (6 years). The renewal notice shows last year's premium (FCA Handbook ICOBS 6.5.1R), which helps check the next renewal price. |
+| Policies with liability cover: motor insurance, and home insurance with personal liability cover | permanently | receipt | Limitation Act 1980 s. 11(4), 28(1) and (6), 38(2); suggested. Suggestion. A personal injury claim can be brought within 3 years of the injury or of the injured person's date of knowledge, whichever is later (s. 11(4)); for an injured child, time runs only from age 18 (s. 28 with s. 38(2)). Such a claim can arrive long after the policy ended, and the old policy shows who covered it. |
+| Tenancy agreement or written statement of terms, deposit protection certificate and prescribed information, inventory, rent receipts, notices, and gas and electrical safety records received | 6 years | the end of the tenancy or the return of the deposit, whichever is later | Limitation Act 1980 s. 5 and 9; Housing Act 2004 s. 213, 214; suggested. A tenant's court claim for a deposit not protected in time, or given without the prescribed information, can be made after the tenancy ends (s. 214) and is a claim for a sum recoverable by statute (6 years, s. 9). Contract claims about the tenancy also run 6 years (s. 5). |
+| Gas safety records, for a household that lets a home | 2 years | the date of the check | Gas Safety (Installation and Use) Regulations 1998 reg. 36(3)(c). Keep each record until two further checks of the appliance or flue have been made; for an appliance or flue removed from the home, 2 years from its last check. Checks are at most 12 months apart, so this is about 2 years. |
+| Electrical installation condition reports, for a household that lets a home | 5 years | the date of the inspection and test | Electrical Safety Standards in the Private Rented Sector and Social Rented Sector (England) Regulations 2020 reg. 3(3)(ca). Keep the report until the later of the date the next inspection is due (at most 5 years, sooner if the report says so) and the date it is done; a copy goes to the person doing the next inspection (reg. 3(3)(d)). |
+| Birth, adoption, marriage, civil partnership and death certificates | permanently | receipt | suggested. No law sets a period for a household. They serve as evidence in later applications, for example for a passport or Child Benefit. Copies can be ordered again from the General Register Office or the local register office, for a fee (gov.uk 'Order a copy of a birth, death or marriage certificate'). |
+| Vehicle log book (V5C) | see note | while the household is the registered keeper | Road Vehicles (Registration and Licensing) Regulations 2002 reg. 18 and 22; suggested. No period is set, but the V5C is used to report a new address and a sale. On a sale the green new keeper slip goes to the buyer, and after telling DVLA online the rest is destroyed (gov.uk). A replacement costs £25 (reg. 18(1A) and 22(3)). |
+| MOT test certificates | 1 years | the test date | Motor Vehicles (Tests) Regulations 1981 reg. 15(2); suggested. Suggestion: keep the current certificate until the next test. Results are entered in the MOT database, and copies of current and previous certificates for tests in Great Britain can be downloaded (gov.uk 'Check MOT history'). |
+| Old (cancelled) passports after renewal | see note | cancellation | suggested. HM Passport Office cancels the old passport when it issues the new one; a cancelled British passport has the top right-hand corner of the cover cut off. A holder who does not want it back may ask for it to be destroyed (HMPO guidance 'Cancelling British passports', v23.0, 24 Aug 2026). No period is set; keep it only while it may still serve as evidence, for example of past travel. |
+| Health papers kept at home: vaccination records, hospital letters, NHS exemption and prepayment certificates | see note | receipt | suggested. No law sets a period for a household. The GP and hospitals hold the full record, and a copy can be requested free of charge through a subject access request (UK GDPR Art. 12(5) and Art. 15). Keep exemption and prepayment certificates at least until they expire, because a wrongful claim for free prescriptions can lead to a penalty charge (NHSBSA HC11). |
+| School reports, and school offer, refusal and appeal letters | see note | receipt | suggested. No law sets a period for parents. Suggestion: keep until the child leaves school. A refusal letter states the appeal deadline (School Admission Appeals Code 2022 para. 2.5). |
+| Inheritance Tax account, estate valuations and proof of tax paid (for personal representatives) | 4 years | the later of the date the tax (or the last instalment) was paid and accepted and the date it was due | Inheritance Tax Act 1984 s. 240(2), (4), (5), (6) and (7). After 4 years HMRC cannot recover more tax paid on a delivered account; 6 years if the loss was careless, 20 years if deliberate. Where tax was not paid on a delivered account, for example an estate treated as excepted that was not, the limit is 20 years from the death, unless the loss was deliberate (s. 240(6) and (7)). |
+
+## Insurance a household must or may have
+
+| Topic | Rule | Law |
+|---|---|---|
+| Motor insurance | Anyone using a motor vehicle on a road or other public place needs insurance covering third-party risks; using it without, or letting someone else do so, is an offence. Third party cover is the legal minimum. gov.uk gives the penalty as a fixed penalty of £300 and 6 penalty points, or in court an unlimited fine and disqualification. | Road Traffic Act 1988 s. 143(1) and (2); gov.uk, Driving without insurance |
+| Keep it insured or declare it off the road | The registered keeper of a registered vehicle commits an offence if the vehicle is not insured, whether or not it is driven. The main exception is a vehicle kept off the road with a statutory off road notification (SORN). This is continuous insurance enforcement; gov.uk lists a £100 fine, up to £1,000 in court, and clamping, impounding or destruction of the vehicle. | Road Traffic Act 1988 s. 144A, 144B(5); gov.uk, Uninsured vehicles |
+| Buildings insurance | Not required by any Act for a household. A mortgage lender or a lease may require it as a term of the contract; read the mortgage offer or the lease. | contract terms |
+| Contents, landlord, pet, life and travel insurance | Optional. The GHIC and travel cover are in the travel section of this pack. | none |
+| Telling the insurer the truth | When buying, renewing or changing a policy, the household must take reasonable care not to make a misrepresentation. A deliberate or reckless one lets the insurer avoid the policy, refuse all claims and keep the premiums. After a careless one, the insurer's remedy depends on what it would have done: avoid the policy and return the premiums, apply the terms it would have used, or cut a claim in proportion to the premium it would have charged. The duty of fair presentation in the Insurance Act 2015 applies only to non-consumer (business) insurance. | Consumer Insurance (Disclosure and Representations) Act 2012 s. 2(2), 4, Sch. 1 para. 2, 5 to 7; Insurance Act 2015 s. 2(1) |
+| Fraudulent claims | The insurer need not pay a fraudulent claim, may recover what it paid on it, and may treat the policy as ended from the time of the fraud. | Insurance Act 2015 s. 12(1) |
+| Renewal notice | For a policy of 10 months or more, the insurer or broker gives, in good time before renewal: the renewal premium, last year's premium shown alongside it, a prompt to check the cover and compare, and whether the policy renews automatically. From the fourth renewal the notice adds a fixed message about shopping around. The rule sets no number of days. | FCA Handbook ICOBS 6.5.1R (inserted as ICOBS 6.1.12AR, FCA 2016/50) |
+| Home and motor renewal price | Since 1 January 2022 the renewal price may not exceed the price the firm would quote a new customer for the same cover (equivalent new business price). | ICOBS 6B.2.1R |
+| Stopping automatic renewal | The firm must offer easy ways to stop automatic renewal, including every way in which a policy can be bought from it, at any time and free of charge. This does not apply to private medical or pet insurance. | ICOBS 6A.6.1R, 6A.6.3R, 6A.6.4R, 6A.6.6R |
+| Cooling-off period | The household may cancel without penalty and without a reason: 14 days for general insurance, 30 days for life and other pure protection policies and payment protection. The days run from the day the policy is concluded, or from receipt of the terms if later; for pure protection, from being told the policy is concluded. Exceptions include travel or baggage cover for less than one month. | ICOBS 7.1 (7.1.1R for the periods) |
+| Complaints about an insurer | The financial-firm complaint rules and the Financial Ombudsman Service apply (see Consumer complaints, returns and claims). | DISP 1.6, 2.8 |
+
+## Home upkeep, further rules
+
+| Topic | Rule | Law |
+|---|---|---|
+| Gas appliances in a home the household owns | No law requires an owner-occupier to have a yearly service. HSE "strongly advises" that gas appliances, flues and pipework are serviced at least once a year by a Gas Safe registered engineer, and recommends carbon monoxide alarms. HSE notes that it is illegal for anyone to use a gas appliance they suspect is unsafe. | HSE, Gas safety: home owners (guidance) |
+| Smoke and carbon monoxide alarms in a rented home | The landlord, private or social (social landlords since 1 October 2022), ensures a smoke alarm on each storey with living accommodation, and a carbon monoxide alarm in any room used as living accommodation that has a fixed combustion appliance other than a gas cooker. The landlord checks they work on the day a new tenancy starts, and repairs or replaces a faulty alarm after the tenant reports it, as soon as reasonably practicable. | Smoke and Carbon Monoxide Alarm (England) Regulations 2015 reg. 4, as amended by SI 2022/707 and SI 2026/325 |
+| Gas safety in a rented home | The landlord has each gas appliance and flue checked at least every 12 months, gives existing tenants a copy of the record within 28 days of the check, and gives a new tenant the latest record before moving in. | Gas Safety (Installation and Use) Regulations 1998 reg. 36(3) and (6) |
+| Electrical safety in a rented home | The landlord has the electrical installation inspected and tested at least every 5 years, or sooner if the report says so. A copy of the report goes to existing tenants within 28 days, to a new tenant before moving in, and to a prospective tenant within 28 days of a written request. Remedial work is done within 28 days, or sooner if the report says so. Social rented homes are covered since 1 November 2025 for some tenancies and fully since 1 May 2026. | Electrical Safety Standards in the Private Rented Sector and Social Rented Sector (England) Regulations 2020 reg. 3(1) to (4); SI 2025/1043 |
+| Energy Performance Certificate (EPC) | A landlord or seller gives a valid EPC free of charge to a prospective tenant or buyer, and to the person who takes the tenancy or buys. An EPC is valid for 10 years from its entry on the register, unless a newer one exists. A private landlord may not let, or go on letting, a home rated F or G, unless an exemption applies. The government announced band C from 1 October 2030; no regulations had been made by 14 November 2026. | Energy Performance of Buildings (England and Wales) Regulations 2012 reg. 6(2) and (5), 9(2)(a); Energy Efficiency (Private Rented Property) (England and Wales) Regulations 2015 reg. 22, 23 |
+| Tenancy deposit | The landlord protects the deposit in an authorised scheme within 30 days beginning with the day it was received, and in the same 30 days gives the tenant the prescribed information about the scheme. If not, the tenant can apply to the county court, also after the tenancy ends. The court orders the deposit repaid or protected, and the landlord to pay 1 to 3 times the deposit. | Housing Act 2004 s. 213(1), (3), (5), (6), 214 |
+| Written terms, and the How to Rent guide | For tenancies from 1 May 2026 the landlord gives the key terms in writing. Landlords of earlier tenancies had to give the government's Renters' Rights Act Information Sheet by 31 May 2026. The government says the How to Rent guide is, in most cases, no longer needed. | Renters' Rights Act 2025 s. 12, Sch. 6 para. 7; gov.uk housing campaign, Landlords, renting is changing |
+| Awaab's Law (social housing in England) | In force since 27 October 2025 for council and housing association tenants. Emergency hazards: action within 24 hours. Significant damp and mould hazards: investigation within 10 working days from the day after the landlord becomes aware, and a written summary within 3 working days after the investigation. gov.uk adds that the home is made safe within 5 working days after the investigation and further work starts within 12 weeks at the latest. If the home cannot be made safe in time, the landlord offers suitable alternative accommodation. More hazards are planned from 30 November 2026. | Hazards in Social Housing (Prescribed Requirements) (England) Regulations 2025 (SI 2025/1042) reg. 5, 6(4), 9; gov.uk, Awaab's Law: guidance for tenants in social housing |
+| Building works next to a neighbour (party walls) | A pointer. The building owner gives the neighbour notice at least 1 month before building a new wall on or at the boundary, at least 2 months before work on a party wall or structure, and at least 1 month before excavating close to the neighbour's building. A neighbour who does not consent within 14 days of a party structure or excavation notice is treated as dissenting, and the dispute goes to surveyors. Notices go in person, by post, or by email if the neighbour agreed. | Party Wall etc. Act 1996 s. 1(2) and (5), 3(2)(a), 5, 6(5) and (7), 10, 15 |
+
+## Travel documents
+
+| Topic | Rule | Law |
+|---|---|---|
+| Renewing a passport | HM Passport Office usually issues a passport within 3 weeks, counted from when it receives the documents; it takes longer if it needs more information or an interview. Faster paid services exist. A new passport has a new number. The old passport is cancelled when the new one is issued; a holder who does not want it back may ask for it to be destroyed. | HM Passport Office "About our services" and "Cancelling British passports" (v23.0, 24 Aug 2026); gov.uk "Renew or replace your adult passport" (guidance) |
+| Schengen countries | The passport must have been issued less than 10 years before the day of arrival and expire at least 3 months after the planned day of leaving the Schengen area. Visa-free stays are up to 90 days in any 180. Each country's rules are on its gov.uk foreign travel advice page. | gov.uk "France: entry requirements" (example of the foreign travel advice) |
+| EU Entry/Exit System (EES) | Started on 12 Oct 2025. Travellers may be asked to register fingerprints and a photo at the border on their first entry; the record is valid for 3 years. Nothing is needed before travelling. It does not apply to Ireland or Cyprus, which are outside the Schengen area. | gov.uk "EU Entry/Exit System" (updated 10 Apr 2026) |
+| ETIAS | gov.uk (10 Apr 2026) expected the EU travel authorisation, with a €20 fee, to start from autumn 2026, with the date to be announced by the EU. Check the foreign travel advice before booking. | gov.uk "EU Entry/Exit System" |
+| Children | Taking a child under 16 out of the UK needs the consent of everyone with parental responsibility, or a court's permission; otherwise it can be child abduction. A person named in a child arrangements order as the one the child lives with may take the child abroad for less than one month without consent (gov.uk says 28 days), unless a court order forbids it. No law requires a consent letter; gov.uk says a letter from the other parent with their contact details and the trip details is usually enough, together with a birth or adoption certificate, and a marriage or divorce certificate when surnames differ. | Child Abduction Act 1984 s. 1(1), (3), (4)(a) and (4A); gov.uk "Taking your child abroad" |
+| GHIC | See Documents with an expiry date. | nhs.uk "GHIC" |
+| Driving abroad | A UK photocard licence needs no international driving permit (IDP) in the EU, Switzerland, Norway, Iceland or Liechtenstein; a paper licence, or one issued in Gibraltar, Guernsey, Jersey or the Isle of Man, may need one. IDPs are sold at some PayPoint shops. Take the V5C and the insurance certificate, or form VE103 for a hired or leased vehicle. | gov.uk "Driving abroad" and "International driving permit" (guidance) |
+| UK sticker | A number plate with the UK identifier and the Union flag needs no sticker, except in Spain, Cyprus and Malta, where a UK sticker is always required. A plate with no identifier, a GB identifier, an EU flag or a national flag of England, Scotland or Wales needs a UK sticker. GB stickers have been replaced: cover or remove them. No sticker is needed in Ireland. | gov.uk "Displaying number plates: flags, identifiers and stickers" |
+
+## Where things are done
+
+Name the channel; never open a link taken from a message.
+
+| Matter | Official channel |
+|---|---|
+| Income tax, tax code, Self Assessment, Simple Assessment, Child Benefit, Marriage Allowance, National Insurance record | HMRC personal tax account (gov.uk/personal-tax-account) and the HMRC app |
+| Signing in to government services | GOV.UK One Login, which works for some services and will replace Government Gateway over time (gov.uk/using-your-gov-uk-one-login) |
+| Money claims in the County Court | Money Claim Online and gov.uk "Make a court claim for money"; paper forms for those claims go to the Civil National Business Centre, St Katharine's House, Northampton (PD 7C para 5.2D). Older letters may name the County Court Business Centre. |
+| Council tax band | Valuation Office Agency (gov.uk/challenge-council-tax-band) |
+| Council tax appeals | Valuation Tribunal for England (valuationtribunal.gov.uk); in Wales, the Valuation Tribunal for Wales |
+| Council tax bills, discounts, reduction; council parking and traffic penalty notices | The local council (gov.uk/find-local-council) |
+| Appeals against council penalty charge notices | London Tribunals in London; the Traffic Penalty Tribunal for the rest of England and for Wales (gov.uk/appeal-against-a-penalty-charge-notice) |
+| Benefit appeals | First-tier Tribunal, Social Entitlement Chamber (gov.uk/appeal-benefit-decision) |
+| Driving licence, vehicle tax | DVLA (pointer; part C) |
+| Unresolved complaints about banks, insurers and payment firms | Financial Ombudsman Service (financial-ombudsman.org.uk; pointer) |
+
+## Writing for a household in England and Wales
+
+- Letters follow the usual UK layout: the sender's address at the top (often
+  on the right) with the date under it, the recipient's name and address on
+  the left, then a reference line and a heading that says what the letter is
+  about.
+- Dates are written day, month, year: `14 November 2026`, or `14/11/2026` in
+  forms. Never month first. Registers keep the ISO form. Amounts are written
+  `£1,240.00`.
+- Quote the reference printed on the letter being answered: the PCN number,
+  the council tax account number, the HMRC or DWP reference. Identifiers are
+  fields the household fills in and are never copied into logs or examples
+  (the personal-data rule): the National Insurance number (2 letters, 6
+  digits, a final letter), the 10-digit Unique Taxpayer Reference (UTR) and
+  the payment reference built from it, passport and driving licence numbers,
+  sort codes and account numbers. Sources: gov.uk Find your UTR number; gov.uk
+  Your National Insurance number.
+- "Dear Sir or Madam" closes with "Yours faithfully"; a letter to a named
+  person ("Dear Ms Smith") closes with "Yours sincerely".
+- "Without prejudice" is a legal label for settlement talks; it is not used in
+  drafts, and its use gets the one-line pointer to a professional.
+- An HMRC appeal must be in writing to the officer named on the notice (TMA
+  1970 s.31A(1)); use the address or online form on the letter. Representations
+  against a council penalty charge notice are made in the form the council
+  sets (2022 Appeals Regulations reg 5(2)(a)).
+- Email a public body only where it publishes an address or form for that
+  purpose. A court accepts email only for the documents listed in HMCTS email
+  guidance, within the limits of Practice Direction 5B (County Court: one email
+  per step, at most 10 MB and 25 printed sheets).
+- Post: First Class has a D+1 routing time and Second Class D+3. A Certificate
+  of Posting is free on request when the letter is handed in at a post office;
+  it proves the posting on which the Interpretation Act 1978 s.7 bases deemed
+  service. The universal service must also offer proof of delivery for First
+  and Second Class items (sold by Royal Mail as Signed For) and a registered
+  next-day service with tracking and a 1pm delivery target (sold as Special
+  Delivery Guaranteed). Law: Postal Services (Universal Postal Service) Order
+  2012 Sch 1 paras 2 to 4.
+- Many gov.uk services are also available in Welsh (Cymraeg).
+
+## Scam patterns
+
+Name the pattern when a message matches one (the untrusted-content rule).
+Check through the organisation's own website or app, never through a link or
+number in the message.
+
+- **Tax refund or tax debt "from HMRC".** A text, email or call about a refund,
+  a rebate or an unpaid tax bill, with a link or a threat. HMRC says it will
+  never leave a voicemail threatening legal action, threaten arrest, ask for
+  payment in gift or payment vouchers, or offer a tax rebate on social media.
+  It advises not to open links in a text claiming to be from HMRC that offers a
+  tax refund. Forward HMRC-themed texts to 60599 (network charges apply) and
+  emails to phishing@hmrc.gov.uk. Source: gov.uk, Identify tax scams (updated
+  6 October 2026).
+- **Vehicle tax or driving licence "from DVLA".** A message about a vehicle tax
+  refund, a failed payment or a licence problem. DVLA says it will never ask
+  for bank account details or ask to confirm payment details. Vehicle tax
+  refunds are issued automatically, never through an email with a link, and
+  DVLA emails or texts to confirm personal details only when there is a live
+  enquiry. Source: gov.uk, DVLA's top tips for avoiding scams (updated
+  12 December 2025).
+- **Parking charge text.** A text demanding payment of a "penalty charge" with
+  threats of a driving ban or court. DVSA says it does not issue or deal with
+  parking fines. Source: gov.uk, DVSA warning about parking fine scam texts
+  (2024).
+- **Parcel redelivery fee.** A text or email from "Royal Mail" or a courier
+  asking for a small fee through a link. Royal Mail says it texts or emails
+  only when the sender requested tracking, it does not ask for payment for an
+  underpaid item by text or email (it leaves a grey card), and the only
+  payment it requests this way is a customs fee through its Fee to Pay site.
+  Source: Royal Mail, Help with online security.
+- **TV Licensing refund.** An email or text about a refund or a failed payment.
+  TV Licensing says it would never process a refund through a "click here"
+  email asking for card or bank details, and never texts that the household is
+  owed a refund or asks for bank details by text. Source: TV Licensing, Helping
+  you avoid TV Licensing scams.
+- **Energy rebate or bill support.** A text or email with a link to "claim" a
+  rebate or a discount. Check with the supplier through its own website or
+  app.
+- **"Bank security team" and the safe account.** A caller says the account is
+  at risk and asks the household to move money to a "safe account", to read
+  out a code, or to install remote-access software. Report Fraud says a bank
+  or the police will never ask anyone to transfer money to a safe account.
+  Hang up and call the bank on the number on the card.
+- **Changed bank details from a builder or a solicitor.** An email, often near
+  completion of a house purchase or the end of a building job, saying the
+  firm's bank details have changed. The National Crime Agency notes that law
+  firms rarely change bank details, and advises getting the details in person
+  or by phone at the start, calling a published number before paying, and
+  testing the account with a small sum. Source: National Crime Agency, Payment
+  diversion fraud.
+
+### Checks and reporting
+
+| Topic | Rule | Law or source |
+|---|---|---|
+| Confirmation of Payee | When the household sets up a new payee, or changes an existing payee's details, the bank checks the name against the account before a Faster Payment or CHAPS payment between UK accounts and shows whether it matches. The banks and payment firms named in the direction have had to do this since 31 October 2023 (group 1) or 31 October 2024 (group 2); the direction no longer has an end date. | Payment Systems Regulator Specific Direction 17 (consolidated October 2026) para. 1.8A, 3.1 to 3.8, 4.1 |
+| Money lost to a scam transfer | For Faster Payments and CHAPS from 7 October 2024, the household's bank reimburses an authorised push payment (APP) scam up to £85,000. It may apply an excess of up to £100, but not for a vulnerable customer. It pays within 5 business days of the claim, or reaches an outcome within 35 business days if it stopped the clock. The claim is made within 13 months of the last scam payment. There is no reimbursement for someone complicit or grossly negligent; gross negligence does not apply to vulnerable customers. A dispute goes to the Financial Ombudsman Service. | Payment Systems Regulator APP scams reimbursement requirement (PS23/4; consolidated PS25/5); PSR, APP fraud reimbursement protections |
+| Suspicious email or text | Forward emails to report@phishing.gov.uk (National Cyber Security Centre). Forward texts to 7726, free of charge, which reports them to the mobile provider. | gov.uk, Report suspicious emails, websites and phishing |
+| Money lost or account hacked | Tell the bank at once, then report to Report Fraud at reportfraud.police.uk or on 0300 123 2040. Report Fraud replaced Action Fraud on 4 December 2025; the phone number did not change. | gov.uk, Report Fraud: new service from City of London Police (4 December 2025) |
+
+## Sources
+
+Read on 2026-11-14.
+
+- Alternative Dispute Resolution for Consumer Disputes Regulations 2015 (revoked 6 April 2026): https://www.legislation.gov.uk/uksi/2015/542/schedule/3
+- Banking and Financial Dealings Act 1971 s.1: https://www.legislation.gov.uk/ukpga/1971/80/section/1
+- Banking and Financial Dealings Act 1971 Sch 1: https://www.legislation.gov.uk/ukpga/1971/80/schedule/1
+- Bereavement Support Payment Regulations 2017 reg. 3: https://www.legislation.gov.uk/uksi/2017/410/regulation/3
+- Births and Deaths Registration Act 1953 (ss. 2, 4, 15 to 18, 36): https://www.legislation.gov.uk/ukpga/Eliz2/1-2/20
+- Child Abduction Act 1984 s. 1: https://www.legislation.gov.uk/ukpga/1984/37/section/1
+- Child Benefit (General) Regulations 2006 (regs. 3, 4): https://www.legislation.gov.uk/uksi/2006/223
+- Child Benefit (Rates) Regulations 2006 reg. 2: https://www.legislation.gov.uk/uksi/2006/965/regulation/2
+- Childcare (Free of Charge for Working Parents) (England) Regulations 2022 (regs. 12, 25, 27): https://www.legislation.gov.uk/uksi/2022/1134
+- Childcare Payments Act 2014 (ss. 5, 19): https://www.legislation.gov.uk/ukpga/2014/28
+- Civil Enforcement of Road Traffic Contraventions (Approved Devices, Charging Guidelines and General Provisions) (England) Regulations 2022, S.I. 2022/71, contents: https://www.legislation.gov.uk/uksi/2022/71/contents
+- Civil Enforcement of Road Traffic Contraventions (Representations and Appeals) (England) Regulations 2022, S.I. 2022/576, reg 5: https://www.legislation.gov.uk/uksi/2022/576/regulation/5
+- Civil Procedure (Amendment No. 2) Rules 2025, S.I. 2025/893: https://www.legislation.gov.uk/uksi/2025/893/made
+- Civil Procedure (Amendment No. 2) Rules 2026, S.I. 2026/817: https://www.legislation.gov.uk/uksi/2026/817/made
+- Civil Procedure (Amendment No. 3) Rules 2025, S.I. 2025/1229: https://www.legislation.gov.uk/uksi/2025/1229/made
+- Civil Procedure (Amendment) Rules 2026, S.I. 2026/97: https://www.legislation.gov.uk/uksi/2026/97/made
+- Civil Procedure Rules Part 10: https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part10
+- Civil Procedure Rules Part 14: https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part14
+- Civil Procedure Rules Part 15: https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part15
+- Civil Procedure Rules Part 2: https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part02
+- Civil Procedure Rules Part 6: https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part06
+- Civil Procedure Rules Part 7: https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part07
+- Civil Procedure Rules Part 9: https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part09
+- Civil Procedure Rules, Part 26 (r. 26.9(4)): https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part26
+- Communications (Television Licensing) (Amendment) Regulations 2026, S.I. 2026/104: https://www.legislation.gov.uk/uksi/2026/104/made
+- Communications (Television Licensing) Regulations 2004 (reg. 3, Sch. 1): https://www.legislation.gov.uk/uksi/2004/692
+- Communications Act 2003 s.363: https://www.legislation.gov.uk/ukpga/2003/21/section/363
+- Communications Act 2003 s.364: https://www.legislation.gov.uk/ukpga/2003/21/section/364
+- Consumer Contracts (Information, Cancellation and Additional Charges) Regulations 2013 reg 32: https://www.legislation.gov.uk/uksi/2013/3134/regulation/32
+- Consumer Contracts (Information, Cancellation and Additional Charges) Regulations 2013, reg. 28 to 37 (latest revised, up to date to 12 Nov 2026): https://www.legislation.gov.uk/uksi/2013/3134
+- Consumer Credit Act 1974, s. 75: https://www.legislation.gov.uk/ukpga/1974/39/section/75
+- Consumer Insurance (Disclosure and Representations) Act 2012, s. 2, 4, Sch. 1: https://www.legislation.gov.uk/ukpga/2012/6
+- Consumer Rights Act 2015, s. 9 to 24, 42, 49, 54 to 56, 62: https://www.legislation.gov.uk/ukpga/2015/15
+- Council Tax (Administration and Enforcement) Regulations 1992 reg 16: https://www.legislation.gov.uk/uksi/1992/613/regulation/16
+- Council Tax (Administration and Enforcement) Regulations 1992 reg 19: https://www.legislation.gov.uk/uksi/1992/613/regulation/19
+- Council Tax (Administration and Enforcement) Regulations 1992 reg 21: https://www.legislation.gov.uk/uksi/1992/613/regulation/21
+- Council Tax (Administration and Enforcement) Regulations 1992 reg 34: https://www.legislation.gov.uk/uksi/1992/613/regulation/34
+- Council Tax (Administration and Enforcement) Regulations 1992 Sch 1: https://www.legislation.gov.uk/uksi/1992/613/schedule/1
+- Council Tax (Alteration of Lists and Appeals) (England) Regulations 2009 reg 10: https://www.legislation.gov.uk/uksi/2009/2270/regulation/10
+- Council Tax (Alteration of Lists and Appeals) (England) Regulations 2009 reg 4: https://www.legislation.gov.uk/uksi/2009/2270/regulation/4
+- Council Tax (Alteration of Lists and Appeals) (England) Regulations 2009 reg 9: https://www.legislation.gov.uk/uksi/2009/2270/regulation/9
+- Council Tax Reduction Schemes (Prescribed Requirements) (England) Regulations 2012 Sch 8: https://www.legislation.gov.uk/uksi/2012/2885/schedule/8
+- CPR 186th practice direction update (Practice Direction 5C, CE-File, from 1 October 2025): https://www.justice.gov.uk/documents/cpr-186th-pd-making-document.pdf
+- CPR Practice Direction 5B, communication and filing of documents by email: https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part05/pd_part05b
+- CPR Practice Direction 7C, Money Claim Online: https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part07/pd_part07c
+- Criminal Procedure Rules 2025 r.4.11: https://www.legislation.gov.uk/uksi/2025/909/rule/4.11
+- Data (Use and Access) Act 2025 s. 76 and Sch. 3: https://www.legislation.gov.uk/ukpga/2025/18
+- DfE: Free school meals guidance (updated 7 Oct 2026): https://www.gov.uk/government/publications/free-school-meals-guidance-for-schools-and-local-authorities/free-school-meals-guidance-for-local-authorities-local-authority-maintained-schools-academies-and-free-schools
+- Digital Markets, Competition and Consumers Act 2024 (Commencement No. 3 and Transitional Provisions) Regulations 2026, SI 2026/284: https://www.legislation.gov.uk/uksi/2026/284/made
+- Digital Markets, Competition and Consumers Act 2024, Part 4 Chapter 2 (prospective) and Schedule 26: https://www.legislation.gov.uk/ukpga/2024/13/part/4/chapter/2
+- Disabled Persons (Badges for Motor Vehicles) (England) Regulations 2000 reg. 4 and 6: https://www.legislation.gov.uk/uksi/2000/682/regulation/6
+- Disabled Persons (Badges for Motor Vehicles) (Wales) Regulations 2000 reg. 6: https://www.legislation.gov.uk/wsi/2000/1786/regulation/6
+- Draft Consumer Subscription Contracts (Cancellation and Information) Regulations 2026: https://www.legislation.gov.uk/ukdsi/2026/9780348287912
+- Draft Hazards in Social Housing (Prescribed Requirements) (England) (Amendment) Regulations 2026 (read through search extracts): https://www.legislation.gov.uk/ukdsi/2026/9780348285611
+- Education (Penalty Notices) (England) (Amendment) (No. 2) Regulations 2024 (SI 2024/717): https://www.legislation.gov.uk/uksi/2024/717/made
+- Education (Penalty Notices) (England) (Amendment) Regulations 2013 (SI 2013/757): https://www.legislation.gov.uk/uksi/2013/757/made
+- Education (Penalty Notices) (England) (Amendment) Regulations 2024 (SI 2024/210): https://www.legislation.gov.uk/uksi/2024/210/made
+- Education (Penalty Notices) (England) Regulations 2007: https://www.legislation.gov.uk/uksi/2007/1867
+- Education (School Leaving Date) Order 1997: https://www.legislation.gov.uk/uksi/1997/1970
+- Education (Start of Compulsory School Age) Order 1998: https://www.legislation.gov.uk/uksi/1998/1607
+- Education Act 1996 (ss. 8, 444A, 512ZB): https://www.legislation.gov.uk/ukpga/1996/56
+- Electrical Safety Standards in the Private Rented Sector and Social Rented Sector (England) Regulations 2020, reg. 3: https://www.legislation.gov.uk/uksi/2020/312/regulation/3
+- Energy Efficiency (Private Rented Property) (England and Wales) Regulations 2015, reg. 22, 23: https://www.legislation.gov.uk/uksi/2015/962/regulation/23
+- Energy Ombudsman, FAQs: https://www.energyombudsman.org/faqs
+- Energy Ombudsman, Our process: https://www.energyombudsman.org/our-process
+- Energy Performance of Buildings (England and Wales) Regulations 2012, Part 2 (reg. 6, 9): https://www.legislation.gov.uk/uksi/2012/3118/part/2
+- FCA 2026/4 FOS 2026/3 Redress Reforms Instrument 2026 (DISP 1.6.1R in force 1 June 2026, citing DISP 1.6.2R and 1.6.2AR): https://api-handbook.fca.org.uk/files/instrument/GLOSSARY-SUP-DISP-COMP/FCA%202026/4-2026-03-17.pdf
+- FCA Handbook, DISP 2.8 (read through search extracts): https://handbook.fca.org.uk/handbook/DISP/2/8.html
+- FCA Handbook, ICOBS 7.1 (read through search extracts): https://handbook.fca.org.uk/handbook/ICOBS/7/1.html
+- FCA PS16/21 with instrument FCA 2016/50 (renewal notices, ICOBS 6.1.12AR, now 6.5.1R): https://www.fca.org.uk/publication/policy/ps16-21.pdf
+- FCA PS21/5 with instrument FCA 2021/19 (ICOBS 6.5.1R, 6A.6, 6B.2.1R): https://www.fca.org.uk/publication/policy/ps21-5.pdf
+- FCA, How to complain (consumers): https://www.fca.org.uk/consumers/how-complain
+- Finance Act 2008 Sch 41: https://www.legislation.gov.uk/ukpga/2008/9/schedule/41
+- Finance Act 2009 Sch 55: https://www.legislation.gov.uk/ukpga/2009/10/schedule/55
+- Finance Act 2009 Sch 56: https://www.legislation.gov.uk/ukpga/2009/10/schedule/56
+- Finance Act 2021 (Income Tax and Capital Gains Tax) (Penalties) (Appointed Day: Digitally Obligated Persons) Regulations 2026, S.I. 2026/370: https://www.legislation.gov.uk/uksi/2026/370/made
+- Financial Ombudsman Service: https://www.financial-ombudsman.org.uk/
+- Financial Ombudsman Service, Time limits: https://www.financial-ombudsman.org.uk/consumers/complaints-can-help/expect/time-limits
+- Gas and Electricity (Consumer Complaints Handling Standards) Regulations 2008, reg. 2 and 6: https://www.legislation.gov.uk/uksi/2008/1898
+- Gas Safety (Installation and Use) Regulations 1998, reg. 36: https://www.legislation.gov.uk/uksi/1998/2451/regulation/36
+- GDS blog: Opening GOV.UK Wallet sandbox to digital verification services (19 Oct 2026): https://gds.blog.gov.uk/2026/10/19/opening-gov-uk-wallet-sandbox-to-digital-verification-services/
+- gov.uk housing campaign, Landlords, renting is changing: https://housinghub.campaign.gov.uk/renting-is-changing/
+- gov.uk news, Cost of TV licence fee set for 2026/27 (6 February 2026): https://www.gov.uk/government/news/cost-of-tv-licence-fee-set-for-202627
+- gov.uk news: Driving licence counterpart abolished: https://www.gov.uk/government/news/driving-licence-changes
+- gov.uk, Appeal a benefit decision: https://www.gov.uk/appeal-benefit-decision
+- gov.uk, Appeal against a penalty charge notice: https://www.gov.uk/appeal-against-a-penalty-charge-notice
+- gov.uk, Awaab's Law: guidance for tenants in social housing (updated 4 December 2025): https://www.gov.uk/government/publications/awaabs-law-guidance-for-tenants-in-social-housing/awaabs-law-guidance-for-tenants-in-social-housing
+- gov.uk, bank holidays JSON: https://www.gov.uk/bank-holidays.json
+- gov.uk, Business records if you're self-employed: how long to keep your records: https://www.gov.uk/self-employed-records/how-long-to-keep-your-records
+- gov.uk, Challenge a benefit decision (mandatory reconsideration): https://www.gov.uk/mandatory-reconsideration
+- gov.uk, Challenge your Council Tax band: after you make a challenge: https://www.gov.uk/challenge-council-tax-band/after-you-make-challenge
+- gov.uk, Challenge your Council Tax band: legal right to make a challenge: https://www.gov.uk/challenge-council-tax-band/legal-right-to-make-a-challenge
+- gov.uk, Check how to register for Self Assessment: https://www.gov.uk/register-for-self-assessment
+- gov.uk, Check when to sign up for Making Tax Digital for Income Tax: https://www.gov.uk/guidance/check-when-to-sign-up-for-making-tax-digital-for-income-tax
+- gov.uk, Disagree with a tax decision or penalty: disagree with a penalty: https://www.gov.uk/tax-appeals/penalty
+- gov.uk, Domestic private rented sector minimum energy efficiency standards enforcement factsheet (read through search extracts): https://www.gov.uk/government/publications/energy-independence-bill-factsheets/domestic-private-rental-sector-minimum-energy-efficiency-standards-enforcement
+- gov.uk, DVLA's top tips for avoiding scams (updated 12 December 2025): https://www.gov.uk/government/news/dvlas-top-tips-for-avoiding-scams
+- gov.uk, DVSA issues warning about parking fine scam text messages (23 September 2024): https://www.gov.uk/government/news/dvsa-issues-warning-about-parking-fine-scam-text-messages
+- gov.uk, Find your UTR number: https://www.gov.uk/find-utr-number
+- gov.uk, High Income Child Benefit Charge: https://www.gov.uk/child-benefit-tax-charge
+- gov.uk, High Income Child Benefit Charge: pay through PAYE: https://www.gov.uk/child-benefit-tax-charge/pay-tax-charge-paye
+- gov.uk, Identify tax scams by phone, text, email or social media (updated 6 October 2026): https://www.gov.uk/guidance/identify-hmrc-related-scam-phone-calls-emails-and-text-messages
+- gov.uk, Keeping your pay and tax records: employees: https://www.gov.uk/keeping-your-pay-tax-records/employees-and-limited-company-directors
+- gov.uk, Keeping your pay and tax records: how long to keep your records: https://www.gov.uk/keeping-your-pay-tax-records/how-long-to-keep-your-records
+- gov.uk, Keeping your pay and tax records: savings, investments and pensions: https://www.gov.uk/keeping-your-pay-tax-records/savings-investments-and-pensions
+- gov.uk, Make a court claim for money: https://www.gov.uk/make-court-claim-for-money
+- gov.uk, Marriage Allowance: https://www.gov.uk/marriage-allowance
+- gov.uk, National Insurance: your National Insurance number: https://www.gov.uk/national-insurance/your-national-insurance-number
+- gov.uk, Pay your Self Assessment tax bill: https://www.gov.uk/pay-self-assessment-tax-bill
+- gov.uk, Pay your Self Assessment tax bill: by cheque through the post: https://www.gov.uk/pay-self-assessment-tax-bill/by-post
+- gov.uk, Pay your Self Assessment tax bill: Direct Debit: https://www.gov.uk/pay-self-assessment-tax-bill/direct-debit
+- gov.uk, Pay your Self Assessment tax bill: online or telephone bank transfer: https://www.gov.uk/pay-self-assessment-tax-bill/bank-details
+- gov.uk, Pay your Self Assessment tax bill: through your tax code: https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code
+- gov.uk, Penalties for Making Tax Digital for Income Tax: https://www.gov.uk/guidance/penalties-for-making-tax-digital-for-income-tax
+- gov.uk, Personal tax account: sign in or set up: https://www.gov.uk/personal-tax-account
+- gov.uk, Renters' Rights Act overview for tenants (updated 1 May 2026): https://www.gov.uk/guidance/renters-rights-act-overview-for-tenants
+- gov.uk, Report Fraud: new service from City of London Police (4 December 2025): https://www.gov.uk/government/news/report-fraud-new-service-from-city-of-london-police
+- gov.uk, Report suspicious emails, websites and phishing: https://www.gov.uk/report-suspicious-emails-websites-phishing
+- gov.uk, Respond to a court claim for money: https://www.gov.uk/respond-money-claim
+- gov.uk, Self Assessment tax returns: deadlines: https://www.gov.uk/self-assessment-tax-returns/deadlines
+- gov.uk, Self Assessment tax returns: if you need to change your return: https://www.gov.uk/self-assessment-tax-returns/corrections
+- gov.uk, Self Assessment tax returns: penalties: https://www.gov.uk/self-assessment-tax-returns/penalties
+- gov.uk, Self Assessment tax returns: who must send a tax return: https://www.gov.uk/self-assessment-tax-returns/who-must-send-a-tax-return
+- gov.uk, Smoke and Carbon Monoxide Alarm (Amendment) Regulations 2022: guidance for landlords and tenants (read through search extracts): https://www.gov.uk/government/publications/smoke-and-carbon-monoxide-alarms-explanatory-booklet-for-landlords/the-smoke-and-carbon-monoxide-alarm-england-regulations-2015-qa-booklet-for-the-private-rented-sector-landlords-and-tenants
+- gov.uk, Tax relief when you donate to a charity: Gift Aid: https://www.gov.uk/donating-to-charity/gift-aid
+- gov.uk, TV Licence: https://www.gov.uk/tv-licence
+- gov.uk, UK bank holidays: https://www.gov.uk/bank-holidays
+- gov.uk, Understand your Self Assessment tax bill: payments on account: https://www.gov.uk/understand-self-assessment-bill/payments-on-account
+- gov.uk, Use Making Tax Digital for Income Tax: send quarterly updates: https://www.gov.uk/guidance/use-making-tax-digital-for-income-tax/send-quarterly-updates
+- gov.uk, Using your GOV.UK One Login: https://www.gov.uk/using-your-gov-uk-one-login
+- gov.uk, Valuation Office Agency: https://www.gov.uk/government/organisations/valuation-office-agency
+- gov.uk, Vehicle insurance: Driving without insurance: https://www.gov.uk/vehicle-insurance/driving-without-insurance
+- gov.uk, Vehicle insurance: Uninsured vehicles: https://www.gov.uk/vehicle-insurance/uninsured-vehicles
+- gov.uk: 30 hours free childcare: https://www.gov.uk/30-hours-free-childcare
+- gov.uk: An overview of the death certification reforms: https://www.gov.uk/government/publications/changes-to-the-death-certification-process/an-overview-of-the-death-certification-reforms
+- gov.uk: Applying for probate: https://www.gov.uk/applying-for-probate
+- gov.uk: Bereavement Support Payment, what you'll get: https://www.gov.uk/bereavement-support-payment/what-youll-get
+- gov.uk: Biometric residence permits (BRPs): https://www.gov.uk/biometric-residence-permits
+- gov.uk: Cancel your vehicle tax and get a refund: https://www.gov.uk/vehicle-tax-refund
+- gov.uk: Change the address on your driving licence: https://www.gov.uk/change-address-driving-licence
+- gov.uk: Change the address on your vehicle log book (V5C): https://www.gov.uk/change-address-v5c
+- gov.uk: Check MOT history: https://www.gov.uk/check-mot-history
+- gov.uk: Child Benefit for children 16 to 19: https://www.gov.uk/child-benefit-16-19
+- gov.uk: Child Benefit, how to claim: https://www.gov.uk/child-benefit/how-to-claim
+- gov.uk: Displaying number plates, flags, identifiers and stickers: https://www.gov.uk/displaying-number-plates/flags-identifiers-and-stickers
+- gov.uk: Driving abroad: https://www.gov.uk/driving-abroad
+- gov.uk: EU Entry/Exit System (updated 10 Apr 2026): https://www.gov.uk/guidance/eu-entryexit-system
+- gov.uk: France entry requirements (foreign travel advice): https://www.gov.uk/foreign-travel-advice/france/entry-requirements
+- gov.uk: Free Childcare for Working Parents, when to apply: https://www.gov.uk/free-childcare-if-working/when-to-apply
+- gov.uk: Funeral Expenses Payment, how to claim: https://www.gov.uk/funeral-payments/how-to-claim
+- gov.uk: Get a passport for your child: https://www.gov.uk/get-a-child-passport
+- gov.uk: Getting an MOT: https://www.gov.uk/getting-an-mot
+- gov.uk: International driving permit: https://www.gov.uk/driving-abroad/international-driving-permit
+- gov.uk: Make a SORN: https://www.gov.uk/make-a-sorn
+- gov.uk: Online immigration status (eVisa): https://www.gov.uk/guidance/online-immigration-status-evisa
+- gov.uk: Order a copy of a birth, death or marriage certificate: https://www.gov.uk/order-copy-birth-death-marriage-certificate
+- gov.uk: P45: https://www.gov.uk/paye-forms-p45-p60-p11d/p45
+- gov.uk: Paternity pay and leave, eligibility: https://www.gov.uk/paternity-pay-leave/eligibility
+- gov.uk: Paternity pay and leave, pay: https://www.gov.uk/paternity-pay-leave/pay
+- gov.uk: Register a birth: https://www.gov.uk/register-birth
+- gov.uk: Register to vote: https://www.gov.uk/register-to-vote
+- gov.uk: Renew or replace your adult passport: https://www.gov.uk/renew-adult-passport
+- gov.uk: Renew your driving licence: https://www.gov.uk/renew-driving-licence
+- gov.uk: Renew your driving licence if you're 70 or over: https://www.gov.uk/renew-driving-licence-at-70
+- gov.uk: Sold your vehicle to a private individual or business: https://www.gov.uk/sold-bought-vehicle/y/no/sold-it/sold-it-privately-to-a-person-or-business
+- gov.uk: Sold, bought or transferred a vehicle (buyer): https://www.gov.uk/sold-bought-vehicle/y/no/bought-it
+- gov.uk: Sure Start Maternity Grant: https://www.gov.uk/sure-start-maternity-grant
+- gov.uk: Taking your child abroad: https://www.gov.uk/permission-take-child-abroad
+- gov.uk: Tax codes: https://www.gov.uk/tax-codes
+- gov.uk: Tax your vehicle: https://www.gov.uk/vehicle-tax
+- gov.uk: Tax-Free Childcare: https://www.gov.uk/tax-free-childcare
+- gov.uk: Tell HMRC you've changed your address: https://www.gov.uk/tell-hmrc-change-address
+- gov.uk: Tell Us Once: https://www.gov.uk/after-a-death/organisations-you-need-to-contact-and-tell-us-once
+- gov.uk: Telling DVLA after someone dies: https://www.gov.uk/tell-dvla-about-bereavement
+- gov.uk: Telling DVLA after someone dies, keeping a vehicle: https://www.gov.uk/tell-dvla-about-bereavement/keeping-the-vehicle
+- gov.uk: The electoral register and the open register: https://www.gov.uk/electoral-register
+- gov.uk: Valuing the estate of someone who's died: https://www.gov.uk/valuing-estate-of-someone-who-died
+- gov.uk: Vehicle registration, new and used vehicles: https://www.gov.uk/vehicle-registration/new-and-used-vehicles
+- gov.uk: Vehicle tax Direct Debit payments: https://www.gov.uk/vehicle-tax-direct-debit
+- gov.uk: Vehicle tax Direct Debit payments, renewing: https://www.gov.uk/vehicle-tax-direct-debit/renewing
+- gov.uk: What to do after someone dies, register the death: https://www.gov.uk/after-a-death/register-the-death
+- Hazards in Social Housing (Prescribed Requirements) (England) Regulations 2025, SI 2025/1042: https://www.legislation.gov.uk/ukdsi/2025/9780348273083
+- HM Passport Office: About our services: https://www.gov.uk/government/organisations/hm-passport-office/about-our-services
+- HM Passport Office: Cancelling British passports, v23.0: https://www.gov.uk/government/publications/cancellation-of-passports/cancelling-british-passports-accessible
+- HM Passport Office: Types of British passports, v11.0 (8 Dec 2025): https://assets.publishing.service.gov.uk/media/69f9bab8097169e6a7a76fb5/Types_of_British_passports_v11.0.pdf
+- HMRC Enquiry Manual EM1506: https://www.gov.uk/hmrc-internal-manuals/enquiry-manual/em1506
+- HMRC Self Assessment Manual SAM31030: https://www.gov.uk/hmrc-internal-manuals/self-assessment-manual/sam31030
+- Home Office: EU Settlement Scheme status automation update (9 Apr 2026): https://www.gov.uk/government/publications/eu-settlement-scheme-euss-status-automation-update-april-2026/eu-settlement-scheme-euss-status-automation-update
+- Housing Act 2004, s. 213, 214: https://www.legislation.gov.uk/ukpga/2004/34/section/213
+- HSE, Gas safety: home owners: https://www.hse.gov.uk/gas/domestic/faqownerocc.htm
+- Human Medicines Regulations 2012 reg. 217: https://www.legislation.gov.uk/uksi/2012/1916/regulation/217
+- Immigration Rules Appendix EU (EU2, EU3, EU4): https://www.gov.uk/guidance/immigration-rules/immigration-rules-appendix-eu
+- Income Tax (Digital Obligations) Regulations 2026, S.I. 2026/336, contents: https://www.legislation.gov.uk/uksi/2026/336/contents
+- Income Tax (Digital Requirements) Regulations 2021 reg 7 (revoked from 1 April 2026): https://www.legislation.gov.uk/uksi/2021/1076/regulation/7
+- Income Tax (Earnings and Pensions) Act 2003 s.681C: https://www.legislation.gov.uk/ukpga/2003/1/section/681C
+- Income Tax (Pay As You Earn) Regulations 2003 (regs. 36, 46): https://www.legislation.gov.uk/uksi/2003/2682
+- Income Tax (Pay As You Earn) Regulations 2003 reg 36: https://www.legislation.gov.uk/uksi/2003/2682/regulation/36
+- Income Tax (Pay As You Earn) Regulations 2003 reg 67: https://www.legislation.gov.uk/uksi/2003/2682/regulation/67
+- Income Tax (Pay As You Earn) Regulations 2003 reg 94: https://www.legislation.gov.uk/uksi/2003/2682/regulation/94
+- Income Tax (Payments on Account) Regulations 1996 reg 3 (as made): https://www.legislation.gov.uk/uksi/1996/1654/regulation/3
+- Income Tax Act 2007 s.426: https://www.legislation.gov.uk/ukpga/2007/3/section/426
+- Income Tax Act 2007 s.55B: https://www.legislation.gov.uk/ukpga/2007/3/section/55B
+- Inheritance Tax (Delivery of Accounts) (Excepted Estates) Regulations 2004 (regs. 3, 4): https://www.legislation.gov.uk/uksi/2004/2543
+- Inheritance Tax Act 1984 (ss. 216, 226, 227, 240): https://www.legislation.gov.uk/ukpga/1984/51
+- Insurance Act 2015, s. 2(1) and 12(1): https://www.legislation.gov.uk/ukpga/2015/4
+- Interpretation Act 1978 s.23: https://www.legislation.gov.uk/ukpga/1978/30/section/23
+- Interpretation Act 1978 s.5: https://www.legislation.gov.uk/ukpga/1978/30/section/5
+- Interpretation Act 1978 s.7: https://www.legislation.gov.uk/ukpga/1978/30/section/7
+- Interpretation Act 1978 Sch 1: https://www.legislation.gov.uk/ukpga/1978/30/schedule/1
+- Limitation Act 1980 s.5: https://www.legislation.gov.uk/ukpga/1980/58/section/5
+- Limitation Act 1980, s. 5, 8, 9, 11, 28, 38: https://www.legislation.gov.uk/ukpga/1980/58
+- Local Government Act 1972 s.233: https://www.legislation.gov.uk/ukpga/1972/70/section/233
+- Local Government Finance Act 1992 (ss. 2, 6): https://www.legislation.gov.uk/ukpga/1992/14
+- Local Government Finance Act 1992 s.30: https://www.legislation.gov.uk/ukpga/1992/14/section/30
+- Local Government Finance Act 1992 Sch 3: https://www.legislation.gov.uk/ukpga/1992/14/schedule/3
+- London Tribunals: https://www.londontribunals.gov.uk/
+- Medical Certificate of Cause of Death Regulations 2024: https://www.legislation.gov.uk/uksi/2024/492
+- Misuse of Drugs Regulations 2001 reg. 16: https://www.legislation.gov.uk/uksi/2001/3998/regulation/16
+- Motor Vehicles (Tests) Regulations 1981 reg. 15: https://www.legislation.gov.uk/uksi/1981/1694/regulation/15
+- National Crime Agency, Payment diversion fraud information sheet: https://www.nationalcrimeagency.gov.uk/who-we-are/publications/764-payment-diversion-fraud-infosheet/file
+- National Health Service (Charges for Drugs and Appliances) Regulations 2015 (regs. 3, 10, 15, 16): https://www.legislation.gov.uk/uksi/2015/570
+- National Health Service (Dental Charges) Regulations 2005 reg. 4: https://www.legislation.gov.uk/uksi/2005/3477/regulation/4
+- National Health Service (Free Prescriptions and Charges for Drugs and Appliances) (Wales) Regulations 2007: https://www.legislation.gov.uk/wsi/2007/121
+- NCSC, Report a scam email: https://www.ncsc.gov.uk/collection/phishing-scams/report-scam-email
+- NHS Commissioning Board and Clinical Commissioning Groups (Responsibilities and Standing Rules) Regulations 2012 (regs. 44 to 48): https://www.legislation.gov.uk/uksi/2012/2996
+- nhs.uk: Global Health Insurance Card (GHIC): https://www.nhs.uk/ghic
+- nhs.uk: How to register with a GP surgery: https://www.nhs.uk/nhs-services/gps/how-to-register-with-a-gp-surgery/
+- nhs.uk: What is an NHS number?: https://www.nhs.uk/using-the-nhs/about-the-nhs/what-is-an-nhs-number/
+- NHSBSA: Help with health costs, HC11 (April 2026): https://www.nhsbsa.nhs.uk/sites/default/files/2026-04/HC11%20(V28)%2004.2026.pdf
+- NHSBSA: Medical exemption certificates: https://www.nhsbsa.nhs.uk/help-nhs-prescription-costs/medical-exemption-certificates
+- NHSBSA: What are the NHS dental charges?: https://faq.nhsbsa.nhs.uk/knowledgebase/article/KA-02003/en-us
+- Occupational and Personal Pension Schemes (Automatic Enrolment) Regulations 2010 (regs. 9 to 11): https://www.legislation.gov.uk/uksi/2010/772
+- Ofcom, Companies must tell customers about their best deals (read through search extracts): https://www.ofcom.org.uk/phones-and-broadband/service-quality/companies-must-tell-customers-about-their-best-deals
+- Ofcom, General Conditions of Entitlement, unofficial consolidated version with effect from 8 April 2026 (read through search extracts): https://www.ofcom.org.uk/siteassets/resources/documents/phones-telecoms-and-internet/information-for-industry/general-authorisation-regime/general-conditions-of-entitlement---unofficial-consolidate-version.pdf
+- Ofcom, Ofcom bans mid-contract price rises linked to inflation (read through search extracts): https://www.ofcom.org.uk/phones-and-broadband/bills-and-charges/ofcom-bans-mid-contract-price-rises-linked-to-inflation
+- Ofcom, Simpler and quicker broadband switching is here; General Condition C7 extract (read through search extracts): https://www.ofcom.org.uk/phones-and-broadband/switching-provider/simpler-broadband-switching-is-here
+- Ofcom, Statement: Review of ADR in the telecoms sector, 8 July 2025 (read through search extracts): https://www.ofcom.org.uk/phones-and-broadband/service-quality/review-of-adr-in-the-telecoms-sector2
+- Office of the Parliamentary Counsel, Drafting Guidance (19 March 2024), Part 8 Periods of time: https://www.gov.uk/government/publications/drafting-bills-for-parliament/2024-03-19-drafting-guidance
+- Ofgem, Electricity supply standard licence conditions, consolidated to 1 August 2025 (conditions 21BA, 23, 24): https://www.ofgem.gov.uk/sites/default/files/2023-03/Electricity%20Supply%20Standard%20Consolidated%20Licence%20Conditions%20-%20Current.pdf
+- Ofgem, Switch your home energy supplier: https://www.ofgem.gov.uk/information-consumers/energy-advice-households/switching-energy-tariff-or-supplier
+- Party Wall etc. Act 1996, s. 1, 3, 5, 6, 15: https://www.legislation.gov.uk/ukpga/1996/40
+- Paternity and Adoption Leave Regulations 2002 (regs. 4 to 6): https://www.legislation.gov.uk/uksi/2002/2788
+- Payment Services Regulations 2017, reg. 101: https://www.legislation.gov.uk/uksi/2017/752/regulation/101
+- Payment Systems Regulator, APP fraud reimbursement protections: https://www.psr.org.uk/information-for-consumers/app-fraud-reimbursement-protections/
+- Payment Systems Regulator, Specific Direction 17 on expanding Confirmation of Payee (consolidated October 2026): https://www.psr.org.uk/media/xoap1fpf/specific-direction-17-october-2026.pdf
+- Payment Systems Regulator, specific directions list: https://www.psr.org.uk/how-we-regulate/regulatory-framework/specific-directions/
+- Pensions Act 2008 s. 8: https://www.legislation.gov.uk/ukpga/2008/30/section/8
+- Postal Services (Universal Postal Service) Order 2012 Sch 1: https://www.legislation.gov.uk/uksi/2012/936/schedule/1
+- Privy Council Office, proclamation of 8 July 2026 (bank holidays 2027, England, Wales and Northern Ireland): https://privycouncil.independent.gov.uk/wp-content/uploads/2026/07/2026-07-08-Proclamation-England-Wales-and-Northern-Ireland-Bank-Holiday.pdf
+- Privy Council Office, proclamation of 9 July 2025 (bank holidays 2026, England, Wales and Northern Ireland): https://privycouncil.independent.gov.uk/wp-content/uploads/2025/07/2025-07-09-Proclamation-England-Wales-and-Northern-Ireland-Bank-Holidays.pdf
+- Protection of Freedoms Act 2012 Sch 4: https://www.legislation.gov.uk/ukpga/2012/9/schedule/4
+- Reading Borough Council, The Direct Debit Guarantee (updated 24 July 2026): https://www.reading.gov.uk/council-tax/pay-your-council-tax/the-direct-debit-guarantee
+- Renters' Rights Act 2025 (Commencement No. 2 and Transitional and Saving Provisions) Regulations 2026, SI 2026/421: https://www.legislation.gov.uk/uksi/2026/421/made
+- Renters' Rights Act 2025, s. 1, 2, 11, 12, 20, 21 and Sch. 6: https://www.legislation.gov.uk/ukpga/2025/26
+- Renting Homes (Wales) Act 2016, s. 174: https://www.legislation.gov.uk/anaw/2016/1/section/174
+- Report Fraud, Recovery fraud (safe account warning; read through search extracts): https://www.reportfraud.police.uk/fraud-recovery-fraud/
+- Representation of the People (England and Wales) Regulations 2001 reg. 23: https://www.legislation.gov.uk/uksi/2001/341/regulation/23
+- Representation of the People Act 1983 s. 9E: https://www.legislation.gov.uk/ukpga/1983/2/section/9E
+- Road Traffic Act 1988 s.172: https://www.legislation.gov.uk/ukpga/1988/52/section/172
+- Road Traffic Act 1988, s. 143, 144A, 144B: https://www.legislation.gov.uk/ukpga/1988/52
+- Road Traffic Offenders Act 1988 s.1: https://www.legislation.gov.uk/ukpga/1988/53/section/1
+- Road Traffic Offenders Act 1988 s.2: https://www.legislation.gov.uk/ukpga/1988/53/section/2
+- Road Traffic Offenders Act 1988 s.52: https://www.legislation.gov.uk/ukpga/1988/53/section/52
+- Road Traffic Offenders Act 1988 s.75: https://www.legislation.gov.uk/ukpga/1988/53/section/75
+- Road Vehicles (Registration and Licensing) Regulations 2002 (regs. 18, 20, 22, 23, 26): https://www.legislation.gov.uk/uksi/2002/2742
+- Royal Mail, Help with online security (read through search extracts): https://www.royalmail.com/help/scam-protection
+- Royal Mail, Retail compensation policy for loss (certificate of posting; read through search extracts): https://www.royalmail.com/retail-compensation-policy-loss
+- S.I. 2022/576 reg 6: https://www.legislation.gov.uk/uksi/2022/576/regulation/6
+- S.I. 2022/576 reg 7: https://www.legislation.gov.uk/uksi/2022/576/regulation/7
+- S.I. 2022/576 Sch 1: https://www.legislation.gov.uk/uksi/2022/576/schedule/1
+- S.I. 2022/71 reg 10: https://www.legislation.gov.uk/uksi/2022/71/regulation/10
+- S.I. 2022/71 reg 2: https://www.legislation.gov.uk/uksi/2022/71/regulation/2
+- S.I. 2022/71 reg 20: https://www.legislation.gov.uk/uksi/2022/71/regulation/20
+- S.I. 2022/71 reg 21: https://www.legislation.gov.uk/uksi/2022/71/regulation/21
+- S.I. 2022/71 reg 3: https://www.legislation.gov.uk/uksi/2022/71/regulation/3
+- S.I. 2022/71 Sch 2: https://www.legislation.gov.uk/uksi/2022/71/schedule/2
+- S.I. 2026/336 reg 12: https://www.legislation.gov.uk/uksi/2026/336/regulation/12
+- S.I. 2026/336 reg 25: https://www.legislation.gov.uk/uksi/2026/336/regulation/25
+- S.I. 2026/336 reg 27: https://www.legislation.gov.uk/uksi/2026/336/regulation/27
+- School Admission Appeals Code 2022: https://www.gov.uk/government/publications/school-admissions-appeals-code
+- School Admissions (Admission Arrangements and Co-ordination of Admission Arrangements) (England) Regulations 2012 (reg. 2, reg. 30, Sch. 2): https://www.legislation.gov.uk/uksi/2012/8
+- School Admissions Code 2021: https://www.gov.uk/government/publications/school-admissions-code--2
+- Shared Parental Leave Regulations 2014 (regs. 8, 12): https://www.legislation.gov.uk/uksi/2014/3050
+- Smoke and Carbon Monoxide Alarm (England) Regulations 2015, reg. 4: https://www.legislation.gov.uk/uksi/2015/1693/regulation/4
+- Social Fund Maternity and Funeral Expenses (General) Regulations 2005 (regs. 5, 10): https://www.legislation.gov.uk/uksi/2005/3061
+- Social Security (Claims and Payments) Regulations 1987 (reg. 19, Sch. 4): https://www.legislation.gov.uk/uksi/1987/1968
+- Social Security and Child Support (Decisions and Appeals) Regulations 1999 reg 3: https://www.legislation.gov.uk/uksi/1999/991/regulation/3
+- Child Benefit and Guardian's Allowance (Administration) Regulations 2003 reg 6: https://www.legislation.gov.uk/uksi/2003/492/regulation/6
+- Child Benefit and Guardian's Allowance (Decisions and Appeals) Regulations 2003 reg 5: https://www.legislation.gov.uk/uksi/2003/916/regulation/5
+- Social Security Contributions and Benefits Act 1992 (ss. 151, 152, 155, 157, 171ZA, Sch. 11): https://www.legislation.gov.uk/ukpga/1992/4
+- Statutory Paternity Pay (General) Regulations 2002 reg. 2: https://www.legislation.gov.uk/uksi/2002/2818/regulation/2
+- Statutory Sick Pay (General) Regulations 1982 reg. 7: https://www.legislation.gov.uk/uksi/1982/894/regulation/7
+- Statutory Sick Pay (Medical Evidence) Regulations 1985 reg. 2: https://www.legislation.gov.uk/uksi/1985/1604/regulation/2
+- Taxes Management Act 1970 s.115: https://www.legislation.gov.uk/ukpga/1970/9/section/115
+- Taxes Management Act 1970 s.12B: https://www.legislation.gov.uk/ukpga/1970/9/section/12B
+- Taxes Management Act 1970 s.31: https://www.legislation.gov.uk/ukpga/1970/9/section/31
+- Taxes Management Act 1970 s.31A: https://www.legislation.gov.uk/ukpga/1970/9/section/31A
+- Taxes Management Act 1970 s.31AA: https://www.legislation.gov.uk/ukpga/1970/9/section/31AA
+- Taxes Management Act 1970 s.43: https://www.legislation.gov.uk/ukpga/1970/9/section/43
+- Taxes Management Act 1970 s.59A: https://www.legislation.gov.uk/ukpga/1970/9/section/59A
+- Taxes Management Act 1970 s.59B: https://www.legislation.gov.uk/ukpga/1970/9/section/59B
+- Taxes Management Act 1970 s.59BA: https://www.legislation.gov.uk/ukpga/1970/9/section/59BA
+- Taxes Management Act 1970 s.7: https://www.legislation.gov.uk/ukpga/1970/9/section/7
+- Taxes Management Act 1970 s.70A: https://www.legislation.gov.uk/ukpga/1970/9/section/70A
+- Taxes Management Act 1970 s.8: https://www.legislation.gov.uk/ukpga/1970/9/section/8
+- Taxes Management Act 1970 s.9ZA: https://www.legislation.gov.uk/ukpga/1970/9/section/9ZA
+- Taxes Management Act 1970 Sch 1AB: https://www.legislation.gov.uk/ukpga/1970/9/schedule/1AB
+- The NHS Constitution for England: https://www.gov.uk/government/publications/the-nhs-constitution-for-england/the-nhs-constitution-for-england
+- Traffic Penalty Tribunal: https://www.tpt.gov.uk/
+- Tribunal Procedure (First-tier Tribunal) (Social Entitlement Chamber) Rules 2008 r.12: https://www.legislation.gov.uk/uksi/2008/2685/rule/12
+- Tribunal Procedure (First-tier Tribunal) (Social Entitlement Chamber) Rules 2008 r.22: https://www.legislation.gov.uk/uksi/2008/2685/rule/22
+- Tribunal Procedure (First-tier Tribunal) (Tax Chamber) Rules 2009 r.12: https://www.legislation.gov.uk/uksi/2009/273/rule/12
+- TV Licensing, Helping you avoid TV Licensing scams (read through search extracts): https://www.tvlicensing.co.uk/faqs/FAQ288
+- UK GDPR Art. 12 and 15: https://www.legislation.gov.uk/eur/2016/679/article/12
+- Universal Credit, Personal Independence Payment, Jobseeker's Allowance and Employment and Support Allowance (Decisions and Appeals) Regulations 2013 reg 2: https://www.legislation.gov.uk/uksi/2013/381/regulation/2
+- Universal Credit, Personal Independence Payment, Jobseeker's Allowance and Employment and Support Allowance (Decisions and Appeals) Regulations 2013 reg 3: https://www.legislation.gov.uk/uksi/2013/381/regulation/3
+- Universal Credit, Personal Independence Payment, Jobseeker's Allowance and Employment and Support Allowance (Decisions and Appeals) Regulations 2013 reg 5: https://www.legislation.gov.uk/uksi/2013/381/regulation/5
+- Valuation Tribunal for England (Council Tax and Rating Appeals) (Procedure) Regulations 2009 reg 21 (as made): https://www.legislation.gov.uk/uksi/2009/2269/regulation/21
+- Valuation Tribunal Service, council tax liability appeal: https://valuationtribunal.gov.uk/council-tax-appeals/council-tax-liability-appeal/
+- Vehicle Excise and Registration Act 1994 (ss. 3, 19, 29, 31A, 59): https://www.legislation.gov.uk/ukpga/1994/22
+- Working Time Regulations 1998 reg. 14: https://www.legislation.gov.uk/uksi/1998/1833/regulation/14
+
+Points left open, described above without a claim:
+
+- Ofcom's July 2025 postal statement and Royal Mail target pages could not be read (access refused); routing times are taken from the Postal Services (Universal Postal Service) Order 2012 and HMRC manual EM1506.
+- HMRC's manuals disagree on when a posted notice is treated as received: EM1506 uses 1 working day (First Class) and up to 3 (Second Class), SAM31030 uses 2 and 4.
+- How far BFDA 1971 s.1(4) (payment or act due on a bank holiday may be made the next day) extends statutory deadlines was not tested against case law.
+- Whether Regulation (EEC, Euratom) No 1182/71 (periods ending on a public holiday or weekend) still applies to EU-derived consumer time limits after Brexit was not settled from legislation.gov.uk.
+- Whether First-tier Tribunal rule 12 moves a time limit set by a statute rather than by the tribunal rules (for example an HMRC appeal notified to the Tax Chamber) was not checked.
+- No rule moving a deadline that ends on a non-working day was found for councils, the Valuation Office Agency, the Valuation Tribunal for England or parking adjudicators; these windows are treated as fixed.
+- Valuation Tribunal for England Procedure Regulations 2009 reg 21 is available on legislation.gov.uk only as made; the 2- and 4-month limits are confirmed by the Valuation Tribunal Service page, which counts from the date on the decision rather than its service.
+- Penalty charge notices in Wales (separate Welsh regulations) and bus lane and moving traffic notices in London (London Local Authorities Acts) were not checked; the windows given are for the England regulations of 2022.
+- The £70 council tax penalty was substituted for England in 2008; the amount in Wales was not checked.
+- Council tax rules in Wales (discount notification wording, council tax reduction scheme regulations, banding proposals) were not read; only the gov.uk statement of a 4-month appeal to the Valuation Tribunal for Wales is used.
+- HMRC states that the new points-based penalties will apply to all personal Self Assessment returns from April 2027; the commencement regulations for people outside Making Tax Digital were not found.
+- The payments on account thresholds (£1,000 and 80%) come from gov.uk; the Income Tax (Payments on Account) Regulations 1996 are on legislation.gov.uk only as made (£500).
+- The planned transfer of the Payment Systems Regulator's functions to the FCA was not checked; Specific Directions 17, 17a, 20 and 21 are cited as listed by the PSR.
+- APP fraud: the PSR page says report within 13 months of the fraudulent payment; how the limit runs for a series of payments was not checked in Specific Direction 20.
+- TV Licence: the TV Licensing site could not be read; the renewal date is the period stated on the licence (Communications Act 2003 s.364(4)), and the end-of-month expiry practice is not stated.
+- Online money claims: gov.uk says a defendant responding online can ask for 28 extra days; the practice direction for that service was not read.
+- That the Civil National Business Centre named in PD 7C replaced the County Court Business Centre is inferred from the same Northampton address; no announcement was read.
+- A period of months ending in a month without the corresponding date (one month after 31 January): the Drafting Guidance only says the last day of the month 'appears to be confirmed' (University of Cambridge v Murray); Dodds v Walker itself was not read.
+- Fixed penalty notices: the statute sets at least 21 days; whether a given notice states a longer period depends on the notice, which controls.
+- Interpretation of 'within one month of the date of notification' for mandatory reconsideration: counted to the corresponding date; no case law checked.
+- S.I. 2026/1082 amends the PAYE Regulations 2003 (new regs 61GA and 61GB, not yet applied on legislation.gov.uk) and was not read; P60, P11D and P45 duties are stated as in the current text.
+- CPR pages on justice.gov.uk show 2023 and 2024 update dates; amendments made by S.I. 2025/893, 2025/1229, 2026/97 and 2026/817 were checked and do not change rules 2.8(1) to (4), 6.14, 6.26, 7.4, 10.3 or 15.4, but Practice Direction 5B was not rechecked against later practice direction updates.
+- Ofcom General Conditions: Ofcom's site blocks automated reading, so C1, C4 and C7 were read through search extracts; check the numbering C1.14 to C1.16 (version from 8 April 2026) and C1.21 to C1.22 (October 2024 version) against the current text
+- End-of-contract notification timing: Ofcom states 10 to 40 days before the fixed term ends; whether this is in condition C1 itself or in Ofcom's guidance was not confirmed
+- Time limit for taking a phone or broadband complaint to ADR (Communications Ombudsman, CISAS): scheme rules not read; no statutory limit applies since the ADR Regulations 2015 were revoked on 6 April 2026
+- Energy Ombudsman: the 12-month limit is stated for deadlock letters; no limit found for a referral after 8 weeks without a deadlock letter
+- Energy supply licence conditions 21BA and 24 were read in Ofgem's consolidated electricity text to 1 August 2025, which Ofgem says is not a formal register document; the gas supply licence's matching conditions were not read
+- FCA Handbook: the site could not be read by script; DISP 1.6.2R and 1.6.2AR were read in the FCA 2026/4 instrument, DISP 2.8.1R and 2.8.2R through FCA and Financial Ombudsman Service pages, ICOBS 6.5.1R, 6A.6 and 6B.2.1R in the instruments FCA 2016/50 and FCA 2021/19
+- ICOBS 7.1: rule numbers for the exceptions to the cooling-off right and for when the period starts (secondary sources give 7.1.2R or 7.1.3R, and 7.1.4R or 7.1.5R)
+- Subscription contract rules (DMCC Act 2024 Part 4 Chapter 2): not in force on 14 November 2026; the draft Consumer Subscription Contracts (Cancellation and Information) Regulations 2026 give 1 January 2027, government statements say spring 2027
+- Tenant's notice under the Renters' Rights Act: the Act sets at least 2 months but no end day; gov.uk ties it to the rent day (the day rent is due or the day before), and the Explanatory Notes say the end of a rent period
+- Renters' Rights Act Part 1 Chapter 1 for social housing assured tenancies: not in force on 14 November 2026 (SI 2026/421 reg. 2); the start date, expected in 2027, is not fixed
+- Awaab's Law phase 2 (more hazards) from 30 November 2026 depends on the draft amendment regulations being made
+- Minimum EPC band C for private lets from 1 October 2030: announced on 21 January 2026, no regulations made; band E applies
+- Chargeback conditions and time limits: card-scheme rules, not public law; not verified
+- HMRC refund messages: HMRC's page no longer says it never sends refund messages by text or email; it advises not to open links in texts offering a refund
+- TV Licensing, Royal Mail and Report Fraud scam guidance pages block automated reading; their wording was read through search extracts
+- Penalty amounts for uninsured driving and continuous insurance enforcement (£300 and 6 points; £100; up to £1,000): the gov.uk pages show no date the amounts apply from
+- ETIAS: gov.uk 'EU Entry/Exit System' (updated 10 Apr 2026) expected it from autumn 2026, with the date to be announced by the EU; no confirmed start date was found on 14 Nov 2026.
+- Passport renewal: HMPO guidance ('Cancelling British passports', v23.0) says the old passport is cancelled and destroyed only in listed cases or on request, but does not state that it is posted back; the return is not claimed.
+- Excepted estates: legislation.gov.uk shows reg. 4 of SI 2004/2543 without later amendments (2004 limits), so no excepted-estate thresholds are stated.
+- Education (Penalty Notices) (England) Regulations 2007: legislation.gov.uk shows the unrevised 2007 text; the amounts and periods come from SI 2013/757, SI 2024/210 and SI 2024/717 as made.
+- Council tax on moving: no statutory duty or time limit to tell the council about a move was found; it is listed as a task.
+- TV Licence: the regulations set the fee but not the licence period; the pack relies on the expiry date printed on the licence.
+- Child Benefit 2026: only the yearly uprating (SI 2026/232, from 6 Apr 2026) was found; no other 2026 rule change was confirmed.
+- Digital driving licence in GOV.UK Wallet: GDS (19 Oct 2026) says roll-out to the public starts in 2027; not treated as a document.

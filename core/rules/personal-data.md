@@ -32,6 +32,11 @@ It holds for a number the member pasted into the conversation as well: a bill
 pasted with its payment account becomes "the account ending 4410", never the
 full number, also when two accounts are compared.
 
+It holds inside quotes. A quote that would carry one of these values is cut
+before it or rewritten: „Rachunek do wpłat: … 4410” or "the payment account
+line, ending 4410", never the whole line. Quoting a document for proof never
+justifies repeating its identifier.
+
 ## Kept to the output that needs it
 
 - **Health details** (diagnoses, medication, test results, reasons for leave)

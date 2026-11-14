@@ -37,6 +37,8 @@ graders:
       choice, and offers new reminders only after a yes.
       Mentioning other dated items from the record (property tax instalments, the home insurance policy) is not an
       error, and neither are further rules the answer attributes to the country pack with their law and marked as
-      something to verify (other statutory checks, smoke and CO detectors, consumer rights on goods).
+      something to verify (other statutory checks, smoke and CO detectors, consumer rights on goods). One note
+      that marks all the dates and rules in the answer as to verify is enough; each row need not repeat it. A
+      deadline from another area (an internet contract to cancel) with a pointer to its skill is not an error.
       FAIL if it writes to the register, invents the date of a past check, or presents a seasonal job as a legal
       duty.

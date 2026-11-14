@@ -44,16 +44,21 @@ płaci bez zgody domownika.
 | `chore-rotation` | „podział obowiązków”, „kto dziś zmywa” |
 | `life-event` | „przeprowadzka”, „urodziło się dziecko”, „kupiłem auto”, „zmarł tata” |
 | `annual-review` | „przegląd roczny”, „co można wyrzucić” |
+| `household-dashboard` | „pulpit”, „stan wszystkiego” |
+| `build-skill` | „zrób z tego skill”, „chcę to robić jednym poleceniem” |
+| `pack-builder` | „nie ma pakietu dla naszego kraju”, „sprawdź pakiet” |
 
 Agenci (Claude Code i Cowork): `deadline-watcher` według harmonogramu czyta
-rejestr i przygotowuje raport, niczego nie zmieniając; `document-reader` czyta
-stos dokumentów bez narzędzi zapisu i zwraca uporządkowany wyciąg.
+rejestr i przygotowuje raport, mając wyłącznie narzędzia do odczytu;
+`document-reader` czyta stos dokumentów bez narzędzi zapisu i zwraca
+uporządkowany wyciąg.
 
 ## Start
 
-1. Instalacja: w Claude Code `/plugin marketplace add <ścieżka lub repozytorium>`,
-   a następnie `/plugin install householdbot@householdbot`. W Cowork dodajesz
-   marketplace i instalujesz wtyczkę.
+1. Instalacja: w Claude Code `/plugin marketplace add dithiothreitol/householdbot`
+   (albo ścieżka lokalnej kopii), a następnie
+   `/plugin install householdbot@householdbot`. W Cowork dodajesz marketplace
+   w Customize > Plugins albo wgrywasz `householdbot.plugin` z wydania.
 2. Uruchom `/householdbot:household-onboard`. Szybka konfiguracja trwa około
    dwóch minut i kończy się zarchiwizowaniem pierwszego prawdziwego dokumentu.
 3. Od tej chwili wystarczy wysłać zdjęcie lub PDF dowolnego pisma albo zapytać
@@ -77,20 +82,27 @@ log/decisions.md           każda zatwierdzona zmiana: kiedy, kto, co
 
 ## Co wtyczka uruchamia, wysyła i pobiera
 
-- **Uruchamia** trzy skrypty w Pythonie dołączone do skilli (`dates.py` liczy
-  święta i terminy, `record.py` obsługuje rejestry, `statement.py` czyta
-  wyciągi bankowe przekazane przez gospodarstwo). Korzystają wyłącznie z
+- **Uruchamia** cztery skrypty w Pythonie dołączone do skilli (`dates.py`
+  liczy święta, terminy i zdarzenia życiowe, `record.py` obsługuje rejestry,
+  `statement.py` czyta wyciągi bankowe przekazane przez gospodarstwo,
+  `chores.py` układa sprawiedliwy plan obowiązków). Korzystają wyłącznie z
   biblioteki standardowej. Czytają i zapisują pliki w folderze gospodarstwa
-  oraz jeden plik wskaźnika w `~/.claude/plugins/config/householdbot/`. Bez
-  Pythona skille stosują te same zasady samodzielnie i oznaczają wyliczone
-  daty do sprawdzenia.
+  oraz jeden plik wskaźnika w `~/.claude/plugins/config/householdbot/` i
+  odrzucają ścieżkę, która wyprowadza poza folder gospodarstwa. Tekst z
+  dokumentów trafia do nich przez standardowe wejście, nigdy przez wiersz
+  poleceń. `build-skill` zapisuje folder nowego skilla w `~/.claude/skills/`,
+  gdy domownik zatwierdzi to miejsce. Bez Pythona skille stosują te same
+  zasady samodzielnie i oznaczają wyliczone daty do sprawdzenia.
 - **Wysyła** dane wyłącznie do usług podłączonych przez gospodarstwo, bo
   HouseholdBot nie ma żadnej własnej usługi. Podłączone konta Gmail, Kalendarza
   Google lub Dysku Google (`.mcp.json`) czytają dane na prośbę domownika, a
   zapisują (szkic, wpis w kalendarzu, plik) dopiero po zgodzie, na warunkach
   dostawcy. Szkice nigdy nie są wysyłane. HouseholdBot nie loguje się do banku
   i niczego nie płaci.
-- **Niczego nie pobiera** z internetu.
+- **Pobiera:** skrypty nie wykonują żadnych zapytań do internetu.
+  `pack-builder` prosi Claude o przeczytanie urzędowych stron z tekstami ustaw
+  i informacjami administracji jego własnymi narzędziami sieciowymi, gdy sesja
+  je ma, żeby zbudować pakiet krajowy.
 
 ## Języki
 
@@ -107,7 +119,10 @@ na angielski.
 
 Pakiety krajowe zawierają święta, zasady liczenia terminów, typowe terminy na
 odpowiedź i obowiązki cykliczne, każdy z podstawą prawną i datą przeglądu.
-Dostępny pakiet: Polska (`PL`, przegląd 2026-11-13). Bez pakietu HouseholdBot
+Dostępne pakiety: Polska (`PL`, przegląd 2026-11-13) oraz Anglia i Walia
+(`GB`, przegląd 2026-11-14). Dla innego kraju lub regionu `pack-builder`
+buduje własny pakiet gospodarstwa ze źródeł urzędowych i zapisuje go w
+folderze gospodarstwa. Bez pakietu HouseholdBot
 opiera się na tym, co podają dokumenty i domownicy.
 
 ## Prywatność

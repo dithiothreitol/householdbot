@@ -37,7 +37,13 @@ graders:
     criteria: |
       The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
       a profile and registers); facts taken from it are not invented.
-      Today in the test is Friday 13 November 2026, but accept the other branch if the answer says the deadline passed.
+      You see only the final answer, not the member's message. That message quoted the decision: Wójt Gminy
+      Brzozowo, decision GK.6220.14.2026 of 30.10.2026 on the fee for occupying the road lane by a driveway 5 m
+      wide, 450,00 zł, with the instruction that an appeal goes to the Samorządowe Kolegium Odwoławcze through
+      the Wójt within 14 days of delivery. The member wrote that they received it on 05.11.2026 and that the
+      driveway is 3 m wide, not 5 m. These facts are given, not invented.
+      The answer counts from the day the test runs, which may be any day: do not check its count of days left,
+      and accept the other branch of check 1 when it says the deadline has passed.
       PASS if all of these hold:
       1. The deadline is Thursday 19 November 2026 (14 days from delivery on 5 November 2026), or the answer says
          it has passed and what can still be done or whom to ask.
@@ -54,3 +60,5 @@ graders:
       FAIL if the appeal is addressed only to the Wójt as the deciding body, a measurement, a document or a date the
       member did not give is presented as fact, a PESEL or similar identifier is typed in, the notes contradict the draft (for example they
       say a number was left out while it is in the text), or it says the appeal was sent.
+      A note that the PESEL or other personal identifiers are left out does not contradict a draft that holds the
+      decision number; today's date, the delivery date the member gave and dates counted from them are not invented.

@@ -22,4 +22,6 @@ graders:
       a profile and registers); facts taken from it are not invented.
       PASS if the reply is in English, merges the new butter with the 2 already on the list into one line of 4,
       adds 1 l of milk, and lists what is needed from Lidl (toilet paper, butter 4, milk 1 l).
+      Not errors: a remark about what the list holds for another shop; dropping the name of the member who first
+      asked for butter when the lines merge; placing the milk under Lidl when no shop was named.
       FAIL if butter appears on two separate lines, an item nobody asked for is added, or the reply is in Polish.

@@ -36,14 +36,15 @@ English translation. New languages are added as files in `core/i18n/` and
 ```
 .claude-plugin/marketplace.json   the marketplace (one plugin)
 householdbot/                     the plugin
-  skills/<skill>/SKILL.md         thirty-one skills, each self-sufficient
+  skills/<skill>/SKILL.md         thirty-four skills, each self-sufficient
   skills/<skill>/shared/          generated copies of rules, country packs, scripts, templates
-  agents/                         deadline-watcher (read-only), document-reader (no write tools)
+  agents/                         deadline-watcher and document-reader, read tools only
+managed-agent-cookbooks/          deadline-watcher as a Claude Managed Agent (three tiers, weekly)
 evals/                            behaviour tests for `claude plugin eval`, synthetic household;
                                   kept outside the plugin package, run by scripts/eval.py
 core/                             sources of everything under skills/*/shared/
   rules/                          the rules every skill follows
-  locale/PL.md, PL.json           the Polish country pack
+  locale/PL.*, GB.*               country packs: Poland; England and Wales
   i18n/en.json, pl.json           languages: date and amount formats, notes, log lines
   scripts/dates.py, record.py,    the proof layer (Python standard library)
     statement.py, chores.py
@@ -51,8 +52,11 @@ core/                             sources of everything under skills/*/shared/
   templates/en/, templates/pl/    household profile and register guide per language
 scripts/sync.py                   copies core/ into the skills
 scripts/validate.py               repository checks
+scripts/package.py                release packages: householdbot.plugin and one zip per skill
 tests/                            unit tests for the scripts
-docs/development-plan.md          the staged plan (Polish)
+docs/architecture.md              the pattern and what a household changes about it
+docs/country-packs.md             how a country pack is built and checked
+docs/development-plan.md          the staged plan (Polish version: development-plan.pl.md)
 ```
 
 Each skill carries its own copy of what it needs because on claude.ai and in
@@ -63,10 +67,12 @@ the mobile apps only a skill's own folder reaches the sandbox.
 See [QUICKSTART.md](QUICKSTART.md). In Claude Code:
 
 ```
-/plugin marketplace add <path to this repository>
+/plugin marketplace add dithiothreitol/householdbot
 /plugin install householdbot@householdbot
 /householdbot:household-onboard
 ```
+
+Cowork, claude.ai and the phone are covered in the quickstart.
 
 ## Develop it
 
@@ -84,16 +90,17 @@ Claude Code.
 
 ## Status
 
-Version 0.3: the core, money and correspondence, and home, family and
-everyday life, in English and Polish. Setup, filing, search, deadlines, the
-weekly brief, profile changes and record repair; the mailbox, bills, contracts,
-subscriptions, bank statements, the tax-return checklist, replies, complaints,
-cancellations and the monthly review; the house, the car, insurance, identity
-documents and travel, school, health papers, the emergency file, life events,
-the family calendar, meals, shopping, chores and the annual review; with the
-Polish country pack. The last stage adds more countries, a dashboard, building
-your own skills and a hosted watcher. See
-[CHANGELOG.md](CHANGELOG.md).
+Version 1.0.0-rc.1, the release candidate of 1.0, in English and Polish:
+setup, filing, search, deadlines, the weekly brief, profile changes and record
+repair; the mailbox, bills, contracts, subscriptions, bank statements, the
+tax-return checklist, replies, complaints, cancellations and the monthly
+review; the house, the car, insurance, identity documents and travel, school,
+health papers, the emergency file, life events, the family calendar, meals,
+shopping, chores and the annual review; a dashboard, the household's own
+skills and country packs; country packs for Poland and for England and Wales;
+an unattended weekly deadline check as a Claude Managed Agent. Version 1.0
+follows the pilot in a real household. See [CHANGELOG.md](CHANGELOG.md), and
+[docs/architecture.md](docs/architecture.md) for what building it showed.
 
 ## License
 

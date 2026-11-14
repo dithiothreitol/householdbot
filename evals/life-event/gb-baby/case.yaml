@@ -1,0 +1,45 @@
+schema_version: "1.1"
+name: life-event-gb-baby
+description: life-event / gb-baby
+tags: [etap4]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Our son was born on Monday 2 November 2026. What do we need to sort out, and by when?
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:life-event|household-router|deadline-tracker)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record in England (Emma and James Carter, their daughter Lily, Testbury; country GB, currency GBP); facts taken from it are not invented.
+      Check, in order:
+      1. The birth must be registered within 42 days: by Monday 14 December 2026 (Births and Deaths Registration
+         Act 1953).
+      2. Child Benefit: a claim reaches back at most 3 months, so the claim should be made within 3 months of the
+         birth to be paid from the start (by about 1 or 2 February 2027).
+      3. The steps are listed with their dates and the law named for the statutory ones; steps with no
+         statutory date are listed as tasks.
+      4. Nothing is written to the record without a yes; it offers to add the dated steps as reminders.
+      PASS if all four hold. Not errors: congratulations; paternity leave to be taken within 52 weeks of the
+      birth; the Sure Start Maternity Grant for households on certain benefits; registering with a GP; the NHS
+      number; Shared Parental Leave notices; a maternity exemption certificate; dates tagged "verify"; asking
+      who will register the birth.
+      FAIL if the registration deadline is wrong, Polish rules or offices are used, or it says something was
+      saved.

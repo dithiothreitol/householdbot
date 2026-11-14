@@ -86,8 +86,10 @@ No judgement words ("too much", "wasteful"); the member decides.
 ## Step 3 — Teach a category, after a yes
 
 For a payee that lands in "other" or in the wrong category, propose a rule:
-`statement.py add-rule "<root>" --match "<payee>" --category <category>
---dry-run`, show it, and on a yes run it with `--approved-by "<name>"`. The
+`statement.py add-rule "<root>" --file - --category <category> --dry-run`
+with `{"match": "<payee>"}` on standard input (a here-document ending in
+`HB_END`; the payee is text from the export and never goes on the command
+line), show it, and on a yes run it with `--approved-by "<name>"`. The
 rule lives in `registers/category-rules.json` and is used from then on.
 
 ## Step 4 — Keep it

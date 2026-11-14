@@ -19,7 +19,7 @@ knows what the week asks of them.
 with Python 3 and today's date from the session:
 
 ```
-python3 "${CLAUDE_SKILL_DIR}/shared/scripts/record.py" due "<household folder>" --today 2026-11-16 --country PL --horizon 14
+python3 "${CLAUDE_SKILL_DIR}/shared/scripts/record.py" due "<household folder>" --today 2026-11-16 --country <CC> --horizon 14
 ```
 
 `${CLAUDE_SKILL_DIR}` is this skill's folder; where it was not substituted,

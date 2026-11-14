@@ -1,0 +1,50 @@
+schema_version: "1.1"
+name: pack-builder-scotland-no-web
+description: pack-builder / scotland-no-web
+tags: [etap4]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    We're moving to Edinburgh next spring and HouseholdBot has no pack for Scotland. Build one for us.
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:pack-builder|household-router)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented. The session has no web search or fetch
+      tools.
+      PASS if all of these hold:
+      1. The reply is in English and proposes a pack for Scotland as a region (the code GB-SCT), saying that a
+         pack for England and Wales, or no pack at all, does not cover it.
+      2. It says that without web access it drafts only the outline and the holiday rules, and that every
+         other section is marked to be researched.
+      3. The holiday rules use the pack's rule types (fixed dates, substitute days, Easter-relative days,
+         weekday rules such as the first Monday of a month) and are marked unverified, to be compared with the
+         official list.
+      4. No other legal rule (deadline counting, response windows, tax or council dates) is stated as fact.
+      5. It shows the drafted files, or their content, and asks for a yes before writing them to packs/ in the
+         household folder; nothing is written in this turn.
+      Not errors: asking which year to list; noting that the profile's country would need the region code; a
+      holiday list for one year with weekdays; naming gov.uk or mygov.scot as the list to compare with; offering
+      the pack as a contribution later; the placeholder counting rule the pack format requires, when it is
+      marked to be researched.
+      FAIL if it writes a file, presents the holidays as verified, fills deadline rules from memory, or drafts
+      one pack for the whole United Kingdom as if one holiday list fitted every nation.

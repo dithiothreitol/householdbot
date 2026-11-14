@@ -34,6 +34,7 @@ import os
 import re
 import shutil
 import sys
+import tempfile
 import time
 import unicodedata
 from datetime import date, datetime
@@ -65,7 +66,7 @@ KINDS = ["payment", "renewal", "filing", "response", "appointment", "expiry", "t
 OB_STATUS = ["open", "done", "cancelled", "lapsed"]
 DOC_STATUS = ["filed", "action-needed", "superseded", "disposed"]
 PROVENANCE = ["stated in document", "calculated from document", "country pack rule — verify",
-              "model calculation — verify", "told by household member"]
+              "household pack — verify", "model calculation — verify", "told by household member"]
 CLOSED = {"done", "cancelled", "lapsed"}
 
 DOC_FIELDS = {
@@ -184,20 +185,57 @@ def load(root: Path, name: str, required: bool = True) -> dict:
     return data
 
 
-def atomic_write_json(path: Path, data: dict) -> None:
+CONTROL_RE = re.compile(r"[\x00-\x1f\x7f\u2028\u2029]")
+MD_SPECIAL_RE = re.compile(r"([\\`*_\[\]<>!|])")
+
+
+def md_safe(text) -> str:
+    """One line of plain text for a Markdown file: control characters become spaces and
+    Markdown syntax is escaped, so a title cannot add a line, a link, an image or HTML."""
+    return MD_SPECIAL_RE.sub(r"\\\1", CONTROL_RE.sub(" ", str(text)))
+
+
+def ensure_inside(root: Path, path: Path) -> Path:
+    """Refuse a path that, followed through links and junctions, leaves the household folder."""
+    real_root = root.resolve()
+    real = path.resolve()
+    if real != real_root and real_root not in real.parents:
+        raise RecordError(f"{path.name}: the path leads outside the household folder "
+                          "(a link or junction?); nothing was written")
+    return path
+
+
+def read_text_input(value: str) -> str:
+    """Text from a file, or from standard input for '-', decoded as UTF-8.
+    Text taken from documents reaches the scripts this way, never on a command line."""
+    if value == "-":
+        # Bytes, decoded as UTF-8: a pipe on Windows would otherwise use the ANSI code page.
+        stream = getattr(sys.stdin, "buffer", None)
+        return stream.read().decode("utf-8-sig") if stream is not None else sys.stdin.read()
+    return Path(value).read_text(encoding="utf-8-sig")
+
+
+def atomic_write_json(path: Path, data: dict, root: Path | None = None) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_name(path.name + ".tmp")
-    with tmp.open("w", encoding="utf-8", newline="\n") as fh:
-        json.dump(data, fh, ensure_ascii=False, indent=2)
-        fh.write("\n")
-    for attempt in range(4):
-        try:
-            os.replace(tmp, path)
-            return
-        except PermissionError:
-            if attempt == 3:
-                raise
-            time.sleep(0.3)
+    if root is not None:
+        ensure_inside(root, path)
+    fd, tmp_name = tempfile.mkstemp(dir=str(path.parent), prefix=path.name + ".", suffix=".tmp")
+    tmp = Path(tmp_name)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as fh:
+            json.dump(data, fh, ensure_ascii=False, indent=2)
+            fh.write("\n")
+        for attempt in range(4):
+            try:
+                os.replace(tmp, path)
+                return
+            except PermissionError:
+                if attempt == 3:
+                    raise
+                time.sleep(0.3)
+    finally:
+        if tmp.exists():
+            tmp.unlink()
 
 
 def backup(root: Path, name: str) -> str | None:
@@ -206,6 +244,7 @@ def backup(root: Path, name: str) -> str | None:
         return None
     hist = root / "registers" / ".history"
     hist.mkdir(parents=True, exist_ok=True)
+    ensure_inside(root, hist)
     stamp = datetime.now().strftime("%Y%m%dT%H%M%S%f")
     dst = hist / f"{name}-{stamp}.json"
     shutil.copy2(src, dst)
@@ -220,11 +259,13 @@ def append_log(root: Path, when: date, approved_by: str, lines: list[str],
     lang = lang or dates.load_lang(household_language(root))
     log = root / "log" / "decisions.md"
     log.parent.mkdir(parents=True, exist_ok=True)
+    ensure_inside(root, log)
     if not log.exists():
         log.write_text(lang.log("header"), encoding="utf-8")
     with log.open("a", encoding="utf-8", newline="\n") as fh:
         for line in lines:
-            fh.write(lang.log("line", date=when.isoformat(), who=approved_by, what=line) + "\n")
+            fh.write(lang.log("line", date=when.isoformat(), who=md_safe(approved_by),
+                              what=md_safe(line)) + "\n")
 
 
 def conflicts(root: Path) -> list[str]:
@@ -249,7 +290,7 @@ def require_writable(root: Path, args) -> None:
         if not who:
             raise RecordError("a write needs --approved-by NAME: show the change, get a yes, "
                               "then run again with the name of the person who approved")
-        if len(who) > 40 or any(ch in who for ch in (":", "\n", '"', "„", "”")):
+        if len(who) > 40 or CONTROL_RE.search(who) or any(ch in who for ch in (":", '"', "„", "”")):
             raise RecordError("--approved-by takes the approver's name only, for example --approved-by Anna; "
                               "their words stay in the conversation")
     if not getattr(args, "ignore_conflicts", False):
@@ -354,29 +395,106 @@ def luhn_valid(s: str) -> bool:
 SECRET_WORDS = re.compile(r"(hasł|haslo|password|passcode|\bpin\b|\bcvv\b|\bcvc\b|kod blik|seed phrase)", re.I)
 
 
-def identifier_warnings(obj, path: str = "") -> list[str]:
-    """Flag values that look like personal identifiers, without echoing them."""
+def iban_valid(s: str) -> bool:
+    s = s.upper()
+    if not re.fullmatch(r"[A-Z]{2}\d{2}[A-Z0-9]{11,30}", s):
+        return False
+    return int("".join(str(int(ch, 36)) for ch in s[4:] + s[:4])) % 97 == 1
+
+
+def nip_valid(digits: str) -> bool:
+    w = [6, 5, 7, 2, 3, 4, 5, 6, 7]
+    total = sum(int(a) * b for a, b in zip(digits[:9], w)) % 11
+    return total != 10 and total == int(digits[9])
+
+
+NI_RE = re.compile(r"(?<![A-Z0-9])([A-CEGHJ-PR-TW-Z][A-CEGHJ-NPR-TW-Z])\s?\d{2}\s?\d{2}\s?\d{2}\s?[A-D](?![A-Z0-9])")
+NI_NOT_ISSUED = {"BG", "GB", "KN", "NK", "NT", "TN", "ZZ"}
+SORT_ACCOUNT_RE = re.compile(r"(?<!\d)\d{2}[-\s]\d{2}[-\s]\d{2}(?!\d)\D{0,30}?(?<!\d)\d{8}(?!\d)")
+# IBAN lengths by country (ISO 13616 registry), so prose that happens to pass mod 97 is not flagged.
+IBAN_LENGTHS = {"AD": 24, "AT": 20, "BE": 16, "BG": 22, "CH": 21, "CY": 28, "CZ": 24, "DE": 22, "DK": 18,
+                "EE": 20, "ES": 24, "FI": 18, "FR": 27, "GB": 22, "GI": 23, "GR": 27, "HR": 21, "HU": 28,
+                "IE": 22, "IS": 26, "IT": 27, "LI": 21, "LT": 20, "LU": 20, "LV": 21, "MC": 27, "MT": 31,
+                "NL": 18, "NO": 15, "PL": 28, "PT": 25, "RO": 24, "SE": 24, "SI": 19, "SK": 24, "SM": 27,
+                "UA": 29}
+# Electronic form (no spaces) or print form (groups of four separated by one space).
+IBAN_FORM_RE = re.compile(r"(?<![A-Za-z0-9])([A-Z]{2}\d{2}(?:[A-Z0-9]{11,30}|(?: [A-Z0-9]{4}){2,7}(?: [A-Z0-9]{1,4})?))"
+                          r"(?![A-Za-z0-9])")
+
+
+def find_ibans(text: str) -> list[tuple[int, int, str]]:
+    """(start, end, compact) of every valid IBAN written in electronic or print form."""
     out = []
+    for m in IBAN_FORM_RE.finditer(text or ""):
+        compact = m.group(1).replace(" ", "")
+        if IBAN_LENGTHS.get(compact[:2]) == len(compact) and iban_valid(compact):
+            out.append((m.start(1), m.end(1), compact))
+    return out
+CARD_RE = re.compile(r"(?<!\d)(?:\d{4}[ -]){3}\d{1,7}(?!\d)|(?<!\d)\d{13,19}(?!\d)")
+
+
+def identifier_findings(obj, path: str = "") -> list[tuple[str, str]]:
+    """(field path, kind) for every value that looks like a personal identifier or a secret."""
+    out: list[tuple[str, str]] = []
     if isinstance(obj, dict):
         for k, v in obj.items():
-            out += identifier_warnings(v, f"{path}.{k}" if path else k)
+            out += identifier_findings(v, f"{path}.{k}" if path else k)
     elif isinstance(obj, list):
         for i, v in enumerate(obj):
-            out += identifier_warnings(v, f"{path}[{i}]")
+            out += identifier_findings(v, f"{path}[{i}]")
     elif isinstance(obj, str):
         compact = re.sub(r"[\s-]", "", obj)
-        for m in re.finditer(r"(?<!\d)\d{11}(?!\d)", obj):
-            if pesel_valid(m.group()):
-                out.append(f"{path}: looks like a PESEL number")
-        for m in re.finditer(r"(?<!\d)\d{26}(?!\d)", compact):
-            if nrb_valid(m.group()):
-                out.append(f"{path}: looks like a full bank account number")
-        for m in re.finditer(r"(?<!\d)\d{13,19}(?!\d)", compact):
-            if luhn_valid(m.group()) and len(m.group()) in (15, 16):
-                out.append(f"{path}: looks like a payment card number")
+        if any(pesel_valid(m.group()) for m in re.finditer(r"(?<!\d)\d{11}(?!\d)", obj)):
+            out.append((path, "a PESEL number"))
+        account = any(nrb_valid(m.group()) for m in re.finditer(r"(?<!\d)\d{26}(?!\d)", compact))
+        account = account or bool(find_ibans(obj))
+        if account:
+            out.append((path, "a full bank account number"))
+        if SORT_ACCOUNT_RE.search(obj):
+            out.append((path, "a sort code with an account number"))
+        if any(m.group(1) not in NI_NOT_ISSUED for m in NI_RE.finditer(obj.upper())):
+            out.append((path, "a National Insurance number"))
+        for m in re.finditer(r"NIP\W{0,3}((?:\d[\s-]?){9}\d)", obj, re.I):
+            if nip_valid(re.sub(r"\D", "", m.group(1))):
+                out.append((path, "a NIP tax number"))
+                break
+        for m in CARD_RE.finditer(obj):
+            digits = re.sub(r"\D", "", m.group())
+            if 13 <= len(digits) <= 19 and digits[0] in "23456" and luhn_valid(digits):
+                out.append((path, "a payment card number"))
+                break
         if SECRET_WORDS.search(obj) and re.search(r"[:=]\s*\S", obj):
-            out.append(f"{path}: looks like a password, PIN or code")
+            out.append((path, "a password, PIN or code"))
     return out
+
+
+def identifier_warnings(obj, path: str = "") -> list[str]:
+    """Flag stored values that look like personal identifiers, without echoing them."""
+    return [f"{p}: looks like {kind}" for p, kind in identifier_findings(obj, path)]
+
+
+def identifier_errors(obj, path: str = "") -> list[str]:
+    """Refuse to write a value that looks like an identifier or a secret, without echoing it."""
+    return [f"{p}: looks like {kind}; the record keeps only where it is (\"see page 2\") "
+            "or, for an account to pay into, its last four digits" for p, kind in identifier_findings(obj, path)]
+
+
+def copy_new(src: Path, dest: Path, root: Path) -> Path:
+    """Copy an original into the record without overwriting and without following a link
+    out of the record; a name already taken gets -2, -3."""
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    ensure_inside(root, dest.parent)
+    stem, suffix, n = dest.stem, dest.suffix, 1
+    while True:
+        target = dest if n == 1 else dest.with_name(f"{stem}-{n}{suffix}")
+        try:
+            with src.open("rb") as fin, open(target, "xb") as fout:
+                shutil.copyfileobj(fin, fout)
+        except FileExistsError:
+            n += 1
+            continue
+        shutil.copystat(src, target)
+        return target
 
 
 def validate_entries(name: str, entries: list, errors: list, warnings: list) -> None:
@@ -709,7 +827,7 @@ def cmd_init(args) -> dict:
         raise RecordError("a write needs --approved-by NAME")
     root.mkdir(parents=True, exist_ok=True)
     for name in REGISTERS:
-        atomic_write_json(root / REGISTERS[name], empty_register(name))
+        atomic_write_json(root / REGISTERS[name], empty_register(name), root)
     readme_src = HERE.parent / "templates" / lang.code / "registers-README.md"
     if not readme_src.exists():
         readme_src = HERE.parent / "templates" / dates.DEFAULT_LANG / "registers-README.md"
@@ -750,12 +868,21 @@ def cmd_add(args) -> dict:
     today = today_from(args)
     data = load(root, name)
     entries = data[name]
-    entry = fill_defaults(name, read_entry(args))
+    raw_entry = read_entry(args)
+    # The path of a file a document arrived in is document-derived text: it travels inside
+    # the entry on standard input ("original"), never on the command line.
+    source = raw_entry.pop("original", None) if isinstance(raw_entry, dict) else None
+    if source and args.original:
+        raise RecordError("give the original once: in the entry as \"original\" or with --original")
+    source = source or args.original
+    entry = fill_defaults(name, raw_entry)
     warnings: list[str] = []
     normalise_amount(entry, warnings)
     original = None
-    if name == "documents" and args.original:
-        original = Path(args.original).expanduser().resolve()
+    if source and name != "documents":
+        raise RecordError("an original belongs to the documents register")
+    if source:
+        original = Path(str(source)).expanduser().resolve()
         if not original.is_file():
             raise RecordError(f"original not found: {original}")
         entry["sha256"] = sha256_of(original)
@@ -779,10 +906,13 @@ def cmd_add(args) -> dict:
         base = "_".join(x for x in (stamp, slug(entry.get("issuer") or "unknown"),
                                     slug(entry.get("type") or "document")) if x)
         dest_dir = root / "documents" / year
-        dest = dest_dir / f"{base}{original.suffix.lower()}"
+        suffix = original.suffix.lower()
+        if not re.fullmatch(r"\.[a-z0-9]{1,8}", suffix):
+            suffix = ""
+        dest = dest_dir / f"{base}{suffix}"
         n = 2
         while dest.exists():
-            dest = dest_dir / f"{base}-{n}{original.suffix.lower()}"
+            dest = dest_dir / f"{base}-{n}{suffix}"
             n += 1
         entry["file"] = dest.relative_to(root).as_posix()
     errs: list[str] = []
@@ -792,25 +922,25 @@ def cmd_add(args) -> dict:
     dup_errs, dup_warns = duplicate_warnings(name, entry, entries)
     errs += dup_errs
     warnings += dup_warns
-    warnings += identifier_warnings(entry)
+    errs += identifier_errors(entry)
     if errs:
         return {"ok": False, "errors": errs, "warnings": warnings, "entry": entry}
     result = {"register": REGISTERS[name].as_posix(), "entry": entry, "warnings": warnings,
               "lang": lang.code,
               "summary": lang.log("add", entry=describe_entry(name, entry, lang),
                                   register=register_label(name, lang))}
+    if original is not None:
+        result["original_source"] = str(original)
     if args.dry_run:
         result["dry_run"] = True
         result["note"] = "nothing written; show this to the household and wait for a yes"
         return result
     if original is not None:
-        dest = root / entry["file"]
-        dest.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(original, dest)
+        entry["file"] = copy_new(original, root / entry["file"], root).relative_to(root).as_posix()
         result["copied_original_to"] = entry["file"]
     result["backup"] = backup(root, name)
     entries.append(entry)
-    atomic_write_json(root / REGISTERS[name], data)
+    atomic_write_json(root / REGISTERS[name], data, root)
     append_log(root, today, args.approved_by.strip(), [result["summary"]], lang)
     return result
 
@@ -862,16 +992,24 @@ def cmd_update(args) -> dict:
     entry = find_entry(data[name], args.id)
     before = dict(entry)
     changes = {}
+    if getattr(args, "file", None):
+        try:
+            given = json.loads(read_text_input(args.file))
+        except json.JSONDecodeError as exc:
+            raise RecordError(f"the changes are not valid JSON: {exc}")
+        if not isinstance(given, dict):
+            raise RecordError("the changes must be a JSON object of field: value")
+        changes.update(given)
     for item in args.set or []:
         if "=" not in item:
             raise RecordError(f"--set needs field=value, got {item!r}")
         field, raw = item.split("=", 1)
-        field = field.strip()
+        changes[field.strip()] = parse_value(raw, FIELDS[name].get(field.strip()))
+    for field in changes:
         if field in ("id", "created"):
             raise RecordError(f"'{field}' cannot be changed")
-        changes[field] = parse_value(raw, FIELDS[name].get(field))
     if not changes:
-        raise RecordError("nothing to change; give one or more --set field=value")
+        raise RecordError("nothing to change; give --file - with a JSON object, or --set field=value")
     entry.update(changes)
     warnings: list[str] = []
     lang = lang_for(args, root)
@@ -887,7 +1025,9 @@ def cmd_update(args) -> dict:
     entry["updated"] = today.isoformat()
     errs: list[str] = []
     validate_entries(name, [entry], errs, warnings)
-    warnings += identifier_warnings(changes)
+    identifier_errs = identifier_errors(changes)
+    if identifier_errs:
+        return {"ok": False, "errors": identifier_errs, "warnings": warnings}
     diff = {k: {"from": before.get(k), "to": entry.get(k)} for k in changes}
     summary = lang.log("update", id=args.id, changes=", ".join(
         f"{k} → {json.dumps(entry.get(k), ensure_ascii=False)}" for k in changes))
@@ -902,7 +1042,7 @@ def cmd_update(args) -> dict:
         result["note"] = "nothing written; show this to the household and wait for a yes"
         return result
     result["backup"] = backup(root, name)
-    atomic_write_json(root / REGISTERS[name], data)
+    atomic_write_json(root / REGISTERS[name], data, root)
     append_log(root, today, args.approved_by.strip(), [summary], lang)
     return result
 
@@ -988,7 +1128,7 @@ def cmd_complete(args) -> dict:
     if new_entry:
         entries.append(new_entry)
     result["backup"] = backup(root, "obligations")
-    atomic_write_json(root / REGISTERS["obligations"], data)
+    atomic_write_json(root / REGISTERS["obligations"], data, root)
     append_log(root, today, args.approved_by.strip(), lines, lang)
     return result
 
@@ -1094,6 +1234,8 @@ def entry_text(name: str, e: dict) -> list[tuple[str, int]]:
 
 
 def cmd_find(args) -> dict:
+    if getattr(args, "query_file", None):
+        args.query = " ".join(read_text_input(args.query_file).split())
     root = root_of(args.root)
     for name in REGISTERS:
         m = re.search(rf"\b{PREFIX[name]}-\d{{4}}-\d{{4,}}\b", args.query or "")
@@ -1202,6 +1344,10 @@ def cmd_merge(args) -> dict:
     copy = copy if copy.is_absolute() else root / copy
     if not copy.is_file():
         raise RecordError(f"conflict copy not found: {copy}")
+    listed = {(root / c).resolve() for c in conflicts(root)}
+    if copy.resolve() not in listed:
+        raise RecordError(f"{copy.name} is not a sync-conflict copy of a register in this household "
+                          "folder; merge takes only the copies that household-doctor lists")
     with copy.open(encoding="utf-8") as fh:
         other = json.load(fh)
     name = next((n for n in REGISTERS if isinstance(other.get(n), list)), None)
@@ -1217,6 +1363,7 @@ def cmd_merge(args) -> dict:
             raise RecordError(f"--resolve needs id=main or id=copy, got {item!r}")
         resolve[eid] = side
     added, replaced, collisions, unresolved = [], [], [], []
+    changes: dict[str, dict] = {}
     merged = list(main[name])
     for e in other[name]:
         if not isinstance(e, dict):
@@ -1250,19 +1397,36 @@ def cmd_merge(args) -> dict:
         if side == "copy":
             merged[by_id[eid]] = e
             replaced.append(eid)
+            changes[eid] = {f: {"main": mine.get(f), "copy": e.get(f)}
+                            for f in sorted(set(mine) | set(e)) if mine.get(f) != e.get(f)}
     try:
         copy_label = copy.resolve().relative_to(root).as_posix()
     except ValueError:
         copy_label = str(copy)
     lang = lang_for(args, root)
+    renumbered = {c["copy_entry_renumbered_to"] for c in collisions}
+    incoming = [e for e in merged if isinstance(e, dict)
+                and (e.get("id") in set(added) | set(replaced) | renumbered)]
+    entry_errors: list[str] = []
+    entry_warnings: list[str] = []
+    validate_entries(name, incoming, entry_errors, entry_warnings)
+    entry_errors += identifier_errors(incoming, "copy")
     result = {"register": name, "copy": copy_label,
-              "added_from_copy": added, "replaced_by_newer_copy": replaced,
+              "added_from_copy": [{"id": e.get("id"), "title": e.get("title")} for e in incoming
+                                  if e.get("id") in added],
+              "replaced_by_newer_copy": replaced, "changes_from_copy": changes,
               "id_collisions": collisions, "unresolved": unresolved,
               "summary": lang.log("merge", copy=copy.name, register=register_label(name, lang),
                                   added=len(added), updated=len(replaced), renumbered=len(collisions))}
     if collisions:
         result["note"] = ("renumbered entries may be referenced by the other register; "
                           "check document 'obligations' lists and obligation 'source' fields")
+    if entry_warnings:
+        result["warnings"] = entry_warnings
+    if entry_errors:
+        result["ok"] = False
+        result["errors"] = entry_errors
+        return result
     if unresolved:
         result["ok"] = False
         result["errors"] = ["entries changed on both sides on the same day; ask which version to keep "
@@ -1274,9 +1438,10 @@ def cmd_merge(args) -> dict:
         return result
     result["backup"] = backup(root, name)
     main[name] = merged
-    atomic_write_json(root / REGISTERS[name], main)
+    atomic_write_json(root / REGISTERS[name], main, root)
     hist = root / "registers" / ".history"
     hist.mkdir(parents=True, exist_ok=True)
+    ensure_inside(root, hist)
     parked = hist / f"conflict-{datetime.now().strftime('%Y%m%dT%H%M%S')}-{copy.name}"
     shutil.move(str(copy), parked)
     result["conflict_copy_moved_to"] = parked.relative_to(root).as_posix()
@@ -1317,9 +1482,9 @@ def cmd_archive(args) -> dict:
             with path.open(encoding="utf-8") as fh:
                 arch = json.load(fh)
         arch["obligations"].extend(items)
-        atomic_write_json(path, arch)
+        atomic_write_json(path, arch, root)
     data["obligations"] = keep
-    atomic_write_json(root / REGISTERS["obligations"], data)
+    atomic_write_json(root / REGISTERS["obligations"], data, root)
     append_log(root, today, args.approved_by.strip(), [result["summary"]], lang)
     return result
 
@@ -1391,7 +1556,7 @@ def cmd_migrate(args) -> dict:
         return result
     for r in changed:
         backup(root, r["register"])
-        atomic_write_json(root / REGISTERS[r["register"]], r["data"])
+        atomic_write_json(root / REGISTERS[r["register"]], r["data"], root)
     append_log(root, today, args.approved_by.strip(), [result["summary"]], lang)
     return result
 
@@ -1439,12 +1604,14 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--register", choices=list(REGISTERS), required=True)
     s.add_argument("--json", help="the entry as a JSON object")
     s.add_argument("--file", help="a file holding the entry as JSON, or - for stdin")
-    s.add_argument("--original", help="documents only: the original file to copy into documents/YYYY/")
+    s.add_argument("--original", help="documents only: the original file to copy into documents/YYYY/; "
+                                      "a path that came with a document goes inside the entry as \"original\"")
     s.set_defaults(func=cmd_add)
 
     s = common(sub.add_parser("update", help="change fields of one entry"), write=True, pack=True)
     s.add_argument("--id", required=True)
     s.add_argument("--set", action="append", help="field=value; value is JSON when it parses")
+    s.add_argument("--file", help="the changes as a JSON object of field: value, or - for stdin")
     s.set_defaults(func=cmd_update)
 
     s = common(sub.add_parser("complete", help="close an obligation and add its next occurrence"),
@@ -1466,6 +1633,8 @@ def build_parser() -> argparse.ArgumentParser:
 
     s = common(sub.add_parser("find", help="search documents and obligations"))
     s.add_argument("--query", help="words to search; leave out with --type or --category to list them all")
+    s.add_argument("--query-file", help="the words to search, from a file or - for stdin "
+                                        "(text taken from a document goes this way)")
     s.add_argument("--register", choices=list(REGISTERS))
     s.add_argument("--type")
     s.add_argument("--category")

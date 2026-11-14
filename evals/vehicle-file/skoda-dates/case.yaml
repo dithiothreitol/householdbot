@@ -32,5 +32,6 @@ graders:
       a profile and registers); facts taken from it are not invented.
       PASS if it gives the OC with Example Insurance S.A. (1 240,00 zł) and its last day to give notice from the register, the day before the term ends, with its weekday and the planned date before it when that day falls on a weekend, tagged as a rule to verify (ustawa o ubezpieczeniach obowiązkowych, UFG i PBUK art. 28).
       PASS needs the roadworthiness test listed as date unknown with a question asking for the date from the registration certificate, the last test confirmation or mObywatel; explaining the pack's test intervals as a rule to verify is not an error.
-      Switching insurer is pointed to cancel-or-switch, not done.
+      If it brings up switching insurer, the switch is offered as a next step (cancel-or-switch, or preparing the
+      notice), never done and never a recommendation of an insurer.
       FAIL if it invents a test date, drops the test, writes to the register, or shows a VIN or a policy number.

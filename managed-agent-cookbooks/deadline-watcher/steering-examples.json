@@ -1,0 +1,14 @@
+[
+  {
+    "event": "Write this week's deadline report for the household whose read-only snapshot is mounted at /mnt/session/uploads/household/.",
+    "description": "Scheduled Monday run. In schedule.yaml it is the user.define_outcome description, with the starter rubric; today comes from the sandbox clock in the household's time zone."
+  },
+  {
+    "event": "Today is 2026-11-16 (Europe/Warsaw).",
+    "description": "Sent by cookbook.py run as a user.message before the same outcome, so the report is dated by the household's own computer rather than by the sandbox clock."
+  },
+  {
+    "event": "Check that the snapshot can be read and write the report with its group headings and counts only, no item lines.",
+    "description": "Smoke test after a change to the agents or the snapshot format: shows coverage without printing the register's titles."
+  }
+]

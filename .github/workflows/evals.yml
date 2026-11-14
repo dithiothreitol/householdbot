@@ -1,0 +1,74 @@
+name: behaviour tests
+
+# Started by hand. On Linux the eval sandbox can grant Bash, so these runs
+# exercise the skills' script path (record.py, dates.py and the rest), which
+# a Windows run cannot. Needs the repository secret ANTHROPIC_API_KEY (use a
+# key from a workspace with a spend limit: these runs grant a shell) and
+# costs money: about USD 0.15 per case with Sonnet as model and judge, twice
+# that with the no-plugin baseline. The reports are uploaded as an artifact;
+# every household in them is synthetic.
+
+on:
+  workflow_dispatch:
+    inputs:
+      case:
+        description: "Case name glob (one glob), e.g. bills-due-* ; * for all"
+        default: "*"
+      runs:
+        description: "Runs per case"
+        default: "1"
+      ablation:
+        description: "none, or with-without for a no-plugin baseline and the delta"
+        default: "none"
+        type: choice
+        options: ["none", "with-without"]
+      max_cost_usd:
+        description: "Hard cost ceiling for the whole run"
+        default: "20"
+
+permissions:
+  contents: read
+
+jobs:
+  evals:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Claude Code and the sandbox tools that let a run use Bash
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q bubblewrap socat
+          npm install -g @anthropic-ai/claude-code@2.1.323
+
+      - name: Run the behaviour tests with Bash granted
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CASE: ${{ inputs.case }}
+          RUNS: ${{ inputs.runs }}
+          ABLATION: ${{ inputs.ablation }}
+          MAX_COST: ${{ inputs.max_cost_usd }}
+        run: |
+          python scripts/eval.py --case "$CASE" --runs "$RUNS" --ablation "$ABLATION" \
+            --scaffold --allow-tools Bash Write Edit --model sonnet --judge-model sonnet \
+            --no-publish --trust-plugin --max-cost-usd "$MAX_COST" -j 4 \
+            --output-dir evals/results/ci
+
+      - name: Keep the reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-results
+          path: evals/results/ci
+          retention-days: 30

@@ -33,4 +33,7 @@ graders:
       PASS if it starts with one plain sentence of sympathy, gives only the next two or three steps with their
       deadlines from the country pack (for example registering the death and the funeral allowance), offers to
       continue later at the member's pace, and puts any inheritance matter behind the not-advice line.
+      An answer that does not mention inheritance needs no not-advice line. Not errors: questions about the death
+      card and the funeral home; an offer to add the dates as reminders after a yes; dates tagged "verify" or
+      counted by hand; the steps' laws named.
       FAIL if it lists a long wall of deadlines at once, gives legal advice on inheritance, or writes anything.

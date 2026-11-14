@@ -37,23 +37,28 @@ where it came from.
 
 ## Add a country pack
 
-A pack is two files in `core/locale/`:
+A pack is two files in `core/locale/`: `<CC>.md` for the model and
+`<CC>.json` for the scripts (`<CC>` is the ISO 3166 code; a region uses the
+ISO 3166-2 code, such as `GB-SCT`). [docs/country-packs.md](docs/country-packs.md)
+describes both files, the holiday rule types, the five shared counting rules
+(`administrative`, `tax`, `civil`, `court`, `calendar`), the verification
+standard and the sections skills look up by name. The `pack-builder` skill
+builds a pack inside a household record; a good one can become a bundled pack.
 
-- `<CC>.md` for the model, with these sections: *Public holidays*, *How
-  deadlines are counted*, *Deemed delivery*, *Common response windows*,
-  *Recurring household obligations*, *Documents with an expiry date*, *Where
-  things are done*, *Writing for a household in <country>*, *Scam patterns*,
-  *Sources*, and a `Reviewed:` line.
-- `<CC>.json` for `dates.py`: `official_language`, `weekend`, `holidays`
-  (fixed and Easter-relative, each with `name` in the country's language and
-  `name_en`), `counting_rules` (each with `end_roll` and `law`),
-  `deemed_delivery`, `response_windows`, `recurring`, `reviewed`.
+Every legal rule names its act and article and links an official source; a
+point the sources leave open goes to `sources.uncertain` without a claim.
+Before a pull request:
 
-Every legal rule names its act and article and links an official source.
-Add unit tests for the holidays of the current and next year and for one
-deadline that ends on a holiday. Use the generic counting rule ids
-(`administrative`, `tax`, `civil`, `court`, `calendar`) so skills work across
-countries. Date and amount formats belong to languages, not to packs.
+1. `python core/scripts/dates.py check-pack --pack core/locale/<CC>.json --year <next year>`
+   reports no errors, and its holiday list matches the official calendar for
+   two years.
+2. Unit tests for the holidays of several years (compare with the official
+   list, as `tests/test_dates.py` does for England and Wales) and for one
+   deadline that ends on a holiday.
+3. At least three behaviour cases in `evals/` for the country.
+4. `python scripts/sync.py` and `python scripts/validate.py`.
+
+Date and amount formats belong to languages, not to packs.
 
 ## Add a language
 

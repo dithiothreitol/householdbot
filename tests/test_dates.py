@@ -139,7 +139,9 @@ class Language(unittest.TestCase):
         self.assertEqual(EN.amount("1240.00", "PLN"), "PLN 1,240.00")
         self.assertEqual(PLL.amount("1240.00", "PLN"), "1 240,00 zł")
         self.assertEqual(PLL.amount("39.9", "EUR"), "39,90 EUR")
-        self.assertEqual(EN.amount("-5", "EUR"), "EUR -5.00")
+        self.assertEqual(EN.amount("-5", "EUR"), "-€5.00")
+        self.assertEqual(EN.amount("1240.00", "GBP"), "£1,240.00")
+        self.assertEqual(PLL.amount("1240.00", "GBP"), "1 240,00 GBP")
         self.assertEqual(PLL.amount("1234567.5", "PLN"), "1 234 567,50 zł")
 
     def test_polish_plurals(self):
@@ -295,6 +297,225 @@ class LifeEvents(unittest.TestCase):
         self.assertEqual(out["title"], "Zdarzenie testowe")
         self.assertEqual(out["tasks"][0]["title"], "Powiadom ubezpieczyciela")
 
+
+# Bank holidays in England and Wales as published at https://www.gov.uk/bank-holidays.json
+# (read 2026-11-14): the weekday on which each bank holiday is taken.
+GOVUK_ENGLAND_AND_WALES = {
+    2019: ["01-01", "04-19", "04-22", "05-06", "05-27", "08-26", "12-25", "12-26"],
+    2020: ["01-01", "04-10", "04-13", "05-08", "05-25", "08-31", "12-25", "12-28"],
+    2021: ["01-01", "04-02", "04-05", "05-03", "05-31", "08-30", "12-27", "12-28"],
+    2022: ["01-03", "04-15", "04-18", "05-02", "06-02", "06-03", "08-29", "09-19", "12-26", "12-27"],
+    2023: ["01-02", "04-07", "04-10", "05-01", "05-08", "05-29", "08-28", "12-25", "12-26"],
+    2024: ["01-01", "03-29", "04-01", "05-06", "05-27", "08-26", "12-25", "12-26"],
+    2025: ["01-01", "04-18", "04-21", "05-05", "05-26", "08-25", "12-25", "12-26"],
+    2026: ["01-01", "04-03", "04-06", "05-04", "05-25", "08-31", "12-25", "12-28"],
+    2027: ["01-01", "03-26", "03-29", "05-03", "05-31", "08-30", "12-27", "12-28"],
+    2028: ["01-03", "04-14", "04-17", "05-01", "05-29", "08-28", "12-25", "12-26"],
+}
+
+# The rules alone, so the engine is tested apart from the GB pack data.
+WEEKDAY_RULE_PACK = {
+    "pack": "XX", "reviewed": "2026-11-14", "weekend": ["saturday", "sunday"],
+    "holidays": {
+        "fixed": [
+            {"date": "01-01", "name": "New Year's Day", "name_pl": "Nowy Rok", "substitute": True},
+            {"date": "12-25", "name": "Christmas Day", "name_pl": "Boże Narodzenie", "substitute": True},
+            {"date": "12-26", "name": "Boxing Day", "name_pl": "Drugi dzień świąt", "substitute": True},
+        ],
+        "easter_relative": [{"offset": -2, "name": "Good Friday"}, {"offset": 1, "name": "Easter Monday"}],
+        "weekday_rules": [
+            {"month": 5, "weekday": "monday", "nth": 1, "name": "Early May bank holiday"},
+            {"month": 5, "weekday": "monday", "nth": -1, "name": "Spring bank holiday"},
+            {"month": 8, "weekday": "monday", "nth": -1, "name": "Summer bank holiday"},
+        ],
+        "moved": [
+            {"year": 2020, "rule": "Early May bank holiday", "to": "2020-05-08"},
+            {"year": 2022, "rule": "Spring bank holiday", "to": "2022-06-02"},
+        ],
+        "one_off": [
+            {"date": "2022-06-03", "name": "Platinum Jubilee bank holiday"},
+            {"date": "2022-09-19", "name": "Bank Holiday for the State Funeral of Queen Elizabeth II"},
+            {"date": "2023-05-08", "name": "Bank holiday for the coronation of King Charles III"},
+        ],
+    },
+    "counting_rules": {"calendar": {"title": "Plain", "end_roll": "none", "law": None, "met_by": None},
+                       "court": {"title": "Court", "end_roll": "forward", "law": "CPR 2.8(5)", "met_by": None}},
+    "response_windows": [
+        {"id": "pcn-representation", "title": "Representation", "amount": 28, "unit": "days",
+         "from": "service", "counting": "calendar", "law": "x", "start_inclusive": True},
+    ],
+}
+
+
+class WeekdayRulesAndSubstitutes(unittest.TestCase):
+    pack = dates.Pack(WEEKDAY_RULE_PACK, "test")
+
+    def test_nth_weekday(self):
+        self.assertEqual(dates.nth_weekday(2026, 5, 0, 1), date(2026, 5, 4))
+        self.assertEqual(dates.nth_weekday(2026, 5, 0, -1), date(2026, 5, 25))
+        self.assertEqual(dates.nth_weekday(2026, 8, 0, -1), date(2026, 8, 31))
+        self.assertEqual(dates.nth_weekday(2026, 2, 6, 4), date(2026, 2, 22))
+        with self.assertRaises(dates.InputError):
+            dates.nth_weekday(2026, 2, 0, 5)
+
+    def test_matches_the_official_list_2019_to_2028(self):
+        for year, days in GOVUK_ENGLAND_AND_WALES.items():
+            got = sorted(d.strftime("%m-%d") for d in self.pack.holidays(year) if d.weekday() < 5)
+            self.assertEqual(got, days, year)
+
+    def test_substitute_day_names(self):
+        self.assertEqual(self.pack.holiday_name(date(2026, 12, 28), EN), "Boxing Day (substitute day)")
+        self.assertEqual(self.pack.holiday_name(date(2026, 12, 28), PLL), "Drugi dzień świąt (dzień zastępczy)")
+        self.assertEqual(self.pack.holiday_name(date(2026, 12, 26), EN), "Boxing Day")
+        self.assertFalse(self.pack.is_business_day(date(2027, 12, 27)))
+        self.assertFalse(self.pack.is_business_day(date(2027, 12, 28)))
+        self.assertTrue(self.pack.is_business_day(date(2027, 12, 29)))
+
+    def test_moved_day_replaces_the_rule_day(self):
+        self.assertTrue(self.pack.is_business_day(date(2020, 5, 4)))
+        self.assertFalse(self.pack.is_business_day(date(2020, 5, 8)))
+        self.assertTrue(self.pack.is_business_day(date(2022, 5, 30)))
+
+
+class InclusiveCounting(unittest.TestCase):
+    pack = dates.Pack(WEEKDAY_RULE_PACK, "test")
+
+    def test_beginning_with_counts_the_first_day(self):
+        plain = dates.deadline(self.pack, date(2026, 11, 2), 28, "days", "calendar")
+        incl = dates.deadline(self.pack, date(2026, 11, 2), 28, "days", "calendar", inclusive=True)
+        self.assertEqual(plain["raw_end"]["date"], "2026-11-30")
+        self.assertEqual(incl["raw_end"]["date"], "2026-11-29")
+        self.assertTrue(incl["start_inclusive"])
+        self.assertIn("the first day counts", incl["arithmetic"])
+
+    def test_window_flag_is_used(self):
+        w = self.pack.entry("response_windows", "pcn-representation")
+        res = dates.window_result(self.pack, EN, w, date(2026, 11, 2))
+        self.assertEqual(res["raw_end"]["date"], "2026-11-29")
+
+    def test_business_days_inclusive(self):
+        # Friday 18 Dec 2026, 5 business days beginning with it: Fri, Mon 21, Tue 22, Wed 23, Thu 24.
+        self.assertEqual(dates.period_end(self.pack, date(2026, 12, 18), 5, "business_days", True),
+                         date(2026, 12, 24))
+        # From a Saturday the first counted day is the next business day.
+        self.assertEqual(dates.period_end(self.pack, date(2026, 12, 19), 2, "business_days", True),
+                         date(2026, 12, 22))
+
+    def test_cli_flag(self):
+        code, out = run("deadline", "--country", "PL", "--from", "2026-11-02", "--amount", "28",
+                        "--rule", "calendar", "--inclusive")
+        self.assertEqual(code, 0)
+        self.assertEqual(out["raw_end"]["date"], "2026-11-29")
+
+
+class CheckPack(unittest.TestCase):
+    def test_bundled_packs_are_clean(self):
+        for path in sorted((ROOT / "core" / "locale").glob("*.json")):
+            code, out = run("check-pack", "--pack", str(path), "--year", "2026")
+            self.assertEqual(code, 0, (path.name, out.get("errors")))
+            self.assertTrue(out["summary"]["holidays"])
+
+    def test_pl_summary(self):
+        code, out = run("check-pack", "--country", "PL", "--year", "2026")
+        self.assertEqual(len(out["summary"]["holidays"]), 14)
+        self.assertEqual(out["summary"]["pack"], "PL")
+
+    def test_broken_pack_is_reported(self):
+        broken = json.loads(json.dumps(WEEKDAY_RULE_PACK))
+        broken["holidays"]["moved"].append({"year": 2027, "rule": "No such day", "to": "2027-05-07"})
+        broken["response_windows"].append(
+            {"id": "x", "title": "x", "amount": 0, "unit": "fortnights", "from": "x", "counting": "tax"})
+        broken["recurring"] = [{"id": "r", "dates": ["13-40"], "counting": "calendar", "law": "x"}]
+        broken["life_events"] = [{"id": "e", "title": "e", "windows": ["missing"]}]
+        broken["retention"] = [{"id": "k", "title": "k"}]
+        res = dates.check_pack(broken, "# no sections", 2026)
+        text = "\n".join(res["errors"])
+        self.assertFalse(res["ok"])
+        for expected in ("No such day", "unknown rule tax", "names no law", "unit must be",
+                         "amount must be", "'13-40'", "unknown window missing", "needs a law",
+                         "missing section '## Public holidays'"):
+            self.assertIn(expected, text)
+
+    def test_bad_weekday_rule(self):
+        broken = json.loads(json.dumps(WEEKDAY_RULE_PACK))
+        broken["holidays"]["weekday_rules"].append({"month": 2, "weekday": "monday", "nth": 5, "name": "x"})
+        res = dates.check_pack(broken, None, 2026)
+        self.assertTrue(any("holidays:" in e for e in res["errors"]))
+
+
+
+class GreatBritainPack(unittest.TestCase):
+    """The bundled GB pack (England and Wales) itself, not only the engine."""
+    GB = dates.load_pack("GB")
+
+    def test_holidays_match_the_official_list(self):
+        for year, days in GOVUK_ENGLAND_AND_WALES.items():
+            got = sorted(d.strftime("%m-%d") for d in self.GB.holidays(year) if d.weekday() < 5)
+            self.assertEqual(got, days, year)
+
+    def test_pack_check_is_clean(self):
+        code, out = run("check-pack", "--country", "GB", "--year", "2027")
+        self.assertEqual(code, 0, out.get("errors"))
+        self.assertEqual(out["summary"]["scope"], "England and Wales")
+
+    def test_birth_registration_42_days(self):
+        res = dates.window_result(self.GB, EN, self.GB.entry("response_windows", "birth-registration"),
+                                  date(2026, 11, 2))
+        self.assertEqual(res["due_date"], "2026-12-14")
+
+    def test_court_step_over_christmas(self):
+        # 14 days from Mon 14 Dec 2026 ends on Mon 28 Dec, the Boxing Day substitute: the court
+        # office is closed, so the step is in time on Tue 29 Dec (CPR 2.8(5)); the plan stays
+        # before the holidays, on Thu 24 Dec.
+        w = self.GB.entry("response_windows", "county-court-acknowledgment-of-service")
+        res = dates.window_result(self.GB, EN, w, date(2026, 12, 14))
+        self.assertEqual(res["raw_end"]["date"], "2026-12-28")
+        self.assertEqual(res["due_date"], "2026-12-29")
+        self.assertEqual(res["do_by"], "2026-12-24")
+
+    def test_tax_deadline_does_not_move(self):
+        r = dates.deadline(self.GB, date(2026, 11, 26), 30, "days", "tax")
+        self.assertEqual(r["raw_end"]["date"], "2026-12-26")
+        self.assertEqual(r["due_date"], "2026-12-26")
+        self.assertEqual(r["do_by"], "2026-12-24")
+
+    def test_amounts_in_pounds(self):
+        self.assertEqual(EN.amount("142.60", "GBP"), "£142.60")
+
+    def test_deemed_service_in_business_days(self):
+        # CPR 6.14: the second business day after the step. Fri 13 Nov 2026 -> Tue 17 Nov.
+        code, out = run("deemed", "--country", "GB", "--id", "cpr-claim-form", "--from", "2026-11-13")
+        self.assertEqual(out["deemed_delivered"]["date"], "2026-11-17")
+        # CPR 6.26: the second day after posting if a business day, otherwise the next one.
+        # Thu 12 Nov 2026 -> Sat 14 Nov -> Mon 16 Nov.
+        code, out = run("deemed", "--country", "GB", "--id", "cpr-first-class-post", "--from", "2026-11-12")
+        self.assertEqual(out["deemed_delivered"]["date"], "2026-11-16")
+        self.assertIn("Sat 14 Nov 2026", out["deemed_note"])
+        # Over Christmas: posted Wed 23 Dec 2026 -> Fri 25 Dec -> Tue 29 Dec (28 Dec is the substitute day).
+        code, out = run("deemed", "--country", "GB", "--id", "cpr-first-class-post", "--from", "2026-12-23")
+        self.assertEqual(out["deemed_delivered"]["date"], "2026-12-29")
+
+    def test_windows_found_by_words(self):
+        # The defence windows sit under CPR 15.4; a search by one word finds them all.
+        code, out = run("windows", "--country", "GB", "--query", "defence")
+        self.assertEqual(code, 0)
+        ids = {w["id"] for w in out["windows"]}
+        self.assertIn("county-court-defence", ids)
+        self.assertIn("county-court-defence-after-acknowledgment", ids)
+        after = next(w for w in out["windows"] if w["id"] == "county-court-defence-after-acknowledgment")
+        self.assertEqual((after["amount"], after["unit"], after["counting"]), (28, "days", "court"))
+        code, out = run("windows", "--country", "GB", "--query", "15.4(1)(b)")
+        self.assertIn("county-court-defence-after-acknowledgment", {w["id"] for w in out["windows"]})
+        code, out = run("windows", "--country", "GB", "--query", "no-such-word")
+        self.assertEqual(out["count"], 0)
+
+    def test_registration_does_not_move(self):
+        # A birth on Sat 3 Oct 2026: 42 days end on Sat 14 Nov, and the Act does not move it.
+        w = self.GB.entry("response_windows", "birth-registration")
+        res = dates.window_result(self.GB, EN, w, date(2026, 10, 3))
+        self.assertEqual(res["due_date"], "2026-11-14")
+        self.assertEqual(res["do_by"], "2026-11-13")
+        self.assertEqual(w["counting"], "calendar")
 
 if __name__ == "__main__":
     unittest.main()

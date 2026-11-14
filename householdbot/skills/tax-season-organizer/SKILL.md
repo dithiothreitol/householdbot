@@ -31,7 +31,7 @@ Member: "pomóż przygotować PIT za 2026"
 
 ```
 python3 "${CLAUDE_SKILL_DIR}/shared/scripts/record.py" find "<household folder>" --query "PIT-11"
-python3 "${CLAUDE_SKILL_DIR}/shared/scripts/dates.py" recurring --country PL --year <year of filing> --lang pl
+python3 "${CLAUDE_SKILL_DIR}/shared/scripts/dates.py" recurring --country <CC> --year <year of filing> --lang <lang>
 ```
 
 `${CLAUDE_SKILL_DIR}` is this skill's folder; where it was not substituted,
@@ -74,7 +74,7 @@ date.
 
 ## Step 2 — The forms
 
-From the country pack's "Annual tax return (PIT)": for each source, the
+From the country pack's "Annual tax return" section: for each source, the
 information form, who sends it and by when. Then `record.py find` for each:
 
 | Member | Source | Form | Sent by, until | In the record |
@@ -103,6 +103,11 @@ together with "collect the missing forms" tasks. When a refund is expected,
 `dates.py window --id pit-refund-electronic` (or `pit-refund-paper`) from the
 filing date gives the date to check for it; a correction has its own windows
 in the pack.
+In the GB pack: `sa-register`, `sa-paper-return`, `sa-online-return`,
+`sa-january-payment`, `sa-july-payment-on-account`, `p60-arrives`,
+`p11d-arrives`, `hicbc-paye-deadline` and `mtd-quarterly-update`.
+Another pack has its own ids: they are in `shared/locale/<CC>.json`, and
+`dates.py` lists the known ids when it is given one it does not know.
 
 ## Step 5 — One page
 

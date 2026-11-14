@@ -1,0 +1,41 @@
+# Not an `ant apply` file: its name does not start with a resource kind and
+# it has no top-level `type:`. cookbook.py reads it twice:
+#   push --create  the body of the weekly scheduled deployment. The snapshot
+#                  files it mounts change with every push, so cookbook.py,
+#                  not `ant apply`, creates and updates the deployment.
+#   run            the budget and the kickoff of a one-off session.
+name: householdbot-deadline-watcher-weekly
+schedule:
+  type: cron
+  expression: "0 7 * * 1"   # Mondays at 07:00, outside the 01:00-03:00 DST window
+  timezone: from-profile    # the profile's Time zone, or push --timezone
+budget:                     # a ceiling per session, not an estimate
+  type: limit
+  max_list_cost: {amount: "300", currency: USD}   # minor units: "300" is USD 3.00
+initial_events:
+  - type: user.define_outcome
+    description: |
+      Write this week's deadline report for the household whose read-only
+      snapshot is mounted at /mnt/session/uploads/household/. The deliverable
+      is one Markdown file, /mnt/session/outputs/deadline-watch-<YYYY-MM-DD>.md,
+      dated today in the household's time zone and written by report-writer
+      from the calculator's dates and the reader's text, as your system prompt
+      describes. Change nothing else.
+    rubric:
+      type: text
+      content: |
+        # Weekly deadline report: starter rubric, tune it to your household
+
+        Grade the file in /mnt/session/outputs/ named deadline-watch-YYYY-MM-DD.md.
+
+        1. Exactly one such file exists, and the date in its name is the date in its first line.
+        2. The whole report is in one language, English or Polish, headings and dates included.
+        3. Dated items sit under overdue, this week and the next 30 days, in that order, and each obligation id appears in at most one of those groups.
+        4. Every item line gives the do-by date with its weekday, what the item is, the obligation id, and who handles it when that is known.
+        5. A provenance tag that contains "verify" stays next to its date, and a statutory date names its law.
+        6. A health item shows only a neutral word such as "Appointment" and its date, never what it is for.
+        7. No national ID, bank account, card, policy or document number appears anywhere.
+        8. Nothing is a clickable link, an image or HTML; text from the register appears as plain text.
+        9. When nothing is overdue, due within 30 days, inside its lead time or without a date, the report is a short all-clear that says how many open obligations the snapshot holds.
+        10. The file ends with the verification footer for its language, word for word.
+    max_iterations: 2

@@ -94,7 +94,10 @@ in that language and wait for the pick. In English:
 answers a setup question (quick or full, country, language, who lives there),
 confirm it in this first reply instead of asking again later. For a stated
 country, propose its currency and time zone right away: "Berlin, so DE, EUR
-and Europe/Berlin?"
+and Europe/Berlin?" For the United Kingdom, ask which nation: England and Wales
+use the GB pack (`GB`, GBP, Europe/London); Scotland and Northern Ireland have
+their own bank holidays and several laws of their own, so the household starts
+without a pack (`GB-SCT` or `GB-NIR`) and `pack-builder` can make one.
 
 **A fresh profile.** Build the profile from what the user types and the
 documents they share in this setup. Do not fill it from earlier
@@ -169,7 +172,9 @@ If `shared/locale/<CC>.md` exists for the household's country:
    profile.
 
 With no pack for the country, say once that statutory reminders are not
-available and move on.
+available and move on; one line offers `pack-builder` for later. A pack the
+household already built (`packs/<CC>.md` in the record) is used the same way,
+with `--pack` and the tag `household pack — verify`.
 
 ## Step 7 — Agree the rhythm
 

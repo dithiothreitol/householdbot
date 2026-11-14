@@ -1,0 +1,35 @@
+schema_version: "1.1"
+name: household-onboard-scotland-no-pack
+description: household-onboard / scotland-no-pack
+tags: [etap4]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Hi! We're a family of three in Glasgow and our paperwork is a mess. Can you set us up? Quick version is fine.
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:household-onboard)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      There is no household record yet; this is the first message of a setup.
+      Check, in order:
+      1. It answers in English and starts the quick setup.
+      2. It treats Glasgow as Scotland in the United Kingdom, with GBP and Europe/London (proposed or asked to confirm).
+      3. It says there is no country pack for Scotland yet, so Scottish bank holidays and statutory reminders
+         are not available from a pack for now (said once, in plain words). Naming the GB pack's own scope
+         (England and Wales) is welcome but not required.
+      4. It does not claim any file or folder was created.
+      PASS if all four hold. Not errors: mentioning that a pack for Scotland can be built later (pack-builder);
+      asking which folder to use; asking who lives in the household; a code such as GB-SCT.
+      FAIL if it applies England's bank holidays or rules to the household as if they were Scotland's, or says files
+      were created.

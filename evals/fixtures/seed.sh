@@ -2,9 +2,10 @@
 # Seed the synthetic household into the eval workspace (the current folder).
 # Sourced by each case's setup.sh with one or more modes:
 #   . "$(dirname "${BASH_SOURCE[0]}")/../../fixtures/seed.sh" full statement
-# Household modes: full | full-en | empty | conflict | broken | none
+# Household modes: full | full-en | gb | empty | conflict | broken | none
 #   everyday (after full or full-en): profile Everyday life, chores, lists, five more papers
 #   (full, empty, conflict and broken write a Polish household; full-en writes it in English)
+#   gb writes a household in England (GB pack, GBP), see make_household_gb.py
 # Statement modes, written to inbox/wyciag.csv:
 #   statement (Polish layout, Windows-1250) | statement-gap (middle month missing) | statement-en (English layout)
 # Everything it writes is invented; see make_household.py and make_statement.py.
@@ -29,6 +30,7 @@ for mode in "$@"; do
   case "$mode" in
     full)          "$HB_PY" "$HB_FIXTURES/make_household.py" . >/dev/null ;;
     full-en)       "$HB_PY" "$HB_FIXTURES/make_household.py" . --lang en >/dev/null ;;
+    gb)            "$HB_PY" "$HB_FIXTURES/make_household_gb.py" . >/dev/null ;;
     empty)         "$HB_PY" "$HB_FIXTURES/make_household.py" . --empty >/dev/null ;;
     conflict)      "$HB_PY" "$HB_FIXTURES/make_household.py" . --conflict >/dev/null ;;
     broken)        "$HB_PY" "$HB_FIXTURES/make_household.py" . --broken >/dev/null ;;

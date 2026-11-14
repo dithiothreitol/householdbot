@@ -1,5 +1,80 @@
 # Changelog
 
+## 1.0.0-rc.1
+
+Reach, hardening and release (stage 4 of 4). The release candidate of 1.0;
+1.0 follows the pilot in a real household.
+
+- Skills: `household-dashboard` (one read-only page on the whole household:
+  deadlines by band, this month's payments with totals per currency, what
+  expires, insurance, health and school under neutral titles, chores, meals
+  and shopping, the record's health and a "not tracked" line for every gap;
+  saved as Markdown or one self-contained HTML page only after a yes),
+  `build-skill` (a repeated household task becomes the household's own skill
+  that keeps the house rules; written after a yes, never over an existing
+  skill without the difference shown) and `pack-builder` (a household's own
+  country pack from official sources only, checked with `dates.py
+  check-pack`, kept in `packs/` in the record). 34 skills.
+- Country pack **GB** (England and Wales, reviewed 2026-11-14): bank holidays
+  with substitute, moved and one-off days (checked against the official list
+  for 2019 to 2028), the five counting rules, deemed service and delivery,
+  92 response windows (county court, HMRC, benefits, council tax, parking and
+  speeding notices, consumer cancellation and rejection, complaints and
+  ombudsmen, renting, life events, health), 17 yearly dates (Self Assessment,
+  school admissions, childcare codes), 20 keeping periods, 6 life events,
+  every rule with its act, section and source; 46 points left open are listed
+  without a claim. An independent check of about forty claims against the
+  primary texts led to four corrections, among them deemed service counted in
+  business days (`dates.py deemed` now supports `unit` and `end_roll`). The setup asks a UK household which nation it lives in;
+  Scotland and Northern Ireland start without a pack.
+- `dates.py`: holiday rules for "the first Monday in May", "the last Monday in
+  August", substitute days, moved and one-off days; periods "beginning with"
+  the day of the event (`start_inclusive`, `deadline --inclusive`);
+  `check-pack` checks a pack and lists its holidays for a year;
+  `scripts/validate.py` runs the same check on the bundled packs; `windows`
+  finds a pack's response windows by words (`--query defence`). Amounts in
+  English use the currency symbol where there is one (`£142.60`).
+- The dashboard and the payment list name the last day and the plan date
+  apart ("last day Sun 17 Jan 2027, plan by Fri 15 Jan"); a payment is overdue
+  only once its due date has passed. A saved dashboard page and a skill the
+  household builds each leave a line in `log/decisions.md`, as register
+  changes do. Around a draft in the recipient's language, everything else
+  stays in the household's language. After a death, every answer opens with
+  one plain sentence of sympathy, whichever skill takes the request.
+- A household's own pack (`packs/<CC>.md` and `.json` in the record) is used
+  where no pack is bundled, tagged `household pack — verify`; every pack
+  states the part of the country it covers.
+- Security review, all findings fixed: text from documents, messages, file
+  names and bank exports never goes on a command line (`--query-file -`,
+  `--file -`, `"original"` inside the entry, `statement.py add-rule --file -`,
+  `chores.py add --file -`); writes refuse a path that leads out of the
+  household folder through a link, use unique temporary files and never
+  overwrite an original; the decisions log keeps one escaped line per change;
+  `merge` takes only a listed conflict copy, shows every changed field and
+  checks the entries it brings in; identifiers are refused at write time
+  (IBANs of any country, UK sort code and account, National Insurance and NIP
+  numbers, card numbers, PINs and passwords) and masked in bank exports; the
+  `deadline-watcher` agent has read tools only; the release workflow builds
+  with a read-only token and pinned tools and publishes from a separate job.
+- `managed-agent-cookbooks/deadline-watcher`: the weekly deadline check as a
+  Claude Managed Agent with three tiers (a reader with read tools, a
+  calculator that runs the plugin's scripts in a sandbox with no network, a
+  writer that alone can write and never sees raw data), a weekly scheduled
+  deployment, an offline check and dry run; only the profile excerpt and the
+  open obligations are uploaded, never the originals.
+- Release packages: `scripts/package.py` builds `householdbot.plugin` (for
+  Cowork's Upload plugin) and one zip per skill for claude.ai, reproducibly;
+  a tag builds and publishes them (`.github/workflows/release.yml`). Behaviour
+  tests with a shell run on Linux on request (`.github/workflows/evals.yml`).
+- Docs: `docs/architecture.md` (the pattern and what a household changes
+  about it), `docs/country-packs.md`, the quickstart for every surface and
+  scheduled weekly briefs, `CONNECTORS.pl.md`; the development plan in English
+  with a Polish translation.
+- Tests: unit tests for the new holiday rules, inclusive periods, the pack
+  check, the GB pack and the security fixes; behaviour cases for the three
+  skills, the GB pack, Scotland, and a record kept behind the Google Drive
+  connector.
+
 ## 0.3.0
 
 Home, family and everyday life (stage 3 of 4).

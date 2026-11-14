@@ -30,7 +30,7 @@ Member: "co nas czeka w przyszłym tygodniu?"
 
 ```
 python3 "${CLAUDE_SKILL_DIR}/shared/scripts/record.py" due "<household folder>" --horizon 14 --today <today> --country <CC>
-python3 "${CLAUDE_SKILL_DIR}/shared/scripts/dates.py" info <date> --country <CC> --lang pl
+python3 "${CLAUDE_SKILL_DIR}/shared/scripts/dates.py" info <date> --country <CC> --lang <lang>
 ```
 
 `${CLAUDE_SKILL_DIR}` is this skill's folder; where it was not substituted,

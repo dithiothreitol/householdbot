@@ -1,10 +1,11 @@
 ---
 name: identity-and-travel
 description: >
-  Identity cards, passports, driving licences and EKUZ cards: expiry, when to
-  apply, and a readiness check for a trip. Never stores document numbers. Use
-  for: "is my ID valid", "are we ready for the trip", "czy dowód jest ważny",
-  "paszport", "wyjazd za granicę".
+  Identity cards, passports, driving licences and EKUZ cards: expiry, where
+  each is kept, when to apply, and a readiness check for a trip. Never stores
+  document numbers. Use for: "is my ID valid", "what's the passport number",
+  "are we ready for the trip", "czy dowód jest ważny", "numer paszportu",
+  "wyjazd za granicę".
 argument-hint: "[--member NAME] [destination and dates, for a trip check]"
 ---
 
@@ -88,9 +89,9 @@ is saved.
 |---|---|---|---|---|---|
 
 - *Expires*: the weekday and date. *Start by*: the expiry minus the pack's
-  lead time, marked *start now* when that day has passed. A lead time is the
-  pack's advice, not a deadline: never "the deadline has passed", only
-  "start now", with the days left until the expiry.
+  lead time; when that day has passed, only *start now*, without the past
+  date. A lead time is the pack's advice, not a deadline: never "the deadline
+  has passed", only "start now", with the days left until the expiry.
 - *Where kept*: as the register says ("original at home"). Never a number,
   never an image, not even a partial number.
 - The next step in one line per document kind: where to apply (for each kind

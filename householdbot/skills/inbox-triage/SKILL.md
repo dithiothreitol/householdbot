@@ -30,7 +30,9 @@ Member: "co przyszło mailem w tym tygodniu?"
 Python 3:
 
 ```
-python3 "${CLAUDE_SKILL_DIR}/shared/scripts/record.py" find "<household folder>" --query "<sender>"
+python3 "${CLAUDE_SKILL_DIR}/shared/scripts/record.py" find "<household folder>" --query-file - <<'HB_END'
+<sender>
+HB_END
 ```
 
 `${CLAUDE_SKILL_DIR}` is this skill's folder; where it was not substituted,

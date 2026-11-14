@@ -49,7 +49,7 @@ One entry per deadline, renewal, payment, expiry or dated task.
 | `amount`, `currency` | `"286.40"` and `PLN` |
 | `auto_renews`, `notice` | for contracts: whether it renews, and the notice period, method and transit days |
 | `source` | the document, page and quote it came from |
-| `provenance` | `stated in document`, `calculated from document`, `country pack rule — verify`, `model calculation — verify`, `told by household member` |
+| `provenance` | `stated in document`, `calculated from document`, `country pack rule — verify`, `household pack — verify`, `model calculation — verify`, `told by household member` |
 | `law` | the act and article for a statutory date |
 | `status`, `done_date` | `open`, `done`, `cancelled`, `lapsed` |
 

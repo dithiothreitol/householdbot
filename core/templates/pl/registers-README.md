@@ -51,7 +51,7 @@ Jeden wpis na każdy termin, odnowienie, płatność, wygaśnięcie lub zadanie 
 | `amount`, `currency` | `"286.40"` i `PLN` |
 | `auto_renews`, `notice` | przy umowach: czy odnawia się sama oraz okres, forma i czas doręczenia wypowiedzenia |
 | `source` | dokument, strona i cytat, z których pochodzi |
-| `provenance` | `stated in document`, `calculated from document`, `country pack rule — verify`, `model calculation — verify`, `told by household member` |
+| `provenance` | `stated in document`, `calculated from document`, `country pack rule — verify`, `household pack — verify`, `model calculation — verify`, `told by household member` |
 | `law` | akt i artykuł przy terminie ustawowym |
 | `status`, `done_date` | `open`, `done`, `cancelled`, `lapsed` |
 

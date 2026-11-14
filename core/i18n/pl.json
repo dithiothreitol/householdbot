@@ -38,6 +38,7 @@
   "decimal_separator": ",",
   "thousands_separator": " ",
   "amount_format": "{number} {symbol}",
+  "amount_format_symbol": "{number} {symbol}",
   "currency_symbols": {
     "PLN": "zł"
   },
@@ -73,7 +74,8 @@
     "rolled_back": "cofnięte z dnia {date} ({reason})",
     "holiday": "święto: {name}",
     "margin": "ustawowe przesunięcie terminu to zapas, a nie plan",
-    "moved_forward": "{date} to dzień wolny ({reason}); termin przesuwa się na {new_date} zgodnie z {law}"
+    "moved_forward": "{date} to dzień wolny ({reason}); termin przesuwa się na {new_date} zgodnie z {law}",
+    "first_day_counts": "pierwszy dzień wlicza się do terminu"
   },
   "quotes": [
     "„",
@@ -119,5 +121,6 @@
     "chore_person": "obowiązki: {name} ({detail})",
     "chore_plan_saved": "zapisano plan obowiązków na {weeks}",
     "chore_swap": "zamiana w {week}: {chore} ×{count} od {giver} do {to}"
-  }
+  },
+  "substitute_day": "dzień zastępczy"
 }

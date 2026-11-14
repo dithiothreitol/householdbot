@@ -105,6 +105,16 @@ too. Never quote a statutory window from memory when the pack is there.
   a pack cites the act and article, carries the pack's review date, and
   reaches the household tagged `country pack rule — verify`.
 - A pack is a reminder list, not legal advice.
+- **A pack has a scope.** The first lines of a pack say which part of the
+  country it covers (the GB pack covers England and Wales). A household outside
+  that scope, such as one in Scotland or Northern Ireland, is treated as having
+  no pack: say so once, and offer `pack-builder`.
+- **A household pack.** Where no pack is bundled for the household's country
+  or region, a pack the household built with `pack-builder` may sit in the
+  record as `packs/<CC>.md` and `packs/<CC>.json` (a region as `GB-SCT`). Read
+  it the same way, pass `--pack <record>/packs/<CC>.json` to the scripts in
+  place of `--country`, and tag what comes from it `household pack — verify`. A
+  bundled pack always wins over a household pack for the same code.
 
 Packs and languages are contributed separately; `CONTRIBUTING.md` at the
 repository root describes both.

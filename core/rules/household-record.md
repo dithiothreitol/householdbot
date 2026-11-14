@@ -24,6 +24,9 @@ Every skill follows these rules before it reads or writes the record.
   briefs/                   saved weekly briefs
   archive/                  closed obligations of past years
   log/decisions.md          what was approved, by whom, when
+  packs/                    the household's own country pack, where none is bundled (optional)
+  reviews/                  saved dashboards (optional)
+  skills/                   the household's own skills, when kept with the record (optional)
 ```
 
 Both registers are JSON with a `schema_version`. `record.py` (in the skill's
@@ -80,9 +83,10 @@ the quick setup: use them, and name the default when it shapes an answer.
 2. **Show the change, then wait.** Run the write with `--dry-run`, show the
    household exactly what will be added or changed and where, and wait for a
    yes (approval gates). The entry goes to the script on standard input
-   (`--file -` with a here-document) or with `--json`; no file is written to
-   prepare it. Without a shell, the entry is shown in plain words and nothing
-   is written before the yes.
+   (`--file -` with a here-document, as the untrusted-content rule shows); no
+   file is written to prepare it, and text from a document never goes on the
+   command line. Without a shell, the entry is shown in plain words and
+   nothing is written before the yes.
 3. **Write with the approver's name.** After the yes, run the same command
    with `--approved-by "<the approver's name only>"` (a name such as `Anna`,
    never their words). The script refuses a write

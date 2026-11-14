@@ -13,7 +13,9 @@ default language; pass --lang pl for Polish.
 Examples:
   python3 dates.py info 2026-11-11 --country PL --lang pl
   python3 dates.py deadline --country PL --from 2026-10-28 --amount 14 --unit days --rule administrative
+  python3 dates.py deadline --country GB --from 2026-11-02 --amount 28 --rule administrative --inclusive
   python3 dates.py window --country PL --from 2026-11-03 --id appeal-administrative-decision
+  python3 dates.py check-pack --pack ./household/packs/DE.json --year 2027
   python3 dates.py do-by --country PL --due 2026-11-16 --transit 1
   python3 dates.py band --today 2026-11-13 --date 2026-11-20
   python3 dates.py next --due 2026-01-31 --recurrence monthly
@@ -113,7 +115,16 @@ class Lang:
         if value is None:
             return None
         code = currency or ""
-        symbol = self.data.get("currency_symbols", {}).get(code, code)
+        symbols = self.data.get("currency_symbols", {})
+        if code in symbols and self.data.get("amount_format_symbol"):
+            # A currency written with its symbol in this language ("£1,240.00"):
+            # the minus sign goes before the symbol.
+            number = self.number(value)
+            sign = "-" if number.startswith("-") else ""
+            text = self.data["amount_format_symbol"].format(
+                code=code, symbol=symbols[code], number=number.lstrip("-"))
+            return (sign + text).strip()
+        symbol = symbols.get(code, code)
         return self.data["amount_format"].format(code=code, symbol=symbol, number=self.number(value)).strip()
 
     def plural_index(self, n: int) -> int:
@@ -190,25 +201,72 @@ class Pack:
     def label(self) -> str:
         return f"{self.code} pack, reviewed {self.reviewed}"
 
+    def _base_holidays(self, year: int) -> dict[date, dict]:
+        """Holidays of the year before substitute days: fixed, Easter-relative,
+        weekday rules (\"first Monday in May\"), one-off days, with moved days applied."""
+        spec = self.data.get("holidays", {})
+
+        def active(h: dict) -> bool:
+            return not ((h.get("from_year") and year < h["from_year"])
+                        or (h.get("to_year") and year > h["to_year"]))
+
+        out: dict[date, dict] = {}
+        for h in spec.get("fixed", []):
+            if active(h):
+                month, day = (int(x) for x in h["date"].split("-"))
+                out[date(year, month, day)] = h
+        if spec.get("easter_relative"):
+            base = easter_sunday(year)
+            for h in spec["easter_relative"]:
+                if active(h):
+                    out[base + timedelta(days=int(h["offset"]))] = h
+        for h in spec.get("weekday_rules", []):
+            if active(h):
+                out[nth_weekday(year, int(h["month"]), WEEKDAY_INDEX[h["weekday"]], int(h["nth"]))] = h
+        for m in spec.get("moved", []):
+            if int(m["year"]) != year:
+                continue
+            for d, h in list(out.items()):
+                if h.get("name") == m["rule"]:
+                    del out[d]
+                    out[parse_date(m["to"])] = h
+        for h in spec.get("one_off", []):
+            d = parse_date(h["date"])
+            if d.year == year:
+                out[d] = h
+        return out
+
+    def _substitutes(self, year: int, taken: dict[date, dict]) -> dict[date, dict]:
+        """Substitute days for holidays marked \"substitute\": a holiday on a weekend
+        gives the next weekday that is not already a holiday, in date order."""
+        out: dict[date, dict] = {}
+        for d in sorted(taken):
+            h = taken[d]
+            if not h.get("substitute") or d.weekday() not in self.weekend:
+                continue
+            s = d + timedelta(days=1)
+            while s.weekday() in self.weekend or s in taken or s in out:
+                s += timedelta(days=1)
+            entry = {"name": f"{h['name']} (substitute day)", "substitute_for": d.isoformat()}
+            for key, value in h.items():
+                if key.startswith("name_"):
+                    lang = load_lang(key[5:])
+                    entry[key] = f"{value} ({lang.data.get('substitute_day', 'substitute day')})"
+            out[s] = entry
+        return out
+
     def holidays(self, year: int) -> dict[date, dict]:
         """Every public holiday of the year, mapped to its entry (names per language)."""
         if year in self._holiday_cache:
             return self._holiday_cache[year]
-        out: dict[date, dict] = {}
-        spec = self.data.get("holidays", {})
-        for h in spec.get("fixed", []):
-            if h.get("from_year") and year < h["from_year"]:
-                continue
-            if h.get("to_year") and year > h["to_year"]:
-                continue
-            month, day = (int(x) for x in h["date"].split("-"))
-            out[date(year, month, day)] = h
-        if spec.get("easter_relative"):
-            base = easter_sunday(year)
-            for h in spec["easter_relative"]:
-                if h.get("from_year") and year < h["from_year"]:
-                    continue
-                out[base + timedelta(days=int(h["offset"]))] = h
+        out = self._base_holidays(year)
+        out.update(self._substitutes(year, out))
+        # A substitute for a late-December holiday of the previous year may fall in January.
+        previous = self._base_holidays(year - 1)
+        for d, h in self._substitutes(year - 1, previous).items():
+            if d.year == year and d not in out:
+                out[d] = h
+        out = {d: h for d, h in out.items() if d.year == year}
         self._holiday_cache[year] = out
         return out
 
@@ -301,6 +359,21 @@ def easter_sunday(year: int) -> date:
     return date(year, month, day)
 
 
+def nth_weekday(year: int, month: int, weekday: int, nth: int) -> date:
+    """The nth given weekday of a month; nth -1 is the last one (\"last Monday in May\")."""
+    if nth == 0:
+        raise InputError("nth must not be 0: 1 is the first, -1 the last")
+    if nth > 0:
+        first = date(year, month, 1)
+        d = first + timedelta(days=(weekday - first.weekday()) % 7 + 7 * (nth - 1))
+    else:
+        last = date(year, month, calendar.monthrange(year, month)[1])
+        d = last - timedelta(days=(last.weekday() - weekday) % 7 + 7 * (-nth - 1))
+    if d.month != month:
+        raise InputError(f"there is no weekday number {nth} in {year}-{month:02d}")
+    return d
+
+
 def add_months(d: date, n: int, anchor_day: int | None = None) -> date:
     """Add calendar months; a day missing in the target month becomes its last day."""
     total = d.month - 1 + n
@@ -389,11 +462,24 @@ def plan_do_by(pack: Pack, due: date, transit_days: int = 0, lang: Lang | None =
     }
 
 
+def period_end(pack: Pack, start: date, amount: int, unit: str, inclusive: bool = False) -> date:
+    """Last day of a period. By default the day of the event is not counted
+    (\"30 days after\"); inclusive counts it as day one (\"28 days beginning with\")."""
+    if not inclusive:
+        return add_period(start, amount, unit, pack)
+    if unit == "business_days":
+        return pack.add_business_days(start, amount - 1 if pack.is_business_day(start) else amount)
+    return add_period(start, amount, unit, pack) - timedelta(days=1)
+
+
 def deadline(pack: Pack, start: date, amount: int, unit: str, rule_id: str,
-             transit_days: int = 0, lang: Lang | None = None) -> dict:
+             transit_days: int = 0, lang: Lang | None = None,
+             inclusive: bool | None = None) -> dict:
     lang = lang or load_lang(DEFAULT_LANG)
     rule = pack.rule(rule_id)
-    raw_end = add_period(start, amount, unit, pack)
+    if inclusive is None:
+        inclusive = bool(rule.get("start_inclusive"))
+    raw_end = period_end(pack, start, amount, unit, inclusive)
     due = raw_end
     due_note = ""
     if rule.get("end_roll") == "forward":
@@ -402,13 +488,18 @@ def deadline(pack: Pack, start: date, amount: int, unit: str, rule_id: str,
             due = pack.roll_forward(raw_end)
             due_note = lang.note("moved_forward", date=lang.date(raw_end), reason=reason,
                                  new_date=lang.date(due), law=rule.get("law", rule_id))
+    arithmetic = f"{lang.date(start)} + {lang.unit(unit, amount)} = {lang.date(raw_end)}"
+    if inclusive:
+        arithmetic = (f"{lang.date(start)} + {lang.unit(unit, amount)}, "
+                      f"{lang.note('first_day_counts')} = {lang.date(raw_end)}")
     result = {
         "start": describe(start, lang),
         "amount": amount,
         "unit": unit,
         "rule": rule_id,
         "law": rule.get("law"),
-        "arithmetic": f"{lang.date(start)} + {lang.unit(unit, amount)} = {lang.date(raw_end)}",
+        "start_inclusive": inclusive,
+        "arithmetic": arithmetic,
         "raw_end": describe(raw_end, lang),
         "due_date": due.isoformat(),
         "due_date_text": text_en(due),
@@ -516,13 +607,16 @@ def cmd_info(args) -> dict:
 
 def cmd_deadline(args) -> dict:
     pack, lang = _pack(args), _lang(args)
-    res = deadline(pack, parse_date(args.start), args.amount, args.unit, args.rule, args.transit, lang)
+    res = deadline(pack, parse_date(args.start), args.amount, args.unit, args.rule, args.transit, lang,
+                   True if args.inclusive else None)
     res["pack"] = pack.label()
     return res
 
 
 def window_result(pack: Pack, lang: Lang, w: dict, start: date, transit: int = 0) -> dict:
-    res = deadline(pack, start, int(w["amount"]), w["unit"], w["counting"], transit, lang)
+    inclusive = w.get("start_inclusive")
+    res = deadline(pack, start, int(w["amount"]), w["unit"], w["counting"], transit, lang,
+                   None if inclusive is None else bool(inclusive))
     res.update({"window": w["id"], "title": w.get(f"title_{lang.code}") or w.get("title"),
                 "counted_from": w.get("from"), "law": w.get("law"), "pack": pack.label(),
                 "provenance": "country pack rule — verify"})
@@ -566,18 +660,57 @@ def cmd_events(args) -> dict:
         for e in pack.data.get("life_events", [])]}
 
 
+def cmd_windows(args) -> dict:
+    """The pack's response windows whose id, title, start, law or note hold every word of --query."""
+    pack, lang = _pack(args), _lang(args)
+    words = (args.query or "").lower().split()
+    found = []
+    for w in pack.data.get("response_windows", []):
+        title = w.get(f"title_{lang.code}") or w.get("title")
+        text = " ".join(str(v or "") for v in (w.get("id"), title, w.get("title"), w.get("from"),
+                                                w.get("law"), w.get("note"))).lower()
+        if all(word in text for word in words):
+            row = {"id": w.get("id"), "title": title}
+            row.update({k: w[k] for k in ("amount", "unit", "from", "counting", "law") if w.get(k) is not None})
+            found.append(row)
+    return {"pack": pack.label(), "query": args.query or "", "count": len(found), "windows": found,
+            "note": "count one with: dates.py window --id <id> --from <date>; "
+                    "no match means no window holds every word, not that the pack has no rule"}
+
+
+def deemed_date(pack: Pack, rule: dict, start: date, lang: Lang) -> tuple[date, str, str]:
+    """Deemed delivery: calendar or business days after the start, then, where the rule says
+    so, the next business day ("the second day after posting if that is a business day;
+    otherwise the next business day")."""
+    days = int(rule["days"])
+    unit = rule.get("unit", "days")
+    if unit == "business_days":
+        deemed = pack.add_business_days(start, days)
+    else:
+        deemed = start + timedelta(days=days)
+    arithmetic = f"{lang.date(start)} + {lang.unit(unit, days)} = {lang.date(deemed)}"
+    note = ""
+    if rule.get("end_roll") == "forward" and not pack.is_business_day(deemed):
+        rolled = pack.roll_forward(deemed)
+        note = lang.note("moved_forward", date=lang.date(deemed), reason=pack.non_business_reason(deemed, lang),
+                         new_date=lang.date(rolled), law=rule.get("law"))
+        deemed = rolled
+    return deemed, arithmetic, note
+
+
 def cmd_deemed(args) -> dict:
     pack, lang = _pack(args), _lang(args)
     rule = pack.entry("deemed_delivery", args.id)
     start = parse_date(args.start)
-    deemed = start + timedelta(days=int(rule["days"]))
+    deemed, arithmetic, roll_note = deemed_date(pack, rule, start, lang)
     return {
         "rule": rule["id"],
         "title": rule.get("title"),
         "counted_from": rule.get("from"),
         "start": describe(start, lang),
         "deemed_delivered": describe(deemed, lang),
-        "arithmetic": f"{lang.date(start)} + {lang.unit('days', int(rule['days']))} = {lang.date(deemed)}",
+        "arithmetic": arithmetic,
+        "deemed_note": roll_note,
         "law": rule.get("law"),
         "note": rule.get("note"),
         "pack": pack.label(),
@@ -645,6 +778,140 @@ def cmd_recurring(args) -> dict:
             "dates": statutory_dates(pack, args.year, ids, args.transit, lang)}
 
 
+PACK_REQUIRED_KEYS = ("pack", "reviewed", "weekend", "holidays", "counting_rules")
+PACK_REQUIRED_HEADINGS = ("Public holidays", "How deadlines are counted", "Scam patterns", "Sources")
+PACK_UNITS = ("days", "weeks", "months", "years", "business_days")
+MONTH_DAY_RE = re.compile(r"^(\d{2})-(\d{2}|L)$")
+
+
+def check_pack(data: dict, md_text: str | None = None, year: int | None = None) -> dict:
+    """Check a country pack: structure, citations, references between sections and the
+    holiday rules. Returns {ok, errors, warnings, summary}; the summary lists the
+    holidays of the year so a person can compare them with the official list."""
+    errors: list[str] = []
+    warnings: list[str] = []
+    for key in PACK_REQUIRED_KEYS:
+        if key not in data:
+            errors.append(f"missing '{key}'")
+    rules = data.get("counting_rules") or {}
+    for rid, rule in rules.items():
+        if rule.get("end_roll") not in ("forward", "none"):
+            errors.append(f"rule {rid} needs end_roll forward or none")
+    for wd in data.get("weekend", []):
+        if wd not in WEEKDAY_INDEX:
+            errors.append(f"weekend: unknown weekday {wd!r}")
+
+    ids: dict[str, set] = {}
+    for section in ("response_windows", "recurring", "deemed_delivery", "retention", "life_events"):
+        ids[section] = set()
+        for item in data.get(section, []):
+            iid = item.get("id")
+            if not iid:
+                errors.append(f"{section}: an entry has no id")
+                continue
+            if iid in ids[section]:
+                errors.append(f"{section}: duplicate id {iid}")
+            ids[section].add(iid)
+            if section in ("response_windows", "recurring") and item.get("counting") not in rules:
+                errors.append(f"{section} {iid} uses unknown rule {item.get('counting')}")
+            if section in ("response_windows", "recurring", "deemed_delivery") and not item.get("law"):
+                errors.append(f"{section} {iid} names no law")
+    for w in data.get("response_windows", []):
+        if w.get("unit") not in PACK_UNITS:
+            errors.append(f"response_windows {w.get('id')}: unit must be one of {list(PACK_UNITS)}")
+        if not isinstance(w.get("amount"), int) or w["amount"] < 1:
+            errors.append(f"response_windows {w.get('id')}: amount must be a whole number from 1")
+    for r in data.get("recurring", []):
+        values = list(r.get("dates", [])) + ([r["window_opens"]] if r.get("window_opens") else [])
+        if not r.get("dates"):
+            errors.append(f"recurring {r.get('id')}: no dates")
+        for md in values:
+            m = MONTH_DAY_RE.match(str(md))
+            try:
+                if not m:
+                    raise ValueError
+                date(2024, int(m.group(1)), 1 if m.group(2) == "L" else int(m.group(2)))
+            except ValueError:
+                errors.append(f"recurring {r.get('id')}: {md!r} is not MM-DD or MM-L")
+    for d in data.get("deemed_delivery", []):
+        if not isinstance(d.get("days"), int) or d["days"] < 0:
+            errors.append(f"deemed_delivery {d.get('id')}: days must be a whole number")
+        if d.get("unit", "days") not in ("days", "business_days"):
+            errors.append(f"deemed_delivery {d.get('id')}: unit must be days or business_days")
+        if d.get("end_roll", "none") not in ("forward", "none"):
+            errors.append(f"deemed_delivery {d.get('id')}: end_roll must be forward or none")
+    for ev in data.get("life_events", []):
+        for wid in ev.get("windows", []):
+            if wid not in ids["response_windows"]:
+                errors.append(f"life event {ev.get('id')} names unknown window {wid}")
+        if not ev.get("title"):
+            errors.append(f"life event {ev.get('id')} has no title")
+    for item in data.get("retention", []):
+        if not item.get("law") and not item.get("suggested"):
+            errors.append(f"retention {item.get('id')} needs a law or \"suggested\": true")
+
+    year = year or date.today().year
+    holidays: list[dict] = []
+    spec = data.get("holidays") or {}
+    names = {h.get("name") for kind in ("fixed", "easter_relative", "weekday_rules")
+             for h in spec.get(kind, [])}
+    for m in spec.get("moved", []):
+        if m.get("rule") not in names:
+            errors.append(f"holidays.moved: {m.get('rule')!r} is not the name of a holiday rule")
+    if "holidays" in data:
+        try:
+            pack = Pack(data, "check")
+            for y in (year, year + 1):
+                hol = pack.holidays(y)
+                if y == year:
+                    holidays = [{"date": d.isoformat(), "text": text_en(d), "name": hol[d].get("name")}
+                                for d in sorted(hol)]
+        except (InputError, KeyError, ValueError, TypeError) as exc:
+            errors.append(f"holidays: {exc}")
+
+    if md_text is not None:
+        for heading in PACK_REQUIRED_HEADINGS:
+            if f"## {heading}" not in md_text:
+                errors.append(f"Markdown: missing section '## {heading}'")
+        if f"Reviewed:** {data.get('reviewed')}" not in md_text:
+            warnings.append(f"Markdown: review date differs from the JSON ({data.get('reviewed')})")
+    sources = data.get("sources") or {}
+    if not sources:
+        warnings.append("no 'sources' (reviewed_with and uncertain)")
+    summary = {
+        "pack": data.get("pack"),
+        "scope": data.get("scope"),
+        "reviewed": data.get("reviewed"),
+        "counts": {s: len(data.get(s, [])) for s in
+                   ("response_windows", "recurring", "deemed_delivery", "retention", "life_events")},
+        "uncertain": len(sources.get("uncertain", [])),
+        "year": year,
+        "holidays": holidays,
+    }
+    return {"ok": not errors, "errors": errors, "warnings": warnings, "summary": summary}
+
+
+def cmd_check_pack(args) -> dict:
+    if args.pack:
+        path = Path(args.pack)
+    elif args.country:
+        path = LOCALE_DIR / f"{args.country.upper()}.json"
+    else:
+        raise InputError("give --pack <path> or --country <CC>")
+    if not path.exists():
+        raise InputError(f"no pack at {path}")
+    try:
+        data = json.loads(path.read_text(encoding="utf-8-sig"))
+    except json.JSONDecodeError as exc:
+        return {"ok": False, "errors": [f"{path.name} is not valid JSON: {exc}"]}
+    md = path.with_suffix(".md")
+    res = check_pack(data, md.read_text(encoding="utf-8-sig") if md.exists() else None, args.year)
+    if not md.exists():
+        res["warnings"].append(f"no {md.name} next to {path.name}")
+    res["path"] = str(path)
+    return res
+
+
 def cmd_amount(args) -> dict:
     lang = _lang(args)
     return {"value": args.value, "currency": args.currency, "lang": lang.code,
@@ -682,6 +949,8 @@ def build_parser() -> argparse.ArgumentParser:
                    choices=["days", "weeks", "months", "years", "business_days"])
     s.add_argument("--rule", required=True, help="counting rule id from the pack")
     s.add_argument("--transit", type=int, default=0, help="days allowed for delivery")
+    s.add_argument("--inclusive", action="store_true",
+                   help='the day of the event counts as day one ("within 28 days beginning with")')
     s.set_defaults(func=cmd_deadline)
 
     s = with_pack(sub.add_parser("window", help="a named response window from the pack"))
@@ -698,6 +967,12 @@ def build_parser() -> argparse.ArgumentParser:
 
     s = with_pack(sub.add_parser("events", help="the life events the pack knows"))
     s.set_defaults(func=cmd_events)
+
+    s = with_pack(sub.add_parser("windows", help="the pack's response windows, found by words"))
+    s.add_argument("--query", default="",
+                   help="words that must all appear in the id, title, start, law or note; "
+                        "words you choose, never text copied from a document")
+    s.set_defaults(func=cmd_windows)
 
     s = with_pack(sub.add_parser("deemed", help="deemed delivery date"))
     s.add_argument("--from", dest="start", required=True,
@@ -734,6 +1009,12 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--ids", help="comma-separated ids; default all")
     s.add_argument("--transit", type=int, default=0)
     s.set_defaults(func=cmd_recurring)
+
+    s = sub.add_parser("check-pack", help="check a country pack and list its holidays for a year")
+    s.add_argument("--pack", help="path to the pack JSON; the .md next to it is checked too")
+    s.add_argument("--country", help="a bundled pack, e.g. GB")
+    s.add_argument("--year", type=int, help="the year whose holidays are listed; default this year")
+    s.set_defaults(func=cmd_check_pack)
 
     s = with_lang(sub.add_parser("amount", help="an amount written the household's way"))
     s.add_argument("--value", required=True, help='the amount as in the register, e.g. "1240.00"')

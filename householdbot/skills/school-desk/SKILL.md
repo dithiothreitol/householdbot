@@ -33,15 +33,22 @@ a school day. Run them with Python 3 and today's date:
 
 ```
 python3 "${CLAUDE_SKILL_DIR}/shared/scripts/record.py" due "<household folder>" --category children --horizon 60 --today <today> --country <CC>
-python3 "${CLAUDE_SKILL_DIR}/shared/scripts/dates.py" info <date> --country <CC> --lang pl
-python3 "${CLAUDE_SKILL_DIR}/shared/scripts/record.py" add "<household folder>" --register obligations --file - --country <CC> --today <today> --dry-run <<'JSON'
+python3 "${CLAUDE_SKILL_DIR}/shared/scripts/dates.py" info <date> --country <CC> --lang <lang>
+python3 "${CLAUDE_SKILL_DIR}/shared/scripts/record.py" add "<household folder>" --register obligations --file - --country <CC> --today <today> --dry-run <<'HB_END'
 { the entry }
-JSON
+HB_END
 ```
 
 Recurring ids in the Polish pack (`dates.py recurring --ids ...`):
 `preschool-year-start`, `school-obligation-start`,
 `school-start-postponement`, `school-abroad-notice`, `school-extra-days-off`.
+In the GB pack: the recurring dates `school-application-secondary`,
+`school-application-primary`, `school-offer-day-secondary`,
+`school-offer-day-primary`, `free-childcare-code-deadline`,
+`child-benefit-staying-in-education`, and the windows
+`school-absence-penalty-reduced` and `school-absence-penalty-final`.
+Another pack has its own ids: they are in `shared/locale/<CC>.json`, and
+`dates.py` lists the known ids when it is given one it does not know.
 
 `${CLAUDE_SKILL_DIR}` is this skill's folder; where it was not substituted,
 use the folder this SKILL.md was read from. Use `python` or `py -3` where
@@ -108,6 +115,12 @@ One line per item:
 - Every date gets its weekday from `dates.py info` or counted from today. A
   weekday printed in the message that does not match its date is reported,
   never corrected silently. "By Friday" is counted from the message's date.
+  The answer opens with today's date and weekday ("Dziś jest sob. 14.11.2026"),
+  since every "in 7 days" is counted from it.
+- Details come from the letter only: how consent is given (paper or
+  e-register) and where it is handed in are "not stated" unless the letter
+  says them; the answer never states them one way and asks about them
+  another.
 - What the source does not say (to whom the money goes, a time, a place) is
   "not stated", with the question to ask the teacher; it is never filled in.
 

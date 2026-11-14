@@ -84,6 +84,7 @@ One tag per date, stored in `provenance` and carried into every report:
 | `stated in document` | the date is printed in the source; `source` holds page and quote |
 | `calculated from document` | `dates.py` computed it from dates and periods the document states |
 | `country pack rule — verify` | the rule comes from the country pack; the law is named |
+| `household pack — verify` | the rule comes from a pack the household built (`packs/` in the record); the law is named |
 | `model calculation — verify` | the model did the arithmetic without the script |
 | `told by household member` | a member said so |
 

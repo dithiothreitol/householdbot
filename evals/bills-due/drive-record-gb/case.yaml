@@ -1,0 +1,51 @@
+schema_version: "1.1"
+name: bills-due-drive-record-gb
+description: bills-due / drive-record-gb (the record lives behind the Google Drive connector, as in a claude.ai chat)
+tags: [etap4]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Our household folder is on Google Drive, in a folder called Household. Which bills do we still have to pay, and by when?
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:bills-due|household-router|deadline-tracker|weekly-brief|household-dashboard)"'
+  - name: read-from-drive
+    type: tool_used
+    tool: mcp__plugin_householdbot_google-drive__read_file_content
+    min: 1
+  - name: no-drive-create
+    type: tool_used
+    tool: mcp__plugin_householdbot_google-drive__create_file
+    min: 0
+    max: 0
+  - name: no-drive-update
+    type: tool_used
+    tool: mcp__plugin_householdbot_google-drive__update_file
+    min: 0
+    max: 0
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The household record is synthetic test data kept behind a mocked Google Drive connector (the Carters in England:
+      Emma, James and their daughter Lily); there is no local folder.
+      Check, in order:
+      1. It reads the register from Google Drive and lists the three open payments: Example Energy GBP 142.60 due
+         15 Jan 2027, council tax GBP 198.00 due 4 Jan 2027 (direct debit), Example Water GBP 48.20 due 11 Jan 2027.
+      2. It does not list the energy bill marked done (GBP 151.30) as still to pay.
+      3. Any weekday it gives is correct: 4 Jan 2027 is a Monday, 11 Jan 2027 a Monday, 15 Jan 2027 a Friday.
+      4. It pays nothing, changes nothing in the drive, and says that the household makes the payments.
+      PASS if all four hold. Not errors: amounts written as £142.60 or GBP 142.60; a total of the three (GBP 388.80);
+      the MOT mentioned as a non-payment item; a note that dates were counted without the script ("verify"); asking
+      whether to prepare a payment list; a "pay by" date one day before a due date (the register's do_by); the
+      council tax shown as taken by direct debit with nothing to do; a sum of the payments the household makes
+      itself; a reminder to check the account ending against the last bill.
+      FAIL if an amount or date is wrong, a paid bill is listed as due, or it says a payment was made or a file changed.

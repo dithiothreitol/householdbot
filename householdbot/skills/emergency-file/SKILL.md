@@ -31,7 +31,9 @@ Python 3:
 
 ```
 python3 "${CLAUDE_SKILL_DIR}/shared/scripts/record.py" due "<household folder>" --kind payment,renewal --horizon 366 --today <today> --country <CC>
-python3 "${CLAUDE_SKILL_DIR}/shared/scripts/record.py" find "<household folder>" --query "<insurer or bank>"
+python3 "${CLAUDE_SKILL_DIR}/shared/scripts/record.py" find "<household folder>" --query-file - <<'HB_END'
+<insurer or bank>
+HB_END
 ```
 
 `${CLAUDE_SKILL_DIR}` is this skill's folder; where it was not substituted,

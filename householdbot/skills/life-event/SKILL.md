@@ -15,6 +15,10 @@ This chain reads the event's checklist from the country pack, counts every
 date from the day it happened, and lets the household take it one step at a
 time.
 
+**After a death, the answer opens with one plain sentence of sympathy**
+("Bardzo mi przykro z powodu śmierci Twojego taty."), with nothing before it,
+whatever else the answer holds.
+
 ```
 Member: "kupiłem używane auto od sąsiada 10 listopada"
 → Which event, which day, whom it concerns (asked, not guessed)
@@ -30,8 +34,8 @@ Member: "kupiłem używane auto od sąsiada 10 listopada"
 reminders. Run them with Python 3:
 
 ```
-python3 "${CLAUDE_SKILL_DIR}/shared/scripts/dates.py" events --country PL --lang pl
-python3 "${CLAUDE_SKILL_DIR}/shared/scripts/dates.py" event --country PL --id vehicle-purchase --from <the day it happened> --lang pl
+python3 "${CLAUDE_SKILL_DIR}/shared/scripts/dates.py" events --country <CC> --lang <lang>
+python3 "${CLAUDE_SKILL_DIR}/shared/scripts/dates.py" event --country <CC> --id vehicle-purchase --from <the day it happened> --lang <lang>
 ```
 
 `${CLAUDE_SKILL_DIR}` is this skill's folder; where it was not substituted,
@@ -74,7 +78,9 @@ every date in it as the member's, not the law's.
 Death of someone close: the answer's first sentence is one plain sentence of
 sympathy in the household's language ("Bardzo mi przykro z powodu śmierci
 Twojego taty."), with nothing before it, no remark about language or tools.
-Then the next two or three steps only, and the offer to continue later. The
+Then the next two or three steps only, from the pack's checklist with their
+deadlines (registering the death, the funeral allowance), never a rule
+recalled from memory, and the offer to continue later. The
 not-advice line comes before anything about inheritance.
 
 ## Step 2 — The dates
@@ -126,7 +132,8 @@ Each hand-off keeps its own approval (chain seams).
   goes, signs and pays.
 - **No legal advice.** Inheritance, tax and benefit choices get the not-advice
   line and the professional to ask.
-- **Gentle with loss.** No platitudes, no long lists, the member sets the pace.
+- **Gentle with loss.** The first sentence is one plain sentence of sympathy;
+  after it, no platitudes, no long lists, and the member sets the pace.
 
 Full rules: `shared/rules.md` (Chain seams, Dates and deadlines, Not advice,
 Approval gates).

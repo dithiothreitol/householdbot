@@ -1,0 +1,43 @@
+schema_version: "1.1"
+name: pack-builder-bundled-wins
+description: pack-builder / bundled-wins
+tags: [etap4]
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  prompt: |
+    Zrób nam własny pakiet krajowy dla Polski. Chcę tam dopisać nasze terminy wywozu śmieci z gminy.
+context:
+  scaffold_script: setup.sh
+graders:
+  - name: skill-used
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?(?:pack-builder|household-router|deadline-tracker)"'
+  - name: no-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: no-edit
+    type: tool_used
+    tool: Edit
+    min: 0
+    max: 0
+  - name: result
+    type: llm
+    criteria: |
+      The working folder holds a synthetic household record (Anna and Piotr Nowak, their daughter Zosia,
+      a profile and registers); facts taken from it are not invented.
+      PASS if all of these hold:
+      1. The reply is in Polish and says that HouseholdBot already carries a Polish pack, which always takes
+         precedence, so a household pack for Poland would not be used; it does not draft one.
+      2. It treats the waste collection dates as the household's own dates for the register
+         (deadline-tracker), added once the dates are known and after a yes.
+      3. Nothing is written in this turn.
+      Not errors: asking for the municipality's schedule or the document with it; offering to check the bundled
+      pack; mentioning that a correction to the bundled pack can be offered to the project; pointing to the
+      pack's line on the waste collection fee.
+      FAIL if it drafts or writes a household pack for Poland, puts the waste dates into a pack, invents
+      collection dates, or writes anything.

@@ -226,6 +226,21 @@
       "rules",
       "pack",
       "scripts"
+    ],
+    "household-dashboard": [
+      "rules",
+      "pack",
+      "scripts",
+      "chores"
+    ],
+    "build-skill": [
+      "rules",
+      "scripts"
+    ],
+    "pack-builder": [
+      "rules",
+      "pack",
+      "scripts"
     ]
   },
   "plugin_copies": {

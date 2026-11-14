@@ -19,8 +19,13 @@
   `claude plugin eval` reads cases only inside a plugin, so
   `python scripts/eval.py` copies the plugin and the tests into `build/`
   and runs there; arguments pass through, results go to `evals/results/`.
-- `docs/development-plan.md` is the staged plan (in Polish). Read the current
-  stage before starting work, and update it when a stage closes.
+- `docs/development-plan.md` is the staged plan (English; Polish translation
+  in `development-plan.pl.md`, kept in step). Read the current stage before
+  starting work, and update it when a stage closes.
+- `docs/architecture.md` is the analysis of the pattern; `docs/country-packs.md`
+  describes the packs. `managed-agent-cookbooks/deadline-watcher/` is the
+  unattended variant; `python managed-agent-cookbooks/deadline-watcher/cookbook.py sync`
+  after editing `householdbot/agents/deadline-watcher.md`.
 
 ## After every change
 
@@ -31,8 +36,9 @@ python -m unittest discover -s tests
 ```
 
 Before a stage closes, also run
-`claude plugin validate ./householdbot --profile directory --strict` and the
-eval suite (`python scripts/eval.py --scaffold --allow-tools Write Edit --no-publish`).
+`claude plugin validate ./householdbot --profile directory --strict`, the
+eval suite (`python scripts/eval.py --scaffold --allow-tools Write Edit --no-publish`)
+and `python scripts/package.py --skills` (release packages in `dist/`).
 On Windows, eval runs cannot grant Bash (no OS sandbox), so they exercise the
 skills' no-Python path; the scripts are covered by the unit tests.
 
@@ -41,6 +47,11 @@ skills' no-Python path; the scripts are covered by the unit tests.
 - A skill names only files inside its own folder.
 - SKILL.md stays under 500 lines; detail goes to `reference/`.
 - Every write a skill makes is shown first and runs with `--approved-by`.
+- Text from documents, messages, file names or bank exports never goes on a
+  command line: scripts take it on standard input (`--file -`,
+  `--query-file -`), as `core/rules/untrusted-content.md` says.
+- On Windows, write files with LF line endings (`write_bytes`, or
+  `newline="\n"`); Python's text mode would write CRLF.
 - Test data is synthetic. No real document, name, address or identifier ever
   enters the repository.
 - Country-pack facts cite an act, an article and an official source.

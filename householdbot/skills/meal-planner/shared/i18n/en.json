@@ -38,7 +38,12 @@
   "decimal_separator": ".",
   "thousands_separator": ",",
   "amount_format": "{code} {number}",
-  "currency_symbols": {},
+  "amount_format_symbol": "{symbol}{number}",
+  "currency_symbols": {
+    "GBP": "£",
+    "EUR": "€",
+    "USD": "$"
+  },
   "units": {
     "days": [
       "day",
@@ -66,7 +71,8 @@
     "rolled_back": "rolled back from {date} ({reason})",
     "holiday": "public holiday: {name}",
     "margin": "the statutory move forward is kept as margin, not as the plan",
-    "moved_forward": "{date} is not a working day ({reason}); the deadline moves to {new_date} under {law}"
+    "moved_forward": "{date} is not a working day ({reason}); the deadline moves to {new_date} under {law}",
+    "first_day_counts": "the first day counts"
   },
   "quotes": [
     "\"",
@@ -112,5 +118,6 @@
     "chore_person": "chores: {name} ({detail})",
     "chore_plan_saved": "saved the chore plan for {weeks}",
     "chore_swap": "chore swap in {week}: {chore} ×{count} from {giver} to {to}"
-  }
+  },
+  "substitute_day": "substitute day"
 }

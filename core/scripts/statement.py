@@ -21,6 +21,7 @@ import csv
 import io
 import json
 import re
+import shutil
 import statistics
 import sys
 from collections import defaultdict
@@ -157,8 +158,9 @@ def parse_day(value: str) -> date | None:
     return None
 
 
-ACCOUNT_RE = re.compile(r"(?:PL)?(?:\d[ \-]?){26}")
-DIGITS_RE = re.compile(r"(?<!\d)(?:\d[ \-]?){12,25}\d(?!\d)")
+ACCOUNT_RE = re.compile(r"(?:PL)?(?:\d[\s\-]?){26}")
+SORT_ACCOUNT_RE = re.compile(r"((?<!\d)\d{2}[-\s]\d{2}[-\s]\d{2}(?!\d)\D{0,30}?)(?<!\d)\d{4}(\d{4})(?!\d)")
+DIGITS_RE = re.compile(r"(?<!\d)(?:\d[\s\-]?){12,25}\d(?!\d)")
 PESEL_RE = re.compile(r"(?<!\d)\d{11}(?!\d)")
 
 
@@ -175,6 +177,9 @@ def mask(text: str) -> str:
         return m.group()
 
     text = ACCOUNT_RE.sub(acct, text or "")
+    for start, end, compact in reversed(record.find_ibans(text)):
+        text = text[:start] + f"[account …{compact[-4:]}]" + text[end:]
+    text = SORT_ACCOUNT_RE.sub(lambda m: f"{m.group(1)}[account …{m.group(2)}]", text)
     text = DIGITS_RE.sub(card, text)
     return PESEL_RE.sub(lambda m: "[PESEL]" if record.pesel_valid(m.group()) else m.group(), text)
 
@@ -499,8 +504,15 @@ def cmd_add_rule(args) -> dict:
     cats = load_categories()
     if args.category not in cats["categories"]:
         raise StatementError(f"unknown category {args.category!r}; use one of {sorted(cats['categories'])}")
-    if not args.match.strip():
-        raise StatementError("--match needs a word or phrase")
+    if args.file:
+        try:
+            given = json.loads(record.read_text_input(args.file))
+        except json.JSONDecodeError as exc:
+            raise StatementError(f"the rule is not valid JSON: {exc}")
+        args.match = str(given.get("match") or "")
+    if not (args.match or "").strip():
+        raise StatementError('give the payee or phrase: --file - with {"match": "..."} (text from a '
+                             'bank export goes this way), or --match')
     p = root / HOUSEHOLD_RULES
     data = json.loads(p.read_text(encoding="utf-8")) if p.exists() else {"schema_version": 1, "rules": []}
     rule = {"match": args.match.strip(), "category": args.category}
@@ -510,10 +522,14 @@ def cmd_add_rule(args) -> dict:
     summary = lang.log("category_rule", match=args.match.strip(), category=args.category)
     if args.dry_run:
         return {"dry_run": True, "would_add": rule, "file": HOUSEHOLD_RULES.as_posix(), "summary": summary}
-    if not (args.approved_by or "").strip():
-        raise StatementError("a write needs --approved-by NAME")
+    record.require_writable(root, args)
     data["rules"].append(rule)
-    record.atomic_write_json(p, data)
+    if p.exists():
+        hist = root / "registers" / ".history"
+        hist.mkdir(parents=True, exist_ok=True)
+        record.ensure_inside(root, hist)
+        shutil.copy2(p, hist / f"{p.stem}-{datetime.now().strftime('%Y%m%dT%H%M%S%f')}.json")
+    record.atomic_write_json(p, data, root)
     record.append_log(root, date.today() if not args.today else dates.parse_date(args.today),
                       args.approved_by.strip(), [summary], lang)
     return {"added": rule, "file": HOUSEHOLD_RULES.as_posix(), "summary": summary}
@@ -534,7 +550,8 @@ def build_parser() -> argparse.ArgumentParser:
         s.set_defaults(func=func)
     s = sub.add_parser("add-rule", help="teach a category for a counterparty or phrase")
     s.add_argument("root", help="the household folder")
-    s.add_argument("--match", required=True)
+    s.add_argument("--match", help="the payee or phrase; text from a bank export goes with --file - instead")
+    s.add_argument("--file", help='the rule as JSON ({"match": "..."}), or - for stdin')
     s.add_argument("--category", required=True)
     s.add_argument("--approved-by")
     s.add_argument("--dry-run", action="store_true")
