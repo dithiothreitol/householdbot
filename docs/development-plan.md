@@ -33,6 +33,12 @@ Version 1.0 is done when all of these conditions are met:
 5. The plugin passes `claude plugin validate --profile directory --strict`,
    the repository validator and the plugin directory checklist.
 6. A pilot in a real household (yours) completed without blocking errors.
+7. A write to the household record applies only a change that was shown
+   first: the scripts enforce it, and where the host has hooks a person
+   confirms it in the host's own prompt; the session tests confirm both
+   (added with Stage 5).
+8. Every host named in the README has a row in the compatibility table,
+   filled from the critical session suite (added with Stage 6).
 
 ---
 
@@ -288,6 +294,7 @@ directory reviews by hand.
 | 1. Structure | manifests, frontmatter, self-sufficiency of skills, freshness of copies, directory limits, agent permissions, shape of tests, country packs, identifiers and secrets in files | `scripts/validate.py`, `claude plugin validate --profile directory --strict` | after every change, in CI |
 | 2. Arithmetic | holidays, deadlines, roll-back, bands, recurrence, registers, merging, archiving | `python -m unittest` | after a script change, in CI |
 | 3. Behaviour | skill triggering, correctness of the result, stopping at the gate, resistance to injection and scams | `claude plugin eval` through `scripts/eval.py` | during work: single cases; at the close of a stage: a full run |
+| 3b. Sessions (from Stage 5) | multi-turn paths with the scripts: the write gate, injection, identifiers, dates, language; checked by the state of the household folder and by patterns, without an LLM judge | `scripts/session_test.py` through a host's command line | after a change to a script or a gate; at the close of a stage: the whole suite twice |
 | 4. Use | the full multi-turn path, real documents | a `claude -p` session on synthetic data, the pilot | after every stage |
 
 Limits found in Stage 1 and their status after Stage 4:
@@ -323,8 +330,9 @@ repository's files.
 
 ## 7. Stages
 
-Four stages, each as one session. Stages 2 and 3 are independent of each
-other.
+Four stages, each as one session; Stages 2 and 3 are independent of each
+other. Stages 5 and 6 were added on 14 Nov 2026 and are planned, each as
+one session, with the pilot between them.
 
 ### Stage 1. Core: record, documents, deadlines (version 0.1, done)
 
@@ -714,6 +722,269 @@ an isolated configuration, without running the model). Still to do: a
 Codex session on synthetic data, the `ANTHROPIC_API_KEY` secret, the
 submissions to the Claude and OpenAI directories, the pilot.
 
+### Stage 5. Guarantees in code, fixes, reminders (version 1.0.0-rc.3, planned)
+
+Planned on 14 Nov 2026 from two sources. The first is a six-turn use session
+on the published rc.2 (a Polish household, scripts allowed, 0.81 USD), which
+found defects that the 115 behaviour cases cannot see, because on Windows
+they run without a shell. The second is a comparison with general agent
+platforms (Grok Bot, OpenBot), whose agents act without asking: next to them
+the write gate of this plugin rests on the model alone, since the model
+types `--approved-by` itself and `hooks/hooks.json` is empty.
+
+Aim: the promises of section 1 hold because the scripts enforce them,
+whatever model drives the skills; the defects are fixed; reminders reach a
+phone without a connector; the pilot has a protocol. One session. Nothing is
+needed from you before it starts.
+
+- **A. Fixes from the use session.**
+  1. *Overdue means the last day has passed.* `record.py due` takes the band
+     from the plan date (`do_by`), so a payment whose plan date has passed
+     and whose last day is still ahead is reported as overdue (the property
+     tax instalment due on Sunday 15 Nov 2026). Change: band `overdue` only
+     when `due_date` is before today (for an entry without `due_date`, when
+     `do_by` is); when only the plan date has passed, band `now` with
+     `plan_passed: true`. Counts and totals follow the same rule.
+     `weekly-brief`, `household-dashboard`, `deadline-tracker`, `bills-due`
+     and `household-router` print the script's band, add "plan date passed"
+     from the flag, and never rename a band.
+  2. *A last day on a non-working day.* An entry can name the pack's
+     counting rule (a new optional field `rule`; old entries stay valid and
+     `migrate` adds nothing to them). For such an entry `due` returns
+     `due_effective`, the stored last day moved forward by that rule, with
+     the `moved_forward` note. Statutory dates from `dates.py recurring`
+     carry the rule, and the test household is built from them.
+  3. *Provenance tags in the household's language.* `core/i18n/<lang>.json`
+     gets `tags` for the six values (in Polish: „z dokumentu”, „podane przez
+     domownika”, „wyliczone z dokumentu”, „reguła z pakietu krajowego, do
+     sprawdzenia”, „pakiet gospodarstwa, do sprawdzenia”, „wyliczenie
+     modelu, do sprawdzenia”). The scripts return `provenance_local` beside
+     `provenance`; `core/rules/output-style.md` prints the local form; the
+     registers keep the English values. Polish behaviour cases that grade
+     on "verify" accept the Polish tag.
+  4. *Script notes in one language.* The joiner in `due_note` (today
+     "… with Kodeks cywilny …" inside a Polish note) and the fixed parts of
+     `met_by` and `counted_from` come from i18n. Pack text that exists only
+     in English (`title`, free notes) is returned with `text_lang: "en"`,
+     and the locale rule says to translate it in a Polish answer, not to
+     quote it.
+  5. *The weekly brief table.* Two columns, "plan by" and "last day", as on
+     the dashboard; no single date with a label in brackets (the brief
+     called the safe date for the internet notice, Thu 19 Nov, "the last
+     day", while the last day was Tue 24 Nov).
+  6. *Titles in the household's language (D14).* `make_household.py --lang
+     pl` writes Polish titles (the model copied the English titles of the
+     test household into a new entry); `file-document` and
+     `deadline-tracker` say in one sentence that a title is written in the
+     household's language.
+
+- **B. The write gate in code.**
+  1. *Two phases in `record.py`, `chores.py` and `statement.py`.* A writing
+     command without `--confirm` only previews: it validates the change,
+     stores exactly that change in `registers/.pending/<token>.json`, and
+     returns preview lines in the household's language with a `confirm`
+     token derived from the change and the state of the register.
+     `commit --confirm TOKEN --approved-by NAME` applies the stored change
+     and nothing else. It refuses when the token is unknown, older than 30
+     minutes, or the register has changed since the preview. A write in one
+     call no longer exists. Text from documents arrives on standard input,
+     at the preview only.
+  2. *Files as well as registers.* `record.py save` writes a file under
+     `reviews/`, `briefs/`, `drafts/` or `exports/` in the same two phases
+     and adds the log line itself. Skills stop writing these files with the
+     host's write tool and stop appending to `log/decisions.md` (today the
+     dashboard's log line is typed by the model).
+  3. *What the token proves.* It proves that the write equals a preview
+     that was produced. It does not prove that a person read it; the hook
+     adds that.
+  4. *The hook.* `hooks/hooks.json` gets a `PreToolUse` entry for shell
+     commands that contain `commit --confirm` of the three scripts, and for
+     the host's write tools inside the household folder. A small Python
+     script (the interpreter found the way `seed.sh` finds it) answers
+     `ask` with the first preview line as the reason, so the member confirms
+     in the host's own prompt even in a mode that accepts edits on its own.
+     Coverage: Claude Code and Cowork get the token and the hook; claude.ai
+     gets the token (hooks are skipped there); Codex gets the token and its
+     own approval mode, described in QUICKSTART.
+  5. *Skills and rules.* The skills that write (15 today) and
+     `core/rules/approval-gates.md` change to preview, yes, commit.
+     `scripts/validate.py` refuses a skill text with a writing command in
+     the old one-call form. The agents stay without a shell or read-only,
+     and `cookbook.py check` passes.
+  6. *Unit tests.* Unknown, expired and replayed token; register changed
+     between preview and commit; the commit writes the previewed change
+     byte for byte; a path outside the household folder is still refused;
+     the pending folder never holds an identifier that the write would
+     refuse.
+
+- **C. Reminders without a connector.** `record.py export --ics [--days N]
+  [--member NAME]` builds `exports/householdbot.ics` through
+  `record.py save`: one all-day event per open obligation on its plan date,
+  the last day and the provenance tag in the description, an alarm from
+  `lead_time_days`, a stable `UID` per obligation so that a second import
+  updates instead of duplicating, obligations closed in the last 30 days
+  exported as cancelled. The titles follow the dashboard's rules: neutral
+  for health, nothing that only adults should see unless `--member` names
+  an adult, no identifiers. RFC 5545: CRLF line ends (the one exception to
+  the repository's LF rule), folding at 75 octets, escaping.
+  `deadline-tracker` and `family-calendar` offer the export when no
+  calendar connector is connected; QUICKSTART gets "Reminders on your
+  phone". Unit tests: folding and escaping, stable UIDs, neutral titles,
+  cancelled entries.
+
+- **D. Session tests (verification level 3b).** `scripts/session_test.py`
+  runs multi-turn sessions from `evals/sessions/<name>.yaml` through a
+  host's command line on a synthetic household, with a shell. Checks are
+  deterministic: patterns on each reply and the state of the household
+  folder after each turn (register hash unchanged, an entry with given
+  fields, the number of log lines, a file present or absent). No LLM judge.
+  The host is an adapter: `claude -p --plugin-dir … --resume` in this
+  stage, others in Stage 6. A cost ceiling per run; reports go to
+  `evals/results/sessions/` (not committed). The critical suite, about 18
+  sessions in four groups:
+  - *gate*: a document filed after a yes; consent given in advance;
+    "change" is not consent; a no writes nothing; a bill closed and its
+    next occurrence added;
+  - *safety*: an instruction hidden in a document; `$(...)` in a sender's
+    name (a marker file must not appear); an identifier in a document
+    (absent from registers, log and replies); the dashboard for the fridge
+    without the court matter and without scripts or links in the HTML;
+    account numbers masked in a bank export;
+  - *dates*: objection to a payment order (26 Nov, plan 23 Nov, the article
+    cited); a deadline that falls on Christmas Eve (28 Dec, plan 23 Dec);
+    acknowledgment of service in England over Christmas; a last day on a
+    Sunday with the plan date passed; the `.ics` export;
+  - *language*: Polish tags and titles; an English-speaking household in
+    Poland; the two columns of the weekly brief.
+  Section 6 gets the level and its place in the closing protocol.
+
+- **E. Pack review on the repository's side.** `scripts/pack_review.py`
+  reports each pack whose `reviewed` date is older than six months and the
+  number of points in `sources.uncertain`. The workflow `pack-review.yml`
+  runs it on the first day of each month and opens or updates one issue per
+  pack (pinned actions, `issues: write` only). `docs/country-packs.md` gets
+  the review procedure: the sources to open, what to rerun (`check-pack`,
+  the pack's unit tests), how the date and the reviewer are recorded.
+
+- **F. Pilot protocol.** `docs/pilot.md` and `docs/pilot.pl.md`:
+  preparation (a private folder outside the repository, rc.3, a copy of the
+  folder); twelve scenarios across Stages 1 to 5 (setup, three documents
+  filed, the deadline list, an official letter with a deadline, a bank
+  export, a notice of cancellation drafted, the weekly brief, the
+  dashboard, the `.ics` file on a phone, one life event, Cowork with a
+  scheduled brief, Remote Control from a phone); measures (writes without
+  consent: 0; wrong dates: 0, each computed date checked against
+  `dates.py` or the source; minutes to the first weekly brief; corrections
+  of the model's output per scenario); blocking and non-blocking errors;
+  a notes template that takes paraphrase only, never real data; the exit
+  condition, which is conditions 1 and 6 of section 1.
+
+- **G. Documents and release.** README and QUICKSTART (the gate in three
+  steps, reminders), PRIVACY (the pending folder, who sees the `.ics`
+  file), SECURITY (what the gate proves and what it leaves to the host),
+  `docs/architecture.md` (lesson: a guarantee moved from the prompt to the
+  script), CHANGELOG, bilingual release notes, both manifests at
+  1.0.0-rc.3, this plan in both languages, project memory, commit. Push,
+  tag and release after your yes.
+
+Acceptance:
+
+1. Unit tests green with the new ones; `scripts/validate.py` 0 errors and 0
+   warnings; `claude plugin validate ./householdbot --profile directory
+   --strict`; `scripts/package.py --skills` builds, under 450 files.
+2. Session suite: every gate and safety session passes in two runs in a
+   row; the dates and language groups pass at 90% or more.
+3. Behaviour tests (Windows, no shell): the cases of every changed skill
+   rerun; the full run at closing at 100 of 115 or more, with no gate case
+   failing.
+4. A write in one call is impossible: the unit tests and
+   `scripts/validate.py` show it.
+
+Cost of model calls: session suite about 5 USD per run (about 15 USD with
+iterations), reruns of changed skills about 6 USD, the full closing run
+about 17 USD; ceiling 40 USD.
+
+Your part after the stage: the pilot by `docs/pilot.md` on rc.3; a yes for
+push, tag and release; optional: the `ANTHROPIC_API_KEY` secret, so that
+`evals.yml` runs the 115 cases with a shell on Linux.
+
+### Stage 6. Any client and model, release (version 1.0.0, planned)
+
+Planned on 14 Nov 2026. Aim: the proof layer and the gate reach clients
+that are not plugin hosts; the hosts named in the README are measured, not
+assumed; the choice of model, local models included, belongs to the
+household. One session, after the pilot.
+
+Decisions behind the stage (section 11): the project does not ship its own
+agent runtime or model routing, because the host chooses the model and the
+value of the project is household knowledge and the scripts; the MCP server
+is local only, because the record stays in the household's folder.
+
+Needed from you before the session: the pilot notes; `codex login` on the
+development machine; approval to install OpenCode and OpenClaw there; the
+model for OpenCode (one API model, and one local model through Ollama if
+the hardware carries it).
+
+- **A. Fixes from the pilot.** Blocking errors first, each with a unit test
+  or a session that reproduces it on synthetic data.
+
+- **B. Local MCP server.** `mcp/householdbot_mcp.py`, standard library
+  only, stdio transport, one household root fixed at start (`--root` or the
+  pointer). Read tools, marked read-only: `due`, `find`, `show`,
+  `validate`, `deadline`, `window`, `windows`, `holidays`, `band`,
+  `statement_summary`, `chore_plan`. Write tools in the two phases of
+  Stage 5: `preview_change` returns the preview and the token,
+  `commit_change` takes the token and the approver's name and is marked
+  destructive, so that a client asks its user. No tool takes a path outside
+  the root; document text travels as a tool argument, never on a command
+  line. The server's instructions carry the gate and the untrusted-content
+  rules in short. The skills keep calling the scripts through the shell;
+  the server is an option for clients without the plugin (Claude Desktop,
+  Cursor, Gemini CLI, Codex, OpenCode), with a configuration example for
+  each in CONNECTORS. Unit tests with a stdio client: tool list, a read, a
+  preview and a commit, a refused path, a refused token. No HTTP mode: an
+  agent in a cloud (Grok Bot and similar) does not reach the folder.
+
+- **C. Hosts.** For Codex, OpenCode and OpenClaw, from each host's own
+  documentation and a run on the development machine: how it loads Agent
+  Skills or a plugin, how it runs scripts, how it asks for approval,
+  whether it has hooks. `scripts/package.py --skills-dir` builds a plain
+  `skills/` tree for hosts that take skill folders, not Claude plugins.
+  `core/rules/output-style.md` names a skill the way each host does. One
+  adapter per host in `scripts/session_test.py`. README "Where it runs" and
+  QUICKSTART get the install path of each host and its gate (token and
+  hook, token and host approval, or token alone). Gemini CLI is added when
+  it needs nothing beyond the plain `skills/` tree. The ChatGPT desktop app
+  stays described from the documentation.
+
+- **D. Compatibility table.** The critical suite runs twice for each pair
+  of host and model: Claude Code with Sonnet and with Haiku; Codex with its
+  default model; OpenCode with the chosen API model and with the local
+  model; OpenClaw with its configured model. `docs/compatibility.md` and
+  its Polish version give the date, the versions and the pass rate per
+  group (gate, safety, dates, language). A pair is "supported" when every
+  gate and safety session passes in both runs; otherwise "works with
+  limits", with the failing sessions named. The README names no host
+  without a row.
+
+- **E. Documents and release.** README and QUICKSTART in both languages,
+  CONNECTORS (the MCP server), `docs/architecture.md` (the table as a
+  result of the research), CHANGELOG, bilingual release notes, both
+  manifests at 1.0.0, this plan, project memory, commit. Push, tag and
+  release after your yes; the submissions to the Claude and OpenAI
+  directories are yours.
+
+Acceptance: conditions 1 to 8 of section 1; unit tests, validator and
+package as in Stage 5; the session suite for Claude Code with Sonnet
+passes as in Stage 5 on the final build.
+
+Cost of model calls: about 60 USD across providers (five paid pairs, two
+runs each; the local model costs nothing).
+
+If the pilot has not ended when the session runs, the stage closes as
+1.0.0-rc.4 without part A, and 1.0.0 is tagged after the pilot with the
+closing protocol alone.
+
 ---
 
 ## 8. Status after Stages 1, 1.1, 2, 3 and 4
@@ -1047,6 +1318,16 @@ confirmed, 7 corrected, 2 unresolved.
 | Merging of copies approved without the changes shown | `merge`: only copies from the list, all changed fields, entry checks | closed (Stage 4) |
 | Identifiers from outside Poland (IBAN, NI, sort code) | `identifier_findings`, the write refused | closed (Stage 4) |
 | A pack for one country only, without coverage | GB pack, coverage in the pack, own packs in `packs/` | closed (Stage 4) |
+| The band "overdue" taken from the plan date, not from the last day | `record.py due`, the five skills that print bands | open (Stage 5 A) |
+| Provenance tags and script notes in English in a Polish answer | `tags` in i18n, `provenance_local`, joiners from i18n | open (Stage 5 A) |
+| The write gate rests on the model: the model types `--approved-by`, `hooks.json` is empty | two-phase write with a token, a hook with the host's prompt | open (Stage 5 B) |
+| The log line for a saved file is typed by the model | `record.py save` | open (Stage 5 B) |
+| Reminders need a calendar connector or a scheduled task | `.ics` export | open (Stage 5 C) |
+| The script path has no behaviour tests on the development machine | session tests through `claude -p` with a shell | open (Stage 5 D) |
+| A pack's age is checked only in the household's annual review | monthly pack review in CI | open (Stage 5 E) |
+| The pilot has no scenarios and no measures | `docs/pilot.md` | open (Stage 5 F) |
+| The proof layer is reachable only through a plugin host | local MCP server | open (Stage 6 B) |
+| Codex support checked without running a model; other hosts and models not measured | host adapters, compatibility table | open (Stage 6 C, D) |
 
 ---
 
@@ -1066,6 +1347,11 @@ confirmed, 7 corrected, 2 unresolved.
 | Anthropic releases its own household plugin | the project is open and research-oriented; its value remains in the country packs, the proof layer and the analysis of the pattern |
 | The language versions of documents drift apart | the validator requires a Polish counterpart and links in both directions; CLAUDE.md requires changing both files |
 | Every further skill needs content in two languages | we write skills in English (the model answers in the household's language); only fixed texts, templates and user documents are in two languages |
+| A weaker or local model skips a gate written in instructions | the gate in the scripts (Stage 5 B); a host and model count as supported only when every gate and safety session passes twice (Stage 6 D) |
+| Agents on a platform approve each other's writes | the hook asks a person in the host's own prompt; where a host has no such prompt, the README says that the gate proves a preview, not a reader |
+| Hosts load skills and ask for approval in different ways | one adapter and one row of the compatibility table per host; the README names no host without a row |
+| The MCP server widens what a client can reach | local stdio only, one household root fixed at start, read tools marked read-only, writes in two phases |
+| Cost of the compatibility runs | a ceiling per run, the critical suite only (about 18 sessions), the local model free; about 60 USD for Stage 6 |
 
 ---
 
@@ -1093,12 +1379,30 @@ separate question:
    Scotland and Northern Ireland are outside the pack's scope.
 9. Version 1.0.0-rc.1 until the pilot and publication; 1.0.0 after them.
 
+Taken on 14 Nov 2026 with the plan of Stages 5 and 6:
+
+10. Two more stages in two sessions, with the pilot between them. Version
+    1.0.0 closes Stage 6 when the pilot has ended without blocking errors.
+11. The project does not ship its own agent runtime or model routing
+    (LiteLLM, OpenRouter and the like). The host chooses the model; "any
+    model" is reached through hosts that read Agent Skills and through the
+    MCP server.
+12. The MCP server is local (stdio) only. No hosted service and no remote
+    endpoint: the record stays in the household's folder.
+13. A write is enforced by the scripts in two phases; a hook adds a
+    person's confirmation where the host has hooks.
+14. Still outside the scope: logging in to a bank, paying, and sending
+    letters or messages on the household's behalf.
+
 Stage 2 was done on 13 Nov 2026 on the instruction to move to it before the
 Stage 1 pilot; the pilots of both stages can be run together.
 
-Open, yours to do: approval to publish (the public repository
-`householdbot` on the dithiothreitol account, the tag `v1.0.0-rc.1`, the
-`ANTHROPIC_API_KEY` secret for the tests with a shell, the submission to the
-plugin directory) and the pilot. If "English by default" is to mean English
+Open, yours to do: a yes for each push, tag and release; after Stage 5
+the pilot on rc.3 by `docs/pilot.md` (with Cowork and the phone); before
+Stage 6 `codex login`, approval to install OpenCode and OpenClaw on the
+development machine and the choice of the models for OpenCode; the
+submissions to the Claude and OpenAI directories; optional: the
+`ANTHROPIC_API_KEY` secret for the tests with a shell on Linux.
+If "English by default" is to mean English
 also when a household member without a profile writes in Polish, a change
 to one rule is enough (D14).

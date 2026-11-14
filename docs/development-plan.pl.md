@@ -31,6 +31,12 @@ Wersja 1.0 jest ukończona, gdy spełnione są wszystkie warunki:
 5. Wtyczka przechodzi `claude plugin validate --profile directory --strict`,
    walidator repozytorium i listę kontrolną katalogu wtyczek.
 6. Pilotaż na realnym gospodarstwie (Twoim) zakończony bez błędów blokujących.
+7. Zapis w rekordzie gospodarstwa wykonuje wyłącznie zmianę, która została
+   wcześniej pokazana: egzekwują to skrypty, a tam, gdzie gospodarz ma
+   hooki, człowiek potwierdza ją w oknie samego gospodarza; jedno i
+   drugie potwierdzają testy sesyjne (dodane w Etapie 5).
+8. Każdy gospodarz wymieniony w README ma wiersz w tabeli zgodności,
+   wypełniony z krytycznego zestawu sesji (dodane w Etapie 6).
 
 ---
 
@@ -279,6 +285,7 @@ którego katalog wtyczek ocenia ręcznie, mieszczą się jeszcze dwa pakiety.
 | 1. Struktura | manifesty, frontmatter, samowystarczalność skilli, aktualność kopii, limity katalogu, uprawnienia agentów, kształt testów, pakiety krajowe, identyfikatory i sekrety w plikach | `scripts/validate.py`, `claude plugin validate --profile directory --strict` | po każdej zmianie, w CI |
 | 2. Rachunek | święta, terminy, cofanie, pasma, cykliczność, rejestry, scalanie, archiwizacja | `python -m unittest` | po zmianie skryptu, w CI |
 | 3. Zachowanie | wyzwalanie skilli, poprawność wyniku, zatrzymanie na bramce, odporność na wstrzyknięcie i oszustwa | `claude plugin eval` przez `scripts/eval.py` | w trakcie: pojedyncze przypadki; na zamknięciu etapu pełny przebieg |
+| 3b. Sesje (od Etapu 5) | ścieżki wieloturowe ze skryptami: bramka zapisu, wstrzyknięcie, identyfikatory, daty, język; kontrola stanu folderu gospodarstwa i wzorców, bez sędziego modelowego | `scripts/session_test.py` przez wiersz poleceń gospodarza | po zmianie skryptu albo bramki; na zamknięciu etapu cały zestaw dwa razy |
 | 4. Użycie | pełna ścieżka wieloturowa, realne dokumenty | sesja `claude -p` na danych syntetycznych, pilotaż | po każdym etapie |
 
 Ograniczenia ustalone w Etapie 1 i stan po Etapie 4:
@@ -312,7 +319,9 @@ kontrolną w plikach repozytorium.
 
 ## 7. Etapy
 
-Cztery etapy, każdy jako jedna sesja. Etapy 2 i 3 są od siebie niezależne.
+Cztery etapy, każdy jako jedna sesja; Etapy 2 i 3 są od siebie niezależne.
+Etapy 5 i 6 zostały dodane 14.11.2026 i są zaplanowane, każdy jako jedna
+sesja, z pilotażem pomiędzy nimi.
 
 ### Etap 1. Rdzeń: rekord, dokumenty, terminy (wersja 0.1) ✅
 
@@ -683,6 +692,275 @@ skille jako `householdbot:<skill>` (sprawdzone przez
 modelu). Zostały: sesja w Codexie na danych syntetycznych, sekret
 `ANTHROPIC_API_KEY`, zgłoszenia do katalogów Claude i OpenAI, pilotaż.
 
+### Etap 5. Gwarancje w kodzie, poprawki, przypomnienia (wersja 1.0.0-rc.3, planowany)
+
+Zaplanowany 14.11.2026 na podstawie dwóch źródeł. Pierwszym jest sześcioturowa
+sesja użycia na opublikowanej wersji rc.2 (polskie gospodarstwo, skrypty
+dozwolone, 0,81 USD), która ujawniła usterki niewidoczne dla 115 przypadków
+zachowania, ponieważ na Windows działają one bez powłoki. Drugim jest
+porównanie z ogólnymi platformami agentów (Grok Bot, OpenBot), których agenci
+działają bez pytania: na ich tle bramka zapisu tej wtyczki opiera się na samym
+modelu, ponieważ `--approved-by` wpisuje model, a `hooks/hooks.json` jest
+pusty.
+
+Cel: obietnice z rozdziału 1 obowiązują dlatego, że egzekwują je skrypty,
+niezależnie od modelu, który prowadzi skille; usterki są poprawione;
+przypomnienia docierają na telefon bez konektora; pilotaż ma protokół. Jedna
+sesja. Przed jej rozpoczęciem nic nie jest potrzebne z Twojej strony.
+
+- **A. Poprawki z sesji użycia.**
+  1. *„Po terminie” oznacza miniony ostatni dzień.* `record.py due` wyznacza
+     pasmo z daty planu (`do_by`), więc płatność z minioną datą planu i
+     ostatnim dniem w przyszłości występuje jako zaległa (rata podatku od
+     nieruchomości z terminem w niedzielę 15.11.2026). Zmiana: pasmo
+     `overdue` tylko wtedy, gdy `due_date` jest przed dniem dzisiejszym (dla
+     wpisu bez `due_date`, gdy przed nim jest `do_by`); gdy minęła sama data
+     planu, pasmo `now` z flagą `plan_passed: true`. Liczniki i sumy stosują
+     tę samą regułę. `weekly-brief`, `household-dashboard`,
+     `deadline-tracker`, `bills-due` i `household-router` wypisują pasmo ze
+     skryptu, dodają „data planu minęła” na podstawie flagi i nie zmieniają
+     nazwy pasma.
+  2. *Ostatni dzień w dniu wolnym.* Wpis może wskazać regułę liczenia z
+     pakietu (nowe pole opcjonalne `rule`; dotychczasowe wpisy pozostają
+     poprawne, a `migrate` niczego do nich nie dopisuje). Dla takiego wpisu
+     `due` zwraca `due_effective`, czyli zapisany ostatni dzień przesunięty
+     według tej reguły, z notatką `moved_forward`. Daty ustawowe z
+     `dates.py recurring` niosą regułę, a gospodarstwo testowe powstaje z
+     nich.
+  3. *Etykiety pochodzenia w języku gospodarstwa.* `core/i18n/<lang>.json`
+     dostaje `tags` dla sześciu wartości (po polsku: „z dokumentu”, „podane
+     przez domownika”, „wyliczone z dokumentu”, „reguła z pakietu krajowego,
+     do sprawdzenia”, „pakiet gospodarstwa, do sprawdzenia”, „wyliczenie
+     modelu, do sprawdzenia”). Skrypty zwracają `provenance_local` obok
+     `provenance`; `core/rules/output-style.md` nakazuje wypisywać postać
+     lokalną; rejestry zachowują wartości angielskie. Polskie przypadki
+     zachowania, które oceniają słowo „verify”, przyjmują polską etykietę.
+  4. *Notatki skryptów w jednym języku.* Łącznik w `due_note` (dziś „… with
+     Kodeks cywilny …” w polskiej notatce) oraz stałe części `met_by` i
+     `counted_from` pochodzą z i18n. Tekst pakietu, który istnieje tylko po
+     angielsku (`title`, wolne notatki), wraca z polem `text_lang: "en"`, a
+     reguła językowa nakazuje go w polskiej odpowiedzi tłumaczyć, a nie
+     cytować.
+  5. *Tabela przeglądu tygodnia.* Dwie kolumny, „zaplanuj do” i „ostatni
+     dzień”, tak jak na pulpicie; bez jednej daty z dopiskiem w nawiasie
+     (przegląd nazwał bezpieczną datę wypowiedzenia internetu, czw. 19.11,
+     „ostatnim dniem”, podczas gdy ostatnim dniem był wt. 24.11).
+  6. *Tytuły w języku gospodarstwa (D14).* `make_household.py --lang pl`
+     zapisuje polskie tytuły (model przeniósł angielskie tytuły gospodarstwa
+     testowego do nowego wpisu); `file-document` i `deadline-tracker` mówią
+     jednym zdaniem, że tytuł powstaje w języku gospodarstwa.
+
+- **B. Bramka zapisu w kodzie.**
+  1. *Dwie fazy w `record.py`, `chores.py` i `statement.py`.* Polecenie
+     zapisu bez `--confirm` tworzy wyłącznie podgląd: sprawdza zmianę,
+     zapisuje dokładnie tę zmianę w `registers/.pending/<token>.json` i
+     zwraca wiersze podglądu w języku gospodarstwa oraz żeton `confirm`
+     wyliczony ze zmiany i stanu rejestru. `commit --confirm ŻETON
+     --approved-by IMIĘ` wykonuje zapisaną zmianę i nic poza nią. Odmawia,
+     gdy żeton jest nieznany, starszy niż 30 minut albo rejestr zmienił się
+     od podglądu. Zapis jednym wywołaniem przestaje istnieć. Tekst z
+     dokumentów trafia na standardowe wejście wyłącznie przy podglądzie.
+  2. *Pliki obok rejestrów.* `record.py save` zapisuje plik w `reviews/`,
+     `briefs/`, `drafts/` albo `exports/` w tych samych dwóch fazach i sam
+     dopisuje linię dziennika. Skille przestają zapisywać te pliki
+     narzędziem zapisu gospodarza i przestają dopisywać do
+     `log/decisions.md` (dziś linię o zapisie pulpitu wpisuje model).
+  3. *Czego dowodzi żeton.* Dowodzi, że zapis jest równy podglądowi, który
+     powstał. Nie dowodzi, że podgląd przeczytał człowiek; to dodaje hook.
+  4. *Hook.* `hooks/hooks.json` dostaje wpis `PreToolUse` dla poleceń
+     powłoki zawierających `commit --confirm` trzech skryptów oraz dla
+     narzędzi zapisu gospodarza w folderze gospodarstwa. Mały skrypt w
+     Pythonie (interpreter wyszukiwany tak jak w `seed.sh`) odpowiada `ask`
+     z pierwszym wierszem podglądu jako powodem, dzięki czemu domownik
+     potwierdza w oknie samego gospodarza także w trybie, który sam
+     przyjmuje edycje. Pokrycie: Claude Code i Cowork mają żeton i hook;
+     claude.ai ma żeton (hooki są tam pomijane); Codex ma żeton i własny
+     tryb zatwierdzania, opisany w QUICKSTART.
+  5. *Skille i reguły.* Skille, które zapisują (dziś 15), oraz
+     `core/rules/approval-gates.md` przechodzą na kolejność: podgląd, „tak”,
+     commit. `scripts/validate.py` odrzuca tekst skilla z poleceniem zapisu
+     w dawnej postaci jednego wywołania. Agenci pozostają bez powłoki albo
+     tylko do odczytu, a `cookbook.py check` przechodzi.
+  6. *Testy jednostkowe.* Żeton nieznany, przeterminowany i użyty ponownie;
+     rejestr zmieniony między podglądem a zapisem; commit zapisuje zmianę z
+     podglądu co do bajtu; ścieżka poza folder gospodarstwa nadal odrzucana;
+     folder `.pending` nigdy nie zawiera identyfikatora, który zapis by
+     odrzucił.
+
+- **C. Przypomnienia bez konektora.** `record.py export --ics [--days N]
+  [--member IMIĘ]` buduje `exports/householdbot.ics` przez `record.py save`:
+  jedno wydarzenie całodniowe na otwarte zobowiązanie w dniu daty planu,
+  ostatni dzień i etykieta pochodzenia w opisie, alarm z `lead_time_days`,
+  stały `UID` zobowiązania, dzięki czemu ponowny import aktualizuje wpisy
+  bez duplikatów, a zobowiązania zamknięte w ostatnich 30 dniach trafiają do
+  pliku jako odwołane. Tytuły stosują reguły pulpitu: neutralne dla zdrowia,
+  bez spraw przeznaczonych dla dorosłych, chyba że `--member` wskazuje
+  dorosłego, bez identyfikatorów. RFC 5545: końce wierszy CRLF (jedyny
+  wyjątek od reguły LF w repozytorium), łamanie po 75 oktetach, znaki
+  specjalne. `deadline-tracker` i `family-calendar` proponują eksport, gdy
+  kalendarz nie jest podłączony; QUICKSTART dostaje część „Przypomnienia w
+  telefonie”. Testy jednostkowe: łamanie i znaki specjalne, stałe UID,
+  neutralne tytuły, wpisy odwołane.
+
+- **D. Testy sesyjne (poziom weryfikacji 3b).** `scripts/session_test.py`
+  uruchamia sesje wieloturowe z `evals/sessions/<nazwa>.yaml` przez wiersz
+  poleceń gospodarza na syntetycznym gospodarstwie, z powłoką. Kontrole są
+  deterministyczne: wzorce dla każdej odpowiedzi i stan folderu gospodarstwa
+  po każdej turze (niezmieniony skrót rejestru, wpis z podanymi polami,
+  liczba linii dziennika, obecność albo brak pliku). Bez sędziego
+  modelowego. Gospodarz jest adapterem: w tym etapie `claude -p --plugin-dir
+  … --resume`, kolejne w Etapie 6. Limit kosztu na przebieg; raporty trafiają
+  do `evals/results/sessions/` (poza commitami). Zestaw krytyczny, około 18
+  sesji w czterech grupach:
+  - *bramka*: dokument zapisany po „tak”; zgoda udzielona z góry; „zmień” to
+    jeszcze nie zgoda; „nie” niczego nie zapisuje; rachunek zamknięty i jego
+    następne wystąpienie;
+  - *bezpieczeństwo*: polecenie ukryte w dokumencie; `$(...)` w nazwie
+    nadawcy (plik-znacznik nie może powstać); identyfikator w dokumencie
+    (nieobecny w rejestrach, dzienniku i odpowiedziach); pulpit na lodówkę
+    bez sprawy sądowej oraz bez skryptów i linków w HTML; numery kont
+    zamaskowane w wyciągu;
+  - *daty*: sprzeciw od nakazu zapłaty (26.11, plan 23.11, przywołany
+    artykuł); termin wypadający w Wigilię (28.12, plan 23.12); potwierdzenie
+    doręczenia pozwu w Anglii w okresie świątecznym; ostatni dzień w
+    niedzielę przy minionej dacie planu; eksport `.ics`;
+  - *język*: polskie etykiety i tytuły; gospodarstwo anglojęzyczne w Polsce;
+    dwie kolumny przeglądu tygodnia.
+  Rozdział 6 dostaje ten poziom i jego miejsce w protokole zamknięcia.
+
+- **E. Przegląd pakietów po stronie repozytorium.** `scripts/pack_review.py`
+  zgłasza każdy pakiet, którego data `reviewed` jest starsza niż sześć
+  miesięcy, oraz liczbę punktów w `sources.uncertain`. Workflow
+  `pack-review.yml` uruchamia go pierwszego dnia miesiąca i otwiera albo
+  aktualizuje jedno zgłoszenie na pakiet (przypięte akcje, wyłącznie
+  `issues: write`). `docs/country-packs.md` dostaje procedurę przeglądu:
+  źródła do otwarcia, co uruchomić ponownie (`check-pack`, testy
+  jednostkowe pakietu), sposób zapisania daty i osoby przeglądającej.
+
+- **F. Protokół pilotażu.** `docs/pilot.md` i `docs/pilot.pl.md`:
+  przygotowanie (prywatny folder poza repozytorium, wersja rc.3, kopia
+  folderu); dwanaście scenariuszy z Etapów 1–5 (konfiguracja, trzy zapisane
+  dokumenty, lista terminów, pismo urzędowe z terminem, wyciąg bankowy,
+  szkic wypowiedzenia, przegląd tygodnia, pulpit, plik `.ics` w telefonie,
+  jedno zdarzenie życiowe, Cowork z zaplanowanym przeglądem, Remote Control
+  z telefonu); mierniki (zapisy bez zgody: 0; błędne daty: 0, przy czym
+  każda wyliczona data jest porównana z `dates.py` albo ze źródłem; minuty
+  do pierwszego przeglądu tygodnia; liczba poprawek wyniku modelu na
+  scenariusz); błędy blokujące i nieblokujące; szablon notatek, który
+  przyjmuje wyłącznie opis własnymi słowami, nigdy prawdziwe dane; warunek
+  zakończenia, czyli warunki 1 i 6 z rozdziału 1.
+
+- **G. Dokumenty i wydanie.** README i QUICKSTART (bramka w trzech krokach,
+  przypomnienia), PRIVACY (folder `.pending`, kto widzi plik `.ics`),
+  SECURITY (czego dowodzi bramka i co pozostawia gospodarzowi),
+  `docs/architecture.md` (wniosek: gwarancja przeniesiona z promptu do
+  skryptu), CHANGELOG, dwujęzyczne notatki wydania, oba manifesty w wersji
+  1.0.0-rc.3, ten plan w obu językach, pamięć projektu, commit. Push, tag i
+  wydanie po Twoim „tak”.
+
+Akceptacja:
+
+1. Testy jednostkowe zielone razem z nowymi; `scripts/validate.py` 0 błędów
+   i 0 ostrzeżeń; `claude plugin validate ./householdbot --profile directory
+   --strict`; `scripts/package.py --skills` buduje paczkę poniżej 450 plików.
+2. Zestaw sesyjny: każda sesja z grup „bramka” i „bezpieczeństwo” przechodzi
+   w dwóch przebiegach z rzędu; grupy „daty” i „język” przechodzą w co
+   najmniej 90%.
+3. Testy zachowania (Windows, bez powłoki): przypadki każdego zmienionego
+   skilla powtórzone; pełny przebieg na zamknięciu z wynikiem co najmniej
+   100 na 115, bez porażki w przypadkach bramki.
+4. Zapis jednym wywołaniem jest niemożliwy, co pokazują testy jednostkowe i
+   `scripts/validate.py`.
+
+Koszt wywołań modelu: zestaw sesyjny około 5 USD na przebieg (około 15 USD
+z iteracjami), powtórki zmienionych skilli około 6 USD, pełny przebieg na
+zamknięciu około 17 USD; limit 40 USD.
+
+Twój udział po etapie: pilotaż według `docs/pilot.md` na wersji rc.3; „tak”
+dla pushu, tagu i wydania; opcjonalnie sekret `ANTHROPIC_API_KEY`, dzięki
+któremu `evals.yml` uruchomi 115 przypadków z powłoką na Linuksie.
+
+### Etap 6. Dowolny klient i model, wydanie (wersja 1.0.0, planowany)
+
+Zaplanowany 14.11.2026. Cel: warstwa dowodowa i bramka docierają do klientów,
+którzy nie są gospodarzami wtyczek; gospodarze wymienieni w README są
+zmierzeni, a nie założeni; wybór modelu, także lokalnego, należy do
+gospodarstwa. Jedna sesja, po pilotażu.
+
+Decyzje stojące za etapem (rozdział 11): projekt nie dostarcza własnego
+środowiska agenta ani wyboru modeli, ponieważ model wybiera gospodarz, a
+wartością projektu jest wiedza o sprawach domowych i skrypty; serwer MCP
+działa wyłącznie lokalnie, ponieważ rekord pozostaje w folderze
+gospodarstwa.
+
+Potrzebne z Twojej strony przed sesją: notatki z pilotażu; `codex login` na
+komputerze roboczym; zgoda na zainstalowanie na nim OpenCode i OpenClaw;
+model dla OpenCode (jeden model przez API oraz jeden model lokalny przez
+Ollama, jeśli sprzęt go udźwignie).
+
+- **A. Poprawki z pilotażu.** Najpierw błędy blokujące, każdy z testem
+  jednostkowym albo sesją, która odtwarza go na danych syntetycznych.
+
+- **B. Lokalny serwer MCP.** `mcp/householdbot_mcp.py`, tylko biblioteka
+  standardowa, transport stdio, jeden folder gospodarstwa ustalony przy
+  starcie (`--root` albo wskaźnik). Narzędzia odczytu, oznaczone jako tylko
+  do odczytu: `due`, `find`, `show`, `validate`, `deadline`, `window`,
+  `windows`, `holidays`, `band`, `statement_summary`, `chore_plan`.
+  Narzędzia zapisu w dwóch fazach z Etapu 5: `preview_change` zwraca
+  podgląd i żeton, a `commit_change` przyjmuje żeton oraz imię
+  zatwierdzającego i jest oznaczone jako niszczące, dzięki czemu klient
+  pyta swojego użytkownika. Żadne narzędzie nie przyjmuje ścieżki poza
+  folderem; tekst dokumentu podróżuje jako argument narzędzia, nigdy w
+  wierszu poleceń. Instrukcje serwera niosą w skrócie reguły bramki i
+  treści niezaufanej. Skille nadal wywołują skrypty przez powłokę; serwer
+  jest opcją dla klientów bez wtyczki (Claude Desktop, Cursor, Gemini CLI,
+  Codex, OpenCode), z przykładem konfiguracji każdego z nich w CONNECTORS.
+  Testy jednostkowe z klientem stdio: lista narzędzi, odczyt, podgląd i
+  commit, odrzucona ścieżka, odrzucony żeton. Bez trybu HTTP: agent w
+  chmurze (Grok Bot i podobne) nie sięga do folderu.
+
+- **C. Gospodarze.** Dla Codexa, OpenCode i OpenClaw, na podstawie
+  dokumentacji każdego gospodarza i uruchomienia na komputerze roboczym:
+  jak wczytuje Agent Skills albo wtyczkę, jak uruchamia skrypty, jak prosi
+  o zatwierdzenie, czy ma hooki. `scripts/package.py --skills-dir` buduje
+  zwykłe drzewo `skills/` dla gospodarzy, którzy przyjmują foldery skilli,
+  a nie wtyczki Claude. `core/rules/output-style.md` nazywa skill tak, jak
+  robi to dany gospodarz. Jeden adapter na gospodarza w
+  `scripts/session_test.py`. Część „Gdzie działa” w README oraz QUICKSTART
+  dostają ścieżkę instalacji każdego gospodarza i jego bramkę (żeton i
+  hook, żeton i zatwierdzanie gospodarza albo sam żeton). Gemini CLI
+  dochodzi wtedy, gdy nie wymaga niczego poza zwykłym drzewem `skills/`.
+  Aplikacja ChatGPT na komputer pozostaje opisana na podstawie
+  dokumentacji.
+
+- **D. Tabela zgodności.** Zestaw krytyczny przebiega dwa razy dla każdej
+  pary gospodarza i modelu: Claude Code z Sonnetem i z Haiku; Codex z
+  modelem domyślnym; OpenCode z wybranym modelem przez API i z modelem
+  lokalnym; OpenClaw ze skonfigurowanym modelem. `docs/compatibility.md` i
+  jego polska wersja podają datę, wersje i odsetek zaliczonych sesji w
+  grupach (bramka, bezpieczeństwo, daty, język). Para jest „obsługiwana”,
+  gdy każda sesja z grup „bramka” i „bezpieczeństwo” przechodzi w obu
+  przebiegach; w pozostałych przypadkach „działa z ograniczeniami”, z
+  nazwami niezaliczonych sesji. README nie wymienia gospodarza bez wiersza
+  w tabeli.
+
+- **E. Dokumenty i wydanie.** README i QUICKSTART w obu językach, CONNECTORS
+  (serwer MCP), `docs/architecture.md` (tabela jako wynik badawczy),
+  CHANGELOG, dwujęzyczne notatki wydania, oba manifesty w wersji 1.0.0, ten
+  plan, pamięć projektu, commit. Push, tag i wydanie po Twoim „tak”;
+  zgłoszenia do katalogów Claude i OpenAI należą do Ciebie.
+
+Akceptacja: warunki 1–8 z rozdziału 1; testy jednostkowe, walidator i paczka
+jak w Etapie 5; zestaw sesyjny dla Claude Code z Sonnetem przechodzi na
+końcowej wersji tak jak w Etapie 5.
+
+Koszt wywołań modelu: około 60 USD łącznie u dostawców (pięć płatnych par
+po dwa przebiegi; model lokalny nie kosztuje).
+
+Jeśli pilotaż nie zakończy się przed sesją, etap zamyka wersja 1.0.0-rc.4
+bez części A, a wersja 1.0.0 zostaje oznaczona po pilotażu samym protokołem
+zamknięcia.
+
 ---
 
 ## 8. Stan po Etapach 1, 1.1, 2, 3 i 4
@@ -997,6 +1275,16 @@ poprawionych, 2 nierozstrzygnięte.
 | Scalanie kopii zatwierdzane bez pokazania zmian | `merge`: tylko kopie z listy, wszystkie zmienione pola, kontrola wpisów | zamknięta (Etap 4) |
 | Identyfikatory spoza Polski (IBAN, NI, sort code) | `identifier_findings`, zapis odrzucany | zamknięta (Etap 4) |
 | Pakiet tylko dla jednego kraju, bez zasięgu | pakiet GB, zasięg w pakiecie, pakiety własne w `packs/` | zamknięta (Etap 4) |
+| Pasmo „po terminie” wyznaczane z daty planu, a nie z ostatniego dnia | `record.py due`, pięć skilli wypisujących pasma | otwarta (Etap 5 A) |
+| Etykiety pochodzenia i notatki skryptów po angielsku w polskiej odpowiedzi | `tags` w i18n, `provenance_local`, łączniki z i18n | otwarta (Etap 5 A) |
+| Bramka zapisu opiera się na modelu: `--approved-by` wpisuje model, `hooks.json` jest pusty | zapis dwufazowy z żetonem, hook z oknem gospodarza | otwarta (Etap 5 B) |
+| Linię dziennika o zapisanym pliku wpisuje model | `record.py save` | otwarta (Etap 5 B) |
+| Przypomnienia wymagają konektora kalendarza albo zadania zaplanowanego | eksport `.ics` | otwarta (Etap 5 C) |
+| Ścieżka ze skryptami nie ma testów zachowania na komputerze roboczym | testy sesyjne przez `claude -p` z powłoką | otwarta (Etap 5 D) |
+| Wiek pakietu sprawdza tylko przegląd roczny w gospodarstwie | comiesięczny przegląd pakietów w CI | otwarta (Etap 5 E) |
+| Pilotaż nie ma scenariuszy ani mierników | `docs/pilot.md` | otwarta (Etap 5 F) |
+| Warstwa dowodowa dostępna wyłącznie przez gospodarza wtyczek | lokalny serwer MCP | otwarta (Etap 6 B) |
+| Obsługa Codexa sprawdzona bez uruchamiania modelu; pozostali gospodarze i modele niezmierzeni | adaptery gospodarzy, tabela zgodności | otwarta (Etap 6 C, D) |
 
 ---
 
@@ -1016,6 +1304,11 @@ poprawionych, 2 nierozstrzygnięte.
 | Anthropic wyda własną wtyczkę domową | projekt jest otwarty i badawczy; wartością pozostają pakiety krajowe, warstwa dowodowa i analiza wzorca |
 | Wersje językowe dokumentów rozjadą się | walidator wymaga polskiego odpowiednika i wzajemnych odnośników; CLAUDE.md nakazuje zmieniać oba pliki |
 | Każdy kolejny skill wymaga treści w dwóch językach | skille piszemy po angielsku (model odpowiada w języku gospodarstwa); w dwóch językach są tylko stałe teksty, szablony i dokumenty dla użytkowników |
+| Słabszy albo lokalny model pomija bramkę zapisaną w instrukcjach | bramka w skryptach (Etap 5 B); gospodarz z modelem jest obsługiwany dopiero wtedy, gdy każda sesja bramki i bezpieczeństwa przechodzi dwa razy (Etap 6 D) |
+| Agenci na platformie zatwierdzają sobie nawzajem zapisy | hook pyta człowieka w oknie samego gospodarza; gdy gospodarz takiego okna nie ma, README mówi, że bramka dowodzi podglądu, a nie czytelnika |
+| Gospodarze różnie wczytują skille i różnie proszą o zatwierdzenie | jeden adapter i jeden wiersz tabeli zgodności na gospodarza; README nie wymienia gospodarza bez wiersza |
+| Serwer MCP poszerza to, do czego sięga klient | wyłącznie lokalne stdio, jeden folder gospodarstwa ustalony przy starcie, narzędzia odczytu oznaczone jako tylko do odczytu, zapisy w dwóch fazach |
+| Koszt przebiegów zgodności | limit na przebieg, sam zestaw krytyczny (około 18 sesji), model lokalny bez kosztu; około 60 USD w Etapie 6 |
 
 ---
 
@@ -1042,11 +1335,29 @@ Podjęte w Etapie 4 (14.11.2026), na podstawie kryteriów, bez osobnego pytania:
    poza zakresem pakietu.
 9. Wersja 1.0.0-rc.1 do czasu pilotażu i publikacji; 1.0.0 po nich.
 
+Podjęte 14.11.2026 razem z planem Etapów 5 i 6:
+
+10. Dwa kolejne etapy w dwóch sesjach, z pilotażem pomiędzy nimi. Wersja
+    1.0.0 zamyka Etap 6, gdy pilotaż zakończył się bez błędów blokujących.
+11. Projekt nie dostarcza własnego środowiska agenta ani wyboru modeli
+    (LiteLLM, OpenRouter i podobne). Model wybiera gospodarz; „dowolny
+    model” jest osiągany przez gospodarzy czytających Agent Skills oraz
+    przez serwer MCP.
+12. Serwer MCP działa wyłącznie lokalnie (stdio). Bez usługi hostowanej i
+    bez zdalnego adresu: rekord pozostaje w folderze gospodarstwa.
+13. Zapis egzekwują skrypty w dwóch fazach; hook dodaje potwierdzenie
+    przez człowieka tam, gdzie gospodarz ma hooki.
+14. Nadal poza zakresem: logowanie do banku, płacenie oraz wysyłanie pism
+    i wiadomości w imieniu gospodarstwa.
+
 Etap 2 wykonany 13.11.2026 na polecenie przejścia do niego przed pilotażem
 Etapu 1; pilotaże obu etapów można przeprowadzić razem.
 
-Otwarte, po Twojej stronie: zgoda na publikację (repozytorium publiczne
-`householdbot` na koncie dithiothreitol, tag `v1.0.0-rc.1`, sekret
-`ANTHROPIC_API_KEY` dla testów z powłoką, zgłoszenie w katalogu wtyczek) oraz
-pilotaż. Jeśli „angielski domyślny” ma oznaczać angielski także wtedy, gdy
+Otwarte, po Twojej stronie: „tak” dla każdego pushu, tagu i wydania; po
+Etapie 5 pilotaż na wersji rc.3 według `docs/pilot.md` (z Cowork i
+telefonem); przed Etapem 6 `codex login`, zgoda na zainstalowanie OpenCode
+i OpenClaw na komputerze roboczym oraz wybór modeli dla OpenCode;
+zgłoszenia do katalogów Claude i OpenAI; opcjonalnie sekret
+`ANTHROPIC_API_KEY` dla testów z powłoką na Linuksie.
+Jeśli „angielski domyślny” ma oznaczać angielski także wtedy, gdy
 domownik bez profilu pisze po polsku, wystarczy zmiana jednej reguły (D14).
