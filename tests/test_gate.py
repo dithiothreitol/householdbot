@@ -285,6 +285,52 @@ class SaveFiles(GateCase):
         self.assertEqual(code, 1)
         self.assertFalse((self.home / record.PENDING).exists() and any((self.home / record.PENDING).iterdir()))
 
+    def test_a_page_declares_its_charset_and_viewport_and_keeps_its_letters(self):
+        page = ('<!doctype html><html lang="pl"><head><meta charset="utf-8">\n'
+                '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
+                '<title>Stan gospodarstwa</title></head><body><p>Stan na sobotę 14.11.2026</p></body></html>\n')
+        code, out = self.save("reviews/dashboard-2026-11-14.html", page)
+        self.assertEqual(code, 0, out)
+        self.assertEqual(run(record, "commit", self.home, "--confirm", out["confirm"], "--approved-by", "Anna")[0], 0)
+        self.assertEqual((self.home / "reviews" / "dashboard-2026-11-14.html").read_text(encoding="utf-8"), page)
+
+    def test_any_other_meta_is_refused(self):
+        for bad in ('<meta http-equiv="refresh" content="0; url=x.html">', '<meta name="description" content="x">',
+                    '<meta charset="utf-8" http-equiv="x">', '<META HTTP-EQUIV="refresh" CONTENT="5">'):
+            code, out = self.save("reviews/dashboard-2026-11-14.html", f"<!doctype html><head>{bad}</head><p>x</p>")
+            self.assertEqual(code, 1, bad)
+            self.assertIn("<meta>", " ".join(out["errors"]), bad)
+
+    def test_the_dashboard_skeleton_of_the_skill_passes_the_page_check(self):
+        ref = ROOT / "householdbot" / "skills" / "household-dashboard" / "reference" / "html-page.md"
+        skeleton = ref.read_text(encoding="utf-8").split("```html\n", 1)[1].split("```", 1)[0]
+        self.assertIn('<meta charset="utf-8">', skeleton)
+        self.assertEqual(record.content_problems("reviews/dashboard-2026-11-14.html", skeleton), [])
+
+
+def help_text(module, *argv) -> str:
+    buf = io.StringIO()
+    with redirect_stdout(buf):
+        try:
+            module.main([*argv, "--help"])
+        except SystemExit:
+            pass
+    return buf.getvalue()
+
+
+class HelpTeachesTwoSteps(unittest.TestCase):
+    """The model reads --help: a writing command must not offer the one-call --approved-by."""
+
+    def test_writing_commands_do_not_offer_approved_by(self):
+        import statement
+        for module, cmd in ((record, "add"), (record, "save"), (record, "export"), (record, "init"),
+                            (chores, "save-plan"), (chores, "swap"), (statement, "add-rule")):
+            text = help_text(module, cmd)
+            self.assertIn("usage:", text, f"{module.__name__} {cmd}")
+            self.assertNotIn("--approved-by", text, f"{module.__name__} {cmd}")
+        for module in (record, chores, statement):
+            self.assertIn("--approved-by", help_text(module, "commit"))
+
 
 class IcsExport(GateCase):
     def export(self, *extra):

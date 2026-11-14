@@ -876,7 +876,7 @@ Koszt wywołań modelu: zestaw sesyjny około 5 USD na przebieg (około 15 USD
 z iteracjami), powtórki zmienionych skilli około 6 USD, pełny przebieg na
 zamknięciu około 17 USD; limit 40 USD.
 
-Twój udział po etapie: pilotaż według `docs/pilot.md` na wersji rc.3; „tak”
+Twój udział po etapie: pilotaż według `docs/pilot.md` na wersji rc.4; „tak”
 dla pushu, tagu i wydania; opcjonalnie sekret `ANTHROPIC_API_KEY`, dzięki
 któremu `evals.yml` uruchomi 115 przypadków z powłoką na Linuksie.
 
@@ -932,6 +932,24 @@ buduje 385 plików razem z hookiem; (2) i (3) czekają na płatne przebiegi;
 Czeka na Twoje „tak”: płatna weryfikacja (zestaw sesyjny dwa razy, około
 10 USD; testy zachowania zmienionych skilli, około 6 USD; pełny przebieg,
 około 17 USD), potem push, tag i wydanie rc.3, a następnie pilotaż.
+
+**Wydanie i rc.4, 14.11.2026.** Po Twoim „tak” wersja rc.3 została
+wypchnięta, otagowana i wydana (36 plików), bez płatnej weryfikacji.
+Pięcioturowa sesja na rc.3 do materiałów na LinkedIn i X (1,03 USD, za
+zgodą) pokazała to, czego nie wykryły kontrole bez modelu: `record.py save`
+odrzucał `<meta charset>`, którego wymaga szablon strony przeglądu, więc
+model usuwał znacznik i zapisywał polskie litery jako kody HTML;
+`chores.py --help` i `statement.py --help` nadal pokazywały zapis jednym
+wywołaniem, a pierwszy taki zapis modelu skrypt zgodnie z założeniem
+odrzucił; po „zmień … i zapisz” model utworzył nowy podgląd i zatwierdził
+go jednym poleceniem, w turze podglądu. Wersja 1.0.0-rc.4 usuwa dwie
+pierwsze usterki w kodzie (strona może deklarować kodowanie i viewport,
+każdy inny `<meta>` jest odrzucany; pomoc każdego polecenia zapisu uczy
+dwóch kroków, a `scripts/validate.py` czyta także skrypty), a trzecią
+w regułach i w skillu przeglądu: podgląd i jego commit nigdy nie dzielą
+tury ani polecenia. Czy model się tego trzyma, sprawdza sesja
+`gate-change-is-not-yes`; zgodnie z Twoim poleceniem nie została
+uruchomiona, więc pierwszym sprawdzianem będzie pilotaż.
 
 ### Etap 6. Dowolny klient i model, wydanie (wersja 1.0.0, planowany)
 
@@ -1017,6 +1035,16 @@ zamknięcia.
 ---
 
 ## 8. Stan po Etapach 1–5
+
+**Wersja 1.0.0-rc.4 (poprawki z sesji demonstracyjnej na rc.3).**
+
+| Poziom | Wynik |
+|---|---|
+| 1. Struktura | `scripts/validate.py` (kontrola zapisu jednym wywołaniem czyta także skrypty): 0 błędów, 0 ostrzeżeń; `claude plugin validate --profile directory --strict` przechodzi dla wtyczki i marketplace |
+| 2. Arytmetyka | 202 testy jednostkowe zielone (4 nowe): strona z kodowaniem i viewportem zapisana bajt w bajt, każdy inny `<meta>` odrzucony, szkielet strony przeglądu ze skilla przechodzi kontrolę zapisu, pomoc poleceń zapisu bez `--approved-by` |
+| 3b. Sesje | 18 sesji gotowych (`--check`); nieuruchomione, zgodnie z Twoim poleceniem |
+| 3. Zachowanie | nieuruchamiane |
+| 4. Użycie | pięcioturowa sesja na rc.3 (1,03 USD), która wykryła usterki, opisana w Etapie 5 |
 
 **Wersja 1.0.0-rc.3 (Etap 5, gwarancje w kodzie).**
 
@@ -1417,7 +1445,7 @@ Etap 2 wykonany 13.11.2026 na polecenie przejścia do niego przed pilotażem
 Etapu 1; pilotaże obu etapów można przeprowadzić razem.
 
 Otwarte, po Twojej stronie: „tak” dla każdego pushu, tagu i wydania; po
-Etapie 5 pilotaż na wersji rc.3 według `docs/pilot.md` (z Cowork i
+Etapie 5 pilotaż na wersji rc.4 według `docs/pilot.md` (z Cowork i
 telefonem); przed Etapem 6 `codex login`, zgoda na zainstalowanie OpenCode
 i OpenClaw na komputerze roboczym oraz wybór modeli dla OpenCode;
 zgłoszenia do katalogów Claude i OpenAI; opcjonalnie sekret

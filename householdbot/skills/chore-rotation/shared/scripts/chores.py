@@ -9,14 +9,18 @@ stays as even as the chores allow, and so that a chore moves between people
 from week to week when that costs nothing in fairness. The same register and
 the same dates always give the same plan.
 
-Writes follow the household record's rule: run with --dry-run, show the
-result, and run again with --approved-by NAME after a yes.
+Writes follow the household record's rule. A writing command (init, add,
+update, retire, person, save-plan, swap) only previews: it stores the change
+and prints it with a confirm token. Show the preview; after the member's yes,
+in a later turn, `commit "<household>" --confirm TOKEN --approved-by NAME`
+applies exactly that change.
 
-    python3 chores.py init "<household>" --dry-run
-    python3 chores.py add "<household>" --json '{"title": "Bins out", "per_week": 2, "effort": 1, "min_age": 8}' --dry-run
+    python3 chores.py init "<household>"
+    python3 chores.py add "<household>" --json '{"title": "Bins out", "per_week": 2, "effort": 1, "min_age": 8}'
     python3 chores.py plan "<household>" --from 2026-11-16 --weeks 4
-    python3 chores.py save-plan "<household>" --from 2026-11-16 --weeks 1 --approved-by Anna
-    python3 chores.py swap "<household>" --week 2026-W47 --chore ch-002 --from Anna --to Piotr --approved-by Anna
+    python3 chores.py save-plan "<household>" --from 2026-11-16 --weeks 1
+    python3 chores.py commit "<household>" --confirm 3f9a1c0d2b7e4a65 --approved-by Anna
+    python3 chores.py swap "<household>" --week 2026-W47 --chore ch-002 --from Anna --to Piotr
     python3 chores.py balance "<household>" --weeks 8 --today 2026-11-13
     python3 chores.py validate "<household>"
 
@@ -38,7 +42,7 @@ sys.dont_write_bytecode = True
 import dates  # noqa: E402
 import record  # noqa: E402
 
-VERSION = "1.1.0"
+VERSION = "1.1.1"
 SCHEMA_VERSION = 1
 CHORES = Path("registers/chores.json")
 ID_RE = re.compile(r"^ch-(\d{3,})$")
@@ -522,7 +526,8 @@ def build_parser() -> argparse.ArgumentParser:
         sp.add_argument("--lang", help="language of log lines; default the profile's")
         if write:
             sp.add_argument("--dry-run", action="store_true", help="show the change, write nothing")
-            sp.add_argument("--approved-by", help="the adult who said yes")
+            # Refused with the two-step instruction; hidden from --help (see record.py).
+            sp.add_argument("--approved-by", help=argparse.SUPPRESS)
         return sp
 
     s = common(sub.add_parser("init", help="create registers/chores.json from the profile's members"), True)

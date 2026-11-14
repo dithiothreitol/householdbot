@@ -358,7 +358,7 @@ Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md).
 
 ## Status
 
-Version 1.0.0-rc.3 is a release candidate of 1.0: the write gate moved into
+Version 1.0.0-rc.4 is a release candidate of 1.0: the write gate moved into
 the scripts, reminders reach a phone through a calendar file, and the pilot
 has its protocol ([docs/pilot.md](docs/pilot.md)). Version 1.0 follows the
 pilot in a real household. See the [CHANGELOG](CHANGELOG.md) and the

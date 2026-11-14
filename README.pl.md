@@ -368,7 +368,7 @@ dokumentu, nazwiska ani numeru. Podatności zgłaszaj poufnie, jak opisuje
 
 ## Stan projektu
 
-Wersja 1.0.0-rc.3 to kandydat do wydania 1.0: bramka zapisu przeszła do
+Wersja 1.0.0-rc.4 to kandydat do wydania 1.0: bramka zapisu przeszła do
 skryptów, przypomnienia trafiają do telefonu przez plik kalendarza, a
 pilotaż ma swój protokół ([docs/pilot.pl.md](docs/pilot.pl.md)). Wersja 1.0
 ukaże się po pilotażu w prawdziwym gospodarstwie. Zmiany opisuje [CHANGELOG](CHANGELOG.md),

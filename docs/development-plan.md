@@ -904,7 +904,7 @@ Cost of model calls: session suite about 5 USD per run (about 15 USD with
 iterations), reruns of changed skills about 6 USD, the full closing run
 about 17 USD; ceiling 40 USD.
 
-Your part after the stage: the pilot by `docs/pilot.md` on rc.3; a yes for
+Your part after the stage: the pilot by `docs/pilot.md` on rc.4; a yes for
 push, tag and release; optional: the `ANTHROPIC_API_KEY` secret, so that
 `evals.yml` runs the 115 cases with a shell on Linux.
 
@@ -955,6 +955,23 @@ including the hook; (2) and (3) wait for the paid runs; (4) met.
 Waiting for your yes: the paid verification (the session suite twice, about
 10 USD; the behaviour tests of the changed skills, about 6 USD; the full run,
 about 17 USD), then push, tag and release of rc.3, then the pilot.
+
+**Release and rc.4 on 14 Nov 2026.** On your yes rc.3 was pushed, tagged and
+released (36 files); the paid verification was left out. A five-turn session
+on rc.3 for the LinkedIn and X material (1.03 USD, approved) showed what the
+offline checks could not: `record.py save` refused the `<meta charset>` that
+the dashboard template requires, so the model removed it and wrote the
+Polish letters as HTML codes; `chores.py --help` and `statement.py --help`
+still showed writes in one call, and the model's first write in one call was
+refused by the script, as designed; after "change … and save" the model made
+the new preview and committed it in one command, in the turn of the preview.
+Version 1.0.0-rc.4 fixes the first two in code (a page may declare its
+charset and viewport, any other `<meta>` is refused; the help of every
+writing command teaches the two steps, and `scripts/validate.py` reads the
+scripts) and the third in the rules and the dashboard skill: a preview and
+its commit never share a turn or a command. Whether the model keeps to it is
+what the session `gate-change-is-not-yes` checks; on your instruction it was
+not run, so the pilot is the first place to see it.
 
 ### Stage 6. Any client and model, release (version 1.0.0, planned)
 
@@ -1036,6 +1053,16 @@ closing protocol alone.
 ---
 
 ## 8. Status after Stages 1 to 5
+
+**Version 1.0.0-rc.4 (fixes from the demo session on rc.3).**
+
+| Level | Result |
+|---|---|
+| 1. Structure | `scripts/validate.py` (the check against a write in one call reads the scripts as well): 0 errors, 0 warnings; `claude plugin validate --profile directory --strict` passes for the plugin and the marketplace |
+| 2. Arithmetic | 202 unit tests green (4 new): a page with its charset and viewport saved byte for byte, any other `<meta>` refused, the dashboard skeleton of the skill passing the page check, the help of the writing commands without `--approved-by` |
+| 3b. Sessions | 18 sessions ready (`--check`); not run, on your instruction |
+| 3. Behaviour | not run |
+| 4. Use | the five-turn session on rc.3 (1.03 USD) that found the defects, described in Stage 5 |
 
 **Version 1.0.0-rc.3 (Stage 5, guarantees in code).**
 
@@ -1456,7 +1483,7 @@ Stage 2 was done on 13 Nov 2026 on the instruction to move to it before the
 Stage 1 pilot; the pilots of both stages can be run together.
 
 Open, yours to do: a yes for each push, tag and release; after Stage 5
-the pilot on rc.3 by `docs/pilot.md` (with Cowork and the phone); before
+the pilot on rc.4 by `docs/pilot.md` (with Cowork and the phone); before
 Stage 6 `codex login`, approval to install OpenCode and OpenClaw on the
 development machine and the choice of the models for OpenCode; the
 submissions to the Claude and OpenAI directories; optional: the

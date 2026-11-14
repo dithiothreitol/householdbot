@@ -5,14 +5,14 @@
 Pilotaż to ostatni warunek wersji 1.0 (definicja ukończenia w
 `development-plan.pl.md`, warunki 1 i 6): prawdziwe gospodarstwo przechodzi
 pełną ścieżkę bez pomocy autora i nie zostaje żaden otwarty błąd blokujący.
-Pilotaż odbywa się na wersji 1.0.0-rc.3, między Etapami 5 i 6.
+Pilotaż odbywa się na wersji 1.0.0-rc.4, między Etapami 5 i 6.
 
 ## Przed pierwszą sesją
 
 - **Prywatny folder poza tym repozytorium**, na przykład
   `Dokumenty/Gospodarstwo`. Prawdziwe dokumenty nigdy nie trafiają do
   repozytorium; `.gitignore` wyłapuje tylko część nazw folderów.
-- **HouseholdBot 1.0.0-rc.3** zainstalowany z marketplace
+- **HouseholdBot 1.0.0-rc.4** zainstalowany z marketplace
   (`/plugin marketplace update householdbot`, potem `/plugin install
   householdbot@householdbot`). Wersję pokazuje `/plugin`.
 - **Python 3.8 lub nowszy** w ścieżce PATH. Na Windows `python3` bywa

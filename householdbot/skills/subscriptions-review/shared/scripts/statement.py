@@ -13,7 +13,14 @@ Examples:
   python3 statement.py parse export.csv
   python3 statement.py summary export.csv --household ./household --lang pl
   python3 statement.py recurring export.csv --household ./household
-  python3 statement.py add-rule ./household --match "Kowalski Jan" --category housing --approved-by Anna
+  python3 statement.py add-rule ./household --category housing --file - <<'HB_END'
+  {"match": "Kowalski Jan"}
+  HB_END
+  python3 statement.py commit ./household --confirm 3f9a1c0d2b7e4a65 --approved-by Anna
+
+add-rule only previews the rule and prints a confirm token; the commit runs
+after the member's yes, in a later turn. Text from a bank export goes on
+standard input (--file -), never on the command line.
 """
 from __future__ import annotations
 
@@ -36,7 +43,7 @@ sys.dont_write_bytecode = True
 import dates  # noqa: E402
 import record  # noqa: E402
 
-VERSION = "1.1.0"
+VERSION = "1.1.1"
 CATEGORIES_FILE = HERE.parent / "money" / "categories.json"
 HOUSEHOLD_RULES = Path("registers") / "category-rules.json"
 ENCODINGS = ["utf-8-sig", "cp1250", "iso-8859-2"]
@@ -547,7 +554,7 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--match", help="the payee or phrase; text from a bank export goes with --file - instead")
     s.add_argument("--file", help='the rule as JSON ({"match": "..."}), or - for stdin')
     s.add_argument("--category", required=True)
-    s.add_argument("--approved-by")
+    s.add_argument("--approved-by", help=argparse.SUPPRESS)  # refused with the two-step instruction
     s.add_argument("--dry-run", action="store_true")
     s.add_argument("--today")
     s.add_argument("--lang")

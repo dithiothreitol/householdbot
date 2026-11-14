@@ -69,4 +69,6 @@ Write both? (yes / change / no)
 A silence, a topic change or an ambiguous answer is a no. A yes given before
 the change was shown ("just file whatever comes") approves nothing: show the
 change, then ask. "Change" is not a yes either, even with "and save" in the
-same message: make the new preview, show it, and ask again.
+same message: make the new preview, show it, and ask again. The write runs
+when the answer arrives in the member's next message, so a question and the
+commit it asks about never share a turn.

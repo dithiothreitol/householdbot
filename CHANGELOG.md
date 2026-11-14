@@ -1,5 +1,29 @@
 # Changelog
 
+## 1.0.0-rc.4
+
+Fixes from a demo session on rc.3.
+
+- **Saved pages keep their encoding.** `record.py save` accepts a page that
+  declares `<meta charset="utf-8">` and the viewport line, which the
+  dashboard template requires, and still refuses any other `<meta>`
+  (`http-equiv="refresh"` among them). Until now the first save of every
+  dashboard page was refused, and the page reached the folder with its
+  letters written as HTML codes.
+- **The help teaches the two steps.** `chores.py --help` and
+  `statement.py --help` showed writes in one call with `--approved-by`,
+  which the scripts refuse, and the writing commands of all three scripts
+  listed `--approved-by` in their own help. The examples now preview and
+  commit, the option no longer appears on a writing command, and
+  `scripts/validate.py` reads the scripts as well as the skills and rules.
+- **The commit comes in a later turn.** The rules and the dashboard skill
+  state that a preview and its commit never share a turn or a command, that
+  a yes given to a change described before its preview approves only the
+  description, and that "change … and save" asks for a new preview.
+- The dashboard's HTML reference names the provenance tags in the
+  household's language.
+- Unit tests: 202 (4 new).
+
 ## 1.0.0-rc.3
 
 Guarantees in code, fixes from a use session, reminders on a phone (stage 5).

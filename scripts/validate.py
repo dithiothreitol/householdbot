@@ -403,6 +403,8 @@ def check_write_gate() -> None:
     --approved-by on a writing command is refused by the scripts and must not be taught."""
     texts = list((PLUGIN / "skills").glob("*/SKILL.md")) + list((PLUGIN / "skills").glob("*/reference/*.md"))
     texts += list((PLUGIN / "agents").glob("*.md")) + list((REPO / "core" / "rules").glob("*.md"))
+    # The scripts' own --help (module docstrings and argument help) is read by the model too.
+    texts += list((REPO / "core" / "scripts").glob("*.py"))
     for md in texts:
         for n, line in enumerate(md.read_text(encoding="utf-8").splitlines(), 1):
             if ONE_CALL_RE.search(line):

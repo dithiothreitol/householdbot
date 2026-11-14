@@ -248,11 +248,16 @@ it", "make a page I can print", "zapisz", "na lodówkę"):
    Before asking, preview the file: `record.py save "<root>" --to
    reviews/dashboard-<YYYY-MM-DD>.html --file -` with the page on standard
    input. The script refuses a page with a script, a link, an image, a form
-   or a web address, and refuses any identifier.
-3. After the yes, `record.py commit "<root>" --confirm <token> --approved-by
-   "<name>"`: the script writes that one file and its line in
-   `log/decisions.md`. Nothing else changes. A file of that name already
-   there gets `-2`, `-3`; nothing is overwritten.
+   or a web address, any `<meta>` other than the charset and viewport lines,
+   and any identifier.
+3. On "change" ("change … and save", "zmień … i zapisz" included), edit the
+   page, preview it again, show the changed page and ask the same question.
+   The request to change is not the yes, so nothing is committed in that turn.
+4. After the yes, given in the member's next message, `record.py commit
+   "<root>" --confirm <token> --approved-by "<name>"`: the script writes that
+   one file and its line in `log/decisions.md`. Nothing else changes. A file
+   of that name already there gets `-2`, `-3`; nothing is overwritten. The
+   preview and the commit never run in one command or one turn.
 
 The HTML follows `reference/html-page.md`: every value from the record is
 escaped as text, and no link, script or image is carried over from it. In a

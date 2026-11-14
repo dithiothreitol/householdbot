@@ -96,7 +96,9 @@ Write both? (yes / change / no)
 A silence, a topic change or an ambiguous answer is a no. A yes given before
 the change was shown ("just file whatever comes") approves nothing: show the
 change, then ask. "Change" is not a yes either, even with "and save" in the
-same message: make the new preview, show it, and ask again.
+same message: make the new preview, show it, and ask again. The write runs
+when the answer arrives in the member's next message, so a question and the
+commit it asks about never share a turn.
 
 ---
 
@@ -388,13 +390,21 @@ the quick setup: use them, and name the default when it shapes an answer.
    the writing commands of `chores.py` and `statement.py` too) only previews:
    it checks the change, stores exactly that change and prints `preview`
    (the lines the log will get), `files` and a `confirm` token. Nothing is
-   written. Show the household in plain words what will be added or changed
-   and where, and wait for a yes (approval gates). The entry goes to the
+   written. Run the preview before asking: the message that asks for the yes
+   says in plain words what the preview adds or changes and where, and then
+   the session waits for a yes (approval gates). A yes given to a change that
+   was only described, before its preview existed, approves the description:
+   run the preview, and when it differs in any field from what was described,
+   show it and ask again. The entry goes to the
    script on standard input (`--file -` with a here-document, as the
    untrusted-content rule shows); no file is written to prepare it, and text
    from a document never goes on the command line. Without a shell, the entry
    is shown in plain words and nothing is written before the yes.
-3. **Commit with the approver's name.** After the yes:
+3. **Commit with the approver's name, in a later turn.** The commit runs only
+   after the member answered the shown preview in their own message, never in
+   the turn that made the preview and never in one command with it (a
+   `T=$(… save …)` followed by `commit --confirm "$T"` is a write without a
+   yes). After the yes:
    `record.py commit "<root>" --confirm <token> --approved-by "<the approver's name only>"`
    (a name such as `Anna`, never their words; `chores.py commit` and
    `statement.py commit` do the same). Commit applies the previewed change and
@@ -412,8 +422,10 @@ the quick setup: use them, and name the default when it shapes an answer.
    checked. Previews of different registers (a document and its obligations)
    are committed one after the other after the same yes.
 5. **"Change" is not a yes.** An edit asked for before the yes ("change the
-   title", "add the court's name") makes a new preview, shown again; the old
-   token is left to expire.
+   title", "add the court's name"), also when the same message says "and save"
+   or "i zapisz", makes a new preview, shown again with the changed text; the
+   yes has to come after the member saw the version that will be written. The
+   old token is left to expire.
 6. **Files go through `save`.** A brief, a page, a list, a pack, a skill or
    an export is written with
    `record.py save "<root>" --to <folder>/<file> --file -` (the content on

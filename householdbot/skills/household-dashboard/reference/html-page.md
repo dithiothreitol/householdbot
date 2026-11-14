@@ -21,8 +21,9 @@ and it is saved only after that page was shown and a member said yes.
 - **Urgency in words as well as marks.** "overdue", "next 7 days", "start now"
   print in black and white; an emoji or a colour is extra.
 - **The same facts as the chat page.** Dates with weekdays, amounts with
-  their currency, tags with "verify", neutral health titles, no identifiers,
-  and the *not tracked* lines.
+  their currency, provenance tags in the household's language (the
+  `provenance_local` of the script's rows), neutral health titles, no
+  identifiers, and the *not tracked* lines.
 - **The footer says what it is:** when it was made (weekday and date), from
   which record (the profile's label), that it is a snapshot and the record is
   the source, and that nothing on it was paid, sent or changed by making it.
@@ -104,6 +105,9 @@ is the source. Making this page paid, sent and changed nothing.}</footer>
 ## Before the write
 
 Check the finished HTML text once: no `<script`, `<link`, `<img`, `http` or
-`url(` anywhere; every `<` inside a value escaped; no identifier and no health
+`url(` anywhere; no `<meta>` besides the charset and viewport lines of the
+skeleton; every `<` inside a value escaped; no identifier and no health
 detail; the path is `reviews/dashboard-<YYYY-MM-DD>.html`, with `-2` or `-3`
-when that name is taken.
+when that name is taken. `record.py save` checks the same and keeps the
+characters of the household's language as they are, since the page declares
+`utf-8`.

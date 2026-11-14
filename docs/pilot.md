@@ -5,14 +5,14 @@
 The pilot is the last condition of version 1.0 (definition of done in
 `development-plan.md`, conditions 1 and 6): a real household goes through the
 full path without the author's help, and no blocking error is left open. It
-runs on version 1.0.0-rc.3, between Stages 5 and 6.
+runs on version 1.0.0-rc.4, between Stages 5 and 6.
 
 ## Before the first session
 
 - **A private folder outside this repository**, for example
   `Documents/Household`. Real documents never enter the repository; the
   `.gitignore` catches some folder names, not all.
-- **HouseholdBot 1.0.0-rc.3** installed from the marketplace
+- **HouseholdBot 1.0.0-rc.4** installed from the marketplace
   (`/plugin marketplace update householdbot`, then `/plugin install
   householdbot@householdbot`). `/plugin` shows the version.
 - **Python 3.8 or newer** on the PATH. On Windows, `python3` can be a Microsoft

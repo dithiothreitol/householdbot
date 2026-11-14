@@ -55,7 +55,7 @@ if str(HERE) not in sys.path:
 sys.dont_write_bytecode = True  # leave no __pycache__ inside the plugin folder
 import dates  # noqa: E402
 
-VERSION = "1.2.0"
+VERSION = "1.2.1"
 SCHEMA_VERSION = 1
 PROFILE = "household-profile.md"
 REGISTERS = {"documents": Path("registers/documents.json"),
@@ -77,8 +77,15 @@ APPROVER = "⁣approver⁣"
 SAVE_FOLDERS = ("briefs", "reviews", "lists", "packs", "skills", "exports", "drafts")
 SAVE_SUFFIXES = (".md", ".html", ".ics", ".json", ".txt", ".csv")
 HTML_FORBIDDEN = re.compile(
-    r"<\s*(script|iframe|object|embed|form|link|img|base|svg|meta)\b|@import|url\s*\(|"
+    r"<\s*(script|iframe|object|embed|form|link|img|base|svg)\b|@import|url\s*\(|"
     r"\bon[a-z]+\s*=|javascript:|https?://|www\.", re.I)
+# A saved page declares its encoding and a viewport (the dashboard template has both);
+# any other <meta>, such as http-equiv="refresh", is refused.
+META_TAG = re.compile(r"<\s*meta\b[^>]*>", re.I)
+META_ALLOWED = re.compile(
+    r"<\s*meta\s+(?:charset\s*=\s*[\"']?[\w-]+[\"']?"
+    r"|name\s*=\s*[\"']viewport[\"']\s+content\s*=\s*[\"'][\w\s=.,-]*[\"']"
+    r"|content\s*=\s*[\"'][\w\s=.,-]*[\"']\s+name\s*=\s*[\"']viewport[\"'])\s*/?\s*>", re.I)
 
 CATEGORIES = ["home", "vehicle", "money", "tax", "insurance", "utilities", "health",
               "children", "identity", "work", "daily", "other"]
@@ -1907,6 +1914,10 @@ def content_problems(rel: str, text: str) -> list[str]:
         if m:
             problems.append(f"the page holds {m.group(0)!r}: a saved page has no scripts, links, images, "
                             "forms, styles from outside or web addresses")
+        meta = next((t for t in META_TAG.findall(text) if not META_ALLOWED.fullmatch(t)), None)
+        if meta:
+            problems.append(f"the page holds {meta[:60]!r}: <meta> may only declare the charset "
+                            "(<meta charset=\"utf-8\">) and the viewport line")
     if rel.lower().endswith(".json"):
         try:
             json.loads(text)
@@ -2151,7 +2162,9 @@ def build_parser() -> argparse.ArgumentParser:
         sp.add_argument("--today", help="today's date from the session, YYYY-MM-DD")
         sp.add_argument("--lang", help="en or pl; default: the profile's Language, else English")
         if write:
-            sp.add_argument("--approved-by", help="who approved this change, as they said it")
+            # Accepted only to refuse it with the two-step instruction (ONE_CALL); not shown in --help,
+            # so that the help of a writing command teaches the preview, not a write in one call.
+            sp.add_argument("--approved-by", help=argparse.SUPPRESS)
             sp.add_argument("--dry-run", action="store_true", help="show what would be written")
             sp.add_argument("--ignore-conflicts", action="store_true", help=argparse.SUPPRESS)
         if pack:
