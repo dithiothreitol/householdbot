@@ -32,10 +32,11 @@ jobs:
       - name: Unit tests for the proof-layer scripts
         run: python -m unittest discover -s tests -v
 
-      - name: Oldest supported Python can import the scripts
+      # The oldest Python the hosted runners still provide (Ubuntu 26.04 has no 3.9).
+      - name: Oldest available Python can import the scripts
         uses: actions/setup-python@v5
         with:
-          python-version: "3.9"
+          python-version: "3.10"
       - run: python -c "import sys; sys.path.insert(0, 'core/scripts'); import dates, record; print('ok')"
 
       - uses: actions/setup-node@v4
