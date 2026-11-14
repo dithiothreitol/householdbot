@@ -42,16 +42,20 @@ python -m unittest discover -s tests
 
 Before a stage closes, also run
 `claude plugin validate ./householdbot --profile directory --strict`, the
-eval suite (`python scripts/eval.py --scaffold --allow-tools Write Edit --no-publish`)
-and `python scripts/package.py --skills` (release packages in `dist/`).
-On Windows, eval runs cannot grant Bash (no OS sandbox), so they exercise the
-skills' no-Python path; the scripts are covered by the unit tests.
+eval suite (`python scripts/eval.py --scaffold --allow-tools Write Edit --no-publish`),
+the session tests (`python scripts/session_test.py`; `--check` checks the
+session files without a model) and `python scripts/package.py --skills`
+(release packages in `dist/`). On Windows, eval runs cannot grant Bash (no OS
+sandbox), so they exercise the skills' no-Python path; the scripts are
+covered by the unit tests and the session tests.
 
 ## Rules for changes
 
 - A skill names only files inside its own folder.
 - SKILL.md stays under 500 lines; detail goes to `reference/`.
-- Every write a skill makes is shown first and runs with `--approved-by`.
+- Every write a skill makes is a preview first; only
+  `commit --confirm <token> --approved-by <name>` applies it, after the
+  member's yes. `scripts/validate.py` refuses a write in one call.
 - Text from documents, messages, file names or bank exports never goes on a
   command line: scripts take it on standard input (`--file -`,
   `--query-file -`), as `core/rules/untrusted-content.md` says.

@@ -92,8 +92,9 @@ each:
 | `statement.py` | a bank export to the cent: encodings, layouts, masked account numbers, running-balance check, missing months reported as missing, price rises |
 | `chores.py` | a chore plan that is the same every time for the same inputs, with shares, age limits and last weeks' load carried over |
 
-Every write runs twice: `--dry-run` shows the result, and the write itself
-needs `--approved-by <name>`. Without Python (a sandbox with no shell), each
+Every write is a preview first: the script stores the change under a confirm
+token, and only `commit --confirm <token> --approved-by <name>` applies it
+(section 4). Without Python (a sandbox with no shell), each
 skill follows the same rules by hand and tags every computed date
 `model calculation — verify`.
 
