@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>HouseholdBot social preview</title>
+<!--
+  Source of docs/assets/social-preview.png (1280 x 640, the GitHub social preview).
+  Render: msedge --headless=new --hide-scrollbars --force-device-scale-factor=1
+          --window-size=1280,640 --screenshot=social-preview.png social-preview.html
+  System fonts only; the data in the card is the synthetic household from the tests.
+-->
+<style>
+  :root {
+    --green-900: #0f3527;
+    --green-700: #1d5a42;
+    --green-500: #2e7d5b;
+    --green-100: #dcefe5;
+    --ink: #17231d;
+    --muted: #5b6b63;
+    --amber: #c77d12;
+    --red: #b3412f;
+    --blue: #2f6db3;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1280px; height: 640px; overflow: hidden; }
+  body {
+    font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif;
+    color: #fff;
+    background:
+      radial-gradient(circle at 92% 8%, rgba(255,255,255,0.10) 0 180px, transparent 181px),
+      radial-gradient(circle at 70% 112%, rgba(255,255,255,0.07) 0 260px, transparent 261px),
+      linear-gradient(135deg, var(--green-900) 0%, var(--green-700) 55%, var(--green-500) 100%);
+    position: relative;
+  }
+  .left { position: absolute; left: 72px; top: 64px; width: 610px; }
+  .kicker {
+    display: flex; align-items: center; gap: 12px;
+    font-size: 21px; font-weight: 600; letter-spacing: 0.2px; color: var(--green-100);
+  }
+  .kicker svg { width: 34px; height: 34px; }
+  h1 {
+    margin-top: 20px; font-size: 92px; line-height: 1; font-weight: 700; letter-spacing: -2px;
+  }
+  .tagline {
+    margin-top: 20px; font-size: 31px; line-height: 1.25; font-weight: 500; color: #eef8f2;
+  }
+  ul { list-style: none; margin-top: 30px; }
+  li {
+    display: flex; align-items: center; gap: 14px;
+    font-size: 23px; line-height: 1.3; margin-top: 12px; color: #f3fbf6;
+  }
+  li .tick {
+    flex: none; width: 30px; height: 30px; border-radius: 50%;
+    background: rgba(255,255,255,0.16); display: grid; place-items: center;
+  }
+  li .tick svg { width: 17px; height: 17px; }
+  .chips { position: absolute; left: 72px; bottom: 92px; display: flex; gap: 12px; }
+  .chip {
+    font-size: 19px; font-weight: 600; padding: 8px 16px; border-radius: 999px;
+    background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.28); color: #fff;
+  }
+  .url {
+    position: absolute; left: 72px; bottom: 44px;
+    font-size: 21px; font-weight: 500; color: var(--green-100); letter-spacing: 0.2px;
+  }
+  .card {
+    position: absolute; right: 64px; top: 92px; width: 500px;
+    background: #fbfdfb; color: var(--ink); border-radius: 22px;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+    padding: 26px 28px 24px;
+  }
+  .card .head { display: flex; justify-content: space-between; align-items: baseline; }
+  .card .title { font-size: 26px; font-weight: 700; }
+  .card .asof { font-size: 16px; color: var(--muted); font-weight: 500; }
+  .row {
+    display: grid; grid-template-columns: 112px 1fr auto; gap: 12px; align-items: center;
+    padding: 13px 0; border-bottom: 1px solid #e6ece8;
+  }
+  .row:last-of-type { border-bottom: none; }
+  .band {
+    font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px;
+    padding: 4px 8px; border-radius: 6px; text-align: center; color: #fff;
+  }
+  .overdue { background: var(--red); }
+  .now { background: var(--amber); }
+  .soon { background: var(--blue); }
+  .start { background: var(--green-500); }
+  .what { font-size: 18px; line-height: 1.25; }
+  .what b { font-weight: 650; }
+  .what small { display: block; font-size: 14px; color: var(--muted); margin-top: 2px; }
+  .amt { font-size: 18px; font-weight: 650; font-variant-numeric: tabular-nums; }
+  .tag {
+    margin-top: 10px; font-size: 14px; color: var(--muted);
+    font-family: "Cascadia Mono", Consolas, monospace;
+  }
+  .ask {
+    margin-top: 14px; display: flex; align-items: center; justify-content: space-between;
+    background: #eef6f1; border: 1px solid #cfe3d8; border-radius: 12px; padding: 12px 14px;
+    font-size: 17px; font-weight: 600; color: var(--green-700);
+  }
+  .ask span { font-weight: 500; color: var(--muted); }
+</style>
+</head>
+<body>
+  <div class="left">
+    <div class="kicker">
+      <svg viewBox="0 0 34 34" aria-hidden="true">
+        <path d="M5 16.5 17 6l12 10.5" fill="none" stroke="#dcefe5" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M8.5 14v13.5h17V14" fill="none" stroke="#dcefe5" stroke-width="2.6" stroke-linejoin="round"/>
+        <rect x="13.5" y="18" width="7" height="9.5" rx="1" fill="#dcefe5"/>
+      </svg>
+      Open-source plugin for Claude Code and OpenAI Codex
+    </div>
+    <h1>HouseholdBot</h1>
+    <p class="tagline">Household paperwork, bills and deadlines, handled in a conversation.</p>
+    <ul>
+      <li><span class="tick"><svg viewBox="0 0 17 17"><path d="M3 9l3.5 3.5L14 5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Files letters, bills and policies in a folder you own</li>
+      <li><span class="tick"><svg viewBox="0 0 17 17"><path d="M3 9l3.5 3.5L14 5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Every deadline with its law and its weekday</li>
+      <li><span class="tick"><svg viewBox="0 0 17 17"><path d="M3 9l3.5 3.5L14 5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Nothing sent, signed or paid without your yes</li>
+    </ul>
+  </div>
+
+  <div class="chips">
+    <span class="chip">34 Agent Skills</span>
+    <span class="chip">English · Polski</span>
+    <span class="chip">Poland · England and Wales</span>
+  </div>
+  <div class="url">github.com/dithiothreitol/householdbot</div>
+
+  <div class="card">
+    <div class="head">
+      <div class="title">What's due</div>
+      <div class="asof">Sat 14 Nov 2026</div>
+    </div>
+    <div class="row">
+      <span class="band overdue">overdue</span>
+      <span class="what"><b>Water bill</b><small>Tue 10 Nov · Emma</small></span>
+      <span class="amt">£48.20</span>
+    </div>
+    <div class="row">
+      <span class="band now">next 7 days</span>
+      <span class="what"><b>Energy bill</b><small>pay by Thu 19 Nov</small></span>
+      <span class="amt">£142.60</span>
+    </div>
+    <div class="row">
+      <span class="band soon">soon</span>
+      <span class="what"><b>Court claim: acknowledgment</b><small>last day Tue 29 Dec · plan Thu 24 Dec</small></span>
+      <span class="amt"></span>
+    </div>
+    <div class="row">
+      <span class="band start">start now</span>
+      <span class="what"><b>Lily's passport</b><small>expires Tue 13 Apr 2027</small></span>
+      <span class="amt"></span>
+    </div>
+    <div class="tag">country pack rule — verify</div>
+    <div class="ask">Save these as reminders? <span>yes / change / no</span></div>
+  </div>
+</body>
+</html>
