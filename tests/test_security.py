@@ -26,6 +26,16 @@ TODAY = "2026-11-13"
 
 
 def run(module, *argv, stdin: str | None = None):
+    argv = [str(a) for a in argv]
+    if "--approved-by" in argv and argv[0] != "commit":
+        def call(*a):
+            # Text from documents travels on standard input at the preview only.
+            return raw_run(module, *a, stdin=stdin if a and a[0] != "commit" else None)
+        return two_phase(call, argv)
+    return raw_run(module, *argv, stdin=stdin)
+
+
+def raw_run(module, *argv, stdin: str | None = None):
     buf = io.StringIO()
     patches = []
     if stdin is not None:
@@ -40,6 +50,19 @@ def run(module, *argv, stdin: str | None = None):
         for p in patches:
             p.stop()
     return code, json.loads(buf.getvalue())
+
+
+def two_phase(call, argv):
+    """A write as a skill makes it: the preview, then commit with the approver's name.
+    `call(*argv)` runs one command; argv holds --approved-by NAME as the old one-call form did."""
+    argv = [str(a) for a in argv]
+    i = argv.index("--approved-by")
+    who, rest = argv[i + 1], argv[:i] + argv[i + 2:]
+    code, out = call(*rest)
+    if code or "confirm" not in out:
+        return code, out
+    extra = ["--today", rest[rest.index("--today") + 1]] if "--today" in rest else []
+    return call("commit", rest[1], "--confirm", out["confirm"], "--approved-by", who, *extra)
 
 
 def iban(country: str, bban: str) -> str:
@@ -93,7 +116,7 @@ class TextOffTheCommandLine(Household):
         code, out = run(record, "add", self.home, "--register", "documents", "--file", "-",
                         "--today", TODAY, "--approved-by", "Anna", stdin=entry)
         self.assertEqual(code, 0, out)
-        self.assertTrue((self.home / out["copied_original_to"]).is_file())
+        self.assertTrue((self.home / out["original_to"]).is_file())
 
     def test_original_given_twice_is_refused(self):
         f = self.tmp / "a.pdf"
@@ -116,10 +139,14 @@ class TextOffTheCommandLine(Household):
         code, out = run(statement, "add-rule", self.home, "--file", "-", "--category", "housing",
                         "--approved-by", "Anna", stdin=rule)
         self.assertEqual(code, 0, out)
-        self.assertEqual(out["added"]["match"], "Kowalski $(id)")
+        self.assertEqual(out["rule"]["match"], "Kowalski $(id)")
+        # Without a name the rule is only previewed: a token, and nothing new in the rules file.
+        before = (self.home / "registers" / "category-rules.json").read_text(encoding="utf-8")
         code, out = run(statement, "add-rule", self.home, "--file", "-", "--category", "housing",
                         stdin=json.dumps({"match": "Other"}))
-        self.assertEqual(code, 1, out)
+        self.assertEqual(code, 0, out)
+        self.assertIn("confirm", out)
+        self.assertEqual(before, (self.home / "registers" / "category-rules.json").read_text(encoding="utf-8"))
 
     def test_chore_from_stdin(self):
         run(chores, "init", self.home, "--today", TODAY, "--approved-by", "Anna")

@@ -96,6 +96,25 @@ objaśnione w Twoim języku, z cytatem oryginału.
 | „pulpit” / „stan wszystkiego” | jedna strona o całym gospodarstwie: terminy, pieniądze, dokumenty i to, czego rekord jeszcze nie obejmuje |
 | „zrób z tego skill” | własny skill dla powtarzalnej czynności, zapisany po Twojej zgodzie |
 | „zbuduj pakiet krajowy dla Niemiec” | pakiet ze źródeł urzędowych, sprawdzony i zapisany w Twoim folderze |
+| „zrób plik do kalendarza” | plik `.ics` z przypomnieniami, dla każdego telefonu |
+
+## Jak zatwierdzasz zapis
+
+1. HouseholdBot pokazuje, co zapisze, i zadaje jedno pytanie:
+   `(tak / zmień / nie)`. Nic jeszcze nie zostaje zapisane.
+2. Odpowiadasz „tak”. Odpowiedź „zmień” daje nowy podgląd, pokazany jeszcze
+   raz.
+3. W Claude Code i Cowork aplikacja pyta jeszcze raz we własnym oknie
+   uprawnień, które pokazuje zmianę; tam ją potwierdzasz. Dziennik decyzji
+   dostaje jedną linię na zmianę z Twoim imieniem.
+
+## Przypomnienia w telefonie
+
+Bez podłączonego kalendarza napisz „zrób plik do kalendarza”. HouseholdBot
+zapisze `exports/householdbot.ics` po Twoim „tak”; otwórz go w telefonie
+albo zaimportuj do dowolnego kalendarza. Po zmianach utwórz nowy plik i
+zaimportuj go ponownie: te same wydarzenia zostaną zaktualizowane, a
+zamknięte sprawy odwołane. Sprawy zdrowotne mają neutralny tytuł.
 
 ## Przegląd tygodnia według harmonogramu
 

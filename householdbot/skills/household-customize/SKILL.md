@@ -99,14 +99,15 @@ is added after the yes.
 
 After the yes:
 
-1. Edit `household-profile.md`: only the lines shown, nothing else
-   reformatted. Keep `[PLACEHOLDER]` and `[DEFAULT]` markers for fields not
-   answered.
-2. Apply the register changes with `record.py` (`complete --id … --status
-   cancelled --no-next`, `update`, `add`), each dry-run first and then run
-   with `--approved-by "<name>"`; the script logs each one.
-3. Append one line to `log/decisions.md` for the profile change: the date,
-   who approved, what changed.
+1. The profile: `record.py save "<root>" --to household-profile.md --replace
+   --file -` with the whole profile on standard input, changed only in the
+   lines shown, nothing else reformatted; keep `[PLACEHOLDER]` and
+   `[DEFAULT]` markers for fields not answered. The preview's `diff` shows
+   only those lines; then commit its token. The old profile is kept in
+   `registers/.history/` and the log gets its line.
+2. The register changes with `record.py` (`complete --id … --status
+   cancelled --no-next`, `update`, `add`): previewed with the profile, then
+   committed one after the other with `--approved-by "<name>"`.
 
 ## Template drift
 

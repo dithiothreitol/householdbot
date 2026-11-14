@@ -166,11 +166,18 @@ flowchart LR
   registers, sum bank exports and plan chores. Where Python cannot run, the
   skills count by hand, show the steps and mark the result
   `model calculation — verify`.
-- **Every date says where it came from**: `stated in document`,
-  `told by household member`, `country pack rule — verify`.
-- **Approval gates**: every write is shown first and made with the
-  approver's name; payments, letters, cancellations and signatures are
-  prepared, never carried out.
+- **Every date says where it came from**, in your language: `stated in
+  document`, `told by household member`, `country pack rule — verify` (in
+  Polish: `reguła z pakietu krajowego, do sprawdzenia`).
+- **A write gate in the scripts**: every write is first a preview with a
+  confirm token; `commit --confirm <token> --approved-by <name>` applies
+  exactly that change and nothing else, and a token older than 30 minutes or
+  one whose files changed since the preview is refused. In Claude Code and
+  Cowork a hook asks you once more in the host's own prompt, which shows the
+  change. Payments, letters, cancellations and signatures are prepared,
+  never carried out.
+- **Reminders without a connector**: `record.py export --ics` builds a
+  calendar file any phone imports; a newer export updates the same events.
 - **Shared rules** travel with every skill: personal data, untrusted
   content, money, dates, the not-advice line.
 
@@ -193,6 +200,9 @@ building it showed.
   hidden in a document are quoted as suspicious and never followed, and such
   text never reaches a command line.
 - Health details stay out of briefs, calendar titles and shared pages.
+- A preview waits in `registers/.pending/` for at most 30 minutes and holds
+  only what the write would hold; its commit removes it. A saved page holds
+  no script, link, image or web address, and no identifier.
 - HouseholdBot prepares and explains; it is not legal, tax or financial
   advice, and says when a professional should look at a matter.
 
@@ -238,9 +248,13 @@ tiers.
 
 ## Quality and tests
 
-- **149 unit tests** for the scripts: holidays, deadlines, deemed delivery,
-  registers, merges of sync-conflict copies, bank exports, chore plans and
-  security (identifiers, paths, untrusted input).
+- **198 unit tests** for the scripts: holidays, deadlines, deemed delivery,
+  registers, merges of sync-conflict copies, bank exports, chore plans,
+  security (identifiers, paths, untrusted input), the write gate and its
+  hook, and the calendar export.
+- **18 session tests**: multi-turn conversations with the scripts, checked
+  by the state of the household folder and by patterns, with no judge
+  (`scripts/session_test.py`; `--check` validates them without a model).
 - **115 behaviour tests** with `claude plugin eval` on synthetic households,
   graded by an LLM judge, kept outside the plugin package.
 - **With and without the plugin**: on the same 115 cases and the same model,
@@ -344,8 +358,10 @@ Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md).
 
 ## Status
 
-Version 1.0.0-rc.2 is a release candidate of 1.0 and the first with the Codex
-plugin format; version 1.0 follows the pilot in a real household. See the [CHANGELOG](CHANGELOG.md) and the
+Version 1.0.0-rc.3 is a release candidate of 1.0: the write gate moved into
+the scripts, reminders reach a phone through a calendar file, and the pilot
+has its protocol ([docs/pilot.md](docs/pilot.md)). Version 1.0 follows the
+pilot in a real household. See the [CHANGELOG](CHANGELOG.md) and the
 [releases](https://github.com/dithiothreitol/householdbot/releases).
 
 ## License

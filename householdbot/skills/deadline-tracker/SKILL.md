@@ -61,9 +61,14 @@ Report in the household's language, grouped by band, overdue first:
 |---|---|---|---|---|
 
 - *Do by*: the weekday and date in the household's language (`do_by_local`
-  from the script). When `due_date` differs, add it:
-  `Fri 13 Nov 2026 (due Mon 16 Nov 2026)` or `pt. 13.11.2026 (termin: pon. 16.11.2026)`.
-- *Source*: the provenance tag; anything tagged *verify* keeps the word.
+  from the script). When the last day differs (`last_day_local` when the
+  script gives it, else `due_local`), add it:
+  `Fri 13 Nov 2026 (last day Mon 16 Nov 2026)` or
+  `pt. 13.11.2026 (ostatni dzień: pon. 16.11.2026)`.
+- *Band*: the script's. An item with `plan_passed` is "now" with its
+  `plan_note`, never "overdue": overdue means the last day has passed.
+- *Source*: the provenance tag in the household's language
+  (`provenance_local`); a tag *to verify* keeps that word.
 - An amount with its currency; a missing amount is left empty, never zero.
 - **Start now**: entries inside their lead time, even beyond the window.
 - **Date unknown**: every `no_date` entry, on its own line, with the question
@@ -91,18 +96,22 @@ From a handoff or from what a member says.
    `told by household member`.
 2. Check for an open entry in the same `series` with `record.py find`; update
    it instead of adding a parallel one.
-3. `record.py add "<root>" --register obligations --file - --country <CC> --today <today> --dry-run`,
+3. `record.py add "<root>" --register obligations --file - --country <CC> --today <today>`,
    the entry on standard input as a here-document, never in a file written
    to prepare it:
    ```
-   python3 "${CLAUDE_SKILL_DIR}/shared/scripts/record.py" add "<root>" --register obligations --file - --country <CC> --today <today> --dry-run <<'HB_END'
+   python3 "${CLAUDE_SKILL_DIR}/shared/scripts/record.py" add "<root>" --register obligations --file - --country <CC> --today <today> <<'HB_END'
    {"title": "...", "kind": "task", "category": "other", "owner": "...", "due_date": "YYYY-MM-DD", "provenance": "told by household member", "law": "..."}
    HB_END
    ```
    The script assigns the id and computes `do_by`.
-4. Show the entry in plain words with the arithmetic, wait for the yes, run it
-   again with `--approved-by "<name>"` and the same here-document. The script
-   keeps a backup and writes the line in `log/decisions.md` itself.
+   The title is written in the household's language. A deadline counted by a
+   pack rule (`court`, `tax`, `administrative`, `civil`) names it in `"rule"`,
+   so `record.py due` reports the last day moved past a holiday.
+4. The command prints a preview and a `confirm` token and writes nothing.
+   Show the entry in plain words with the arithmetic, wait for the yes, then
+   commit it: `record.py commit "<root>" --confirm <token> --approved-by "<name>"`. The script keeps a backup
+   and writes the line in `log/decisions.md` itself.
 
 If a calendar is connected, offer once to propose calendar entries for the
 new obligation: one on `do_by`, one on the lead-time date. The entry title
@@ -112,9 +121,10 @@ after a yes.
 ## Mode 3 — Complete, cancel, change
 
 - **"I paid it" / "done":**
-  `record.py complete "<root>" --id ob-… --done-date <date> --country <CC> --today <today> --dry-run`.
+  `record.py complete "<root>" --id ob-… --done-date <date> --country <CC> --today <today>`.
   For a recurring entry it also prepares the next occurrence in the same
-  series. Show both changes; one yes covers both; run with `--approved-by`.
+  series. Show both changes; one yes covers both; commit the token with
+  `--approved-by`. Several items at once: one `complete` with `--id` repeated.
   When the recurrence is free text, the script says so: take the next date
   from the source or `dates.py recurring` and add it with Mode 2.
 - **"We cancelled it":** `record.py complete … --status cancelled --no-next`,

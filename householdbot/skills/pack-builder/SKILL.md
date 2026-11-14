@@ -175,9 +175,11 @@ and one count: rules with a source, items uncertain, sections to be
 researched. Ask one question: "Write both to packs/? (yes / change / no)". A
 request to save made before the files were shown approves nothing.
 
-After the yes, write the two files and nothing else, then add one line to
-`log/decisions.md`: the date, who approved, "household pack <CC> written" (or
-"updated"). A pack is never overwritten without its difference shown.
+Before asking, preview both files: `record.py save "<root>" --to
+packs/<CC>.json --file -` and the same for `packs/<CC>.md` (`--replace` when
+the pack exists; the preview's `diff` is the difference to show). After the
+yes, commit both tokens; the script writes the two files and nothing else,
+and logs each one. A pack is never overwritten without its difference shown.
 
 ## Step 6 — Check
 

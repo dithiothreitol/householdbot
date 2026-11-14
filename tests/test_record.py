@@ -20,11 +20,30 @@ from datetime import date  # noqa: E402
 TODAY = "2026-11-13"
 
 
-def run(*argv):
+def raw_run(*argv):
     buf = io.StringIO()
     with redirect_stdout(buf):
         code = record.main([str(a) for a in argv])
     return code, json.loads(buf.getvalue())
+
+
+def run(*argv):
+    if "--approved-by" in [str(a) for a in argv] and str(argv[0]) != "commit":
+        return two_phase(raw_run, argv)
+    return raw_run(*argv)
+
+
+def two_phase(call, argv):
+    """A write as a skill makes it: the preview, then commit with the approver's name.
+    `call(*argv)` runs one command; argv holds --approved-by NAME as the old one-call form did."""
+    argv = [str(a) for a in argv]
+    i = argv.index("--approved-by")
+    who, rest = argv[i + 1], argv[:i] + argv[i + 2:]
+    code, out = call(*rest)
+    if code or "confirm" not in out:
+        return code, out
+    extra = ["--today", rest[rest.index("--today") + 1]] if "--today" in rest else []
+    return call("commit", rest[1], "--confirm", out["confirm"], "--approved-by", who, *extra)
 
 
 def fake_pesel() -> str:
@@ -40,8 +59,12 @@ class RecordTestCase(unittest.TestCase):
         self.tmp = Path(tempfile.mkdtemp(prefix="hb-test-"))
         self.home = self.tmp / "household"
         make_household.write(self.home, date.fromisoformat(TODAY))
+        # Previews made before a record exists wait in the configuration folder: keep it in tmp.
+        self._config = record.CONFIG_DIR
+        record.CONFIG_DIR = self.tmp / "config"
 
     def tearDown(self):
+        record.CONFIG_DIR = self._config
         shutil.rmtree(self.tmp, ignore_errors=True)
 
     def obligations(self):
@@ -100,7 +123,7 @@ class Due(RecordTestCase):
         self.assertEqual(code, 0)
         items = out["items"]
         self.assertEqual(items[0]["band"], "overdue")
-        self.assertIn("Water", items[0]["title"])
+        self.assertEqual(items[0]["counterparty"], "Example Wodociągi Sp. z o.o.")
         bands = {i["id"]: i["band"] for i in items}
         self.assertEqual(bands["ob-2026-0001"], "now")
         self.assertEqual(bands["ob-2026-0004"], "now")  # cancel-by today+10 minus 5 days post
@@ -136,9 +159,18 @@ class Writes(RecordTestCase):
 
     def test_write_needs_approval(self):
         before = (self.home / "registers" / "obligations.json").read_text(encoding="utf-8")
-        code, out = run("add", self.home, "--register", "obligations", "--file", self.entry_file(self.ENTRY))
+        # Without a name the command only previews: a token, nothing written.
+        code, out = raw_run("add", self.home, "--register", "obligations", "--file", self.entry_file(self.ENTRY),
+                            "--today", TODAY)
+        self.assertEqual(code, 0, out)
+        self.assertRegex(out["confirm"], r"^[0-9a-f]{16}$")
+        self.assertIn("ob-2026-0010", out["preview"][0])
+        self.assertEqual(before, (self.home / "registers" / "obligations.json").read_text(encoding="utf-8"))
+        # The old one-call form is refused and writes nothing either.
+        code, out = raw_run("add", self.home, "--register", "obligations", "--file", self.entry_file(self.ENTRY),
+                            "--approved-by", "Anna")
         self.assertEqual(code, 1)
-        self.assertIn("--approved-by", out["errors"][0])
+        self.assertIn("two steps", out["errors"][0])
         self.assertEqual(before, (self.home / "registers" / "obligations.json").read_text(encoding="utf-8"))
 
     def test_dry_run_writes_nothing(self):
@@ -170,7 +202,7 @@ class Writes(RecordTestCase):
         self.assertIn("zgoda: Anna", self.log_lines()[0])
         self.assertIn("do rejestru zobowiązań", self.log_lines()[0])
         self.assertIn("250,00 zł", self.log_lines()[0])
-        self.assertTrue((self.home / out["backup"]).exists())
+        self.assertTrue((self.home / out["backups"][0]).exists())
 
     def test_merge_conflict_copy(self):
         main = self.home / "registers" / "obligations.json"
@@ -460,10 +492,57 @@ class Stage3Helpers(RecordTestCase):
         self.assertEqual(code, 1)
 
 
+class LastDayAndPlan(RecordTestCase):
+    """Overdue means the last day has passed; a passed plan date alone is "now", flagged."""
+
+    def row(self, today, oid="ob-2026-0003", country=True):
+        code, out = run("due", self.home, "--today", today, *(["--country", "PL"] if country else []))
+        self.assertEqual(code, 0, out)
+        return next(i for i in out["items"] if i["id"] == oid), out
+
+    def test_a_last_day_on_sunday_moves_by_the_tax_rule(self):
+        row, _ = self.row(TODAY)                       # instalment 15 Nov 2026, a Sunday
+        self.assertEqual(row["due_date"], "2026-11-15")
+        self.assertEqual(row["last_day"], "2026-11-16")
+        self.assertIn("Ordynacja podatkowa", row["last_day_note"])
+        self.assertEqual(row["do_by"], "2026-11-13")
+
+    def test_a_passed_plan_date_is_now_not_overdue(self):
+        row, out = self.row("2026-11-14")
+        self.assertEqual(row["band"], "now")
+        self.assertTrue(row["plan_passed"])
+        self.assertIn("minęła", row["plan_note"])
+        self.assertEqual(row["days_to_last_day"], 2)
+        water = next(i for i in out["items"] if i["id"] == "ob-2026-0006")
+        self.assertEqual(water["band"], "overdue")
+        self.assertFalse(water["plan_passed"])
+
+    def test_after_the_last_day_it_is_overdue(self):
+        row, _ = self.row("2026-11-17")
+        self.assertEqual(row["band"], "overdue")
+        self.assertFalse(row["plan_passed"])
+
+    def test_without_a_country_the_rule_is_named_not_applied(self):
+        row, out = self.row(TODAY, country=False)
+        self.assertNotIn("last_day", row)
+        self.assertTrue(any("counting rule 'tax'" in w for w in out["warnings"]))
+
+    def test_tags_in_the_household_language(self):
+        row, _ = self.row(TODAY, "ob-2026-0001")
+        self.assertEqual(row["provenance_local"], "z dokumentu")
+        en = self.tmp / "en"
+        make_household.write(en, date.fromisoformat(TODAY), lang="en")
+        code, out = run("due", en, "--today", TODAY, "--country", "PL")
+        row = next(i for i in out["items"] if i["id"] == "ob-2026-0006")
+        self.assertEqual(row["provenance_local"], "told by household member")
+        self.assertEqual(row["title"], "Water and sewage bill: pay Example Wodociągi")
+
+
 class Search(RecordTestCase):
     def test_polish_and_english_queries(self):
         code, out = run("find", self.home, "--query", "ubezpieczenia samochodu OC")
-        self.assertEqual(out["results"][0]["id"], "doc-2026-0002")
+        # The policy and its notice deadline both answer; the policy is among the first two.
+        self.assertIn("doc-2026-0002", [r["id"] for r in out["results"][:2]])
         code, out = run("find", self.home, "--query", "where is the internet contract")
         self.assertEqual(out["results"][0]["id"], "doc-2026-0004")
 

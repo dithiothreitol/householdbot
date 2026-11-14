@@ -80,27 +80,56 @@ the quick setup: use them, and name the default when it shapes an answer.
 1. **Read before write.** Re-read the file immediately before changing it.
    Another member may have changed it since the session started. `record.py`
    always loads the file fresh.
-2. **Show the change, then wait.** Run the write with `--dry-run`, show the
-   household exactly what will be added or changed and where, and wait for a
-   yes (approval gates). The entry goes to the script on standard input
-   (`--file -` with a here-document, as the untrusted-content rule shows); no
-   file is written to prepare it, and text from a document never goes on the
-   command line. Without a shell, the entry is shown in plain words and
-   nothing is written before the yes.
-3. **Write with the approver's name.** After the yes, run the same command
-   with `--approved-by "<the approver's name only>"` (a name such as `Anna`,
-   never their words). The script refuses a write
-   without it, keeps the previous file in `registers/.history/`, and appends
-   one line to `log/decisions.md`.
-4. **Touch one entry.** Add or update the single entry concerned. Do not
+2. **Preview, then wait.** A writing command (`add`, `update`, `complete`,
+   `merge`, `archive`, `migrate`, `save`, `export`, `init`, `set-pointer`;
+   the writing commands of `chores.py` and `statement.py` too) only previews:
+   it checks the change, stores exactly that change and prints `preview`
+   (the lines the log will get), `files` and a `confirm` token. Nothing is
+   written. Show the household in plain words what will be added or changed
+   and where, and wait for a yes (approval gates). The entry goes to the
+   script on standard input (`--file -` with a here-document, as the
+   untrusted-content rule shows); no file is written to prepare it, and text
+   from a document never goes on the command line. Without a shell, the entry
+   is shown in plain words and nothing is written before the yes.
+3. **Commit with the approver's name.** After the yes:
+   `record.py commit "<root>" --confirm <token> --approved-by "<the approver's name only>"`
+   (a name such as `Anna`, never their words; `chores.py commit` and
+   `statement.py commit` do the same). Commit applies the previewed change and
+   nothing else, keeps the previous file in `registers/.history/` and appends
+   one line per change to `log/decisions.md`. It refuses a token that is
+   unknown, older than 30 minutes, or whose files changed since the preview:
+   preview again and show the new change. The old one-call form
+   (`add … --approved-by`) is refused. In Claude Code and Cowork the host then
+   asks the member to confirm in its own permission prompt, which shows the
+   preview line; that prompt is the member's yes reaching the record.
+4. **One preview per register per yes.** Several entries of one register go
+   into one preview: `add --file -` takes a JSON list, `complete` takes
+   `--id` more than once. Two previews of the same register cannot both be
+   committed, because the first commit changes the file the second one
+   checked. Previews of different registers (a document and its obligations)
+   are committed one after the other after the same yes.
+5. **"Change" is not a yes.** An edit asked for before the yes ("change the
+   title", "add the court's name") makes a new preview, shown again; the old
+   token is left to expire.
+6. **Files go through `save`.** A brief, a page, a list, a pack, a skill or
+   an export is written with
+   `record.py save "<root>" --to <folder>/<file> --file -` (the content on
+   standard input; `--replace` for a file updated in place, such as a list,
+   with the old version kept in `registers/.history/`), then committed the
+   same way. `save` writes only into `briefs/`, `reviews/`, `lists/`,
+   `packs/`, `skills/`, `exports/`, `drafts/` and `household-profile.md`,
+   refuses identifiers, and refuses a page with a script, a link, an image
+   or a web address. The host's own write tool is not used inside the
+   household folder.
+7. **Touch one entry.** Add or update the entries concerned. Do not
    reorder, reformat or rewrite the rest of the file.
-5. **Nothing is deleted.** An entry that no longer applies changes `status`
+8. **Nothing is deleted.** An entry that no longer applies changes `status`
    (`superseded`, `cancelled`, `done`, `lapsed`). An original document is never
    overwritten or removed; a name clash gets a numeric suffix.
-6. **Identifiers.** Documents are `doc-YYYY-NNNN`, obligations are
+9. **Identifiers.** Documents are `doc-YYYY-NNNN`, obligations are
    `ob-YYYY-NNNN`, where `YYYY` is the year the entry was created. The script
    assigns the next free number.
-7. **Conflict copies stop writes.** If a synced drive left a conflict copy of a
+10. **Conflict copies stop writes.** If a synced drive left a conflict copy of a
    register (`obligations (1).json`, `obligations (Anna's conflicted copy).json`,
    `obligations-LAPTOP.json`), writing could lose an edit. The script refuses;
    `household-doctor` merges.

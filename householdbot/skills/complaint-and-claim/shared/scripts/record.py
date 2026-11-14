@@ -6,10 +6,16 @@ Reads, checks and writes the two registers of a household folder:
 registers/documents.json and registers/obligations.json. Standard library
 only. Every command prints one JSON object.
 
-Writes need --approved-by NAME. The name is recorded in log/decisions.md as
-the household member gave it; the script cannot verify who is typing. Every
-write keeps a copy of the previous file in registers/.history/ and refuses
-to run while sync-conflict copies of a register exist.
+Every write has two steps. A writing command (init, add, update, complete,
+merge, archive, migrate, save, export, set-pointer) only previews: it checks
+the change, stores exactly that change in registers/.pending/ and prints the
+preview with a confirm token. After the household member says yes,
+`commit <folder> --confirm TOKEN --approved-by NAME` applies the stored change
+and nothing else; it refuses a token that is unknown, older than 30 minutes,
+or whose files changed since the preview. The name is recorded in
+log/decisions.md as the member gave it; the script cannot verify who is
+typing. Every write keeps a copy of the previous file in registers/.history/
+and refuses to run while sync-conflict copies of a register exist.
 
 Dates, amounts and log lines follow the household's language: the
 `Language` line of household-profile.md (English or Polish), English when it
@@ -17,17 +23,19 @@ is not set, or --lang to override.
 
 Examples:
   python3 record.py locate
-  python3 record.py init ./household --approved-by Anna
+  python3 record.py init ./household --lang pl --profile-file - < profile.md
+  python3 record.py commit ./household --confirm 3f9a1c0d2b7e4a65 --approved-by Anna
   python3 record.py validate ./household
   python3 record.py due ./household --today 2026-11-13 --country PL
   python3 record.py find ./household --query "polisa OC"
-  python3 record.py add ./household --register obligations --file - --dry-run < entry
-  python3 record.py add ./household --register documents --json '{...}' --original scan.pdf --approved-by Anna
-  python3 record.py complete ./household --id ob-2026-0003 --approved-by Anna --country PL
+  python3 record.py add ./household --register obligations --file - --country PL < entry
+  python3 record.py save ./household --to briefs/2026-W46.md --file - < brief.md
+  python3 record.py export ./household --ics --country PL
 """
 from __future__ import annotations
 
 import argparse
+import difflib
 import hashlib
 import json
 import os
@@ -37,7 +45,7 @@ import sys
 import tempfile
 import time
 import unicodedata
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
 
@@ -47,7 +55,7 @@ if str(HERE) not in sys.path:
 sys.dont_write_bytecode = True  # leave no __pycache__ inside the plugin folder
 import dates  # noqa: E402
 
-VERSION = "1.1.0"
+VERSION = "1.2.0"
 SCHEMA_VERSION = 1
 PROFILE = "household-profile.md"
 REGISTERS = {"documents": Path("registers/documents.json"),
@@ -58,7 +66,19 @@ ID_RE = {"documents": re.compile(r"^doc-(\d{4})-(\d{4,})$"),
 MONEY_RE = re.compile(r"^-?\d+(\.\d{1,2})?$")
 CURRENCY_RE = re.compile(r"^[A-Z]{3}$")
 POINTER = Path.home() / ".claude" / "plugins" / "config" / "householdbot" / "location.md"
+CONFIG_DIR = POINTER.parent
 HISTORY_KEEP = 20
+PENDING = Path("registers/.pending")
+PENDING_TTL_SECONDS = 30 * 60
+TOKEN_RE = re.compile(r"^[0-9a-f]{16}$")
+# Stands for the approver's name inside a previewed register (chores plans keep it);
+# commit puts the name in its place.
+APPROVER = "⁣approver⁣"
+SAVE_FOLDERS = ("briefs", "reviews", "lists", "packs", "skills", "exports", "drafts")
+SAVE_SUFFIXES = (".md", ".html", ".ics", ".json", ".txt", ".csv")
+HTML_FORBIDDEN = re.compile(
+    r"<\s*(script|iframe|object|embed|form|link|img|base|svg|meta)\b|@import|url\s*\(|"
+    r"\bon[a-z]+\s*=|javascript:|https?://|www\.", re.I)
 
 CATEGORIES = ["home", "vehicle", "money", "tax", "insurance", "utilities", "health",
               "children", "identity", "work", "daily", "other"]
@@ -82,8 +102,8 @@ OB_FIELDS = {
     "do_by": "date?", "do_by_note": "str", "lead_time_days": "int?", "recurrence": "str?",
     "recurrence_day": "int?", "amount": "money?", "currency": "currency?", "auto_renews": "bool?",
     "notice": "obj?", "transit_buffer_days": "int?", "source": "obj?", "provenance": "provenance",
-    "law": "str?", "status": "ob_status", "done_date": "date?", "notes": "str", "created": "date!",
-    "updated": "date!",
+    "law": "str?", "rule": "str?", "status": "ob_status", "done_date": "date?", "notes": "str",
+    "created": "date!", "updated": "date!",
 }
 FIELDS = {"documents": DOC_FIELDS, "obligations": OB_FIELDS}
 REQUIRED = {
@@ -100,7 +120,7 @@ DEFAULTS = {
                     "recurrence": "none", "recurrence_day": None, "amount": None,
                     "currency": None, "auto_renews": None, "notice": None,
                     "transit_buffer_days": None, "source": None,
-                    "law": None, "status": "open", "done_date": None, "notes": ""},
+                    "law": None, "rule": None, "status": "open", "done_date": None, "notes": ""},
 }
 CONFLICT_PATTERNS = [
     re.compile(r"conflict", re.I),                                   # Dropbox, Nextcloud, Syncthing
@@ -215,16 +235,25 @@ def read_text_input(value: str) -> str:
     return Path(value).read_text(encoding="utf-8-sig")
 
 
+def json_text(data: dict) -> str:
+    """A register as stored: UTF-8 JSON, two-space indent, one final newline."""
+    return json.dumps(data, ensure_ascii=False, indent=2) + "\n"
+
+
 def atomic_write_json(path: Path, data: dict, root: Path | None = None) -> None:
+    atomic_write_bytes(path, json_text(data).encode("utf-8"), root)
+
+
+def atomic_write_bytes(path: Path, payload: bytes, root: Path | None = None) -> None:
+    """Write the bytes as given (no newline translation) through a temporary file."""
     path.parent.mkdir(parents=True, exist_ok=True)
     if root is not None:
         ensure_inside(root, path)
     fd, tmp_name = tempfile.mkstemp(dir=str(path.parent), prefix=path.name + ".", suffix=".tmp")
     tmp = Path(tmp_name)
     try:
-        with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as fh:
-            json.dump(data, fh, ensure_ascii=False, indent=2)
-            fh.write("\n")
+        with os.fdopen(fd, "wb") as fh:
+            fh.write(payload)
         for attempt in range(4):
             try:
                 os.replace(tmp, path)
@@ -238,20 +267,27 @@ def atomic_write_json(path: Path, data: dict, root: Path | None = None) -> None:
             tmp.unlink()
 
 
-def backup(root: Path, name: str) -> str | None:
-    src = root / REGISTERS[name]
-    if not src.exists():
+def backup_file(root: Path, rel: str) -> str | None:
+    """Keep a copy of a file before it is replaced: registers/.history/<stem>-<time><suffix>,
+    the newest HISTORY_KEEP per file name."""
+    src = root / rel
+    if not src.is_file():
         return None
     hist = root / "registers" / ".history"
     hist.mkdir(parents=True, exist_ok=True)
     ensure_inside(root, hist)
+    p = Path(rel)
     stamp = datetime.now().strftime("%Y%m%dT%H%M%S%f")
-    dst = hist / f"{name}-{stamp}.json"
+    dst = hist / f"{p.stem}-{stamp}{p.suffix}"
     shutil.copy2(src, dst)
-    olds = sorted(hist.glob(f"{name}-*.json"))
+    olds = sorted(hist.glob(f"{p.stem}-[0-9]*{p.suffix}"))
     for old in olds[:-HISTORY_KEEP]:
         old.unlink()
     return dst.relative_to(root).as_posix()
+
+
+def backup(root: Path, name: str) -> str | None:
+    return backup_file(root, REGISTERS[name].as_posix())
 
 
 def append_log(root: Path, when: date, approved_by: str, lines: list[str],
@@ -284,20 +320,294 @@ def conflicts(root: Path) -> list[str]:
     return sorted(found)
 
 
+ONE_CALL = ("a write has two steps: run the same command without --approved-by to get a preview "
+            "and a confirm token, show the preview, and after a yes run: "
+            "commit <household folder> --confirm <token> --approved-by <name>")
+
+
+def check_approver(name) -> str:
+    who = (name or "").strip()
+    if not who:
+        raise RecordError("commit needs --approved-by NAME: the person who said yes to the preview")
+    if (len(who) > 40 or CONTROL_RE.search(who) or "⁣" in who
+            or any(ch in who for ch in (":", '"', "„", "”"))):
+        raise RecordError("--approved-by takes the approver's name only, for example --approved-by Anna; "
+                          "their words stay in the conversation")
+    return who
+
+
 def require_writable(root: Path, args) -> None:
-    if not getattr(args, "dry_run", False):
-        who = (getattr(args, "approved_by", None) or "").strip()
-        if not who:
-            raise RecordError("a write needs --approved-by NAME: show the change, get a yes, "
-                              "then run again with the name of the person who approved")
-        if len(who) > 40 or CONTROL_RE.search(who) or any(ch in who for ch in (":", '"', "„", "”")):
-            raise RecordError("--approved-by takes the approver's name only, for example --approved-by Anna; "
-                              "their words stay in the conversation")
+    """Checks before a preview: the one-call form is refused, and so is a write while
+    sync-conflict copies exist."""
+    if (getattr(args, "approved_by", None) or "").strip():
+        raise RecordError(ONE_CALL)
     if not getattr(args, "ignore_conflicts", False):
         found = conflicts(root)
         if found:
             raise RecordError("sync-conflict copies exist, so writing now could lose an edit: "
                               + ", ".join(found) + ". Run household-doctor first.")
+
+
+# --------------------------------------------------------------------------
+# Two-phase writes: a preview stores the change, commit applies exactly it
+# --------------------------------------------------------------------------
+
+class Change:
+    """Every write one command would make. The preview stores it under a confirm token;
+    commit applies these writes and nothing else."""
+
+    def __init__(self, root: Path, lang: "dates.Lang", command: str, ignore_conflicts: bool = False):
+        self.root = root.resolve()
+        self.lang = lang
+        self.command = command
+        self.ignore_conflicts = ignore_conflicts
+        self.ops: list[dict] = []
+        self.lines: list[str] = []     # log lines, also the preview
+        self.notes: list[str] = []     # preview lines that are not logged
+
+    def _rel(self, rel) -> str:
+        rel = Path(str(rel).replace("\\", "/")).as_posix()
+        ensure_inside(self.root, self.root / rel)
+        return rel
+
+    def write_text(self, rel, text: str, backup: bool = False, new: bool = False) -> None:
+        rel = self._rel(rel)
+        p = self.root / rel
+        if new and p.exists():
+            raise RecordError(f"{rel} already exists")
+        self.ops.append({"op": "write", "path": rel, "text": text,
+                         "before": sha256_of(p) if p.is_file() else None,
+                         "backup": bool(backup) and p.is_file()})
+
+    def write_json(self, rel, data: dict, backup: bool = True) -> None:
+        self.write_text(rel, json_text(data), backup=backup)
+
+    def copy(self, src: Path, rel) -> None:
+        rel = self._rel(rel)
+        if (self.root / rel).exists():
+            raise RecordError(f"{rel} already exists")
+        self.ops.append({"op": "copy", "src": str(src), "src_sha256": sha256_of(src), "path": rel,
+                         "before": None})
+
+    def move(self, rel, to) -> None:
+        rel, to = self._rel(rel), self._rel(to)
+        self.ops.append({"op": "move", "path": rel, "to": to, "before": sha256_of(self.root / rel)})
+
+    def mkdir(self, rel) -> None:
+        self.ops.append({"op": "mkdir", "path": self._rel(rel)})
+
+    def pointer(self) -> None:
+        self.ops.append({"op": "pointer", "text": str(self.root) + "\n"})
+
+    def log(self, *lines: str) -> None:
+        self.lines.extend(line for line in lines if line)
+
+    def files(self) -> list[str]:
+        out = []
+        for op in self.ops:
+            if op["op"] in ("write", "copy"):
+                out.append(op["path"])
+            elif op["op"] == "move":
+                out.append(f"{op['path']} → {op['to']}")
+            elif op["op"] == "pointer":
+                out.append(str(POINTER))
+        if self.lines:
+            out.append("log/decisions.md")
+        return out
+
+
+def pending_dir(root: Path) -> Path:
+    """Previews wait in the record's registers/.pending/; before a record exists (init),
+    in the plugin's configuration folder on this machine."""
+    if (root / "registers").is_dir():
+        return root / PENDING
+    return CONFIG_DIR / "pending"
+
+
+def pending_digest(body: dict) -> str:
+    canonical = json.dumps({k: v for k, v in body.items() if k != "token"},
+                           sort_keys=True, ensure_ascii=False)
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()[:16]
+
+
+def sweep_pending(folder: Path) -> None:
+    """Remove previews older than the time a confirm token lives."""
+    now = time.time()
+    for p in folder.glob("*.json"):
+        try:
+            created = float(json.loads(p.read_text(encoding="utf-8")).get("created") or 0)
+        except (OSError, ValueError, AttributeError):
+            created = 0.0
+        if now - created > PENDING_TTL_SECONDS:
+            try:
+                p.unlink()
+            except OSError:
+                pass
+
+
+def inside(root: Path, path: Path) -> bool:
+    try:
+        path.resolve().relative_to(root.resolve())
+        return True
+    except ValueError:
+        return False
+
+
+def store_pending(change: Change, result: dict) -> tuple[str, str]:
+    folder = pending_dir(change.root)
+    folder.mkdir(parents=True, exist_ok=True)
+    in_record = inside(change.root, folder)
+    if in_record:
+        ensure_inside(change.root, folder)
+    sweep_pending(folder)
+    created = time.time()
+    body = {"version": 1, "command": change.command, "root": str(change.root),
+            "lang": change.lang.code, "created": created,
+            "ignore_conflicts": change.ignore_conflicts, "ops": change.ops,
+            "lines": change.lines, "result": result}
+    token = pending_digest(body)
+    body["token"] = token
+    atomic_write_bytes(folder / f"{token}.json", json_text(body).encode("utf-8"),
+                       change.root if in_record else None)
+    expires = datetime.fromtimestamp(created + PENDING_TTL_SECONDS).isoformat(timespec="minutes")
+    return token, expires
+
+
+def finish(change: Change, args, result: dict) -> dict:
+    """End a writing command: store the change under a confirm token and return the
+    preview; with --dry-run only show it."""
+    if (getattr(args, "approved_by", None) or "").strip():
+        raise RecordError(ONE_CALL)
+    result["preview"] = list(change.lines) + list(change.notes)
+    result["files"] = change.files()
+    if getattr(args, "dry_run", False):
+        result["dry_run"] = True
+        result["note"] = ("nothing written and no token issued; run without --dry-run for a preview "
+                          "the household can approve")
+        return result
+    stored = {k: v for k, v in result.items() if k not in ("preview", "files")}
+    token, expires = store_pending(change, stored)
+    result.update({
+        "confirm": token,
+        "expires": expires,
+        "next": (f"show the preview; after a yes: commit \"{change.root}\" --confirm {token} "
+                 "--approved-by <name>"),
+        "note": "nothing written yet",
+    })
+    return result
+
+
+def find_pending(root: Path, token: str) -> Path:
+    for folder in (root / PENDING, CONFIG_DIR / "pending"):
+        p = folder / f"{token}.json"
+        if p.is_file():
+            return p
+    raise RecordError("unknown confirm token: its preview was committed, expired or never made; run the "
+                      "command again without --approved-by and show the new preview")
+
+
+def verify_ops(root: Path, ops: list) -> list[str]:
+    """Paths whose state differs from the preview."""
+    stale = []
+    for op in ops:
+        kind = op.get("op")
+        if kind in ("write", "move"):
+            p = root / op["path"]
+            now = sha256_of(p) if p.is_file() else None
+            if now != op.get("before"):
+                stale.append(op["path"])
+        if kind == "move" and (root / op["to"]).exists():
+            stale.append(op["to"])
+        if kind == "copy":
+            src = Path(op["src"])
+            if not src.is_file() or sha256_of(src) != op.get("src_sha256"):
+                stale.append(src.name)
+            if (root / op["path"]).exists():
+                stale.append(op["path"])
+    return stale
+
+
+def apply_ops(root: Path, ops: list, who: str) -> tuple[list[str], list[str]]:
+    written, backups = [], []
+    marker = json.dumps(APPROVER, ensure_ascii=False)
+    name = json.dumps(who, ensure_ascii=False)
+    for op in ops:
+        kind = op.get("op")
+        if kind == "mkdir":
+            target = root / op["path"]
+            target.mkdir(parents=True, exist_ok=True)
+            ensure_inside(root, target)
+        elif kind == "write":
+            if op.get("backup"):
+                saved = backup_file(root, op["path"])
+                if saved:
+                    backups.append(saved)
+            atomic_write_bytes(root / op["path"], op["text"].replace(marker, name).encode("utf-8"), root)
+            written.append(op["path"])
+        elif kind == "copy":
+            target = root / op["path"]
+            target.parent.mkdir(parents=True, exist_ok=True)
+            ensure_inside(root, target.parent)
+            with open(op["src"], "rb") as fin, open(target, "xb") as fout:
+                shutil.copyfileobj(fin, fout)
+            shutil.copystat(op["src"], target)
+            written.append(op["path"])
+        elif kind == "move":
+            dest = root / op["to"]
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            ensure_inside(root, dest.parent)
+            shutil.move(str(root / op["path"]), str(dest))
+            written.append(op["to"])
+        elif kind == "pointer":
+            POINTER.parent.mkdir(parents=True, exist_ok=True)
+            POINTER.write_text(op["text"], encoding="utf-8")
+            written.append(str(POINTER))
+        else:
+            raise RecordError(f"the stored preview holds an unknown step {kind!r}; nothing was written")
+    return written, backups
+
+
+def cmd_commit(args) -> dict:
+    """Apply a previewed change after the household member said yes."""
+    root = Path(args.root).expanduser().resolve()
+    token = (args.confirm or "").strip().lower()
+    if not TOKEN_RE.match(token):
+        raise RecordError("--confirm takes the 16-character token from the preview")
+    who = check_approver(args.approved_by)
+    path = find_pending(root, token)
+    try:
+        body = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        raise RecordError("the stored preview cannot be read; run the command again for a new preview")
+    if body.get("token") != token or pending_digest(body) != token:
+        raise RecordError("the stored preview does not match its token; run the command again "
+                          "and show the new preview")
+    if Path(body.get("root", "")).resolve() != root:
+        raise RecordError("this token belongs to another household folder")
+    age = time.time() - float(body.get("created") or 0)
+    if age > PENDING_TTL_SECONDS or age < -300:
+        path.unlink()
+        raise RecordError("the preview expired (a token lives 30 minutes); run the command again "
+                          "and show the new preview")
+    if not body.get("ignore_conflicts") and root.is_dir():
+        found = conflicts(root)
+        if found:
+            raise RecordError("sync-conflict copies exist, so writing now could lose an edit: "
+                              + ", ".join(found) + ". Run household-doctor first.")
+    ops = body.get("ops") or []
+    stale = verify_ops(root, ops)
+    if stale:
+        raise RecordError("the record changed since the preview (" + ", ".join(stale) + "); run the "
+                          "command again and show the new preview")
+    written, backups = apply_ops(root, ops, who)
+    lines = body.get("lines") or []
+    if lines:
+        append_log(root, today_from(args), who, lines, dates.load_lang(body.get("lang")))
+    path.unlink()
+    out = dict(body.get("result") or {})
+    out.update({"committed": token, "command": body.get("command"), "approved_by": who,
+                "written": written, "backups": backups, "log": lines})
+    return out
 
 
 # --------------------------------------------------------------------------
@@ -479,24 +789,6 @@ def identifier_errors(obj, path: str = "") -> list[str]:
             "or, for an account to pay into, its last four digits" for p, kind in identifier_findings(obj, path)]
 
 
-def copy_new(src: Path, dest: Path, root: Path) -> Path:
-    """Copy an original into the record without overwriting and without following a link
-    out of the record; a name already taken gets -2, -3."""
-    dest.parent.mkdir(parents=True, exist_ok=True)
-    ensure_inside(root, dest.parent)
-    stem, suffix, n = dest.stem, dest.suffix, 1
-    while True:
-        target = dest if n == 1 else dest.with_name(f"{stem}-{n}{suffix}")
-        try:
-            with src.open("rb") as fin, open(target, "xb") as fout:
-                shutil.copyfileobj(fin, fout)
-        except FileExistsError:
-            n += 1
-            continue
-        shutil.copystat(src, target)
-        return target
-
-
 def validate_entries(name: str, entries: list, errors: list, warnings: list) -> None:
     spec = FIELDS[name]
     seen = set()
@@ -661,27 +953,6 @@ def sha256_of(path: Path) -> str:
     return h.hexdigest()
 
 
-def read_entry(args) -> dict:
-    if getattr(args, "json", None):
-        raw = args.json
-    elif getattr(args, "file", None):
-        if args.file == "-":
-            # Bytes, decoded as UTF-8: a pipe on Windows would otherwise use the ANSI code page.
-            stream = getattr(sys.stdin, "buffer", None)
-            raw = stream.read().decode("utf-8-sig") if stream is not None else sys.stdin.read()
-        else:
-            raw = Path(args.file).read_text(encoding="utf-8-sig")
-    else:
-        raise RecordError("give the entry with --json '<object>' or --file <path> (or --file - for stdin)")
-    try:
-        entry = json.loads(raw)
-    except json.JSONDecodeError as exc:
-        raise RecordError(f"entry is not valid JSON: {exc}")
-    if not isinstance(entry, dict):
-        raise RecordError("entry must be a JSON object")
-    return entry
-
-
 def fill_defaults(name: str, entry: dict) -> dict:
     out = dict(DEFAULTS[name])
     out.update(entry)
@@ -803,13 +1074,13 @@ def cmd_set_pointer(args) -> dict:
     root = root_of(args.root)
     if not (root / PROFILE).exists():
         raise RecordError(f"{root} has no {PROFILE}")
-    if args.dry_run:
-        return {"dry_run": True, "would_write": str(POINTER), "content": str(root)}
-    if not (args.approved_by or "").strip():
-        raise RecordError("a write needs --approved-by NAME")
-    POINTER.parent.mkdir(parents=True, exist_ok=True)
-    POINTER.write_text(str(root) + "\n", encoding="utf-8")
-    return {"written": str(POINTER), "root": str(root)}
+    if (args.approved_by or "").strip():
+        raise RecordError(ONE_CALL)
+    lang = lang_for(args, root)
+    change = Change(root, lang, "set-pointer", ignore_conflicts=True)
+    change.pointer()
+    change.notes.append(f"{POINTER} → {root}")
+    return finish(change, args, {"would_write": str(POINTER), "content": str(root)})
 
 
 def cmd_init(args) -> dict:
@@ -818,25 +1089,33 @@ def cmd_init(args) -> dict:
     if existing:
         raise RecordError(f"a record already exists here ({', '.join(existing)}); "
                           "nothing was changed. Use validate or household-doctor.")
+    require_writable(root, args)
     plan = [p.as_posix() for p in REGISTERS.values()] + [
         "registers/README.md", "log/decisions.md", "documents/", "briefs/", "inbox/"]
     lang = lang_for(args, root)
-    if args.dry_run:
-        return {"dry_run": True, "root": str(root), "would_create": plan, "lang": lang.code}
-    if not (args.approved_by or "").strip():
-        raise RecordError("a write needs --approved-by NAME")
-    root.mkdir(parents=True, exist_ok=True)
+    change = Change(root, lang, "init")
+    change.mkdir(".")
     for name in REGISTERS:
-        atomic_write_json(root / REGISTERS[name], empty_register(name), root)
+        change.write_json(REGISTERS[name], empty_register(name), backup=False)
     readme_src = HERE.parent / "templates" / lang.code / "registers-README.md"
     if not readme_src.exists():
         readme_src = HERE.parent / "templates" / dates.DEFAULT_LANG / "registers-README.md"
     readme = readme_src.read_text(encoding="utf-8") if readme_src.exists() else REGISTERS_README
-    (root / "registers" / "README.md").write_text(readme, encoding="utf-8")
+    change.write_text("registers/README.md", readme)
     for d in ("documents", "briefs", "inbox"):
-        (root / d).mkdir(exist_ok=True)
-    append_log(root, today_from(args), args.approved_by.strip(), [lang.log("created_record")], lang)
-    return {"root": str(root), "created": plan, "lang": lang.code}
+        change.mkdir(d)
+    if getattr(args, "profile_file", None):
+        # The approved profile goes in the same change, so one yes creates the whole record.
+        profile = read_text_input(args.profile_file)
+        if (root / PROFILE).exists():
+            raise RecordError(f"{PROFILE} already exists here; household-customize changes it")
+        problems = identifier_errors({"profile": profile})
+        if problems:
+            return {"ok": False, "errors": problems}
+        change.write_text(PROFILE, profile, new=True)
+        plan.append(PROFILE)
+    change.log(lang.log("created_record"))
+    return finish(change, args, {"root": str(root), "would_create": plan, "lang": lang.code})
 
 
 REGISTERS_README = """# Registers
@@ -861,22 +1140,34 @@ def cmd_next_id(args) -> dict:
     return {"next_id": next_id(data[name], name, year, archived_ids(root))}
 
 
-def cmd_add(args) -> dict:
-    root = root_of(args.root)
-    name = args.register
-    require_writable(root, args)
-    today = today_from(args)
-    data = load(root, name)
-    entries = data[name]
-    raw_entry = read_entry(args)
+def read_entries(args) -> list[dict]:
+    """One entry as a JSON object, or several entries of one register as a list."""
+    if getattr(args, "json", None):
+        raw = args.json
+    elif getattr(args, "file", None):
+        raw = read_text_input(args.file)
+    else:
+        raise RecordError("give the entry with --json '<object>' or --file <path> (or --file - for stdin)")
+    try:
+        value = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        raise RecordError(f"entry is not valid JSON: {exc}")
+    if isinstance(value, dict):
+        return [value]
+    if isinstance(value, list) and value and all(isinstance(v, dict) for v in value):
+        return value
+    raise RecordError("entry must be a JSON object, or a list of objects for one register")
+
+
+def prepare_entry(root: Path, name: str, raw_entry: dict, entries: list, today: date, lang, pack,
+                  given_original, warnings: list, taken_files: set) -> tuple[dict, Path | None]:
     # The path of a file a document arrived in is document-derived text: it travels inside
     # the entry on standard input ("original"), never on the command line.
-    source = raw_entry.pop("original", None) if isinstance(raw_entry, dict) else None
-    if source and args.original:
+    source = raw_entry.pop("original", None)
+    if source and given_original:
         raise RecordError("give the original once: in the entry as \"original\" or with --original")
-    source = source or args.original
+    source = source or given_original
     entry = fill_defaults(name, raw_entry)
-    warnings: list[str] = []
     normalise_amount(entry, warnings)
     original = None
     if source and name != "documents":
@@ -888,61 +1179,90 @@ def cmd_add(args) -> dict:
         entry["sha256"] = sha256_of(original)
     if not entry.get("id"):
         entry["id"] = next_id(entries, name, today.year, archived_ids(root))
-    entry.setdefault("created", today.isoformat())
     entry["created"] = entry.get("created") or today.isoformat()
     entry["updated"] = today.isoformat()
-    lang = lang_for(args, root)
     if name == "obligations" and entry.get("due_date") and not entry.get("do_by"):
-        pack = pack_or_none(args)
         if pack:
             transit = transit_of(entry)
             planned = dates.plan_do_by(pack, dates.parse_date(entry["due_date"]), transit, lang)
             entry["do_by"], entry["do_by_note"] = planned["do_by"], planned["do_by_note"]
         else:
-            warnings.append("do_by not given and no --country: do_by left empty")
+            warnings.append(f"{entry['id']}: do_by not given and no --country: do_by left empty")
     if name == "documents" and original is not None:
         stamp = entry.get("document_date") or entry.get("received_date") or today.isoformat()
-        year = stamp[:4]
         base = "_".join(x for x in (stamp, slug(entry.get("issuer") or "unknown"),
                                     slug(entry.get("type") or "document")) if x)
-        dest_dir = root / "documents" / year
+        dest_dir = root / "documents" / stamp[:4]
         suffix = original.suffix.lower()
         if not re.fullmatch(r"\.[a-z0-9]{1,8}", suffix):
             suffix = ""
-        dest = dest_dir / f"{base}{suffix}"
-        n = 2
-        while dest.exists():
+        dest, n = dest_dir / f"{base}{suffix}", 2
+        while dest.exists() or dest.relative_to(root).as_posix() in taken_files:
             dest = dest_dir / f"{base}-{n}{suffix}"
             n += 1
         entry["file"] = dest.relative_to(root).as_posix()
+        taken_files.add(entry["file"])
+    return entry, original
+
+
+def cmd_add(args) -> dict:
+    """Add one entry, or several entries of one register in one change (a JSON list)."""
+    root = root_of(args.root)
+    name = args.register
+    require_writable(root, args)
+    today = today_from(args)
+    data = load(root, name)
+    entries = data[name]
+    raw_entries = read_entries(args)
+    if args.original and len(raw_entries) > 1:
+        raise RecordError("--original takes one entry; give each entry of a list its own \"original\"")
+    lang = lang_for(args, root)
+    pack = pack_or_none(args) if name == "obligations" else None
+    change = Change(root, lang, "add", getattr(args, "ignore_conflicts", False))
+    warnings: list[str] = []
     errs: list[str] = []
-    validate_entries(name, [entry], errs, warnings)
-    if any(e.get("id") == entry["id"] for e in entries if isinstance(e, dict)):
-        errs.append(f"id {entry['id']} already exists")
-    dup_errs, dup_warns = duplicate_warnings(name, entry, entries)
-    errs += dup_errs
-    warnings += dup_warns
-    errs += identifier_errors(entry)
+    added: list[dict] = []
+    originals: dict[str, str] = {}
+    taken_files: set = set()
+    for raw in raw_entries:
+        entry, original = prepare_entry(root, name, raw, entries, today, lang, pack, args.original,
+                                        warnings, taken_files)
+        entry_errs: list[str] = []
+        validate_entries(name, [entry], entry_errs, warnings)
+        if any(e.get("id") == entry["id"] for e in entries if isinstance(e, dict)):
+            entry_errs.append(f"id {entry['id']} already exists")
+        dup_errs, dup_warns = duplicate_warnings(name, entry, entries)
+        entry_errs += dup_errs
+        warnings += dup_warns
+        entry_errs += identifier_errors(entry)
+        added.append(entry)
+        if entry_errs:
+            errs += entry_errs if len(raw_entries) == 1 else [f"{entry['id']}: {m}" for m in entry_errs]
+            continue
+        if original is not None:
+            change.copy(original, entry["file"])
+            originals[entry["file"]] = str(original)
+        entries.append(entry)
+        change.log(lang.log("add", entry=describe_entry(name, entry, lang), register=register_label(name, lang)))
     if errs:
-        return {"ok": False, "errors": errs, "warnings": warnings, "entry": entry}
-    result = {"register": REGISTERS[name].as_posix(), "entry": entry, "warnings": warnings,
-              "lang": lang.code,
-              "summary": lang.log("add", entry=describe_entry(name, entry, lang),
-                                  register=register_label(name, lang))}
-    if original is not None:
-        result["original_source"] = str(original)
-    if args.dry_run:
-        result["dry_run"] = True
-        result["note"] = "nothing written; show this to the household and wait for a yes"
-        return result
-    if original is not None:
-        entry["file"] = copy_new(original, root / entry["file"], root).relative_to(root).as_posix()
-        result["copied_original_to"] = entry["file"]
-    result["backup"] = backup(root, name)
-    entries.append(entry)
-    atomic_write_json(root / REGISTERS[name], data, root)
-    append_log(root, today, args.approved_by.strip(), [result["summary"]], lang)
-    return result
+        out = {"ok": False, "errors": errs, "warnings": warnings}
+        if len(added) == 1:
+            out["entry"] = added[0]
+        else:
+            out["entries"] = added
+        return out
+    change.write_json(REGISTERS[name], data)
+    result = {"register": REGISTERS[name].as_posix(), "warnings": warnings, "lang": lang.code,
+              "summary": "; ".join(change.lines)}
+    if len(added) == 1:
+        result["entry"] = added[0]
+        if originals:
+            result["original_to"], result["original_source"] = next(iter(originals.items()))
+    else:
+        result["entries"] = added
+        if originals:
+            result["originals"] = originals
+    return finish(change, args, result)
 
 
 TEXT_KINDS = {"str!", "str", "str?", "date!", "date?", "money?", "currency?", "category", "kind",
@@ -1037,14 +1357,10 @@ def cmd_update(args) -> dict:
         return {"ok": False, "errors": errs, "warnings": warnings, "changes": diff}
     result = {"register": REGISTERS[name].as_posix(), "id": args.id, "changes": diff,
               "warnings": warnings, "summary": summary}
-    if args.dry_run:
-        result["dry_run"] = True
-        result["note"] = "nothing written; show this to the household and wait for a yes"
-        return result
-    result["backup"] = backup(root, name)
-    atomic_write_json(root / REGISTERS[name], data, root)
-    append_log(root, today, args.approved_by.strip(), [summary], lang)
-    return result
+    change = Change(root, lang, "update", getattr(args, "ignore_conflicts", False))
+    change.write_json(REGISTERS[name], data)
+    change.log(summary)
+    return finish(change, args, result)
 
 
 def series_anchor_day(entries: list, entry: dict) -> int | None:
@@ -1059,78 +1375,109 @@ def series_anchor_day(entries: list, entry: dict) -> int | None:
 
 
 def cmd_complete(args) -> dict:
+    """Close one or more open obligations (--id, repeated) and add their next occurrences,
+    as one change."""
     root = root_of(args.root)
     require_writable(root, args)
     today = today_from(args)
     data = load(root, "obligations")
     entries = data["obligations"]
-    entry = find_entry(entries, args.id)
-    if entry.get("status") != "open":
-        raise RecordError(f"{args.id} is {entry.get('status')}, not open")
     done_date = args.done_date or today.isoformat()
     if not is_date(done_date):
         raise RecordError(f"--done-date must be YYYY-MM-DD, got {done_date!r}")
-    lines = []
     lang = lang_for(args, root)
-    changes = {"status": args.status, "done_date": done_date if args.status == "done" else None,
-               "updated": today.isoformat()}
-    new_entry = None
+    pack = pack_or_none(args)
+    ids = list(dict.fromkeys(args.id))
+    lines: list[str] = []
     warnings: list[str] = []
-    recurrence = entry.get("recurrence") or "none"
-    if recurrence != "none" and not args.no_next:
-        if not is_date(entry.get("due_date")):
-            warnings.append("no due_date to compute the next occurrence from")
-        else:
-            # --from-done: checks and services count the next one from the day they were done
-            base = dates.parse_date(done_date) if args.from_done else dates.parse_date(entry["due_date"])
-            anchor = None if args.from_done else series_anchor_day(entries, entry)
-            nxt = dates.next_occurrence(base, recurrence, anchor)
-            if nxt is None:
-                warnings.append(f"recurrence '{recurrence}' cannot be computed; ask for the next date "
-                                "and add it with add")
+    completed = []
+    for oid in ids:
+        entry = find_entry(entries, oid)
+        if entry.get("status") != "open":
+            raise RecordError(f"{oid} is {entry.get('status')}, not open")
+        changes = {"status": args.status, "done_date": done_date if args.status == "done" else None,
+                   "updated": today.isoformat()}
+        new_entry = None
+        recurrence = entry.get("recurrence") or "none"
+        if recurrence != "none" and not args.no_next:
+            if not is_date(entry.get("due_date")):
+                warnings.append(f"{oid}: no due_date to compute the next occurrence from")
             else:
-                new_entry = {k: v for k, v in entry.items()}
-                new_entry.update({
-                    "id": next_id(entries, "obligations", today.year, archived_ids(root)),
-                    "due_date": nxt.isoformat(), "do_by": None, "do_by_note": "",
-                    "status": "open", "done_date": None,
-                    "created": today.isoformat(), "updated": today.isoformat(),
-                    "series": entry.get("series") or slug(entry.get("title", "series")),
-                    "notes": f"next occurrence after {entry['id']}, computed from recurrence '{recurrence}'"
-                             + (" counted from the day it was done" if args.from_done else ""),
-                })
-                if entry.get("source") and (entry["source"] or {}).get("document"):
-                    new_entry["provenance"] = "calculated from document"
-                pack = pack_or_none(args)
-                if pack:
-                    transit = transit_of(entry)
-                    planned = dates.plan_do_by(pack, nxt, transit, lang)
-                    new_entry["do_by"], new_entry["do_by_note"] = planned["do_by"], planned["do_by_note"]
+                # --from-done: checks and services count the next one from the day they were done
+                base = dates.parse_date(done_date) if args.from_done else dates.parse_date(entry["due_date"])
+                anchor = None if args.from_done else series_anchor_day(entries, entry)
+                nxt = dates.next_occurrence(base, recurrence, anchor)
+                if nxt is None:
+                    warnings.append(f"{oid}: recurrence '{recurrence}' cannot be computed; ask for the next "
+                                    "date and add it with add")
                 else:
-                    new_entry["do_by"] = nxt.isoformat()
-                    warnings.append("no --country: do_by of the next occurrence equals its due_date")
-                if not entry.get("series"):
-                    changes["series"] = new_entry["series"]
-    if args.status == "done":
-        lines.append(lang.log("complete_on", id=args.id, status=lang.status(args.status),
-                              date=lang.date(dates.parse_date(done_date))))
+                    new_entry = {k: v for k, v in entry.items()}
+                    new_entry.update({
+                        "id": next_id(entries, "obligations", today.year, archived_ids(root)),
+                        "due_date": nxt.isoformat(), "do_by": None, "do_by_note": "",
+                        "status": "open", "done_date": None,
+                        "created": today.isoformat(), "updated": today.isoformat(),
+                        "series": entry.get("series") or slug(entry.get("title", "series")),
+                        "notes": f"next occurrence after {entry['id']}, computed from recurrence '{recurrence}'"
+                                 + (" counted from the day it was done" if args.from_done else ""),
+                    })
+                    if entry.get("source") and (entry["source"] or {}).get("document"):
+                        new_entry["provenance"] = "calculated from document"
+                    if pack:
+                        planned = dates.plan_do_by(pack, nxt, transit_of(entry), lang)
+                        new_entry["do_by"], new_entry["do_by_note"] = planned["do_by"], planned["do_by_note"]
+                    else:
+                        new_entry["do_by"] = nxt.isoformat()
+                        warnings.append(f"{oid}: no --country: do_by of the next occurrence equals its due_date")
+                    if not entry.get("series"):
+                        changes["series"] = new_entry["series"]
+        if args.status == "done":
+            lines.append(lang.log("complete_on", id=oid, status=lang.status(args.status),
+                                  date=lang.date(dates.parse_date(done_date))))
+        else:
+            lines.append(lang.log("complete", id=oid, status=lang.status(args.status)))
+        if new_entry:
+            lines.append(lang.log("next", entry=describe_entry("obligations", new_entry, lang)))
+        entry.update(changes)
+        if new_entry:
+            entries.append(new_entry)
+        completed.append({"id": oid, "changes": changes, "next_occurrence": new_entry})
+    result = {"register": REGISTERS["obligations"].as_posix(), "warnings": warnings, "summary": "; ".join(lines)}
+    if len(completed) == 1:
+        result.update(completed[0])
     else:
-        lines.append(lang.log("complete", id=args.id, status=lang.status(args.status)))
-    if new_entry:
-        lines.append(lang.log("next", entry=describe_entry("obligations", new_entry, lang)))
-    result = {"register": REGISTERS["obligations"].as_posix(), "id": args.id, "changes": changes,
-              "next_occurrence": new_entry, "warnings": warnings, "summary": "; ".join(lines)}
-    if args.dry_run:
-        result["dry_run"] = True
-        result["note"] = "nothing written; show this to the household and wait for a yes"
-        return result
-    entry.update(changes)
-    if new_entry:
-        entries.append(new_entry)
-    result["backup"] = backup(root, "obligations")
-    atomic_write_json(root / REGISTERS["obligations"], data, root)
-    append_log(root, today, args.approved_by.strip(), lines, lang)
-    return result
+        result["completed"] = completed
+    change = Change(root, lang, "complete", getattr(args, "ignore_conflicts", False))
+    change.write_json(REGISTERS["obligations"], data)
+    change.log(*lines)
+    return finish(change, args, result)
+
+def effective_last_day(o: dict, pack, lang: "dates.Lang", warnings: list) -> tuple[date | None, str]:
+    """The last day the law gives: the stored due date, moved past a weekend or holiday when the
+    entry names the pack's counting rule ("rule": "tax") and that rule moves a deadline forward."""
+    due = o.get("due_date")
+    if not is_date(due):
+        return None, ""
+    d = date.fromisoformat(due)
+    rule_id = o.get("rule")
+    if not rule_id:
+        return d, ""
+    if pack is None:
+        warnings.append(f"{o.get('id')}: names the counting rule {rule_id!r}; give --country to apply it")
+        return d, ""
+    try:
+        rule = pack.rule(rule_id)
+    except dates.InputError:
+        warnings.append(f"{o.get('id')}: the {pack.code} pack has no counting rule {rule_id!r}")
+        return d, ""
+    if rule.get("end_roll") != "forward":
+        return d, ""
+    reason = pack.non_business_reason(d, lang)
+    if not reason:
+        return d, ""
+    moved = pack.roll_forward(d)
+    return moved, lang.note("moved_forward", date=lang.date(d), reason=reason, new_date=lang.date(moved),
+                            law=rule.get("law", rule_id))
 
 
 def cmd_due(args) -> dict:
@@ -1163,14 +1510,18 @@ def cmd_due(args) -> dict:
             plan, computed_note = planned["do_by"], "do_by computed now; not stored"
         d = date.fromisoformat(plan)
         days = (d - today).days
-        b = dates.band(days, lang)
+        due = o.get("due_date")
+        last, last_note = effective_last_day(o, pack, lang, warnings)
+        # "Overdue" means the last day has passed. A plan date that has passed while the
+        # last day is still ahead is "now", flagged plan_passed.
+        plan_passed = days < 0 and last is not None and last >= today
+        b = ({"band": "now", "label": lang.band_label("now")} if plan_passed else dates.band(days, lang))
         lead = o.get("lead_time_days")
         start_now = bool(lead) and days >= 0 and days <= int(lead)
         if days >= args.horizon and not start_now:
             beyond += 1
             continue
         counts[b["band"]] += 1
-        due = o.get("due_date")
         try:
             amount_text = lang.amount(o["amount"], o.get("currency")) if o.get("amount") else None
         except dates.InputError:
@@ -1183,13 +1534,21 @@ def cmd_due(args) -> dict:
             "due_date": due, "due_text": dates.text_en(date.fromisoformat(due)) if is_date(due) else None,
             "due_local": lang.date(date.fromisoformat(due)) if is_date(due) else None,
             "do_by": plan, "do_by_text": dates.text_en(d), "do_by_local": lang.date(d),
-            "days": days, "band": b["band"], "band_label": b["label"],
+            "days": days, "band": b["band"], "band_label": b["label"], "plan_passed": plan_passed,
             "start_now": start_now, "lead_time_days": lead,
             "recurrence": o.get("recurrence"), "series": o.get("series"),
-            "provenance": o.get("provenance"), "law": o.get("law"),
+            "provenance": o.get("provenance"), "provenance_local": lang.tag(o.get("provenance")),
+            "law": o.get("law"),
             "source_document": (o.get("source") or {}).get("document"),
             "notice": o.get("notice"), "auto_renews": o.get("auto_renews"),
         }
+        if last is not None:
+            row["days_to_last_day"] = (last - today).days
+        if last is not None and last.isoformat() != due:
+            row.update({"last_day": last.isoformat(), "last_day_text": dates.text_en(last),
+                        "last_day_local": lang.date(last), "last_day_note": last_note})
+        if plan_passed:
+            row["plan_note"] = lang.note("plan_passed", date=lang.date(d), last=lang.date(last))
         if computed_note:
             row["note"] = computed_note
         items.append(row)
@@ -1432,21 +1791,14 @@ def cmd_merge(args) -> dict:
         result["errors"] = ["entries changed on both sides on the same day; ask which version to keep "
                             "and pass --resolve <id>=main or --resolve <id>=copy"]
         return result
-    if args.dry_run:
-        result["dry_run"] = True
-        result["note"] = (result.get("note", "") + " nothing written; show this and wait for a yes").strip()
-        return result
-    result["backup"] = backup(root, name)
     main[name] = merged
-    atomic_write_json(root / REGISTERS[name], main, root)
-    hist = root / "registers" / ".history"
-    hist.mkdir(parents=True, exist_ok=True)
-    ensure_inside(root, hist)
-    parked = hist / f"conflict-{datetime.now().strftime('%Y%m%dT%H%M%S')}-{copy.name}"
-    shutil.move(str(copy), parked)
-    result["conflict_copy_moved_to"] = parked.relative_to(root).as_posix()
-    append_log(root, today, args.approved_by.strip(), [result["summary"]], lang)
-    return result
+    change = Change(root, lang, "merge", ignore_conflicts=True)
+    change.write_json(REGISTERS[name], main)
+    parked = f"registers/.history/conflict-{datetime.now().strftime('%Y%m%dT%H%M%S')}-{copy.name}"
+    change.move(copy_label, parked)
+    result["conflict_copy_moves_to"] = parked
+    change.log(result["summary"])
+    return finish(change, args, result)
 
 
 def cmd_archive(args) -> dict:
@@ -1469,24 +1821,251 @@ def cmd_archive(args) -> dict:
     result = {"before": before, "move": plan, "count": total,
               "summary": lang.log("archive", count=total, before=lang.date(dates.parse_date(before)),
                                   detail=detail)}
-    if args.dry_run or not total:
-        result["dry_run"] = bool(args.dry_run)
-        if not total:
-            result["note"] = "nothing to archive"
+    if not total:
+        result["note"] = "nothing to archive"
         return result
-    result["backup"] = backup(root, "obligations")
-    for year, items in move.items():
-        path = root / "archive" / f"obligations-{year}.json"
+    change = Change(root, lang, "archive", getattr(args, "ignore_conflicts", False))
+    for year, items in sorted(move.items()):
+        rel = f"archive/obligations-{year}.json"
         arch = empty_register("obligations")
-        if path.exists():
-            with path.open(encoding="utf-8") as fh:
+        if (root / rel).exists():
+            with (root / rel).open(encoding="utf-8") as fh:
                 arch = json.load(fh)
         arch["obligations"].extend(items)
-        atomic_write_json(path, arch, root)
+        change.write_json(rel, arch, backup=False)
     data["obligations"] = keep
-    atomic_write_json(root / REGISTERS["obligations"], data, root)
-    append_log(root, today, args.approved_by.strip(), [result["summary"]], lang)
-    return result
+    change.write_json(REGISTERS["obligations"], data)
+    change.log(result["summary"])
+    return finish(change, args, result)
+
+
+# --------------------------------------------------------------------------
+# Files the skills keep in the record: briefs, pages, lists, packs, exports
+# --------------------------------------------------------------------------
+
+MEMBERS_HEAD = re.compile(r"^##\s+(Members|Domownicy)\s*$", re.M)
+LABEL_LINE = re.compile(r"^\s*-\s*\*\*(?:Label|Nazwa)\s*:\*\*\s*(.+?)\s*$", re.I | re.M)
+
+
+def profile_members(root: Path) -> dict[str, str]:
+    """Member name -> "adult" or "child", from the profile's members table."""
+    p = root / PROFILE
+    if not p.exists():
+        return {}
+    text = p.read_text(encoding="utf-8")
+    m = MEMBERS_HEAD.search(text)
+    if not m:
+        return {}
+    out: dict[str, str] = {}
+    for line in text[m.end():].splitlines():
+        if line.startswith("## ") or line.strip() == "---":
+            if out:
+                break
+            continue
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if len(cells) < 2 or not line.lstrip().startswith("|") or set(cells[0]) <= set("-: "):
+            continue
+        name, role = cells[0], cells[1].lower()
+        if name.lower() in ("name", "imię", "imie") or name.startswith("["):
+            continue
+        out[name] = "child" if role.startswith(("child", "dziecko")) else "adult"
+    return out
+
+
+def household_label(root: Path) -> str:
+    p = root / PROFILE
+    m = LABEL_LINE.search(p.read_text(encoding="utf-8")) if p.exists() else None
+    return m.group(1).strip() if m else root.name
+
+
+def save_target(to: str) -> str:
+    rel = Path((to or "").replace("\\", "/"))
+    parts = rel.parts
+    if not parts or rel.is_absolute() or ".." in parts or any(p.startswith(".") for p in parts):
+        raise RecordError("--to takes a path inside the household folder, for example briefs/2026-W46.md")
+    if rel.as_posix() != PROFILE and (parts[0] not in SAVE_FOLDERS or len(parts) < 2):
+        raise RecordError("save writes into " + ", ".join(f"{f}/" for f in SAVE_FOLDERS) + f" or {PROFILE}; "
+                          "registers change through add, update and complete")
+    if rel.suffix.lower() not in SAVE_SUFFIXES:
+        raise RecordError("save keeps " + ", ".join(SAVE_SUFFIXES) + " files")
+    return rel.as_posix()
+
+
+def free_name(root: Path, rel: str) -> str:
+    p, n = Path(rel), 1
+    target = p
+    while (root / target).exists():
+        n += 1
+        target = p.with_name(f"{p.stem}-{n}{p.suffix}")
+    return target.as_posix()
+
+
+def content_problems(rel: str, text: str) -> list[str]:
+    problems = identifier_errors({"text": text})
+    if rel.lower().endswith(".html"):
+        m = HTML_FORBIDDEN.search(text)
+        if m:
+            problems.append(f"the page holds {m.group(0)!r}: a saved page has no scripts, links, images, "
+                            "forms, styles from outside or web addresses")
+    if rel.lower().endswith(".json"):
+        try:
+            json.loads(text)
+        except ValueError as exc:
+            problems.append(f"not valid JSON: {exc}")
+    return problems
+
+
+def short_diff(old: str, new: str, limit: int = 60) -> list[str]:
+    lines = [ln.rstrip("\n") for ln in difflib.unified_diff(
+        old.splitlines(), new.splitlines(), "before", "after", n=0, lineterm="")][2:]
+    return lines[:limit] + ([f"... {len(lines) - limit} more lines"] if len(lines) > limit else [])
+
+
+def cmd_save(args) -> dict:
+    """Keep a file the household approved: a brief, a page, a list, a pack, a skill, an export."""
+    root = root_of(args.root)
+    if not (root / "registers").is_dir():
+        raise RecordError("no record here: save writes into a household folder made by init")
+    require_writable(root, args)
+    rel = save_target(args.to)
+    text = read_text_input(args.file)
+    lang = lang_for(args, root)
+    replaces = (root / rel).exists() and bool(args.replace)
+    if (root / rel).exists() and not args.replace:
+        rel = free_name(root, rel)
+    problems = content_problems(rel, text)
+    if problems:
+        return {"ok": False, "errors": problems, "file": rel}
+    change = Change(root, lang, "save", getattr(args, "ignore_conflicts", False))
+    change.write_text(rel, text, backup=replaces and not rel.startswith("exports/"))
+    summary = lang.log("replaced" if replaces else "saved", file=rel)
+    change.log(summary)
+    result = {"file": rel, "replaces": replaces, "bytes": len(text.encode("utf-8")), "summary": summary}
+    if replaces:
+        result["diff"] = short_diff((root / rel).read_text(encoding="utf-8", errors="replace"), text)
+    return finish(change, args, result)
+
+
+def ics_escape(text: str) -> str:
+    return (str(text).replace("\\", "\\\\").replace(";", "\\;").replace(",", "\\,")
+            .replace("\r\n", "\\n").replace("\n", "\\n").replace("\r", "\\n"))
+
+
+def ics_fold(line: str) -> list[str]:
+    """RFC 5545 3.1: lines longer than 75 octets continue on lines that start with a space;
+    a UTF-8 character is never split."""
+    out, current, size = [], "", 0
+    for ch in line:
+        width = len(ch.encode("utf-8"))
+        limit = 75 if not out else 74
+        if size + width > limit:
+            out.append(current)
+            current, size = "", 0
+        current += ch
+        size += width
+    out.append(current)
+    return [out[0]] + [" " + part for part in out[1:]]
+
+
+def ics_date(iso: str) -> str:
+    return iso.replace("-", "")
+
+
+def ics_event(o: dict, key: str, lang: "dates.Lang", root: Path, pack, cancelled: bool,
+              warnings: list) -> list[str]:
+    plan = o.get("do_by") or o.get("due_date")
+    start = date.fromisoformat(plan)
+    updated = o.get("updated") if is_date(o.get("updated")) else plan
+    if o.get("category") == "health":
+        summary = lang.log("ics_appointment") + (f", {o['owner']}" if o.get("owner") else "")
+    else:
+        summary = o.get("title") or o.get("id")
+    details = []
+    last, _ = effective_last_day(o, pack, lang, warnings)
+    if last is not None:
+        details.append(lang.log("ics_last_day", date=lang.date(last)))
+    if o.get("amount") and o.get("currency"):
+        try:
+            details.append(lang.amount(o["amount"], o["currency"]))
+        except dates.InputError:
+            pass
+    if o.get("owner"):
+        details.append(lang.log("ics_who", name=o["owner"]))
+    if o.get("provenance") and o["provenance"] != "stated in document":
+        details.append(f"({lang.tag(o['provenance'])})")
+    if o.get("law") and o.get("category") != "health":
+        details.append(o["law"])
+    lines = [
+        "BEGIN:VEVENT",
+        f"UID:{o['id']}-{key}@householdbot",
+        f"DTSTAMP:{ics_date(updated)}T000000Z",
+        f"SEQUENCE:{int(ics_date(updated))}",
+        f"DTSTART;VALUE=DATE:{ics_date(plan)}",
+        f"DTEND;VALUE=DATE:{ics_date((start + timedelta(days=1)).isoformat())}",
+        f"SUMMARY:{ics_escape(summary)}",
+        f"DESCRIPTION:{ics_escape(' · '.join(details))}",
+        "TRANSP:TRANSPARENT",
+        f"STATUS:{'CANCELLED' if cancelled else 'CONFIRMED'}",
+    ]
+    if not cancelled:
+        lead = o.get("lead_time_days")
+        days = lead if isinstance(lead, int) and not isinstance(lead, bool) and lead > 0 else 1
+        lines += ["BEGIN:VALARM", "ACTION:DISPLAY", f"DESCRIPTION:{ics_escape(summary)}",
+                  f"TRIGGER:-P{days}D", "END:VALARM"]
+    lines.append("END:VEVENT")
+    return lines
+
+
+def cmd_export(args) -> dict:
+    """Open obligations as a calendar file any phone or calendar imports (RFC 5545)."""
+    root = root_of(args.root)
+    require_writable(root, args)
+    today = today_from(args)
+    lang = lang_for(args, root)
+    pack = pack_or_none(args)
+    members = profile_members(root)
+    member = (args.member or "").strip() or None
+    if member and member not in members:
+        raise RecordError(f"{member!r} is not in the profile's members table")
+    data = load(root, "obligations")
+    key = hashlib.sha256(household_label(root).encode("utf-8")).hexdigest()[:8]
+    horizon = today + timedelta(days=args.days)
+    events, warnings, skipped, cancelled = [], [], [], 0
+    for o in data["obligations"]:
+        if not isinstance(o, dict) or not o.get("id"):
+            continue
+        if member and (o.get("owner") or "") != member:
+            continue
+        plan = o.get("do_by") or o.get("due_date")
+        if o.get("status") == "open":
+            if not is_date(plan):
+                skipped.append(o["id"])
+                continue
+            if date.fromisoformat(plan) > horizon:
+                continue
+            events.append(ics_event(o, key, lang, root, pack, False, warnings))
+        elif (o.get("status") in CLOSED and is_date(plan) and is_date(o.get("updated"))
+              and (today - date.fromisoformat(o["updated"])).days <= 30):
+            events.append(ics_event(o, key, lang, root, pack, True, warnings))
+            cancelled += 1
+    name = household_label(root)
+    head = ["BEGIN:VCALENDAR", "VERSION:2.0", f"PRODID:-//HouseholdBot//record.py {VERSION}//EN",
+            "CALSCALE:GREGORIAN", "METHOD:PUBLISH",
+            f"X-WR-CALNAME:{ics_escape('HouseholdBot · ' + name + (' · ' + member if member else ''))}"]
+    out_lines = head + [line for ev in events for line in ev] + ["END:VCALENDAR"]
+    text = "".join(part + "\r\n" for line in out_lines for part in ics_fold(line))
+    rel = f"exports/householdbot{'-' + slug(member) if member else ''}.ics"
+    change = Change(root, lang, "export", getattr(args, "ignore_conflicts", False))
+    change.write_text(rel, text, backup=False)
+    summary = lang.log("exported", count=len(events) - cancelled, file=rel)
+    change.log(summary)
+    result = {"file": rel, "events": len(events) - cancelled, "cancelled": cancelled,
+              "no_date": skipped, "days": args.days, "member": member, "summary": summary,
+              "warnings": warnings,
+              "note": "import the file into a calendar; importing a newer export updates the same events"}
+    if member and members.get(member) == "child":
+        result["note"] += "; a child's export holds only that child's own entries"
+    return finish(change, args, result)
 
 
 def cmd_retention(args) -> dict:
@@ -1551,14 +2130,13 @@ def cmd_migrate(args) -> dict:
               "summary": "; ".join(lang.log("migrate", register=register_label(r["register"], lang),
                                             steps=", ".join(r["steps"])) for r in changed)
               or "already at the current schema"}
-    if args.dry_run or not changed:
-        result["dry_run"] = bool(args.dry_run)
+    if not changed:
         return result
+    change = Change(root, lang, "migrate", getattr(args, "ignore_conflicts", False))
     for r in changed:
-        backup(root, r["register"])
-        atomic_write_json(root / REGISTERS[r["register"]], r["data"], root)
-    append_log(root, today, args.approved_by.strip(), [result["summary"]], lang)
-    return result
+        change.write_json(REGISTERS[r["register"]], r["data"])
+    change.log(result["summary"])
+    return finish(change, args, result)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -1589,7 +2167,14 @@ def build_parser() -> argparse.ArgumentParser:
     s.set_defaults(func=cmd_set_pointer)
 
     s = common(sub.add_parser("init", help="create an empty record"), write=True)
+    s.add_argument("--profile-file", help="the approved household-profile.md, or - for stdin; "
+                                          "written in the same change")
     s.set_defaults(func=cmd_init)
+
+    s = common(sub.add_parser("commit", help="apply a previewed change after a yes"))
+    s.add_argument("--confirm", required=True, help="the token printed with the preview")
+    s.add_argument("--approved-by", required=True, help="the name of the person who said yes")
+    s.set_defaults(func=cmd_commit)
 
     s = common(sub.add_parser("validate", help="check both registers"))
     s.add_argument("--no-files", action="store_true", help="skip checking that filed originals exist")
@@ -1614,9 +2199,10 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--file", help="the changes as a JSON object of field: value, or - for stdin")
     s.set_defaults(func=cmd_update)
 
-    s = common(sub.add_parser("complete", help="close an obligation and add its next occurrence"),
+    s = common(sub.add_parser("complete", help="close obligations and add their next occurrences"),
                write=True, pack=True)
-    s.add_argument("--id", required=True)
+    s.add_argument("--id", required=True, action="append",
+                   help="the obligation to close; repeat for several in one change")
     s.add_argument("--done-date")
     s.add_argument("--status", choices=["done", "lapsed", "cancelled"], default="done")
     s.add_argument("--no-next", action="store_true", help="do not add the next occurrence")
@@ -1667,6 +2253,22 @@ def build_parser() -> argparse.ArgumentParser:
 
     s = common(sub.add_parser("migrate", help="bring registers to the current schema"), write=True)
     s.set_defaults(func=cmd_migrate)
+
+    s = common(sub.add_parser("save", help="keep an approved file: a brief, page, list, pack, skill"),
+               write=True)
+    s.add_argument("--to", required=True, help="path inside the household folder, e.g. briefs/2026-W46.md")
+    s.add_argument("--file", required=True, help="the content, from a file or - for stdin")
+    s.add_argument("--replace", action="store_true",
+                   help="replace the file when it exists (a copy goes to registers/.history/); "
+                        "without it a taken name gets -2, -3")
+    s.set_defaults(func=cmd_save)
+
+    s = common(sub.add_parser("export", help="open obligations as a calendar file (.ics)"),
+               write=True, pack=True)
+    s.add_argument("--ics", action="store_true", required=True, help="iCalendar format (RFC 5545)")
+    s.add_argument("--days", type=int, default=400, help="plan dates up to this many days ahead")
+    s.add_argument("--member", help="only this member's entries, for their own calendar")
+    s.set_defaults(func=cmd_export)
     return p
 
 

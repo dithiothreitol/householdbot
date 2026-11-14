@@ -21,7 +21,6 @@ import csv
 import io
 import json
 import re
-import shutil
 import statistics
 import sys
 from collections import defaultdict
@@ -36,7 +35,7 @@ sys.dont_write_bytecode = True
 import dates  # noqa: E402
 import record  # noqa: E402
 
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 CATEGORIES_FILE = HERE.parent / "money" / "categories.json"
 HOUSEHOLD_RULES = Path("registers") / "category-rules.json"
 ENCODINGS = ["utf-8-sig", "cp1250", "iso-8859-2"]
@@ -520,19 +519,13 @@ def cmd_add_rule(args) -> dict:
         return {"note": "the rule already exists", "rule": rule}
     lang = dates.load_lang(args.lang or record.household_language(root))
     summary = lang.log("category_rule", match=args.match.strip(), category=args.category)
-    if args.dry_run:
-        return {"dry_run": True, "would_add": rule, "file": HOUSEHOLD_RULES.as_posix(), "summary": summary}
     record.require_writable(root, args)
     data["rules"].append(rule)
-    if p.exists():
-        hist = root / "registers" / ".history"
-        hist.mkdir(parents=True, exist_ok=True)
-        record.ensure_inside(root, hist)
-        shutil.copy2(p, hist / f"{p.stem}-{datetime.now().strftime('%Y%m%dT%H%M%S%f')}.json")
-    record.atomic_write_json(p, data, root)
-    record.append_log(root, date.today() if not args.today else dates.parse_date(args.today),
-                      args.approved_by.strip(), [summary], lang)
-    return {"added": rule, "file": HOUSEHOLD_RULES.as_posix(), "summary": summary}
+    change = record.Change(root, lang, "add-rule")
+    change.write_json(HOUSEHOLD_RULES, data)
+    change.log(summary)
+    return record.finish(change, args, {"rule": rule, "file": HOUSEHOLD_RULES.as_posix(),
+                                        "summary": summary})
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -558,6 +551,12 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--today")
     s.add_argument("--lang")
     s.set_defaults(func=cmd_add_rule)
+    s = sub.add_parser("commit", help="apply a previewed rule after a yes")
+    s.add_argument("root", help="the household folder")
+    s.add_argument("--confirm", required=True, help="the token printed with the preview")
+    s.add_argument("--approved-by", required=True, help="the name of the person who said yes")
+    s.add_argument("--today")
+    s.set_defaults(func=record.cmd_commit)
     return p
 
 

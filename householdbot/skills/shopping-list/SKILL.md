@@ -56,6 +56,13 @@ bread, dairy, meat and fish, dry goods, frozen, household and hygiene) when
 no shop is named. Each item is a checkbox line: `- [ ] milk 3 l (Anna)`, the
 name only when it matters who asked. Missing file: create it after a yes.
 
+Every change to a list is a whole new version of the file:
+`record.py save "<root>" --to lists/shopping.md --replace --file -` with the
+list on standard input (the preview's `diff` shows the lines that change),
+then `record.py commit "<root>" --confirm <token> --approved-by "<name>"`. For
+items the member dictated, their message is the yes: preview and commit at
+once, and say in one line what changed.
+
 ## Step 2 — Adding
 
 - **Dictated by the member** ("add milk and eggs"): add them now and say in

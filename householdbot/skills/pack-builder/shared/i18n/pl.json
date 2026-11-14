@@ -75,7 +75,8 @@
     "holiday": "święto: {name}",
     "margin": "ustawowe przesunięcie terminu to zapas, a nie plan",
     "moved_forward": "{date} to dzień wolny ({reason}); termin przesuwa się na {new_date} zgodnie z {law}",
-    "first_day_counts": "pierwszy dzień wlicza się do terminu"
+    "first_day_counts": "pierwszy dzień wlicza się do terminu",
+    "plan_passed": "data planu {date} minęła; ostatni dzień to {last}"
   },
   "quotes": [
     "„",
@@ -120,7 +121,21 @@
     "chore_retired": "wyłączono z planu obowiązek {id} „{title}”",
     "chore_person": "obowiązki: {name} ({detail})",
     "chore_plan_saved": "zapisano plan obowiązków na {weeks}",
-    "chore_swap": "zamiana w {week}: {chore} ×{count} od {giver} do {to}"
+    "chore_swap": "zamiana w {week}: {chore} ×{count} od {giver} do {to}",
+    "saved": "zapisano {file}",
+    "replaced": "zastąpiono {file} (poprzednia wersja jest w registers/.history/)",
+    "exported": "wyeksportowano {count} przypomnień do {file}",
+    "ics_appointment": "Wizyta",
+    "ics_last_day": "Ostatni dzień: {date}",
+    "ics_who": "Kto: {name}"
   },
-  "substitute_day": "dzień zastępczy"
+  "substitute_day": "dzień zastępczy",
+  "tags": {
+    "stated in document": "z dokumentu",
+    "calculated from document": "wyliczone z dokumentu",
+    "country pack rule — verify": "reguła z pakietu krajowego, do sprawdzenia",
+    "household pack — verify": "pakiet gospodarstwa, do sprawdzenia",
+    "model calculation — verify": "wyliczenie modelu, do sprawdzenia",
+    "told by household member": "podane przez domownika"
+  }
 }

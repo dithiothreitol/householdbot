@@ -15,8 +15,13 @@ is built to be acted on in under a minute.
    (`Fri 20 Nov 2026`, `pt. 20.11.2026`), every amount with its currency
    (`PLN 1,240.00`, `1 240,00 zł`).
 4. **Every computed or statutory date with its tag** when the tag is not
-   `stated in document`: `(country pack rule — verify)`,
-   `(model calculation — verify)`.
+   `stated in document`, in the household's language. The scripts give the
+   tag as `provenance_local`; the table is `tags` in
+   `shared/i18n/<lang>.json`. English: `(country pack rule — verify)`,
+   `(model calculation — verify)`, `(told by household member)`. Polish:
+   `(reguła z pakietu krajowego, do sprawdzenia)`,
+   `(wyliczenie modelu, do sprawdzenia)`, `(podane przez domownika)`. The
+   registers keep the English value.
 5. **End with the next step**, phrased as one question when a decision is
    needed: `Write both? (yes / change / no)`.
 

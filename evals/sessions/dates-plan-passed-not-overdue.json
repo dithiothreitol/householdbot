@@ -1,0 +1,53 @@
+{
+  "group": "dates",
+  "about": "a passed plan date with the last day ahead is not called overdue",
+  "household": [
+    "full"
+  ],
+  "dates": {
+    "sunday": "next sun",
+    "yesterday": -1
+  },
+  "prepare": [
+    {
+      "args": [
+        "add",
+        ".",
+        "--register",
+        "obligations",
+        "--file",
+        "-",
+        "--country",
+        "PL"
+      ],
+      "stdin": {
+        "title": "Opłata za odbiór odpadów",
+        "kind": "payment",
+        "category": "home",
+        "owner": "Anna",
+        "counterparty": "Urząd Gminy Brzozowo",
+        "due_date": "<<sunday>>",
+        "do_by": "<<yesterday>>",
+        "rule": "tax",
+        "amount": "96.00",
+        "currency": "PLN",
+        "provenance": "stated in document"
+      }
+    }
+  ],
+  "turns": [
+    {
+      "say": "Tu Anna. Co mamy do zapłacenia w najbliższych dniach?",
+      "expect": {
+        "record_unchanged": true,
+        "reply_matches": [
+          "odpad"
+        ],
+        "reply_not_matches": [
+          "(po terminie|zaległ)[^\\n]{0,120}odpad",
+          "odpad[^\\n]{0,120}(po terminie|zaległ)"
+        ]
+      }
+    }
+  ]
+}

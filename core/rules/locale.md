@@ -70,6 +70,11 @@ which forms a member uses, so never infer them from the name or the profile.
   English so that every skill reads them the same way. Titles and notes are
   written in the household's language.
 - **The decisions log:** written by `record.py` in the household's language.
+- **Country pack text:** a pack's titles and notes are often in English only.
+  A script result marked `text_lang: "en"` carries such text; in an answer in
+  another language translate it, and quote only the citation of the law as it
+  stands. Provenance tags come in the household's language
+  (`provenance_local`).
 
 ## Dates and amounts
 

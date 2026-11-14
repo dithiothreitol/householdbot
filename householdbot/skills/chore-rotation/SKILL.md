@@ -20,7 +20,7 @@ Member: "rozpisz obowiązki na przyszły tydzień"
 → None yet? Build it from the household's own words, then a yes
 → chores.py plan for the coming week(s): who does what, the load per person
 → Shown per person; children see their own part
-→ An adult says yes → chores.py save-plan --approved-by
+→ An adult says yes → chores.py save-plan, then chores.py commit
 → Later: agreed swaps (chores.py swap) and the balance (chores.py balance)
 ```
 
@@ -31,13 +31,15 @@ Member: "rozpisz obowiązki na przyszły tydzień"
 
 ```
 python3 "${CLAUDE_SKILL_DIR}/shared/scripts/chores.py" plan "<household folder>" --from <next Monday> --weeks 1 --today <today>
-python3 "${CLAUDE_SKILL_DIR}/shared/scripts/chores.py" save-plan "<household folder>" --from <next Monday> --weeks 1 --today <today> --approved-by "<name>"
+python3 "${CLAUDE_SKILL_DIR}/shared/scripts/chores.py" save-plan "<household folder>" --from <next Monday> --weeks 1 --today <today>
+python3 "${CLAUDE_SKILL_DIR}/shared/scripts/chores.py" commit "<household folder>" --confirm <token> --approved-by "<name>"
 python3 "${CLAUDE_SKILL_DIR}/shared/scripts/chores.py" balance "<household folder>" --weeks 8 --today <today>
 ```
 
 Other commands: `init`, `add --json`, `update --id --set field=value`,
 `retire --id`, `person --name --share --birth-year`, `swap --week --chore
---from --to`, `validate`. Every write runs first with `--dry-run`.
+--from --to`, `validate`. Every write previews first and prints a `confirm`
+token; `chores.py commit` applies it after a yes.
 
 `${CLAUDE_SKILL_DIR}` is this skill's folder; where it was not substituted,
 use the folder this SKILL.md was read from. Use `python` or `py -3` where
@@ -63,7 +65,7 @@ missing shell never means a missing record. Read the profile's members and
 
 ## Step 1 — Start or change the register
 
-- No `registers/chores.json`: `chores.py init --dry-run` reads the members.
+- No `registers/chores.json`: `chores.py init` previews the members.
   Adults get a share of 1, children 0.5 with their birth year. Show who takes
   part, ask whether anyone should have another share, write after a yes.
 - Chores come from the household's own words, one line each: what, how many
@@ -72,7 +74,7 @@ missing shell never means a missing record. Read the profile's members and
   only certain people (`who`), always the same person (`fixed`). Ask for the
   minimum age as a question ("from what age should someone clean the
   bathroom?"); never decide it.
-- Add with `chores.py add --file - --dry-run` and the chore as JSON on
+- Add with `chores.py add --file -` and the chore as JSON on
   standard input (a here-document ending in `HB_END`), show the whole list,
   write after a yes. Change with `update`, stop planning with `retire` (the
   history stays).
@@ -93,12 +95,13 @@ rankings, no blame words, no "lazy" or "always".
 
 ## Step 3 — Save, after a yes
 
-An adult says yes: `chores.py save-plan ... --approved-by "<name>"`. Offer to
+An adult says yes: `chores.py commit "<root>" --confirm <token> --approved-by
+"<name>"` for the `save-plan` preview. Offer to
 add the plan to the family calendar through `family-calendar` (one weekly
 note, not an event per chore) and to print it as a list in `lists/`.
 
 A swap both people agreed to: `chores.py swap --week <week> --chore <id>
---from <name> --to <name> --dry-run`, then with the adult's name after a yes.
+--from <name> --to <name>`, then its commit with the adult's name after a yes.
 The balance stays true only when swaps are recorded.
 
 ## Step 4 — How it went
@@ -126,7 +129,7 @@ yet; once Mum or Dad approves it, the swap goes in"). Never a scolding, never
 
 - **The script assigns.** No reshuffling by hand to please someone; change the
   register (share, `who`, `fixed`) and plan again.
-- **An adult's yes** before any write, with `--approved-by`; children do not
+- **An adult's yes** before any commit, with `--approved-by`; children do not
   approve.
 - **Numbers, not judgements.** No rankings, no blame.
 - **Absent is not zero.** Unsaved weeks are reported as missing.

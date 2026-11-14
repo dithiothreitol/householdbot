@@ -72,7 +72,8 @@
     "holiday": "public holiday: {name}",
     "margin": "the statutory move forward is kept as margin, not as the plan",
     "moved_forward": "{date} is not a working day ({reason}); the deadline moves to {new_date} under {law}",
-    "first_day_counts": "the first day counts"
+    "first_day_counts": "the first day counts",
+    "plan_passed": "the plan date {date} has passed; the last day is {last}"
   },
   "quotes": [
     "\"",
@@ -117,7 +118,21 @@
     "chore_retired": "stopped planning chore {id} “{title}”",
     "chore_person": "chores: {name} ({detail})",
     "chore_plan_saved": "saved the chore plan for {weeks}",
-    "chore_swap": "chore swap in {week}: {chore} ×{count} from {giver} to {to}"
+    "chore_swap": "chore swap in {week}: {chore} ×{count} from {giver} to {to}",
+    "saved": "saved {file}",
+    "replaced": "replaced {file} (the previous version is in registers/.history/)",
+    "exported": "exported {count} reminders to {file}",
+    "ics_appointment": "Appointment",
+    "ics_last_day": "Last day: {date}",
+    "ics_who": "Who: {name}"
   },
-  "substitute_day": "substitute day"
+  "substitute_day": "substitute day",
+  "tags": {
+    "stated in document": "stated in document",
+    "calculated from document": "calculated from document",
+    "country pack rule — verify": "country pack rule — verify",
+    "household pack — verify": "household pack — verify",
+    "model calculation — verify": "model calculation — verify",
+    "told by household member": "told by household member"
+  }
 }

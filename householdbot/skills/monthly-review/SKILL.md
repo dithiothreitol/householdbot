@@ -93,7 +93,8 @@ the reason: 1 Mail, 2 Papers waiting, 3 Bills (the payment list and its total
 per currency), 4 Next month (the dates), 5 Money (coverage first, then the
 month in three lines). Then the decisions needed, each with its date. Every
 date carries its weekday (`pt. 20.11.2026`, `Fri 20 Nov 2026`), also in
-tables. Offer to save the page as `briefs/month-<YYYY-MM>.md`.
+tables. Offer to save the page as `briefs/month-<YYYY-MM>.md` (`record.py save`, then
+`record.py commit` after the yes).
 
 ## Seams between steps
 

@@ -64,10 +64,12 @@ the member shows and say nothing is saved.
 ## Step 1 — Collect
 
 - Open obligations of kind `payment` with `do_by` within the window (default
-  14 days, `--days N`), overdue first. Overdue means the due date has passed.
-  An item whose planned date (`do_by`) has passed while its due date has not
-  is "pay now, due <weekday, date>", never "overdue"; and a last day is always
-  the due date, never the plan date.
+  14 days, `--days N`), overdue first. `record.py due` gives the band:
+  overdue means the last day has passed. An item whose plan date (`do_by`)
+  has passed while its last day has not comes as band `now` with
+  `plan_passed: true`: "pay now, last day <weekday, date>", never "overdue".
+  The last day is `last_day` when the script gives one (a date moved past a
+  holiday by the pack's rule), else `due_date`; never the plan date.
 - Papers in `inbox/` or bills the member mentions that are not filed yet:
   offer `file-document` first, so the bill is in the record before it is paid.
 - Payments made by direct debit: listed as "nothing to do", with the amount.
@@ -111,13 +113,14 @@ approval writes nothing and pays nothing.
 
 When the member says what they paid ("zapłaciłam 1 i 3", "paid all"):
 
-1. For each item, `record.py complete "<root>" --id ob-… --done-date <date>
-   --country <CC> --today <today> --dry-run`. Recurring items get their next
-   occurrence, keeping their `transit_buffer_days`.
+1. One `record.py complete "<root>" --id ob-… --id ob-… --done-date <date>
+   --country <CC> --today <today>` for all of them (one preview, one
+   `confirm` token). Recurring items get their next occurrence, keeping their
+   `transit_buffer_days`.
 2. Show the changes in one list: marked done on which date, next occurrence
    with its date.
-3. **Approval 2**: "Mark these as paid? (yes / change / no)", then run the
-   same commands with `--approved-by "<name>"`.
+3. **Approval 2**: "Mark these as paid? (yes / change / no)", then
+   `record.py commit "<root>" --confirm <token> --approved-by "<name>"`.
 
 HouseholdBot records what the member says; it does not see the bank account.
 Say so once, the first time.

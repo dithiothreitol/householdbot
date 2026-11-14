@@ -143,8 +143,8 @@ days"), never in the trip verdict itself.
 - A trip task ("Apply for EKUZ cards") with `do_by` worked back from the day
   of leaving with the pack's lead time.
 - `record.py add "<root>" --register obligations --file - --country
-  <CC> --today <today> --dry-run`, show it in plain words, ask one question,
-  and write with `--approved-by "<name>"` after the yes.
+  <CC> --today <today>` (a preview), show it in plain words, ask one
+  question, and commit its token with `--approved-by "<name>"` after the yes.
 
 A photo of an identity document is read for its expiry date only. It is not
 filed or copied by this skill; the register records where the original is.

@@ -90,6 +90,24 @@ another language is explained in yours, with the original quoted.
 | "dashboard" / "everything at a glance" | one page on the whole household: deadlines, money, documents, what is not tracked |
 | "make this a skill" | your own skill for a task you repeat, written after your yes |
 | "build a country pack for Germany" | a pack from official sources, checked and kept in your folder |
+| "make a calendar file" | a `.ics` file with your reminders, for any phone |
+
+## How a write is approved
+
+1. HouseholdBot shows what it will write and asks one question:
+   `(yes / change / no)`. Nothing is written yet.
+2. You say yes. A "change" makes a new preview, shown again.
+3. In Claude Code and Cowork the app asks once more in its own permission
+   prompt, which shows the change; confirm it there. The decisions log gets
+   one line per change with your name.
+
+## Reminders on your phone
+
+Without a connected calendar, say "make a calendar file". HouseholdBot
+writes `exports/householdbot.ics` after your yes; open it on the phone or
+import it into any calendar. After changes, make a new file and import it
+again: the same events are updated, closed items are cancelled. Health items
+carry a neutral title.
 
 ## A weekly brief on a schedule
 

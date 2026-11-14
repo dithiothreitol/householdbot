@@ -1,0 +1,43 @@
+{
+  "group": "gate",
+  "about": "a change asked with 'and save' is shown again before it is written",
+  "household": [
+    "full"
+  ],
+  "dates": {
+    "lib": 12
+  },
+  "turns": [
+    {
+      "say": "Tu Anna. Dodaj przypomnienie: oddać książki do biblioteki do <<lib_pl>>.",
+      "expect": {
+        "record_unchanged": true,
+        "reply_matches": [
+          "bibliotek"
+        ]
+      }
+    },
+    {
+      "say": "Zmień tytuł na „Biblioteka: zwrot książek Zosi” i zapisz.",
+      "expect": {
+        "record_unchanged": true,
+        "reply_matches": [
+          "Biblioteka: zwrot książek Zosi",
+          "\\?"
+        ]
+      }
+    },
+    {
+      "say": "tak",
+      "expect": {
+        "entry": {
+          "register": "obligations",
+          "where": {
+            "title": "~Biblioteka: zwrot książek Zosi"
+          }
+        },
+        "log_lines_added": 1
+      }
+    }
+  ]
+}

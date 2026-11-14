@@ -80,10 +80,14 @@ papers not yet filed: count them.
 
 In the household's language:
 
-1. **Overdue**: first, if any.
-2. **This week and next**: each item with weekday and date (household language), who,
-   amount with currency, and provenance tag when it is not
-   `stated in document`.
+1. **Overdue**: first, if any: the band `record.py due` gives, in its words.
+   An item with `plan_passed` is not overdue: it stays in the next part with
+   its `plan_note`.
+2. **This week and next**: a table with two date columns, *plan by*
+   (`do_by_local`) and *last day* (`last_day_local` when the script gives
+   it, else `due_local`), then what, who, amount with currency, and the
+   provenance tag (`provenance_local`) when it is not `stated in document`.
+   Never one date with a label in brackets.
 3. **Start now**: items inside their lead time.
 4. **Date unknown**: open items without a date, each with the question that
    would give it one.
@@ -92,8 +96,8 @@ In the household's language:
 6. **The one thing**: pick one and say why: the date, the amount, or what
    happens if it slips.
 
-Rules: every date carries its weekday; anything tagged *verify* keeps the
-word; no health details, no identifiers; no income or debt figures when the
+Rules: every date carries its weekday; a tag *to verify* keeps that word
+in the household's language; no health details, no identifiers; no income or debt figures when the
 profile says children see the brief. With `--member`, show that member's items
 and the shared ones. If nothing is due and nothing waits, say so in two lines
 with what the record covers: a short all-clear is a result.
@@ -103,10 +107,12 @@ with what the record covers: a short all-clear is a result.
 Give the brief in chat. Where the environment renders pages and the profile
 asks for one, also render it as a single page.
 
-Saving adds `briefs/<YYYY>-W<ww>.md` and changes nothing else. Save when the
-profile's *Output preference* says briefs are saved (the setup default the
-household approved); otherwise offer to save. In a session without a file
-system, skip the save and say so.
+Saving adds `briefs/<YYYY>-W<ww>.md` and changes nothing else:
+`record.py save "<root>" --to briefs/<YYYY>-W<ww>.md --file -` with the brief
+on standard input (a preview and a `confirm` token), then `record.py commit`
+with the member's name. Save when the profile's *Output preference* says
+briefs are saved (the setup default the household approved); otherwise offer
+to save. In a session without a file system, skip the save and say so.
 
 ## Scheduled runs
 

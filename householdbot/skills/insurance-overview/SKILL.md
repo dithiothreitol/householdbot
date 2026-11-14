@@ -145,9 +145,9 @@ comparison, never "unchanged".
 - A policy paid for but not filed: `file-document`.
 - A reminder the register lacks (a last day to cancel, an end date with lead
   time to compare offers): build it, `record.py add "<root>" --register
-  obligations --file - --country <CC> --today <today> --dry-run`,
-  show it, ask one question, and write with `--approved-by "<name>"` after
-  the yes.
+  obligations --file - --country <CC> --today <today>` (a preview),
+  show it, ask one question, and commit its token with `--approved-by
+  "<name>"` after the yes.
 
 ## Step 6 — Which cover to buy
 

@@ -62,6 +62,13 @@ working day. The country pack records that rule and its law, and `dates.py`
 reports it in `due_date`. The plan is still worked back from the unmoved end:
 the forward move is margin, never the plan.
 
+An entry whose `due_date` is the date as a document states it ("raty: 15
+listopada") names the pack's counting rule in `rule` (`"tax"`, `"civil"`,
+`"court"`, `"administrative"`; `dates.py recurring` gives it for statutory
+dates). `record.py due` then reports `last_day`, the stored date moved past a
+weekend or holiday by that rule, with `last_day_note` citing the law. The
+last day the household reads is `last_day` when present, else `due_date`.
+
 ## Deadlines counted from delivery
 
 "Within 14 days of receiving this letter" needs the delivery date.
@@ -98,13 +105,21 @@ intervals so each obligation lands in exactly one band:
 
 | Band | Days until `do_by` |
 |---|---|
-| ⚫ overdue | fewer than 0, status still `open` |
+| ⚫ overdue | the last day has passed, status still `open` |
 | 🔴 now | 0 to 6 |
 | 🟠 soon | 7 to 29 |
 | 🟡 coming | 30 to 89 |
 
 Day 0 is today. Days 7, 30 and 90 belong to the later band. Obligations 90 or
 more days away are not shown unless asked for.
+
+**Overdue means the last day has passed.** When only the plan date has
+passed and the last day is still ahead, `record.py due` puts the item in
+*now* with `plan_passed: true` and a `plan_note` ("data planu pt. 13.11.2026
+minęła; ostatni dzień to pn. 16.11.2026"). Print the band the script gives,
+in its words, and add the plan note; never call such an item overdue, and
+never rename a band. A table that lists deadlines has two date columns, the
+plan date and the last day, never one date with a label in brackets.
 
 **Lead time.** An obligation with `lead_time_days` also appears, marked
 *start now*, from `do_by` minus that many days, whatever band it is in. Use it

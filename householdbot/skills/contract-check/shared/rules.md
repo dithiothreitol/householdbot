@@ -47,8 +47,12 @@ member to carry out.
 ### Gates that every skill honours
 
 1. **A read is not a write.** Reading a document, a mailbox or a calendar
-   needs no approval. Writing to the record does: show the entry, wait for yes,
-   then write with the approver's name (the household record).
+   needs no approval. Writing to the record does: the script previews the
+   change and prints a confirm token, the member sees it and says yes, then
+   `commit --confirm <token> --approved-by <name>` applies exactly that change
+   (the household record). The scripts refuse any other way to write, and in
+   Claude Code and Cowork the host asks the member once more in its own
+   prompt before the commit runs.
 2. **Filing and acting are separate approvals.** Approving that a bill is
    filed is not approving that it is paid. Approving a draft is not approving
    that it is sent.
@@ -91,7 +95,8 @@ Write both? (yes / change / no)
 
 A silence, a topic change or an ambiguous answer is a no. A yes given before
 the change was shown ("just file whatever comes") approves nothing: show the
-change, then ask.
+change, then ask. "Change" is not a yes either, even with "and save" in the
+same message: make the new preview, show it, and ask again.
 
 ---
 
@@ -378,27 +383,56 @@ the quick setup: use them, and name the default when it shapes an answer.
 1. **Read before write.** Re-read the file immediately before changing it.
    Another member may have changed it since the session started. `record.py`
    always loads the file fresh.
-2. **Show the change, then wait.** Run the write with `--dry-run`, show the
-   household exactly what will be added or changed and where, and wait for a
-   yes (approval gates). The entry goes to the script on standard input
-   (`--file -` with a here-document, as the untrusted-content rule shows); no
-   file is written to prepare it, and text from a document never goes on the
-   command line. Without a shell, the entry is shown in plain words and
-   nothing is written before the yes.
-3. **Write with the approver's name.** After the yes, run the same command
-   with `--approved-by "<the approver's name only>"` (a name such as `Anna`,
-   never their words). The script refuses a write
-   without it, keeps the previous file in `registers/.history/`, and appends
-   one line to `log/decisions.md`.
-4. **Touch one entry.** Add or update the single entry concerned. Do not
+2. **Preview, then wait.** A writing command (`add`, `update`, `complete`,
+   `merge`, `archive`, `migrate`, `save`, `export`, `init`, `set-pointer`;
+   the writing commands of `chores.py` and `statement.py` too) only previews:
+   it checks the change, stores exactly that change and prints `preview`
+   (the lines the log will get), `files` and a `confirm` token. Nothing is
+   written. Show the household in plain words what will be added or changed
+   and where, and wait for a yes (approval gates). The entry goes to the
+   script on standard input (`--file -` with a here-document, as the
+   untrusted-content rule shows); no file is written to prepare it, and text
+   from a document never goes on the command line. Without a shell, the entry
+   is shown in plain words and nothing is written before the yes.
+3. **Commit with the approver's name.** After the yes:
+   `record.py commit "<root>" --confirm <token> --approved-by "<the approver's name only>"`
+   (a name such as `Anna`, never their words; `chores.py commit` and
+   `statement.py commit` do the same). Commit applies the previewed change and
+   nothing else, keeps the previous file in `registers/.history/` and appends
+   one line per change to `log/decisions.md`. It refuses a token that is
+   unknown, older than 30 minutes, or whose files changed since the preview:
+   preview again and show the new change. The old one-call form
+   (`add … --approved-by`) is refused. In Claude Code and Cowork the host then
+   asks the member to confirm in its own permission prompt, which shows the
+   preview line; that prompt is the member's yes reaching the record.
+4. **One preview per register per yes.** Several entries of one register go
+   into one preview: `add --file -` takes a JSON list, `complete` takes
+   `--id` more than once. Two previews of the same register cannot both be
+   committed, because the first commit changes the file the second one
+   checked. Previews of different registers (a document and its obligations)
+   are committed one after the other after the same yes.
+5. **"Change" is not a yes.** An edit asked for before the yes ("change the
+   title", "add the court's name") makes a new preview, shown again; the old
+   token is left to expire.
+6. **Files go through `save`.** A brief, a page, a list, a pack, a skill or
+   an export is written with
+   `record.py save "<root>" --to <folder>/<file> --file -` (the content on
+   standard input; `--replace` for a file updated in place, such as a list,
+   with the old version kept in `registers/.history/`), then committed the
+   same way. `save` writes only into `briefs/`, `reviews/`, `lists/`,
+   `packs/`, `skills/`, `exports/`, `drafts/` and `household-profile.md`,
+   refuses identifiers, and refuses a page with a script, a link, an image
+   or a web address. The host's own write tool is not used inside the
+   household folder.
+7. **Touch one entry.** Add or update the entries concerned. Do not
    reorder, reformat or rewrite the rest of the file.
-5. **Nothing is deleted.** An entry that no longer applies changes `status`
+8. **Nothing is deleted.** An entry that no longer applies changes `status`
    (`superseded`, `cancelled`, `done`, `lapsed`). An original document is never
    overwritten or removed; a name clash gets a numeric suffix.
-6. **Identifiers.** Documents are `doc-YYYY-NNNN`, obligations are
+9. **Identifiers.** Documents are `doc-YYYY-NNNN`, obligations are
    `ob-YYYY-NNNN`, where `YYYY` is the year the entry was created. The script
    assigns the next free number.
-7. **Conflict copies stop writes.** If a synced drive left a conflict copy of a
+10. **Conflict copies stop writes.** If a synced drive left a conflict copy of a
    register (`obligations (1).json`, `obligations (Anna's conflicted copy).json`,
    `obligations-LAPTOP.json`), writing could lose an edit. The script refuses;
    `household-doctor` merges.
@@ -500,6 +534,13 @@ working day. The country pack records that rule and its law, and `dates.py`
 reports it in `due_date`. The plan is still worked back from the unmoved end:
 the forward move is margin, never the plan.
 
+An entry whose `due_date` is the date as a document states it ("raty: 15
+listopada") names the pack's counting rule in `rule` (`"tax"`, `"civil"`,
+`"court"`, `"administrative"`; `dates.py recurring` gives it for statutory
+dates). `record.py due` then reports `last_day`, the stored date moved past a
+weekend or holiday by that rule, with `last_day_note` citing the law. The
+last day the household reads is `last_day` when present, else `due_date`.
+
 ### Deadlines counted from delivery
 
 "Within 14 days of receiving this letter" needs the delivery date.
@@ -536,13 +577,21 @@ intervals so each obligation lands in exactly one band:
 
 | Band | Days until `do_by` |
 |---|---|
-| ⚫ overdue | fewer than 0, status still `open` |
+| ⚫ overdue | the last day has passed, status still `open` |
 | 🔴 now | 0 to 6 |
 | 🟠 soon | 7 to 29 |
 | 🟡 coming | 30 to 89 |
 
 Day 0 is today. Days 7, 30 and 90 belong to the later band. Obligations 90 or
 more days away are not shown unless asked for.
+
+**Overdue means the last day has passed.** When only the plan date has
+passed and the last day is still ahead, `record.py due` puts the item in
+*now* with `plan_passed: true` and a `plan_note` ("data planu pt. 13.11.2026
+minęła; ostatni dzień to pn. 16.11.2026"). Print the band the script gives,
+in its words, and add the plan note; never call such an item overdue, and
+never rename a band. A table that lists deadlines has two date columns, the
+plan date and the last day, never one date with a label in brackets.
 
 **Lead time.** An obligation with `lead_time_days` also appears, marked
 *start now*, from `do_by` minus that many days, whatever band it is in. Use it
@@ -913,6 +962,11 @@ which forms a member uses, so never infer them from the name or the profile.
   English so that every skill reads them the same way. Titles and notes are
   written in the household's language.
 - **The decisions log:** written by `record.py` in the household's language.
+- **Country pack text:** a pack's titles and notes are often in English only.
+  A script result marked `text_lang: "en"` carries such text; in an answer in
+  another language translate it, and quote only the citation of the law as it
+  stands. Provenance tags come in the household's language
+  (`provenance_local`).
 
 ### Dates and amounts
 
@@ -1080,8 +1134,13 @@ is built to be acted on in under a minute.
    (`Fri 20 Nov 2026`, `pt. 20.11.2026`), every amount with its currency
    (`PLN 1,240.00`, `1 240,00 zł`).
 4. **Every computed or statutory date with its tag** when the tag is not
-   `stated in document`: `(country pack rule — verify)`,
-   `(model calculation — verify)`.
+   `stated in document`, in the household's language. The scripts give the
+   tag as `provenance_local`; the table is `tags` in
+   `shared/i18n/<lang>.json`. English: `(country pack rule — verify)`,
+   `(model calculation — verify)`, `(told by household member)`. Polish:
+   `(reguła z pakietu krajowego, do sprawdzenia)`,
+   `(wyliczenie modelu, do sprawdzenia)`, `(podane przez domownika)`. The
+   registers keep the English value.
 5. **End with the next step**, phrased as one question when a decision is
    needed: `Write both? (yes / change / no)`.
 

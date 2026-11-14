@@ -178,14 +178,15 @@ In the household's language, short:
 
 ## Step 8 — Gate
 
-Dry-run every write first and show the result:
+Preview every write first (each command prints a `confirm` token and writes
+nothing) and show the result:
 
 ```
 record.py next-id "<root>" --kind doc
-record.py add "<root>" --register obligations --file - --country <CC> --today <today> --dry-run <<'HB_END'
-{ the obligation }
+record.py add "<root>" --register obligations --file - --country <CC> --today <today> <<'HB_END'
+{ the obligation, or a list of them }
 HB_END
-record.py add "<root>" --register documents --file - --today <today> --dry-run <<'HB_END'
+record.py add "<root>" --register documents --file - --today <today> <<'HB_END'
 { the document, with "original": "<path of the file it arrived in>" }
 HB_END
 ```
@@ -198,12 +199,18 @@ who is approving, ask once per session whose name to record.
 
 ## Step 9 — Write
 
-After the yes, run the same commands with `--approved-by "<name>"` instead of
-`--dry-run`, in this order: obligations first (with
-`source.document` set to the document id from `next-id`), then the document
-with `id` set and `obligations` listing the new obligation ids. If something
-was superseded, `record.py update --id <old> --set status=superseded`. Each
-command keeps a backup and writes its own line in `log/decisions.md`.
+The previews are made before the question: the obligations (all of them in
+one list, with `source.document` set to the document id from `next-id`) and
+the document (with `id` set and `obligations` listing the new obligation ids).
+Titles and notes are written in the household's language. When the member
+removes an obligation, preview the trimmed list again and commit that one.
+
+After the yes, commit the two tokens, obligations first:
+`record.py commit "<root>" --confirm <token> --approved-by "<name>"`. If
+something was superseded, preview `record.py update --id <old> --set
+status=superseded` after the document is committed and commit it under the
+same yes. Each commit keeps a backup and writes its own lines in
+`log/decisions.md`.
 
 Report in one line what was filed and how many obligations were registered.
 Then at most two offers: "what's due" (`deadline-tracker`), or the next paper

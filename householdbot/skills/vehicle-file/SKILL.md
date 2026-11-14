@@ -168,15 +168,16 @@ shows and say nothing is saved.
 ## Step 7 — Write after a yes
 
 Build each entry or change, run `record.py add` or `record.py update "<root>"
---id ob-… --set due_date=<date> --country <CC> --today <today> --dry-run`,
-show it in plain words with its basis, and ask one question:
+--id ob-… --set due_date=<date> --country <CC> --today <today>` (a preview
+with a `confirm` token), show it in plain words with its basis, and ask one
+question:
 
 ```
 Set the roadworthiness test of the car to Sat 12 Jun 2027, planned for
 Fri 11 Jun 2027 (told by household member)? (yes / change / no)
 ```
 
-After the yes, run the same command with `--approved-by "<name>"`.
+After the yes: `record.py commit "<root>" --confirm <token> --approved-by "<name>"`.
 
 ## Gates
 

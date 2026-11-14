@@ -85,8 +85,9 @@ household asks, and then only as information with the not-advice line.
 
 ## Step 4 — Save, then shop
 
-After a yes, write `lists/meals-<YYYY>-W<NN>.md` (the week's dates, the table,
-the dishes' ingredient lists with quantities). Then build the ingredients for
+Before asking, preview `lists/meals-<YYYY>-W<NN>.md` (the week's dates, the
+table, the dishes' ingredient lists with quantities) with `record.py save
+"<root>" --to lists/meals-<YYYY>-W<NN>.md --file -`; after the yes, commit it. Then build the ingredients for
 the whole week, summed (two dishes needing onions give one line), minus what
 is at home and on the staples list already bought, and hand them to
 `shopping-list`, which shows them and adds them after its own yes.

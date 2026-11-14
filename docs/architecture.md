@@ -149,11 +149,19 @@ The pattern says "nothing without a yes". In a household the gate has to be
 concrete enough for a model to follow under pressure:
 
 1. The skill shows the exact entry, list or draft, then asks.
-2. The yes names who gave it; the script refuses to write without
-   `--approved-by`, and the decisions log keeps the name.
+2. The script previews every write and stores exactly that change under a
+   confirm token; only `commit --confirm <token> --approved-by <name>`
+   applies it, after the yes, and the decisions log keeps the name. A token
+   older than 30 minutes, or one whose files changed since the preview, is
+   refused; several entries of one register go into one preview, so one yes
+   is one commit per register. In Claude Code and Cowork a `PreToolUse` hook
+   sends the commit to the host's own permission prompt, which shows the
+   preview line, so the yes reaches the record through a person and not
+   only through the model's account of it.
 3. Preparing a file is already a write. Entries reach `record.py` on standard
-   input (`--file -` with a here-document) or as `--json`; without a shell the
-   skill only shows them.
+   input (`--file -` with a here-document) or as `--json`; files the skills
+   keep (briefs, pages, lists, packs) go through `record.py save` under the
+   same gate; without a shell the skill only shows them.
 4. Money takes two approvals: one for the payment list, one per payment the
    member reports as made. HouseholdBot never pays.
 5. A draft is never sent. A draft in a connected mailbox is created only after
@@ -279,6 +287,19 @@ These findings are about the pattern, not about households alone.
     undefined counting rule that `check-pack` always reports. The same steps
     with the scripts are deterministic and covered by unit tests; the
     behaviour tests on Windows measure the fallback.
+23. **A guarantee belongs in the script, not in the prompt.** Until rc.2 the
+    gate rested on the model: it typed `--approved-by` itself, and nothing
+    but its instructions kept it from typing the name before the yes. Next
+    to agent platforms whose agents act without asking, that is a promise a
+    weaker or a misled model can break. In rc.3 the scripts enforce two
+    phases and the hook asks a person; the skills only describe the flow.
+24. **A use session finds what the behaviour tests cannot.** Six turns with
+    the scripts on a Polish household (0.81 USD) found a band computed from
+    the plan date ("overdue" for an instalment whose last day was two days
+    ahead), provenance tags and law citations in English inside Polish
+    answers, and a table that called the safe date the last day. None of
+    them shows in the 115 cases, because on Windows they run without a
+    shell; the session tests now cover that path with deterministic checks.
 
 ## 7. Surfaces
 

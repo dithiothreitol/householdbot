@@ -692,7 +692,7 @@ skille jako `householdbot:<skill>` (sprawdzone przez
 modelu). Zostały: sesja w Codexie na danych syntetycznych, sekret
 `ANTHROPIC_API_KEY`, zgłoszenia do katalogów Claude i OpenAI, pilotaż.
 
-### Etap 5. Gwarancje w kodzie, poprawki, przypomnienia (wersja 1.0.0-rc.3, planowany)
+### Etap 5. Gwarancje w kodzie, poprawki, przypomnienia (wersja 1.0.0-rc.3, wykonany)
 
 Zaplanowany 14.11.2026 na podstawie dwóch źródeł. Pierwszym jest sześcioturowa
 sesja użycia na opublikowanej wersji rc.2 (polskie gospodarstwo, skrypty
@@ -880,6 +880,59 @@ Twój udział po etapie: pilotaż według `docs/pilot.md` na wersji rc.3; „tak
 dla pushu, tagu i wydania; opcjonalnie sekret `ANTHROPIC_API_KEY`, dzięki
 któremu `evals.yml` uruchomi 115 przypadków z powłoką na Linuksie.
 
+**Wykonane 14.11.2026** (w tej samej sesji co plan, po „tak”). Zgodnie z
+Twoim poleceniem z tego samego dnia nie uruchomiłem niczego, co wywołuje
+model: żadnego testu sesyjnego, testu zachowania, przebiegu w Codexie ani
+subagenta. Wszystko poniżej sprawdzają testy jednostkowe, walidatory i
+kontrole offline.
+
+- **A.** Pasma liczone od ostatniego dnia, z `plan_passed` i `plan_note`;
+  opcjonalne pole `rule` i `last_day` w `record.py due`; `rule` przy każdej
+  dacie ustawowej z `dates.py recurring`; `tags` w i18n oraz
+  `provenance_local` w `due`, `window`, `event`, `deemed` i `recurring`.
+  Angielski łącznik w polskiej notatce pochodził z pól `law` samego pakietu,
+  a nie z szablonu: 73 podstawy prawne pakietu PL brzmią teraz po polsku
+  („i”, „w zw. z”, nazwy rozporządzeń), test jednostkowy tego pilnuje, a
+  tekst pakietu, który istnieje tylko po angielsku, ma znacznik
+  `text_lang: "en"`. Dwie kolumny dat w przeglądzie tygodnia i na liście
+  terminów; polskie tytuły i notatki w polskim gospodarstwie testowym, którego
+  rata podatku wskazuje regułę `tax`.
+- **B.** Dwie fazy we wszystkich trzech skryptach przez jeden obiekt
+  `Change` w `record.py` (`chores.py` i `statement.py` z niego korzystają i
+  dostały `commit`); `init --profile-file -` tworzy cały rekord jedną zmianą;
+  `save` dla plików; hook (`hooks/gate.sh` znajduje Pythona, `hooks/gate.py`
+  decyduje) w formie powłoki z `"onFailure": "continue"`; 26 skilli i reguły
+  przepisane na kolejność podgląd, „tak”, commit; `scripts/validate.py`
+  odrzuca zapis jednym wywołaniem i sprawdza hook. Dodane po drodze: kilka
+  wpisów jednego rejestru w jednym podglądzie (`add` przyjmuje listę JSON,
+  `complete` przyjmuje `--id` wiele razy), ponieważ drugi podgląd tego
+  samego rejestru staje się nieaktualny po commicie pierwszego; plan
+  obowiązków zachowuje zatwierdzającego dzięki znacznikowi, który `commit`
+  zastępuje imieniem.
+- **C.** `record.py export --ics` zgodnie z planem.
+- **D.** `scripts/session_test.py` i 18 sesji. Sesje są w JSON, a nie w
+  YAML, dzięki czemu program korzysta tylko z biblioteki standardowej;
+  `--check` zakłada każde gospodarstwo i rozwiązuje każdą wartość bez
+  modelu; identyfikatory w sesjach bezpieczeństwa powstają w trakcie
+  przebiegu.
+- **E.** `scripts/pack_review.py` i `pack-review.yml` (akcje przypięte do
+  wersji, tak jak w pozostałych workflowach); procedura w
+  `docs/country-packs.md`.
+- **F.** `docs/pilot.md` i `docs/pilot.pl.md`.
+- **G.** README, QUICKSTART, README wtyczki i PRIVACY w obu językach,
+  SECURITY, `docs/architecture.md` (wnioski 23 i 24), CHANGELOG, dwujęzyczne
+  notatki wydania, oba manifesty w wersji 1.0.0-rc.3.
+
+Akceptacja: (1) spełniona: 198 testów jednostkowych zielonych (49 nowych),
+`scripts/validate.py` 0 błędów i 0 ostrzeżeń, `claude plugin validate
+--strict` przechodzi dla wtyczki i marketplace, `scripts/package.py --skills`
+buduje 385 plików razem z hookiem; (2) i (3) czekają na płatne przebiegi;
+(4) spełniona.
+
+Czeka na Twoje „tak”: płatna weryfikacja (zestaw sesyjny dwa razy, około
+10 USD; testy zachowania zmienionych skilli, około 6 USD; pełny przebieg,
+około 17 USD), potem push, tag i wydanie rc.3, a następnie pilotaż.
+
 ### Etap 6. Dowolny klient i model, wydanie (wersja 1.0.0, planowany)
 
 Zaplanowany 14.11.2026. Cel: warstwa dowodowa i bramka docierają do klientów,
@@ -963,7 +1016,17 @@ zamknięcia.
 
 ---
 
-## 8. Stan po Etapach 1, 1.1, 2, 3 i 4
+## 8. Stan po Etapach 1–5
+
+**Wersja 1.0.0-rc.3 (Etap 5, gwarancje w kodzie).**
+
+| Poziom | Wynik |
+|---|---|
+| 1. Struktura | `scripts/validate.py` (nowa kontrola: brak zapisu jednym wywołaniem w skillach, regułach i agentach; obecność hooka): 0 błędów, 0 ostrzeżeń; `claude plugin validate --profile directory --strict` przechodzi dla wtyczki i marketplace; 385 plików wtyczki z 512 |
+| 2. Rachunek | 198 testów jednostkowych zielonych (49 nowych): bramka (podgląd co do bajtu, żeton nieznany, użyty ponownie, przeterminowany, zmieniony i nieaktualny, zatwierdzający sprawdzany przy commicie, odrzucony wpis bez śladu w `.pending`, oryginały kopiowane przy commicie, zapisy zbiorcze), `save` (ścieżki, strony, identyfikatory, zastąpienie z kopią), eksport kalendarza (łamanie i znaki specjalne RFC 5545, stałe UID, neutralne tytuły, wpisy odwołane), pasma i ostatnie dni, etykiety, podstawy prawne pakietu PL, hook (8) i program sesji z gospodarzem skryptowym (7) |
+| 3b. Sesje | 18 sesji gotowych (`--check`: każde gospodarstwo założone, każda wartość rozwiązana); nieuruchomione, bez wywołań modelu |
+| 3. Zachowanie | w tym etapie nieuruchamiane |
+| 4. Użycie | sześcioturowa sesja na rc.2, od której zaczął się etap (0,81 USD, opisana w Etapie 5) |
 
 **Wersja 1.0.0-rc.1 (Etap 4, zasięg, utwardzenie, publikacja).**
 
@@ -1275,14 +1338,14 @@ poprawionych, 2 nierozstrzygnięte.
 | Scalanie kopii zatwierdzane bez pokazania zmian | `merge`: tylko kopie z listy, wszystkie zmienione pola, kontrola wpisów | zamknięta (Etap 4) |
 | Identyfikatory spoza Polski (IBAN, NI, sort code) | `identifier_findings`, zapis odrzucany | zamknięta (Etap 4) |
 | Pakiet tylko dla jednego kraju, bez zasięgu | pakiet GB, zasięg w pakiecie, pakiety własne w `packs/` | zamknięta (Etap 4) |
-| Pasmo „po terminie” wyznaczane z daty planu, a nie z ostatniego dnia | `record.py due`, pięć skilli wypisujących pasma | otwarta (Etap 5 A) |
-| Etykiety pochodzenia i notatki skryptów po angielsku w polskiej odpowiedzi | `tags` w i18n, `provenance_local`, łączniki z i18n | otwarta (Etap 5 A) |
-| Bramka zapisu opiera się na modelu: `--approved-by` wpisuje model, `hooks.json` jest pusty | zapis dwufazowy z żetonem, hook z oknem gospodarza | otwarta (Etap 5 B) |
-| Linię dziennika o zapisanym pliku wpisuje model | `record.py save` | otwarta (Etap 5 B) |
-| Przypomnienia wymagają konektora kalendarza albo zadania zaplanowanego | eksport `.ics` | otwarta (Etap 5 C) |
-| Ścieżka ze skryptami nie ma testów zachowania na komputerze roboczym | testy sesyjne przez `claude -p` z powłoką | otwarta (Etap 5 D) |
-| Wiek pakietu sprawdza tylko przegląd roczny w gospodarstwie | comiesięczny przegląd pakietów w CI | otwarta (Etap 5 E) |
-| Pilotaż nie ma scenariuszy ani mierników | `docs/pilot.md` | otwarta (Etap 5 F) |
+| Pasmo „po terminie” wyznaczane z daty planu, a nie z ostatniego dnia | `record.py due`, pięć skilli wypisujących pasma | zamknięta (Etap 5 A) |
+| Etykiety pochodzenia i notatki skryptów po angielsku w polskiej odpowiedzi | `tags` w i18n, `provenance_local`, polskie podstawy prawne w pakiecie PL, `text_lang` | zamknięta (Etap 5 A) |
+| Bramka zapisu opiera się na modelu: `--approved-by` wpisuje model, `hooks.json` jest pusty | zapis dwufazowy z żetonem, hook z oknem gospodarza | zamknięta (Etap 5 B) |
+| Linię dziennika o zapisanym pliku wpisuje model | `record.py save` | zamknięta (Etap 5 B) |
+| Przypomnienia wymagają konektora kalendarza albo zadania zaplanowanego | eksport `.ics` | zamknięta (Etap 5 C) |
+| Ścieżka ze skryptami nie ma testów zachowania na komputerze roboczym | testy sesyjne przez `claude -p` z powłoką | program i 18 sesji gotowe; pierwszy przebieg czeka na płatną weryfikację (Etap 5 D) |
+| Wiek pakietu sprawdza tylko przegląd roczny w gospodarstwie | comiesięczny przegląd pakietów w CI | zamknięta (Etap 5 E) |
+| Pilotaż nie ma scenariuszy ani mierników | `docs/pilot.md` | zamknięta (Etap 5 F) |
 | Warstwa dowodowa dostępna wyłącznie przez gospodarza wtyczek | lokalny serwer MCP | otwarta (Etap 6 B) |
 | Obsługa Codexa sprawdzona bez uruchamiania modelu; pozostali gospodarze i modele niezmierzeni | adaptery gospodarzy, tabela zgodności | otwarta (Etap 6 C, D) |
 

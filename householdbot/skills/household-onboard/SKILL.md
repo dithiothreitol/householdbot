@@ -135,12 +135,16 @@ Show the complete profile draft from the template in the chosen language
 `shared/templates/pl/household-profile.md`; keep its headings and markers).
 Ask what is wrong. After an explicit yes, with the approver's name:
 
-1. `record.py init "<folder>" --lang <en|pl> --approved-by "<name>" --today <today>`
-   creates `registers/` (two empty JSON registers and `README.md` in the
-   chosen language), `documents/`, `briefs/`, `inbox/` and `log/decisions.md`.
-2. Write `household-profile.md` into the folder from the approved draft.
-3. Offer to remember the folder on this machine:
-   `record.py set-pointer "<folder>" --approved-by "<name>"`.
+1. `record.py init "<folder>" --lang <en|pl> --profile-file - --today <today>`
+   with the approved profile on standard input (a here-document ending in
+   `HB_END`) previews the whole record: `registers/` (two empty JSON
+   registers and `README.md` in the chosen language), `documents/`,
+   `briefs/`, `inbox/`, `log/decisions.md` and `household-profile.md`. It
+   prints a `confirm` token and writes nothing.
+2. Commit it with the approver's name:
+   `record.py commit "<folder>" --confirm <token> --approved-by "<name>"`.
+3. Offer to remember the folder on this machine: `record.py set-pointer
+   "<folder>"`, then commit its token after the yes.
 
 Without Python: create the same folders, write each register as
 `{"schema_version": 1, "documents": []}` and
@@ -166,8 +170,8 @@ If `shared/locale/<CC>.md` exists for the household's country:
    `country pack rule — verify`. For fixed statutory dates, get them from
    `dates.py recurring --country <CC> --year <year> --today <today>`.
 3. The household ticks the ones it wants. Each ticked row becomes an
-   obligation (`record.py add --register obligations --dry-run`, then the yes,
-   then the write), with real dates supplied by the household where the pack
+   obligation (`record.py add --register obligations`, then the yes, then
+   `record.py commit`; all ticked rows in one list), with real dates supplied by the household where the pack
    gives only a rule. Record the accepted ones under *Country pack* in the
    profile.
 

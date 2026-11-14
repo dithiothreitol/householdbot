@@ -79,6 +79,10 @@ registers/obligations.json każdy termin, odnowienie i płatność wraz ze źró
 registers/chores.json      obowiązki domowe, udziały i zapisane plany (gdy gospodarstwo z nich korzysta)
 lists/                     lista zakupów, stałe produkty i jadłospis tygodnia
 documents/<rok>/           zarchiwizowane oryginały
+briefs/, reviews/          zapisane przeglądy i strony
+exports/                   plik kalendarza dla telefonu
+registers/.history/        poprzednia wersja każdego zmienionego pliku
+registers/.pending/        podglądy czekające na „tak” (najwyżej 30 minut)
 log/decisions.md           każda zatwierdzona zmiana: kiedy, kto, co
 ```
 
@@ -92,7 +96,11 @@ log/decisions.md           każda zatwierdzona zmiana: kiedy, kto, co
   oraz jeden plik wskaźnika w `~/.claude/plugins/config/householdbot/` i
   odrzucają ścieżkę, która wyprowadza poza folder gospodarstwa. Tekst z
   dokumentów trafia do nich przez standardowe wejście, nigdy przez wiersz
-  poleceń. `build-skill` zapisuje folder nowego skilla w `~/.claude/skills/`,
+  poleceń. Każdy zapis jest najpierw podglądem; `commit` wykonuje dokładnie
+  pokazaną zmianę z imieniem zatwierdzającego. W Claude Code i Cowork hook
+  wtyczki `PreToolUse` (`hooks/gate.py`, uruchamiany przez `hooks/gate.sh`
+  ze znalezionym Pythonem) kieruje każdy commit i każdy bezpośredni zapis do
+  folderu gospodarstwa do okna uprawnień gospodarza. `build-skill` zapisuje folder nowego skilla w `~/.claude/skills/`,
   gdy domownik zatwierdzi to miejsce. Bez Pythona skille stosują te same
   zasady samodzielnie i oznaczają wyliczone daty do sprawdzenia.
 - **Wysyła** dane wyłącznie do usług podłączonych przez gospodarstwo, bo

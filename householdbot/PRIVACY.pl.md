@@ -11,6 +11,10 @@ konektorów. Nie ma serwera, konta ani analityki.
   przeglądy i dziennik zgód leżą w folderze wybranym przez gospodarstwo.
   HouseholdBot czyta i zapisuje wyłącznie tam, a poza tym jeden plik wskaźnika
   (`~/.claude/plugins/config/householdbot/location.md`) ze ścieżką do folderu.
+  Zmiana czekająca na „tak” leży w `registers/.pending/` najwyżej 30 minut i
+  zawiera tylko to, co zawierałby zapis; zmiana przygotowana, zanim rekord
+  istnieje (konfiguracja), czeka obok pliku wskaźnika. Plik kalendarza w
+  `exports/` udostępnia wyłącznie domownik, który go importuje.
 - **Claude.** Dokumenty i pytania przetwarza Claude na koncie Claude
   należącym do gospodarstwa, na warunkach tego konta.
 - **Podłączone usługi.** Gmail, Kalendarz Google i Dysk Google działają

@@ -1,0 +1,34 @@
+{
+  "group": "gate",
+  "about": "a paid bill is closed and its next occurrence added in one change",
+  "household": [
+    "full"
+  ],
+  "turns": [
+    {
+      "say": "Tu Anna. Zapłaciłam dziś rachunek za prąd.",
+      "expect": {
+        "record_unchanged": true,
+        "reply_matches": [
+          "prąd"
+        ]
+      }
+    },
+    {
+      "say": "tak",
+      "expect": {
+        "entry": {
+          "register": "obligations",
+          "where": {
+            "series": "electricity-bill",
+            "status": "done",
+            "done_date": "<<today>>"
+          }
+        },
+        "log_lines_added": {
+          "min": 2
+        }
+      }
+    }
+  ]
+}

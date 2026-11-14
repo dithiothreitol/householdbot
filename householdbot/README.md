@@ -75,6 +75,10 @@ registers/obligations.json every deadline, renewal and payment, with its source
 registers/chores.json      chores, shares and saved chore plans (when the household uses them)
 lists/                     the shopping list, regular items and the week's meals
 documents/<year>/         the filed originals
+briefs/, reviews/          saved briefs and pages
+exports/                   the calendar file for a phone
+registers/.history/        the previous version of every changed file
+registers/.pending/        previews waiting for a yes (30 minutes at most)
 log/decisions.md          every approved change: when, who, what
 ```
 
@@ -87,7 +91,12 @@ log/decisions.md          every approved change: when, who, what
   read and write inside the household folder and one pointer file under
   `~/.claude/plugins/config/householdbot/`, and refuse a path that leads out of
   the household folder. Text from documents reaches them on standard input,
-  never on a command line. `build-skill` writes one new skill folder under
+  never on a command line. Every write is a preview first; `commit` applies
+  exactly the previewed change with the approver's name. In Claude Code and
+  Cowork, the plugin's `PreToolUse` hook (`hooks/gate.py`, run through
+  `hooks/gate.sh` with the Python it finds) sends each commit, and each
+  direct write into the household folder, to the host's permission prompt.
+  `build-skill` writes one new skill folder under
   `~/.claude/skills/` when the member approves that place. Without Python the
   skills follow the same rules by hand and mark computed dates for checking.
 - **Sends:** nothing to any service of its own; HouseholdBot has none. If the

@@ -10,7 +10,7 @@
     "sunday"
   ],
   "holidays": {
-    "law": "ustawa z dnia 18 stycznia 1951 r. o dniach wolnych od pracy, art. 1 (t.j. Dz.U. 2025 poz. 296); 24 December added by Dz.U. 2024 poz. 1965 from 1 February 2025",
+    "law": "ustawa z dnia 18 stycznia 1951 r. o dniach wolnych od pracy, art. 1 (t.j. Dz.U. 2025 poz. 296); 24 grudnia dodany przez Dz.U. 2024 poz. 1965 od 1 lutego 2025",
     "source": "https://api.sejm.gov.pl/eli/acts/DU/2025/296/text.pdf",
     "fixed": [
       {
@@ -111,7 +111,7 @@
     "court": {
       "title": "Civil court proceedings",
       "end_roll": "forward",
-      "law": "KPC art. 165 § 1 with Kodeks cywilny art. 111, 112, 115",
+      "law": "KPC art. 165 § 1 w zw. z art. 111, 112 i 115 Kodeksu cywilnego",
       "met_by": "posting at a Polish post office of the designated operator before the end of the last day (KPC art. 165 § 2)"
     },
     "calendar": {
@@ -135,7 +135,7 @@
       "title": "Registered letter from a court, not collected after two notices",
       "days": 15,
       "from": "the day the first notice was left",
-      "law": "KPC art. 139 § 1; court delivery regulation (Dz.U. 2024 poz. 19) § 6 to § 8; Supreme Court IV CKN 1026/00",
+      "law": "KPC art. 139 § 1; rozporządzenie w sprawie doręczeń sądowych (Dz.U. 2024 poz. 19) § 6-8; SN IV CKN 1026/00",
       "note": "Each notice gives 7 days counted from the day after it; the letter counts as delivered on the last day of the second period, usually 15 days after the first notice (7 days after the second notice when its date is known). A first letter to a private defendant may be served by a bailiff (KPC art. 139¹ § 1); if the claimant proves the address, the original date stands (art. 139¹ § 3). An electronic payment order counts as served at the PESEL-register address (KPC art. 505³⁴)."
     },
     {
@@ -218,7 +218,7 @@
       "unit": "days",
       "from": "taking possession of the goods, or concluding the contract for services",
       "counting": "civil",
-      "law": "ustawa o prawach konsumenta art. 27 ust. 1, art. 28, art. 30 ust. 2 (sending the statement in time is enough)",
+      "law": "ustawa o prawach konsumenta art. 27 ust. 1, art. 28, art. 30 ust. 2 (wystarczy wysłać oświadczenie przed upływem terminu)",
       "met_by": "sending the statement before the end of the last day (ustawa o prawach konsumenta art. 30 ust. 2)"
     },
     {
@@ -238,7 +238,7 @@
       "unit": "days",
       "from": "the trader receiving the complaint",
       "counting": "civil",
-      "law": "ustawa o prawach konsumenta art. 7a ust. 1 and 2",
+      "law": "ustawa o prawach konsumenta art. 7a ust. 1 i 2",
       "silence": "no reply within the window means the complaint is accepted (ustawa o prawach konsumenta art. 7a ust. 2)"
     },
     {
@@ -248,7 +248,7 @@
       "unit": "days",
       "from": "the firm receiving the complaint",
       "counting": "civil",
-      "law": "ustawa o rozpatrywaniu reklamacji przez podmioty rynku finansowego art. 6 and 8",
+      "law": "ustawa o rozpatrywaniu reklamacji przez podmioty rynku finansowego art. 6 i 8",
       "met_by": "the firm sending its reply before the end of the last day (ustawa o rozpatrywaniu reklamacji przez podmioty rynku finansowego art. 6)",
       "silence": "no reply within the window means the complaint is accepted (art. 8 of that act)"
     },
@@ -259,7 +259,7 @@
       "unit": "days",
       "from": "the firm receiving the complaint",
       "counting": "civil",
-      "law": "ustawa o rozpatrywaniu reklamacji przez podmioty rynku finansowego art. 7 pkt 3 and art. 8",
+      "law": "ustawa o rozpatrywaniu reklamacji przez podmioty rynku finansowego art. 7 pkt 3 i art. 8",
       "met_by": "the firm sending its reply before the end of the last day (ustawa o rozpatrywaniu reklamacji przez podmioty rynku finansowego art. 6)",
       "silence": "no reply within the window means the complaint is accepted (art. 8 of that act)"
     },
@@ -279,7 +279,7 @@
       "unit": "business_days",
       "from": "the provider receiving the complaint",
       "counting": "civil",
-      "law": "ustawa o usługach płatniczych art. 15a ust. 2 and 4",
+      "law": "ustawa o usługach płatniczych art. 15a ust. 2 i 4",
       "met_by": "the firm sending its reply before the end of the last day (ustawa o usługach płatniczych art. 15a ust. 4)",
       "silence": "the act sets no consequence for a missing reply; do not treat silence as acceptance — verify"
     },
@@ -290,7 +290,7 @@
       "unit": "business_days",
       "from": "the provider receiving the complaint",
       "counting": "civil",
-      "law": "ustawa o usługach płatniczych art. 15a ust. 3 and 4",
+      "law": "ustawa o usługach płatniczych art. 15a ust. 3 i 4",
       "met_by": "the firm sending its reply before the end of the last day (ustawa o usługach płatniczych art. 15a ust. 4)",
       "silence": "the act sets no consequence for a missing reply; do not treat silence as acceptance — verify"
     },
@@ -329,7 +329,7 @@
       "unit": "days",
       "from": "filing the complaint",
       "counting": "civil",
-      "law": "electricity system regulation (t.j. Dz.U. 2025 poz. 919) § 49 pkt 8; gas system regulation (t.j. Dz.U. 2025 poz. 1382) § 41 pkt 2",
+      "law": "rozporządzenie w sprawie systemu elektroenergetycznego (t.j. Dz.U. 2025 poz. 919) § 49 pkt 8; rozporządzenie w sprawie systemu gazowego (t.j. Dz.U. 2025 poz. 1382) § 41 pkt 2",
       "silence": "the system regulations set no consequence for a missing reply to a billing complaint — verify"
     },
     {
@@ -367,7 +367,7 @@
       "unit": "days",
       "from": "the insurer receiving notice of the event",
       "counting": "civil",
-      "law": "Kodeks cywilny art. 817 § 1 and 2; ustawa o działalności ubezpieczeniowej i reasekuracyjnej art. 29 ust. 4 and 5"
+      "law": "Kodeks cywilny art. 817 § 1 i 2; ustawa o działalności ubezpieczeniowej i reasekuracyjnej art. 29 ust. 4 i 5"
     },
     {
       "id": "withdrawal-refund",
@@ -376,7 +376,7 @@
       "unit": "days",
       "from": "the trader receiving the withdrawal statement",
       "counting": "civil",
-      "law": "ustawa o prawach konsumenta art. 32 ust. 1 and 3"
+      "law": "ustawa o prawach konsumenta art. 32 ust. 1 i 3"
     },
     {
       "id": "withdrawal-return-goods",
@@ -458,7 +458,7 @@
       "unit": "days",
       "from": "filing the correction",
       "counting": "tax",
-      "law": "Ordynacja podatkowa art. 77 § 2 pkt 1 (as amended by Dz.U. 2026 poz. 846)"
+      "law": "Ordynacja podatkowa art. 77 § 2 pkt 1 (w brzmieniu nadanym przez Dz.U. 2026 poz. 846)"
     },
     {
       "id": "pit-refund-correction-late",
@@ -467,7 +467,7 @@
       "unit": "months",
       "from": "filing the correction",
       "counting": "tax",
-      "law": "Ordynacja podatkowa art. 77 § 1 pkt 6 lit. a and art. 165 § 8a (Dz.U. 2026 poz. 846)"
+      "law": "Ordynacja podatkowa art. 77 § 1 pkt 6 lit. a i art. 165 § 8a (Dz.U. 2026 poz. 846)"
     },
     {
       "id": "prescription-paper",
@@ -503,7 +503,7 @@
       "unit": "days",
       "from": "the issue date, or the date it may be filled from (realizacja od dnia)",
       "counting": "calendar",
-      "law": "Prawo farmaceutyczne art. 96a ust. 7 pkt 1, ust. 7a and 7aa; prescriptions regulation (t.j. Dz.U. 2025 poz. 604) § 9 ust. 3"
+      "law": "Prawo farmaceutyczne art. 96a ust. 7 pkt 1, ust. 7a i 7aa; rozporządzenie w sprawie recept (t.j. Dz.U. 2025 poz. 604) § 9 ust. 3"
     },
     {
       "id": "prescription-antibiotic",
@@ -539,7 +539,7 @@
       "unit": "business_days",
       "from": "being entered on the waiting list",
       "counting": "court",
-      "law": "ustawa o świadczeniach opieki zdrowotnej finansowanych ze środków publicznych art. 20 ust. 2a pkt 1 and ust. 2aa",
+      "law": "ustawa o świadczeniach opieki zdrowotnej finansowanych ze środków publicznych art. 20 ust. 2a pkt 1 i ust. 2aa",
       "met_by": "posting it at a Polish post office of the designated operator before the end of the last day (KPC art. 165 § 2, applied by art. 20 ust. 2aa of that act)"
     },
     {
@@ -549,7 +549,7 @@
       "unit": "days",
       "from": "the obstacle that caused the missed appointment ending",
       "counting": "calendar",
-      "law": "ustawa o świadczeniach opieki zdrowotnej finansowanych ze środków publicznych art. 20 ust. 10e and 10f, art. 23g ust. 10"
+      "law": "ustawa o świadczeniach opieki zdrowotnej finansowanych ze środków publicznych art. 20 ust. 10e i 10f, art. 23g ust. 10"
     },
     {
       "id": "physiotherapy-referral-registration",
@@ -558,7 +558,7 @@
       "unit": "days",
       "from": "the issue date of the referral",
       "counting": "calendar",
-      "law": "guaranteed rehabilitation benefits regulation (t.j. Dz.U. 2021 poz. 265), annex 1 lp. 1 lit. b"
+      "law": "rozporządzenie w sprawie świadczeń gwarantowanych z zakresu rehabilitacji leczniczej (t.j. Dz.U. 2021 poz. 265), zał. 1 lp. 1 lit. b"
     },
     {
       "id": "spa-referral-paper-sending",
@@ -567,7 +567,7 @@
       "unit": "days",
       "from": "the issue date of the referral",
       "counting": "calendar",
-      "law": "spa referral regulation (t.j. Dz.U. 2026 poz. 557) § 1a pkt 2, § 2 ust. 6"
+      "law": "rozporządzenie w sprawie kierowania na leczenie uzdrowiskowe (t.j. Dz.U. 2026 poz. 557) § 1a pkt 2, § 2 ust. 6"
     },
     {
       "id": "spa-referral-nfz-decision",
@@ -576,7 +576,7 @@
       "unit": "days",
       "from": "the NFZ branch receiving the referral",
       "counting": "calendar",
-      "law": "spa referral regulation (t.j. Dz.U. 2026 poz. 557) § 7 ust. 1, § 9c"
+      "law": "rozporządzenie w sprawie kierowania na leczenie uzdrowiskowe (t.j. Dz.U. 2026 poz. 557) § 7 ust. 1, § 9c"
     },
     {
       "id": "sick-leave-address-change",
@@ -594,7 +594,7 @@
       "unit": "months",
       "from": "the last day of the period the benefit covers",
       "counting": "civil",
-      "law": "ustawa o świadczeniach pieniężnych z ubezpieczenia społecznego w razie choroby i macierzyństwa art. 67 ust. 1 and 4"
+      "law": "ustawa o świadczeniach pieniężnych z ubezpieczenia społecznego w razie choroby i macierzyństwa art. 67 ust. 1 i 4"
     },
     {
       "id": "farm-holder-change-notice",
@@ -621,7 +621,7 @@
       "unit": "years",
       "from": "the claim becoming due, or receiving the insurer's written decision on a reported claim",
       "counting": "civil",
-      "law": "Kodeks cywilny art. 819 § 1 and 4"
+      "law": "Kodeks cywilny art. 819 § 1 i 4"
     },
     {
       "id": "building-defect-discovery",
@@ -630,7 +630,7 @@
       "unit": "years",
       "from": "handover (odbiór) of the works",
       "counting": "civil",
-      "law": "Kodeks cywilny art. 656 § 1, art. 638 § 1, art. 568 § 1 and 6"
+      "law": "Kodeks cywilny art. 656 § 1, art. 638 § 1, art. 568 § 1 i 6"
     },
     {
       "id": "building-defect-repair-claim",
@@ -639,7 +639,7 @@
       "unit": "years",
       "from": "finding the defect",
       "counting": "civil",
-      "law": "Kodeks cywilny art. 568 § 2 and 3, with art. 638 § 1 and art. 656 § 1"
+      "law": "Kodeks cywilny art. 568 § 2 i 3 w zw. z art. 638 § 1 i art. 656 § 1"
     },
     {
       "id": "contract-for-work-claims",
@@ -666,7 +666,7 @@
       "unit": "days",
       "from": "signing the sale contract",
       "counting": "tax",
-      "law": "ustawa o podatku od czynności cywilnoprawnych art. 3 ust. 1 pkt 1, art. 7 ust. 1 pkt 1 lit. a, art. 10 ust. 1; exemptions art. 2 pkt 4 lit. a and b, art. 9 pkt 6 (PLN 3,000 for contracts from 3 Nov 2026, PLN 1,000 before: Dz.U. 2026 poz. 1354 art. 3, 10 and 11)",
+      "law": "ustawa o podatku od czynności cywilnoprawnych art. 3 ust. 1 pkt 1, art. 7 ust. 1 pkt 1 lit. a, art. 10 ust. 1; zwolnienia: art. 2 pkt 4 lit. a i b, art. 9 pkt 6 (3000 zł dla umów od 3.11.2026, wcześniej 1000 zł: Dz.U. 2026 poz. 1354 art. 3, 10 i 11)",
       "events": [
         "vehicle-purchase"
       ]
@@ -678,7 +678,7 @@
       "unit": "days",
       "from": "buying the vehicle (the date of the contract or invoice)",
       "counting": "administrative",
-      "law": "Prawo o ruchu drogowym art. 73 ust. 1, art. 73aa ust. 1 pkt 1 and ust. 7; penalties art. 140mb ust. 1 and 5",
+      "law": "Prawo o ruchu drogowym art. 73 ust. 1, art. 73aa ust. 1 pkt 1 i ust. 7; kary: art. 140mb ust. 1 i 5",
       "events": [
         "vehicle-purchase"
       ]
@@ -690,7 +690,7 @@
       "unit": "days",
       "from": "the sale (transfer of ownership)",
       "counting": "civil",
-      "law": "ustawa o ubezpieczeniach obowiązkowych, UFG i PBUK art. 32 ust. 1, 2 and 4",
+      "law": "ustawa o ubezpieczeniach obowiązkowych, UFG i PBUK art. 32 ust. 1, 2 i 4",
       "events": [
         "vehicle-sale"
       ]
@@ -702,7 +702,7 @@
       "unit": "days",
       "from": "the sale (the date of the contract)",
       "counting": "administrative",
-      "law": "Prawo o ruchu drogowym art. 78 ust. 2 pkt 1 and ust. 2a; penalty art. 140mb ust. 6; vehicle registration regulation (Dz.U. 2024 poz. 1709) § 15 ust. 1",
+      "law": "Prawo o ruchu drogowym art. 78 ust. 2 pkt 1 i ust. 2a; kara: art. 140mb ust. 6; rozporządzenie w sprawie rejestracji pojazdów (Dz.U. 2024 poz. 1709) § 15 ust. 1",
       "events": [
         "vehicle-sale"
       ]
@@ -738,7 +738,7 @@
       "unit": "days",
       "from": "the first resident moving in",
       "counting": "tax",
-      "law": "ustawa o utrzymaniu czystości i porządku w gminach art. 6m ust. 1 and 1¹ pkt 1, art. 2 ust. 3, art. 6q ust. 1",
+      "law": "ustawa o utrzymaniu czystości i porządku w gminach art. 6m ust. 1 i 1¹ pkt 1, art. 2 ust. 3, art. 6q ust. 1",
       "events": [
         "moving-house"
       ]
@@ -762,7 +762,7 @@
       "unit": "days",
       "from": "the change of address",
       "counting": "administrative",
-      "law": "Prawo o ruchu drogowym art. 78 ust. 2 pkt 2; vehicle registration regulation (Dz.U. 2024 poz. 1709) § 16 ust. 1 pkt 1 and 2",
+      "law": "Prawo o ruchu drogowym art. 78 ust. 2 pkt 2; rozporządzenie w sprawie rejestracji pojazdów (Dz.U. 2024 poz. 1709) § 16 ust. 1 pkt 1 i 2",
       "events": [
         "moving-house"
       ]
@@ -774,7 +774,7 @@
       "unit": "days",
       "from": "the birth card (karta urodzenia) being drawn up",
       "counting": "administrative",
-      "law": "Prawo o aktach stanu cywilnego art. 12 ust. 1, art. 14, art. 55 ust. 1 and 2, art. 56 ust. 2, art. 57 ust. 1 and 2, art. 58a ust. 1",
+      "law": "Prawo o aktach stanu cywilnego art. 12 ust. 1, art. 14, art. 55 ust. 1 i 2, art. 56 ust. 2, art. 57 ust. 1 i 2, art. 58a ust. 1",
       "events": [
         "birth"
       ]
@@ -798,7 +798,7 @@
       "unit": "days",
       "from": "the birth",
       "counting": "calendar",
-      "law": "ustawa o świadczeniach pieniężnych z ubezpieczenia społecznego w razie choroby i macierzyństwa art. 30a ust. 1, art. 31 ust. 3 and 3f",
+      "law": "ustawa o świadczeniach pieniężnych z ubezpieczenia społecznego w razie choroby i macierzyństwa art. 30a ust. 1, art. 31 ust. 3 i 3f",
       "events": [
         "birth"
       ]
@@ -810,7 +810,7 @@
       "unit": "months",
       "from": "the birth",
       "counting": "administrative",
-      "law": "ustawa o pomocy państwa w wychowywaniu dzieci art. 13 ust. 5, art. 18 ust. 2 and 2a, art. 28 ust. 1",
+      "law": "ustawa o pomocy państwa w wychowywaniu dzieci art. 13 ust. 5, art. 18 ust. 2 i 2a, art. 28 ust. 1",
       "events": [
         "birth"
       ]
@@ -822,7 +822,7 @@
       "unit": "months",
       "from": "the birth",
       "counting": "administrative",
-      "law": "ustawa o świadczeniach rodzinnych art. 17c ust. 1, 3, 5 and 9 pkt 1, art. 24 ust. 9, art. 32 ust. 2",
+      "law": "ustawa o świadczeniach rodzinnych art. 17c ust. 1, 3, 5 i 9 pkt 1, art. 24 ust. 9, art. 32 ust. 2",
       "events": [
         "birth"
       ]
@@ -834,7 +834,7 @@
       "unit": "months",
       "from": "the birth",
       "counting": "administrative",
-      "law": "ustawa o świadczeniach rodzinnych art. 15b ust. 1, 2, 3 and 5, art. 32 ust. 2",
+      "law": "ustawa o świadczeniach rodzinnych art. 15b ust. 1, 2, 3 i 5, art. 32 ust. 2",
       "events": [
         "birth"
       ]
@@ -846,7 +846,7 @@
       "unit": "months",
       "from": "the birth",
       "counting": "calendar",
-      "law": "Kodeks pracy art. 182³ § 1 pkt 1, § 1¹ and § 2",
+      "law": "Kodeks pracy art. 182³ § 1 pkt 1, § 1¹ i § 2",
       "events": [
         "birth"
       ]
@@ -858,7 +858,7 @@
       "unit": "days",
       "from": "the end of employment",
       "counting": "civil",
-      "law": "Kodeks pracy art. 97 § 1 and 1³, art. 300",
+      "law": "Kodeks pracy art. 97 § 1 i 1³, art. 300",
       "met_by": "the employer posting the certificate or delivering it in another way before the end of the last day (Kodeks pracy art. 97 § 1)",
       "events": [
         "job-change"
@@ -895,7 +895,7 @@
       "unit": "days",
       "from": "the end of the health insurance obligation, such as the end of employment",
       "counting": "calendar",
-      "law": "ustawa o świadczeniach opieki zdrowotnej finansowanych ze środków publicznych art. 67 ust. 4 and 6",
+      "law": "ustawa o świadczeniach opieki zdrowotnej finansowanych ze środków publicznych art. 67 ust. 4 i 6",
       "events": [
         "job-change"
       ]
@@ -907,7 +907,7 @@
       "unit": "days",
       "from": "the new employer concluding the PPK contract on the employee's behalf",
       "counting": "civil",
-      "law": "ustawa o pracowniczych planach kapitałowych art. 19 ust. 1 and 2",
+      "law": "ustawa o pracowniczych planach kapitałowych art. 19 ust. 1 i 2",
       "events": [
         "job-change"
       ]
@@ -919,7 +919,7 @@
       "unit": "days",
       "from": "the death card (karta zgonu) being drawn up",
       "counting": "administrative",
-      "law": "Prawo o aktach stanu cywilnego art. 12 ust. 1, art. 13 ust. 2, art. 93 ust. 1 and 2; ustawa o cmentarzach i chowaniu zmarłych art. 10 ust. 1",
+      "law": "Prawo o aktach stanu cywilnego art. 12 ust. 1, art. 13 ust. 2, art. 93 ust. 1 i 2; ustawa o cmentarzach i chowaniu zmarłych art. 10 ust. 1",
       "events": [
         "death"
       ]
@@ -931,7 +931,7 @@
       "unit": "months",
       "from": "the death (or the funeral, when an earlier application was impossible for reasons beyond the claimant's control)",
       "counting": "administrative",
-      "law": "ustawa o emeryturach i rentach z FUS art. 80 ust. 1 and 7, art. 81 ust. 1 and 2, art. 124; Dz.U. 2025 poz. 718 art. 13; M.P. 2026 poz. 150",
+      "law": "ustawa o emeryturach i rentach z FUS art. 80 ust. 1 i 7, art. 81 ust. 1 i 2, art. 124; Dz.U. 2025 poz. 718 art. 13; M.P. 2026 poz. 150",
       "events": [
         "death"
       ]
@@ -955,7 +955,7 @@
       "unit": "months",
       "from": "the day the heir learned of their title to inherit",
       "counting": "civil",
-      "law": "Kodeks cywilny art. 1012, art. 1015 § 1, 1¹, 1² and 2, art. 1018 § 3",
+      "law": "Kodeks cywilny art. 1012, art. 1015 § 1, 1¹, 1² i 2, art. 1018 § 3",
       "met_by": "making the statement before a notary or a court, or filing the request with the court, before the end of the last day (Kodeks cywilny art. 1015 § 1¹); the time stops while a court decides on a required permission (art. 1015 § 1²)",
       "silence": "no statement within the window means acceptance with the benefit of inventory (Kodeks cywilny art. 1015 § 2)",
       "events": [
@@ -969,7 +969,7 @@
       "unit": "months",
       "from": "the death of the account holder",
       "counting": "tax",
-      "law": "ustawa o podatku od spadków i darowizn art. 1 ust. 2, art. 4a ust. 1 pkt 1 and ust. 4 pkt 1, art. 6 ust. 1 pkt 3, art. 9 ust. 1 pkt 1",
+      "law": "ustawa o podatku od spadków i darowizn art. 1 ust. 2, art. 4a ust. 1 pkt 1 i ust. 4 pkt 1, art. 6 ust. 1 pkt 3, art. 9 ust. 1 pkt 1",
       "events": [
         "death"
       ]
@@ -981,7 +981,7 @@
       "unit": "months",
       "from": "the court decision on succession becoming final, or the notarial certificate of succession being registered",
       "counting": "tax",
-      "law": "ustawa o podatku od spadków i darowizn art. 6 ust. 1 pkt 1, art. 9 ust. 1, art. 17a ust. 1 (as amended by Dz.U. 2025 poz. 1854, for decisions and certificates from 7 Jan 2026)",
+      "law": "ustawa o podatku od spadków i darowizn art. 6 ust. 1 pkt 1, art. 9 ust. 1, art. 17a ust. 1 (w brzmieniu nadanym przez Dz.U. 2025 poz. 1854, dla decyzji i zaświadczeń od 7.01.2026)",
       "events": [
         "death"
       ]
@@ -993,7 +993,7 @@
       "unit": "days",
       "from": "the court decision on succession becoming final, or the notarial certificate of succession being drawn up",
       "counting": "administrative",
-      "law": "Prawo o ruchu drogowym art. 73aa ust. 2, art. 140mb ust. 1 and 5 (60 days since 24 Dec 2025, Dz.U. 2025 poz. 1734)",
+      "law": "Prawo o ruchu drogowym art. 73aa ust. 2, art. 140mb ust. 1 i 5 (60 dni od 24.12.2025, Dz.U. 2025 poz. 1734)",
       "events": [
         "death"
       ]
@@ -1005,7 +1005,7 @@
       "unit": "months",
       "from": "the court decision on succession becoming final, or the notarial certificate of succession being registered",
       "counting": "tax",
-      "law": "ustawa o podatku od spadków i darowizn art. 4a ust. 1 pkt 1, ust. 1a, 2, 3 and 4 pkt 1, art. 4c ust. 1, art. 17a ust. 1a (Dz.U. 2025 poz. 1854); Ordynacja podatkowa art. 162 § 2",
+      "law": "ustawa o podatku od spadków i darowizn art. 4a ust. 1 pkt 1, ust. 1a, 2, 3 i 4 pkt 1, art. 4c ust. 1, art. 17a ust. 1a (Dz.U. 2025 poz. 1854); Ordynacja podatkowa art. 162 § 2",
       "events": [
         "death"
       ]
@@ -1040,7 +1040,7 @@
       "counting": "tax",
       "lead_time_days": 7,
       "applies_when": "the household owns a home, land or a garage",
-      "law": "ustawa o podatkach i opłatach lokalnych art. 6 ust. 7 and 11a"
+      "law": "ustawa o podatkach i opłatach lokalnych art. 6 ust. 7 i 11a"
     },
     {
       "id": "child-benefit-800",
@@ -1054,7 +1054,7 @@
       "counting": "calendar",
       "lead_time_days": 30,
       "applies_when": "the household has a child under 18 and receives or wants 800+",
-      "law": "ustawa o pomocy państwa w wychowywaniu dzieci art. 13 ust. 5, art. 18 ust. 1 and 2, art. 21 ust. 3 and 4"
+      "law": "ustawa o pomocy państwa w wychowywaniu dzieci art. 13 ust. 5, art. 18 ust. 1 i 2, art. 21 ust. 3 i 4"
     },
     {
       "id": "pit-information-forms",
@@ -1067,7 +1067,7 @@
       "counting": "tax",
       "lead_time_days": 0,
       "applies_when": "someone in the household had wages, contract income, a pension or investment income last year",
-      "law": "ustawa o podatku dochodowym od osób fizycznych art. 42g ust. 1 pkt 2, with art. 34 ust. 7 and 8, art. 39 ust. 1 and 3, art. 42 ust. 2 pkt 1, art. 42a ust. 1"
+      "law": "ustawa o podatku dochodowym od osób fizycznych art. 42g ust. 1 pkt 2 w zw. z art. 34 ust. 7 i 8, art. 39 ust. 1 i 3, art. 42 ust. 2 pkt 1, art. 42a ust. 1"
     },
     {
       "id": "pit-twoj-e-pit-check",
@@ -1081,7 +1081,7 @@
       "counting": "tax",
       "lead_time_days": 14,
       "applies_when": "a taxpayer in the household relies on the pre-filled return and all their income is on payers' forms",
-      "law": "ustawa o podatku dochodowym od osób fizycznych art. 45cd ust. 1, 2, 4 and 5"
+      "law": "ustawa o podatku dochodowym od osób fizycznych art. 45cd ust. 1, 2, 4 i 5"
     },
     {
       "id": "pit-1-5-pensioner-statement",
@@ -1094,7 +1094,7 @@
       "counting": "tax",
       "lead_time_days": 14,
       "applies_when": "a pensioner whose PIT-40A settles the year wants to choose or change the organisation",
-      "law": "ustawa o podatku dochodowym od osób fizycznych art. 45c ust. 3a and 3c"
+      "law": "ustawa o podatku dochodowym od osób fizycznych art. 45c ust. 3a i 3c"
     },
     {
       "id": "preschool-year-start",
@@ -1107,7 +1107,7 @@
       "counting": "calendar",
       "lead_time_days": 30,
       "applies_when": "a child in the household turns 6 this calendar year",
-      "law": "Prawo oświatowe art. 31 ust. 4 and 5, art. 33 ust. 1, art. 94"
+      "law": "Prawo oświatowe art. 31 ust. 4 i 5, art. 33 ust. 1, art. 94"
     },
     {
       "id": "school-obligation-start",
@@ -1133,7 +1133,7 @@
       "counting": "calendar",
       "lead_time_days": 60,
       "applies_when": "a child turns 7 this calendar year and the parents want to postpone the start of school",
-      "law": "Prawo oświatowe art. 36 ust. 4 to 6"
+      "law": "Prawo oświatowe art. 36 ust. 4-6"
     },
     {
       "id": "school-abroad-notice",
@@ -1146,7 +1146,7 @@
       "counting": "calendar",
       "lead_time_days": 14,
       "applies_when": "a child of pre-school-year or school-obligation age attends a kindergarten or school abroad, or a foreign embassy school in Poland",
-      "law": "Prawo oświatowe art. 33 ust. 1 pkt 3, art. 36 ust. 10 and 11, art. 40 ust. 1 pkt 4"
+      "law": "Prawo oświatowe art. 33 ust. 1 pkt 3, art. 36 ust. 10 i 11, art. 40 ust. 1 pkt 4"
     },
     {
       "id": "school-extra-days-off",
@@ -1159,7 +1159,7 @@
       "counting": "calendar",
       "lead_time_days": 0,
       "applies_when": "a child attends a public primary or secondary school",
-      "law": "school year regulation (t.j. Dz.U. 2023 poz. 1211) § 5 ust. 1 and 3, § 6"
+      "law": "rozporządzenie w sprawie organizacji roku szkolnego (t.j. Dz.U. 2023 poz. 1211) § 5 ust. 1 i 3, § 6"
     }
   ],
   "sources": {
@@ -1246,7 +1246,7 @@
       "keep_years": 5,
       "from": "handover (odbiór) of the works",
       "permanent": false,
-      "law": "Kodeks cywilny art. 568 § 1 and 2, with art. 638 § 1 and art. 656 § 1",
+      "law": "Kodeks cywilny art. 568 § 1 i 2 w zw. z art. 638 § 1 i art. 656 § 1",
       "suggested": false,
       "note": "Defects of a building must be found within 5 years of handover; a repair claim expires 1 year after the defect is found, for a consumer not before the 5 years end. Keep longer while a defect claim is pending. Invoices for improvements may also matter for tax on a later sale (see notarial deeds)."
     },
@@ -1268,7 +1268,7 @@
       "keep_years": 3,
       "from": "the end of the cover, or receipt of the insurer's written decision on a reported claim",
       "permanent": false,
-      "law": "Kodeks cywilny art. 819 § 1 and 4",
+      "law": "Kodeks cywilny art. 819 § 1 i 4",
       "suggested": true,
       "note": "Suggestion based on the 3-year limitation of claims under an insurance contract, which runs from the claim becoming due and restarts after the insurer's written decision on a reported claim or event."
     },
@@ -1279,7 +1279,7 @@
       "keep_years": 10,
       "from": "the end of the cover",
       "permanent": false,
-      "law": "Kodeks cywilny art. 442¹ § 1 to 4, art. 819 § 3",
+      "law": "Kodeks cywilny art. 442¹ § 1-4, art. 819 § 3",
       "suggested": true,
       "note": "Suggestion. A claim for damage caused by a tort expires 3 years after the injured person learns of the damage and who is liable, but no later than 10 years after the event; longer periods apply after a crime and for personal injury. An injured person's claim against the liability insurer follows the same limitation (art. 819 § 3)."
     },
@@ -1353,7 +1353,7 @@
         {
           "title": "Decide on the seller's OC: keep it or end it in writing",
           "title_pl": "Zdecyduj o OC sprzedającego: kontynuacja albo pisemne wypowiedzenie",
-          "law": "ustawa o ubezpieczeniach obowiązkowych, UFG i PBUK art. 31 ust. 1 and 6",
+          "law": "ustawa o ubezpieczeniach obowiązkowych, UFG i PBUK art. 31 ust. 1 i 6",
           "note": "A new OC must start no later than the day the ended one stops."
         },
         {
@@ -1388,13 +1388,13 @@
         {
           "title": "Keep the sale agreement and attach a copy to the starosta notice",
           "title_pl": "Zachowaj umowę sprzedaży; kopię dołącz do zawiadomienia starosty",
-          "law": "vehicle registration regulation (Dz.U. 2024 poz. 1709) § 15 ust. 1; ustawa o ubezpieczeniach obowiązkowych, UFG i PBUK art. 32 ust. 3 and 4",
+          "law": "rozporządzenie w sprawie rejestracji pojazdów (Dz.U. 2024 poz. 1709) § 15 ust. 1; ustawa o ubezpieczeniach obowiązkowych, UFG i PBUK art. 32 ust. 3 i 4",
           "note": "Its date fixes when liability and the premium passed to the buyer."
         },
         {
           "title": "Check voluntary policies such as AC",
           "title_pl": "Sprawdź ubezpieczenia dobrowolne, np. AC",
-          "law": "Kodeks cywilny art. 823 § 1 and 3",
+          "law": "Kodeks cywilny art. 823 § 1 i 3",
           "note": "They pass to the buyer only with the insurer's consent, unless the terms say otherwise; otherwise they end at the sale."
         },
         {
@@ -1444,7 +1444,7 @@
         {
           "title": "Driving licence: the current pattern shows no address",
           "title_pl": "Prawo jazdy: obecny wzór nie zawiera adresu",
-          "law": "ustawa o kierujących pojazdami art. 18 ust. 1; driving licence pattern regulation (Dz.U. 2025 poz. 1072) annex 1 pt 2.1.4",
+          "law": "ustawa o kierujących pojazdami art. 18 ust. 1; rozporządzenie w sprawie wzoru prawa jazdy (Dz.U. 2025 poz. 1072) zał. 1 pkt 2.1.4",
           "note": "Changes to data shown on the licence go to the starosta within 30 days."
         },
         {
@@ -1484,19 +1484,19 @@
         {
           "title": "Request parental leave from the employer",
           "title_pl": "Złóż wniosek o urlop rodzicielski",
-          "law": "Kodeks pracy art. 182¹a § 1 and 4, art. 182¹c, art. 182¹d § 1",
+          "law": "Kodeks pracy art. 182¹a § 1 i 4, art. 182¹c, art. 182¹d § 1",
           "note": "At least 21 days before the leave starts; up to 5 parts until the end of the year the child turns 6."
         },
         {
           "title": "Premature or hospitalised baby: request supplementary maternity leave",
           "title_pl": "Wcześniak lub dziecko w szpitalu: złóż wniosek o uzupełniający urlop macierzyński",
-          "law": "Kodeks pracy art. 180² § 1 and 4",
+          "law": "Kodeks pracy art. 180² § 1 i 4",
           "note": "At least 21 days before maternity leave ends."
         },
         {
           "title": "Check-up and vaccination schedules",
           "title_pl": "Terminarz bilansów zdrowia i szczepień",
-          "law": "regulation on guaranteed primary care services (t.j. Dz.U. 2023 poz. 1427) annex 1 part III; ustawa o zapobieganiu oraz zwalczaniu zakażeń i chorób zakaźnych u ludzi art. 17 ust. 11",
+          "law": "rozporządzenie w sprawie świadczeń gwarantowanych z zakresu podstawowej opieki zdrowotnej (t.j. Dz.U. 2023 poz. 1427) zał. 1 część III; ustawa o zapobieganiu oraz zwalczaniu zakażeń i chorób zakaźnych u ludzi art. 17 ust. 11",
           "note": "The vaccination programme for each year is announced by 31 October of the year before."
         },
         {
@@ -1522,25 +1522,25 @@
         {
           "title": "Give the new employer a PIT-2 statement",
           "title_pl": "Złóż nowemu pracodawcy oświadczenie PIT-2",
-          "law": "ustawa o PIT art. 31a ust. 2, 5 and 7, art. 31b ust. 1 to 3",
+          "law": "ustawa o PIT art. 31a ust. 2, 5 i 7, art. 31b ust. 1-3",
           "note": "Applied from the month after it arrives at the latest; up to three payers, at 1/12, 1/24 or 1/36 each."
         },
         {
           "title": "PPK at the new employer: enrolment or written opt-out",
           "title_pl": "PPK u nowego pracodawcy: zapis albo pisemna rezygnacja",
-          "law": "ustawa o pracowniczych planach kapitałowych art. 15 ust. 1 and 2, art. 16 ust. 1 and 2, art. 23 ust. 2, 4 and 6",
+          "law": "ustawa o pracowniczych planach kapitałowych art. 15 ust. 1 i 2, art. 16 ust. 1 i 2, art. 23 ust. 2, 4 i 6",
           "note": "Enrolment no later than the 10th day of the month after 3 months of employment; opting out stops contributions from that month."
         },
         {
           "title": "No new job: register at the county labour office",
           "title_pl": "Brak nowej pracy: rejestracja w powiatowym urzędzie pracy",
-          "law": "ustawa o rynku pracy i służbach zatrudnienia art. 218 ust. 1, art. 219 ust. 1 pkt 1, art. 220 ust. 1 pkt 5 and ust. 2 pkt 3",
+          "law": "ustawa o rynku pracy i służbach zatrudnienia art. 218 ust. 1, art. 219 ust. 1 pkt 1, art. 220 ust. 1 pkt 5 i ust. 2 pkt 3",
           "note": "Benefit from the day of registration; none after resigning with notice, and a 90-day wait after an agreed termination, with the listed exceptions."
         },
         {
           "title": "Work certificate not issued: claim it in the labour court",
           "title_pl": "Brak świadectwa pracy: pozew do sądu pracy",
-          "law": "Kodeks pracy art. 97¹ § 1 and 3",
+          "law": "Kodeks pracy art. 97¹ § 1 i 3",
           "note": "At any time before the claim is time-barred."
         }
       ]
@@ -1563,19 +1563,19 @@
         {
           "title": "Funeral costs from the deceased's bank accounts",
           "title_pl": "Zwrot kosztów pogrzebu z rachunków zmarłego",
-          "law": "Prawo bankowe art. 55 ust. 1 pkt 1 and ust. 2",
+          "law": "Prawo bankowe art. 55 ust. 1 pkt 1 i ust. 2",
           "note": "Paid on the bills, within customary costs; outside the estate."
         },
         {
           "title": "Disposition on death at the deceased's bank",
           "title_pl": "Dyspozycja wkładem na wypadek śmierci",
-          "law": "Prawo bankowe art. 56 ust. 1, 2 and 5, art. 56a ust. 2",
+          "law": "Prawo bankowe art. 56 ust. 1, 2 i 5, art. 56a ust. 2",
           "note": "To the named spouse, ascendants, descendants or siblings, up to 20 times the average monthly wage; the bank informs them."
         },
         {
           "title": "Survivor's pension application to ZUS",
           "title_pl": "Wniosek o rentę rodzinną",
-          "law": "ustawa o emeryturach i rentach z FUS art. 65 ust. 1, art. 95a ust. 1 and 2, art. 129 ust. 1 and 2",
+          "law": "ustawa o emeryturach i rentach z FUS art. 65 ust. 1, art. 95a ust. 1 i 2, art. 129 ust. 1 i 2",
           "note": "Filed in the month of the death or the next month: paid from the day of death."
         },
         {
@@ -1587,7 +1587,7 @@
         {
           "title": "Find the deceased's bank accounts",
           "title_pl": "Uzyskaj informację o rachunkach zmarłego",
-          "law": "Prawo bankowe art. 92ba ust. 1 and 2, art. 92bc ust. 1",
+          "law": "Prawo bankowe art. 92ba ust. 1 i 2, art. 92bc ust. 1",
           "note": "For a person with a legal title to the estate, through a bank, from the central account information."
         },
         {

@@ -1,0 +1,23 @@
+{
+  "group": "language",
+  "about": "the weekly brief shows the plan date and the last day in two columns",
+  "household": [
+    "full",
+    "everyday"
+  ],
+  "turns": [
+    {
+      "say": "Tu Anna. Przegląd tygodnia, proszę.",
+      "expect": {
+        "record_unchanged": true,
+        "reply_matches": [
+          "ostatni dzień",
+          "(zaplanuj|zrób do|zrobić do|plan)"
+        ],
+        "reply_not_matches": [
+          "\\(ostatni dzień\\)"
+        ]
+      }
+    }
+  ]
+}

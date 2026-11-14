@@ -1,0 +1,30 @@
+{
+  "group": "gate",
+  "about": "a no leaves the record as it was",
+  "household": [
+    "full"
+  ],
+  "dates": {
+    "tyres": 20
+  },
+  "turns": [
+    {
+      "say": "Tu Piotr. Dodaj przypomnienie o wymianie opon na zimowe na <<tyres_pl>>.",
+      "expect": {
+        "record_unchanged": true
+      }
+    },
+    {
+      "say": "nie, jednak nie dodawaj",
+      "expect": {
+        "record_unchanged": true,
+        "no_entry": {
+          "register": "obligations",
+          "where": {
+            "title": "~opon"
+          }
+        }
+      }
+    }
+  ]
+}

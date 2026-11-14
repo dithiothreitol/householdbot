@@ -129,13 +129,13 @@ One line per item:
 - `record.py due --category children`: an item already registered (the same
   document as `source`, the same title and date) is shown as already in the
   record. A changed date or amount is a change to that entry (`record.py
-  update --dry-run`), never a second entry.
+  update`, a preview), never a second entry.
 - Payments and consents become obligations (kind `payment` or `task`,
   category `children`, owner an adult, subject the child's first name);
   meetings and events kind `appointment`. Things to bring and days off are
   registered only when the member wants a reminder.
-- Each entry: `record.py add … --dry-run`, shown in plain words, one
-  question, written with `--approved-by "<name>"` after the yes.
+- The entries: one `record.py add …` with a list (a preview), shown in plain
+  words, one question, committed with `--approved-by "<name>"` after the yes.
 
 ## Step 4 — Calendar entries
 

@@ -1,0 +1,49 @@
+{
+  "group": "gate",
+  "about": "a bill from inbox/ is filed only after a yes, with its payment",
+  "household": [
+    "full"
+  ],
+  "dates": {
+    "issued": -3,
+    "due": 10
+  },
+  "files": {
+    "inbox/rachunek-gaz.txt": "Example Gaz S.A. — Faktura VAT (dokument testowy)\nData wystawienia: <<issued_local_pl>>\nDo zapłaty: 132,50 zł\nTermin płatności: <<due_local_pl>>\n"
+  },
+  "turns": [
+    {
+      "say": "Tu Anna. W inbox jest nowy rachunek za gaz. Zapisz go w rekordzie razem z terminem płatności.",
+      "expect": {
+        "record_unchanged": true,
+        "reply_matches": [
+          "132,50",
+          "\\((tak|yes)\\s*/"
+        ]
+      }
+    },
+    {
+      "say": "tak",
+      "expect": {
+        "entry": [
+          {
+            "register": "documents",
+            "where": {
+              "issuer": "~Example Gaz"
+            }
+          },
+          {
+            "register": "obligations",
+            "where": {
+              "amount": "132.50",
+              "due_date": "<<due>>"
+            }
+          }
+        ],
+        "log_lines_added": {
+          "min": 2
+        }
+      }
+    }
+  ]
+}

@@ -86,15 +86,19 @@ brief* (the same audience applies to this page) and the *Country pack* line.
 ## Step 1 — Deadlines by band
 
 `record.py due` with its 90-day horizon returns `items` (each with `band`,
-`due_local`, `do_by_local`, `days` and `start_now`), `no_date`, `counts` and
-`beyond_horizon`. Every date on the page is the deadline (`due_local`, the
-last day); when `do_by` is earlier, "plan by" and `do_by_local` follow it.
-The plan date is never called the last day. On the page:
+`due_local`, `do_by_local`, `days`, `start_now`, `plan_passed`, and
+`last_day_local` when a pack rule moved the last day), `no_date`, `counts`
+and `beyond_horizon`. Every date on the page is the last day
+(`last_day_local` when given, else `due_local`); when `do_by` is earlier,
+"plan by" and `do_by_local` follow it. The plan date is never called the
+last day, and the band is the script's: an item with `plan_passed` is "now"
+with its `plan_note`, never "overdue". On the page:
 
 - **Overdue and the next 7 days** (bands overdue and now): every item on one
   line: the deadline with its weekday, "plan by" when earlier, what, who,
-  amount with currency, and the provenance tag when it is not `stated in
-  document`. These are the next seven days, not the calendar week.
+  amount with currency, and the provenance tag in the household's language
+  (`provenance_local`) when it is not `stated in document`. These are the
+  next seven days, not the calendar week.
 - **Soon and coming** (7 to 89 days): the count of each band and its nearest
   item.
 - **Start now:** items inside their lead time, wherever they fall.
@@ -241,10 +245,14 @@ it", "make a page I can print", "zapisz", "na lodówkę"):
 2. Ask one question: "Save it as reviews/dashboard-2026-11-14.html?
    (yes / change / no)". A request to save made before the page was shown
    approves nothing: show it, then ask.
-3. After the yes, write that one file, then append one line to
-   `log/decisions.md`: the date, the approver's name, "dashboard saved as
-   reviews/<file>". Nothing else changes. A file of that name already there
-   gets `-2`, `-3`; nothing is overwritten.
+   Before asking, preview the file: `record.py save "<root>" --to
+   reviews/dashboard-<YYYY-MM-DD>.html --file -` with the page on standard
+   input. The script refuses a page with a script, a link, an image, a form
+   or a web address, and refuses any identifier.
+3. After the yes, `record.py commit "<root>" --confirm <token> --approved-by
+   "<name>"`: the script writes that one file and its line in
+   `log/decisions.md`. Nothing else changes. A file of that name already
+   there gets `-2`, `-3`; nothing is overwritten.
 
 The HTML follows `reference/html-page.md`: every value from the record is
 escaped as text, and no link, script or image is carried over from it. In a

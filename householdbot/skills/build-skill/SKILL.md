@@ -169,10 +169,13 @@ no)".
 - Before writing, look for `<place>/<name>/SKILL.md`. When it exists, never
   overwrite it: show the lines that change, old and new, and ask. A different
   skill under that name gets another name.
-- After the yes, write the two files. With a household record, append one
-  line to `log/decisions.md`: the date, the approver's name, "skill <name>
-  written to <place>". Nothing else changes. Say where the files are and how
-  to start the skill (`reference/install.md`).
+- In the household folder (`skills/<name>/`), preview each file with
+  `record.py save "<root>" --to skills/<name>/SKILL.md --file -` (and
+  `skills/<name>/reference/gotchas.md`) before asking, and commit both after
+  the yes; the script logs them. In `~/.claude/skills/<name>/`, outside the
+  record, write the two files after the yes; the decisions log covers the
+  record only, so nothing is logged there. Nothing else changes. Say where
+  the files are and how to start the skill (`reference/install.md`).
 
 ## Step 5 — Three prompts to try
 

@@ -170,11 +170,18 @@ flowchart LR
   rejestry, sumują wyciągi i planują obowiązki. Gdy Python nie działa, skille
   liczą ręcznie, pokazują kolejne kroki i oznaczają wynik
   `model calculation — verify`.
-- **Każda data ma źródło**: `stated in document`,
-  `told by household member`, `country pack rule — verify`.
-- **Bramki zgody**: każdy zapis jest najpierw pokazany i wykonywany z imieniem
-  zatwierdzającego; płatności, pisma, wypowiedzenia i podpisy są
+- **Każda data ma źródło**, podane w języku gospodarstwa: `z dokumentu`,
+  `podane przez domownika`, `reguła z pakietu krajowego, do sprawdzenia`.
+- **Bramka zapisu w skryptach**: każdy zapis jest najpierw podglądem z
+  żetonem potwierdzenia; `commit --confirm <żeton> --approved-by <imię>`
+  wykonuje dokładnie tę zmianę i nic więcej, a żeton starszy niż 30 minut
+  albo taki, którego pliki zmieniły się od podglądu, zostaje odrzucony. W
+  Claude Code i Cowork hook pyta jeszcze raz w oknie samego gospodarza, które
+  pokazuje zmianę. Płatności, pisma, wypowiedzenia i podpisy są
   przygotowywane, nigdy wykonywane.
+- **Przypomnienia bez konektora**: `record.py export --ics` tworzy plik
+  kalendarza, który zaimportuje każdy telefon; nowszy eksport aktualizuje te
+  same wydarzenia.
 - **Wspólne zasady** ma każdy skill: dane osobowe, treści z zewnątrz,
   pieniądze, daty i zastrzeżenie, że to nie jest porada.
 
@@ -198,6 +205,9 @@ pokazała jego budowa.
   nie trafia do wiersza poleceń.
 - Informacje o zdrowiu nie trafiają do przeglądów, tytułów w kalendarzu ani
   wspólnych stron.
+- Podgląd czeka w `registers/.pending/` najwyżej 30 minut i zawiera tylko to,
+  co zawierałby zapis; commit go usuwa. Zapisana strona nie zawiera skryptu,
+  linku, obrazka, adresu internetowego ani identyfikatora.
 - HouseholdBot przygotowuje i wyjaśnia. Nie udziela porad prawnych,
   podatkowych ani finansowych i mówi, kiedy sprawą powinien zająć się
   specjalista.
@@ -244,9 +254,13 @@ obliczenia, zapis raportu).
 
 ## Jakość i testy
 
-- **149 testów jednostkowych** skryptów: święta, terminy, doręczenia,
-  rejestry, scalanie kopii konfliktowych, wyciągi bankowe, plany obowiązków
-  i bezpieczeństwo (identyfikatory, ścieżki, dane z zewnątrz).
+- **198 testów jednostkowych** skryptów: święta, terminy, doręczenia,
+  rejestry, scalanie kopii konfliktowych, wyciągi bankowe, plany obowiązków,
+  bezpieczeństwo (identyfikatory, ścieżki, dane z zewnątrz), bramka zapisu z
+  hookiem i eksport kalendarza.
+- **18 testów sesyjnych**: rozmowy wieloturowe ze skryptami, oceniane po
+  stanie folderu gospodarstwa i po wzorcach, bez sędziego
+  (`scripts/session_test.py`; `--check` sprawdza je bez modelu).
 - **115 testów zachowania** w `claude plugin eval` na syntetycznych
   gospodarstwach, oceniane przez sędziego LLM, trzymane poza paczką wtyczki.
 - **Z wtyczką i bez niej**: na tych samych 115 przypadkach i tym samym modelu
@@ -354,8 +368,10 @@ dokumentu, nazwiska ani numeru. Podatności zgłaszaj poufnie, jak opisuje
 
 ## Stan projektu
 
-Wersja 1.0.0-rc.2 to kandydat do wydania 1.0 i pierwsza wersja w formacie
-wtyczek Codexa; wersja 1.0 ukaże się po pilotażu w prawdziwym gospodarstwie. Zmiany opisuje [CHANGELOG](CHANGELOG.md),
+Wersja 1.0.0-rc.3 to kandydat do wydania 1.0: bramka zapisu przeszła do
+skryptów, przypomnienia trafiają do telefonu przez plik kalendarza, a
+pilotaż ma swój protokół ([docs/pilot.pl.md](docs/pilot.pl.md)). Wersja 1.0
+ukaże się po pilotażu w prawdziwym gospodarstwie. Zmiany opisuje [CHANGELOG](CHANGELOG.md),
 a paczki są w [wydaniach](https://github.com/dithiothreitol/householdbot/releases).
 
 ## Licencja

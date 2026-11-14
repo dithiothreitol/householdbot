@@ -21,6 +21,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
+import make_household  # noqa: E402
 from make_household import add_months, back_to_weekday, pl  # noqa: E402
 
 
@@ -285,6 +286,9 @@ def add(root: Path, today: date) -> dict:
            lead_time_days=60, provenance="stated in document",
            source={"document": f"doc-{y}-{dn + 4:04d}", "page": 1, "quote": f"Data ważności: {pl(id_expiry)}"}),
     ]
+    if lang == "pl":
+        make_household.polish(new_docs)
+        make_household.polish(new_obs)
     docs["documents"].extend(new_docs)
     obs["obligations"].extend(new_obs)
     for name, data in (("documents", docs), ("obligations", obs)):

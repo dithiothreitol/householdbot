@@ -1,0 +1,30 @@
+{
+  "group": "dates",
+  "about": "England: acknowledgment of service over the Christmas bank holidays",
+  "household": [
+    "gb"
+  ],
+  "dates": {
+    "served": "next 12-15"
+  },
+  "windows": {
+    "ack": {
+      "window": "county-court-acknowledgment-of-service",
+      "from": "served",
+      "country": "GB",
+      "lang": "en"
+    }
+  },
+  "turns": [
+    {
+      "say": "This is Emma. A County Court claim form was served on me on <<served_en>>; I do not agree with the claim. What is the last day to file the acknowledgment of service?",
+      "expect": {
+        "record_unchanged": true,
+        "reply_matches": [
+          "<<ack_due_d_mon_en>>",
+          "CPR\\s*10"
+        ]
+      }
+    }
+  ]
+}

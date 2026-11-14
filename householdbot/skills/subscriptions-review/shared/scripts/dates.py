@@ -34,7 +34,7 @@ from datetime import date, timedelta
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
 
-VERSION = "1.1.0"
+VERSION = "1.2.0"
 HERE = Path(__file__).resolve().parent
 LOCALE_DIR = HERE.parent / "locale"
 I18N_DIR = HERE.parent / "i18n"
@@ -47,6 +47,10 @@ WEEKDAY_INDEX = {
 }
 ISO_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 EVERY_RE = re.compile(r"^every\s+(\d+)\s+(day|week|month|year)s?$")
+
+TEXT_LANG_NOTE = ("titles and notes from the pack are in English: translate them in the answer; "
+                  "quote only the law as it stands")
+PACK_TAG = "country pack rule — verify"
 
 BANDS = [
     # (name, lower bound inclusive, upper bound exclusive)
@@ -154,6 +158,24 @@ class Lang:
 
     def band_label(self, band_name: str) -> str:
         return self.data.get("bands", {}).get(band_name, band_name)
+
+    def tag(self, provenance: str | None) -> str | None:
+        """A provenance tag as the household reads it ("reguła z pakietu krajowego, do sprawdzenia")."""
+        if provenance is None:
+            return None
+        return self.data.get("tags", {}).get(provenance, provenance)
+
+    def pack_text(self, item: dict, field: str, out: dict) -> str | None:
+        """A pack's text in this language when the pack has it (title_pl), else the pack's own
+        text; text taken in English for another language marks the result with text_lang."""
+        own = item.get(f"{field}_{self.code}")
+        if own:
+            return own
+        value = item.get(field)
+        if value and self.code != "en":
+            out["text_lang"] = "en"
+            out["text_lang_note"] = TEXT_LANG_NOTE
+        return value
 
     def log(self, key: str, **kw) -> str:
         return self.data["log"][key].format(**kw)
@@ -506,9 +528,10 @@ def deadline(pack: Pack, start: date, amount: int, unit: str, rule_id: str,
         "due_date_text": text_en(due),
         "due_date_local": lang.date(due),
         "due_note": due_note,
-        "met_by": rule.get("met_by"),
         "lang": lang.code,
     }
+    if rule.get("met_by"):
+        result["met_by"] = lang.pack_text(rule, "met_by", result)
     # The plan never relies on the statutory forward roll: do_by is worked
     # back from the raw end of the period, so the forward roll stays margin.
     result.update(plan_do_by(pack, raw_end, transit_days, lang))
@@ -539,7 +562,6 @@ def statutory_dates(pack: Pack, year: int, ids: list[str] | None = None,
                                      new_date=lang.date(due), law=rule.get("law", item.get("counting")))
             row = {
                 "id": item["id"],
-                "title": item.get(f"title_{lang.code}") or item.get("title"),
                 "kind": item.get("kind"),
                 "category": item.get("category"),
                 "applies_when": item.get("applies_when"),
@@ -550,8 +572,11 @@ def statutory_dates(pack: Pack, year: int, ids: list[str] | None = None,
                 "due_note": due_note,
                 "lead_time_days": item.get("lead_time_days"),
                 "law": item.get("law"),
-                "provenance": "country pack rule — verify",
+                "rule": item.get("counting"),
+                "provenance": PACK_TAG,
+                "provenance_local": lang.tag(PACK_TAG),
             }
+            row["title"] = lang.pack_text(item, "title", row)
             if item.get("window_opens"):
                 om, od = (int(x) for x in item["window_opens"].split("-"))
                 row["window_opens"] = date(year, om, od).isoformat()
@@ -618,15 +643,18 @@ def window_result(pack: Pack, lang: Lang, w: dict, start: date, transit: int = 0
     inclusive = w.get("start_inclusive")
     res = deadline(pack, start, int(w["amount"]), w["unit"], w["counting"], transit, lang,
                    None if inclusive is None else bool(inclusive))
-    res.update({"window": w["id"], "title": w.get(f"title_{lang.code}") or w.get("title"),
-                "counted_from": w.get("from"), "law": w.get("law"), "pack": pack.label(),
-                "provenance": "country pack rule — verify"})
+    res.update({"window": w["id"], "title": lang.pack_text(w, "title", res),
+                "counted_from": lang.pack_text(w, "from", res), "law": w.get("law"), "pack": pack.label(),
+                "provenance": PACK_TAG, "provenance_local": lang.tag(PACK_TAG)})
+    rule = pack.data.get("counting_rules", {}).get(w["counting"], {})
     if w.get("met_by"):
         # A window for the other side (a firm's reply, an insurer's payment) says what
         # meets it; the general rule describes the household's own statements.
-        res["met_by"] = w["met_by"]
+        res["met_by"] = lang.pack_text(w, "met_by", res)
+    elif rule.get("met_by"):
+        res["met_by"] = lang.pack_text(rule, "met_by", res)
     if w.get("silence"):
-        res["silence"] = w["silence"]
+        res["silence"] = lang.pack_text(w, "silence", res)
     return res
 
 
@@ -644,13 +672,16 @@ def cmd_event(args) -> dict:
     steps = [window_result(pack, lang, pack.entry("response_windows", wid), start, args.transit)
              for wid in ev.get("windows", [])]
     steps.sort(key=lambda s: (s["do_by"], s["window"]))
-    tasks = [{"title": t.get(f"title_{lang.code}") or t.get("title"), "law": t.get("law"),
-              "note": t.get(f"note_{lang.code}") or t.get("note")} for t in ev.get("tasks", [])]
-    return {"event": ev["id"], "title": ev.get(f"title_{lang.code}") or ev.get("title"),
-            "happened": describe(start, lang), "steps": steps, "tasks": tasks,
-            "pack": pack.label(), "lang": lang.code,
-            "provenance": "country pack rule — verify",
-            "note": "steps are statutory windows counted from the event; tasks have no statutory date"}
+    res = {"event": ev["id"], "happened": describe(start, lang), "steps": steps,
+           "pack": pack.label(), "lang": lang.code,
+           "provenance": PACK_TAG, "provenance_local": lang.tag(PACK_TAG),
+           "note": "steps are statutory windows counted from the event; tasks have no statutory date"}
+    res["title"] = lang.pack_text(ev, "title", res)
+    res["tasks"] = [{"title": lang.pack_text(t, "title", res), "law": t.get("law"),
+                     "note": lang.pack_text(t, "note", res)} for t in ev.get("tasks", [])]
+    if any(s.get("text_lang") for s in steps):
+        res["text_lang"], res["text_lang_note"] = "en", TEXT_LANG_NOTE
+    return res
 
 
 def cmd_events(args) -> dict:
@@ -704,20 +735,22 @@ def cmd_deemed(args) -> dict:
     rule = pack.entry("deemed_delivery", args.id)
     start = parse_date(args.start)
     deemed, arithmetic, roll_note = deemed_date(pack, rule, start, lang)
-    return {
+    res = {
         "rule": rule["id"],
-        "title": rule.get("title"),
-        "counted_from": rule.get("from"),
         "start": describe(start, lang),
         "deemed_delivered": describe(deemed, lang),
         "arithmetic": arithmetic,
         "deemed_note": roll_note,
         "law": rule.get("law"),
-        "note": rule.get("note"),
         "pack": pack.label(),
         "lang": lang.code,
-        "provenance": "country pack rule — verify",
+        "provenance": PACK_TAG,
+        "provenance_local": lang.tag(PACK_TAG),
     }
+    res["title"] = lang.pack_text(rule, "title", res)
+    res["counted_from"] = lang.pack_text(rule, "from", res)
+    res["note"] = lang.pack_text(rule, "note", res)
+    return res
 
 
 def cmd_do_by(args) -> dict:

@@ -93,7 +93,7 @@ from `monthly_total_text` and `yearly_total_text` (for the rows shown). The
 
 - To cancel: hand each one to `cancel-or-switch`.
 - To remember a promotion end or a cancel-by date the register lacks: build
-  the obligation, `record.py add … --dry-run`, show it, write after a yes.
+  the obligation, `record.py add …` (a preview), show it, commit after a yes.
 
 ## Gates
 

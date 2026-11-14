@@ -82,8 +82,9 @@ Keep it to what was asked. One to four lines.
 
 When the fact was not extracted at filing, read the original at `file` and
 look for it. Report the page and quote. Offer to add the fact to the entry's
-`key_facts` (`record.py update --id doc-… --set 'key_facts=[…]' --dry-run`,
-then the yes, then `--approved-by`). Never add it without a yes.
+`key_facts` (`record.py update --id doc-… --file -` with the facts on
+standard input, then the yes, then `record.py commit`). Never add it without a
+yes.
 
 ## Step 4 — When nothing matches
 

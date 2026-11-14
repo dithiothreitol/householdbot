@@ -98,7 +98,8 @@ The filing window and deadline, the date the pre-filled return is accepted
 automatically, the date the information forms are due: from the pack, with
 `dates.py recurring` (in the Polish pack: `pit-information-forms`,
 `pit-twoj-e-pit-check`, `pit-annual`, `pit-1-5-pensioner-statement`). Offer
-them as obligations (`record.py add … --dry-run`, show, write after a yes),
+them as obligations (one `record.py add …` with a list, show the preview,
+commit after a yes),
 together with "collect the missing forms" tasks. When a refund is expected,
 `dates.py window --id pit-refund-electronic` (or `pit-refund-paper`) from the
 filing date gives the date to check for it; a correction has its own windows
@@ -112,7 +113,9 @@ Another pack has its own ids: they are in `shared/locale/<CC>.json`, and
 ## Step 5 — One page
 
 The checklist by member, the reliefs to decide, the missing items with who
-sends them, the dates. Saved as `briefs/tax-<year>.md` after a yes. Income
+sends them, the dates. Saved as `briefs/tax-<year>.md` (`record.py save`, then
+`record.py commit` after the yes).
+Income
 figures stay out of briefs shared with children.
 
 ## Gates

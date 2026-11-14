@@ -1,0 +1,46 @@
+name: pack review
+
+# On the first day of each month: every country pack whose last review is older
+# than six months gets one open issue, opened or updated, with the review steps.
+# Reads the repository; writes issues only.
+
+on:
+  schedule:
+    - cron: "0 6 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Packs due for review
+        run: python scripts/pack_review.py | tee review.json
+
+      - name: One issue per pack due
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create pack-review --color 2E7D5B --description "A country pack due for its review" --force
+          for pack in $(python -c "import json; print(' '.join(json.load(open('review.json'))['due']))"); do
+            title="Pack review due: $pack"
+            python scripts/pack_review.py --issue-body "$pack" > body.md
+            number=$(gh issue list --label pack-review --state open --search "in:title \"$title\"" \
+                     --json number --jq '.[0].number')
+            if [ -n "$number" ]; then
+              gh issue edit "$number" --body-file body.md
+            else
+              gh issue create --title "$title" --label pack-review --body-file body.md
+            fi
+          done

@@ -1,0 +1,28 @@
+{
+  "group": "dates",
+  "about": "the last day for an objection, with the article, from the delivery date",
+  "household": [
+    "full"
+  ],
+  "dates": {
+    "delivered": -2
+  },
+  "windows": {
+    "obj": {
+      "window": "objection-payment-order",
+      "from": "delivered"
+    }
+  },
+  "turns": [
+    {
+      "say": "Tu Anna. W <<delivered_weekday_pl>> <<delivered_pl>> odebrałam na poczcie nakaz zapłaty z Sądu Rejonowego w Brzozowie w postępowaniu upominawczym, na 1 860 zł od Example Windykacja S.A. Nie zgadzamy się z tym długiem. Do kiedy mamy czas?",
+      "expect": {
+        "record_unchanged": true,
+        "reply_matches": [
+          "<<obj_due_dm>>",
+          "505"
+        ]
+      }
+    }
+  ]
+}

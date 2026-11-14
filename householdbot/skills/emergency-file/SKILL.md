@@ -115,8 +115,9 @@ policy, page 1").
 
 ## Step 4 — Save and keep fresh
 
-After a yes, write `briefs/emergency-file.md` (or the place the member
-chose). Offer a yearly reminder to refresh it (kind `task`), which
+Preview the file with `record.py save "<root>" --to briefs/emergency-file.md
+--replace --file -` (or another name in `briefs/` the member chose; the
+script refuses any identifier in it) and commit it after the yes. Offer a yearly reminder to refresh it (kind `task`), which
 `annual-review` also checks.
 
 ## Gates

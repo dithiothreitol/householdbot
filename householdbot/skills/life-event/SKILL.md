@@ -99,9 +99,9 @@ steps that do not apply, saying why.
 
 The chosen steps as obligations: title, kind (`filing`, `payment`, `task`),
 `due_date` and `do_by` from the script, `law`, provenance `country pack rule —
-verify`. Each `record.py add --dry-run`; show the whole batch; the member may
-remove items; write after a yes with `--approved-by` (approval gates, gates 4
-and 5). Tasks without a date are written only if the member gives one.
+verify`. One `record.py add` with the whole batch as a list (a preview);
+show it; the member may remove items, and a trimmed list is previewed again;
+commit after a yes with `--approved-by` (approval gates, gates 4 and 5). Tasks without a date are written only if the member gives one.
 
 When something ends (a car sold, a home left, a person who died), the first
 answer also names what in the record ends with it: the open entries about it

@@ -1,0 +1,21 @@
+{
+  "group": "language",
+  "about": "a Polish answer gives the provenance tag in Polish",
+  "household": [
+    "full"
+  ],
+  "turns": [
+    {
+      "say": "Tu Piotr. Do kiedy mogę wypowiedzieć OC Skody?",
+      "expect": {
+        "record_unchanged": true,
+        "reply_matches": [
+          "do sprawdzenia"
+        ],
+        "reply_not_matches": [
+          "\\bverify\\b"
+        ]
+      }
+    }
+  ]
+}

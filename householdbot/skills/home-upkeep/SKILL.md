@@ -102,8 +102,8 @@ payments (property tax) are `bills-due`'s.
   stays *date unknown* with its question; it is never counted from today.
 - **A check done:** the next one counts from the day it was done, not from
   the old due date: `record.py complete "<root>" --id ob-… --done-date <date>
-  --from-done --country <CC> --dry-run` closes it and prepares the next entry
-  in the same `series`; one approval covers both.
+  --from-done --country <CC>` previews closing it and the next entry in the
+  same `series`; one approval covers both, then `record.py commit`.
   Offer to file the report through `file-document`.
 - **A new heat source:** the declaration the pack names, counted from first
   use with `dates.py deadline --from <first use> --amount <the pack's days>
@@ -188,10 +188,10 @@ row stays, scope first, even when a quote is silent on it:
 ## Step 7 — Write after a yes
 
 Each entry: `record.py add "<root>" --register obligations --file -
---country <CC> --today <today> --dry-run`, shown in plain words with its
+--country <CC> --today <today>`, shown in plain words with its
 basis and one question ("Add "Chimney and gas installation check", next by
 Thu 14 Oct 2027 (country pack rule — verify)? (yes / change / no)"), then the
-same command with `--approved-by "<name>"` after the yes.
+commit of its token after the yes. Several entries go in one list.
 
 ## Gates
 

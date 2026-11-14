@@ -69,12 +69,12 @@ and which ones will be skipped.
 - **May go** (`may_go`): the keeping date has passed. List them with their
   dates and where the file and paper are. The household shreds the paper and
   deletes the file; the plugin never does. After the member says it is done,
-  offer `record.py update --id <id> --set status=disposed` for each (dry run,
-  yes, write).
+  offer `record.py update --id <id> --set status=disposed` for each (preview,
+  yes, commit).
 - **No keeping date** (`no_keeping_date`): propose one per paper from the
   pack's table (the period, what starts it, the basis, or "suggested" where no
   statute sets it), and the profile's *Documents kept for*. One batch of
-  `update --set keep_until=...`, shown, yes, written.
+  `update --set keep_until=...`, previewed, yes, committed.
 - **Kept for good** (`permanent`): counted, not listed.
 
 ## Steps 2 and 3 — Policies and subscriptions
@@ -90,8 +90,8 @@ information forms will arrive and when. Reminders after its own yes.
 
 ## Step 5 — Closed reminders
 
-`record.py archive --before <1 January of this year> --dry-run`: how many
-closed obligations move to `archive/`. Write after a yes.
+`record.py archive --before <1 January of this year>`: a preview of how many
+closed obligations move to `archive/`. Commit its token after a yes.
 
 ## Step 6 — The rules' age
 
@@ -113,7 +113,8 @@ Offer `emergency-file --refresh`.
 
 What may go and what went, keeping dates set, renewals coming, subscriptions
 kept or to cancel, tax papers expected, archived reminders, the pack's age,
-the record's state. Saved as `briefs/annual-review-<year>.md` after a yes.
+the record's state. Saved as `briefs/annual-review-<year>.md` (`record.py save`, then
+`record.py commit` after the yes).
 
 ## Scheduled runs
 

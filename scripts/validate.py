@@ -392,6 +392,36 @@ def check_cookbooks() -> None:
             errors.extend(f"{rel(helper)}: {e}" for e in found or [res.stderr.strip()[-300:]])
 
 
+ONE_CALL_RE = re.compile(
+    r"(?:record\.py\W+(?:init|set-pointer|add|update|complete|merge|archive|migrate|save|export)"
+    r"|chores\.py\W+(?:init|add|update|retire|person|save-plan|swap)"
+    r"|statement\.py\W+add-rule)\b[^\n`]*--approved-by")
+
+
+def check_write_gate() -> None:
+    """Skills write in two steps (preview, then commit --confirm); the one-call form with
+    --approved-by on a writing command is refused by the scripts and must not be taught."""
+    texts = list((PLUGIN / "skills").glob("*/SKILL.md")) + list((PLUGIN / "skills").glob("*/reference/*.md"))
+    texts += list((PLUGIN / "agents").glob("*.md")) + list((REPO / "core" / "rules").glob("*.md"))
+    for md in texts:
+        for n, line in enumerate(md.read_text(encoding="utf-8").splitlines(), 1):
+            if ONE_CALL_RE.search(line):
+                errors.append(f"{rel(md)}:{n}: a write in one call with --approved-by; preview, then "
+                              "commit --confirm <token> --approved-by <name>")
+    hooks = PLUGIN / "hooks" / "hooks.json"
+    try:
+        spec = json.loads(hooks.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        errors.append(f"{rel(hooks)} unreadable: {exc}")
+        return
+    matchers = {g.get("matcher") for g in spec.get("hooks", {}).get("PreToolUse", [])}
+    if "Bash" not in matchers or not any("Write" in (m or "") for m in matchers):
+        errors.append(f"{rel(hooks)}: the write gate needs PreToolUse hooks for Bash and for Write/Edit")
+    for name in ("gate.sh", "gate.py"):
+        if not (PLUGIN / "hooks" / name).is_file():
+            errors.append(f"hooks/{name} is missing")
+
+
 def main() -> int:
     check_manifests()
     skills = check_skills()
@@ -403,6 +433,7 @@ def main() -> int:
     check_packs()
     check_languages()
     check_identifiers()
+    check_write_gate()
     for w in warnings:
         print(f"warning: {w}")
     for e in errors:

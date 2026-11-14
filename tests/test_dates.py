@@ -517,5 +517,53 @@ class GreatBritainPack(unittest.TestCase):
         self.assertEqual(res["do_by"], "2026-11-13")
         self.assertEqual(w["counting"], "calendar")
 
+
+class PackLanguage(unittest.TestCase):
+    """Citations of Polish law read as Polish; English pack text is marked for translation."""
+
+    def test_pl_pack_law_has_no_english_joiners(self):
+        import re
+        data = json.loads((dates.LOCALE_DIR / "PL.json").read_text(encoding="utf-8"))
+        english = re.compile(r"(with|and|or|the|from|after|before|as|for|since|to|regulation|annex)")
+        found = []
+
+        def scan(obj, where):
+            if isinstance(obj, dict):
+                if isinstance(obj.get("law"), str) and english.search(obj["law"]):
+                    found.append((where, obj["law"]))
+                for k, v in obj.items():
+                    scan(v, f"{where}/{k}")
+            elif isinstance(obj, list):
+                for i, v in enumerate(obj):
+                    scan(v, f"{where}[{i}]")
+        scan(data, "PL")
+        self.assertEqual(found, [])
+
+    def window(self, lang):
+        pack, lang_ = dates.load_pack("PL"), dates.load_lang(lang)
+        w = pack.entry("response_windows", "objection-payment-order")
+        return dates.window_result(pack, lang_, w, dates.parse_date("2026-12-10"))
+
+    def test_a_polish_answer_gets_the_tag_in_polish_and_the_english_text_marked(self):
+        res = self.window("pl")
+        self.assertEqual(res["provenance_local"], "reguła z pakietu krajowego, do sprawdzenia")
+        self.assertEqual(res["text_lang"], "en")
+        self.assertIn("w zw. z art. 111, 112 i 115 Kodeksu cywilnego", res["due_note"])
+        self.assertEqual(res["due_date"], "2026-12-28")
+        self.assertEqual(res["do_by"], "2026-12-23")
+
+    def test_an_english_answer_has_no_marker(self):
+        res = self.window("en")
+        self.assertNotIn("text_lang", res)
+        self.assertEqual(res["provenance_local"], "country pack rule — verify")
+
+    def test_statutory_dates_carry_their_counting_rule(self):
+        rows = dates.statutory_dates(dates.load_pack("PL"), 2026, ["property-tax"], 0, dates.load_lang("pl"))
+        self.assertTrue(rows)
+        self.assertTrue(all(r["rule"] == "tax" for r in rows))
+        nov = next(r for r in rows if r["statutory_date"] == "2026-11-15")
+        self.assertEqual(nov["due_date"], "2026-11-16")
+
+
 if __name__ == "__main__":
     unittest.main()

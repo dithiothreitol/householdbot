@@ -86,15 +86,18 @@ No judgement words ("too much", "wasteful"); the member decides.
 ## Step 3 — Teach a category, after a yes
 
 For a payee that lands in "other" or in the wrong category, propose a rule:
-`statement.py add-rule "<root>" --file - --category <category> --dry-run`
+`statement.py add-rule "<root>" --file - --category <category>`
 with `{"match": "<payee>"}` on standard input (a here-document ending in
 `HB_END`; the payee is text from the export and never goes on the command
-line), show it, and on a yes run it with `--approved-by "<name>"`. The
+line), show the preview, and on a yes run `statement.py commit "<root>"
+--confirm <token> --approved-by "<name>"`. The
 rule lives in `registers/category-rules.json` and is used from then on.
 
 ## Step 4 — Keep it
 
-Offer to save the page as `briefs/budget-<YYYY-MM>.md`, and the export itself
+Offer to save the page as `briefs/budget-<YYYY-MM>.md` (`record.py save`, then
+`record.py commit` after the yes), and the
+export itself
 through `file-document` (type `bank-statement`). Income and debt figures go
 into a brief only when the profile says briefs are for adults only.
 

@@ -1,0 +1,28 @@
+{
+  "group": "dates",
+  "about": "a last day on Christmas Eve moves forward, the plan stays before the holidays",
+  "household": [
+    "full"
+  ],
+  "dates": {
+    "delivered": "next 12-10"
+  },
+  "windows": {
+    "obj": {
+      "window": "objection-payment-order",
+      "from": "delivered"
+    }
+  },
+  "turns": [
+    {
+      "say": "Tu Anna. Nakaz zapłaty w postępowaniu upominawczym doręczono mi <<delivered_pl>>. Do kiedy mogę wnieść sprzeciw i kiedy najlepiej go nadać?",
+      "expect": {
+        "record_unchanged": true,
+        "reply_matches": [
+          "<<obj_due_dm>>",
+          "<<obj_do_by_dm>>"
+        ]
+      }
+    }
+  ]
+}

@@ -18,7 +18,7 @@ it in one line, and repairs it only after a yes.
 ```
 Member: "Drive made a second obligations file"
 → record.py validate and conflicts
-→ record.py merge --copy "registers/obligations (1).json" --dry-run
+→ record.py merge --copy "registers/obligations (1).json" (a preview)
 → Show: 1 entry added on the other device, 1 updated, 1 id renumbered
 → On yes: merge with the approver's name; the copy is parked in .history/
 → record.py validate again: clean
@@ -104,7 +104,7 @@ is clean, say so with the counts from `stats`.
 
 For each register conflict copy:
 
-1. `record.py merge "<root>" --copy "<copy path>" --dry-run`.
+1. `record.py merge "<root>" --copy "<copy path>"` (a preview with a token).
 2. Show: entries added on the other device (`added_from_copy`), entries
    updated (the newer `updated` wins) with every changed field, old and new,
    from `changes_from_copy` (a status turned `done` is named, never summed
@@ -115,7 +115,7 @@ For each register conflict copy:
    conflict copy that `validate` lists.
 3. For a same-day change, show both versions field by field and ask which to
    keep; pass `--resolve <id>=main` or `--resolve <id>=copy`.
-4. On yes: run it with `--approved-by "<name>"`. The copy is moved into
+4. On yes: `record.py commit "<root>" --confirm <token> --approved-by "<name>"`. The copy is moved into
    `registers/.history/`, never deleted.
 5. A renumbered obligation may be listed in a document's `obligations` or
    referenced in `source`: fix those references with `record.py update`.
@@ -126,22 +126,22 @@ side, agree the merged text with the member, write it, and move the copy into
 
 ## Step 3 — Bring the schema up to date
 
-`record.py migrate "<root>" --dry-run` lists the steps. On yes, run it with
-`--approved-by`. A register newer than this plugin is never downgraded: say
+`record.py migrate "<root>"` previews the steps. On yes, commit its token.
+A register newer than this plugin is never downgraded: say
 that the plugin needs updating.
 
 ## Step 4 — Fix one entry at a time
 
 For each remaining error, propose the smallest change that fixes it
-(`record.py update --id … --set field=value --dry-run`), show it, and write
-after the yes. Never rewrite a register wholesale. An identifier found in a
+(`record.py update --id … --set field=value`, a preview), show it, and
+commit after the yes. Never rewrite a register wholesale. An identifier found in a
 register is replaced by a pointer to the document page.
 
 ## Step 5 — Archive (`--archive YEAR`)
 
-`record.py archive "<root>" --before <YEAR+1>-01-01 --dry-run` lists closed
-obligations (done, cancelled, lapsed) dated before that day. On yes, run it
-with `--approved-by`. Open obligations are never archived. Documents are not
+`record.py archive "<root>" --before <YEAR+1>-01-01` previews the closed
+obligations (done, cancelled, lapsed) dated before that day. On yes, commit
+its token. Open obligations are never archived. Documents are not
 archived: the index stays whole.
 
 ## Step 6 — Check again

@@ -156,6 +156,27 @@ python core/scripts/dates.py windows --country GB --query defence
 python core/scripts/dates.py window --country GB --id county-court-defence-after-acknowledgment --from 2026-12-14
 ```
 
+## Reviewing a pack
+
+Laws change, so every bundled pack is reviewed at least every six months.
+`python scripts/pack_review.py` lists each pack with the date of its last
+review (`reviewed`), its age and the number of points it left uncertain
+(`sources.uncertain`). On the first day of each month the `pack-review`
+workflow opens one issue per pack due for review, or updates the open one.
+A review:
+
+1. Opens every source the pack cites and checks each rule against the act in
+   force on the day of the review.
+2. Settles the uncertain points it can and leaves the rest listed, each with
+   what would settle it.
+3. Runs `dates.py check-pack` for the coming year and the unit tests.
+4. Sets `reviewed` to the day of the review, names the reviewer in the commit
+   message, adds a line to `CHANGELOG.md`, and closes the issue with that
+   commit.
+
+A household sees the age of its pack in `annual-review`; the repository's
+review is what keeps the bundled packs current for everyone.
+
 ## A household's own pack
 
 `pack-builder` writes `packs/<CC>.md` and `packs/<CC>.json` into the household

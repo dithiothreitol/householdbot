@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "householdbot",
-  "version": "1.0.0-rc.2",
+  "version": "1.0.0-rc.3",
   "description": "Runs a household's paperwork from a conversation: files letters, bills, contracts and policies into one record the household owns, tracks deadlines, renewals and cancel-by dates with the country's holidays, and briefs you on the week ahead. Works in English or Polish, from photos, PDFs and pasted messages; connectors are optional. Nothing is written, sent or paid without your approval.",
   "author": {
     "name": "Dariusz Tyszka",

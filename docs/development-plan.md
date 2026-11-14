@@ -722,7 +722,7 @@ an isolated configuration, without running the model). Still to do: a
 Codex session on synthetic data, the `ANTHROPIC_API_KEY` secret, the
 submissions to the Claude and OpenAI directories, the pilot.
 
-### Stage 5. Guarantees in code, fixes, reminders (version 1.0.0-rc.3, planned)
+### Stage 5. Guarantees in code, fixes, reminders (version 1.0.0-rc.3, done)
 
 Planned on 14 Nov 2026 from two sources. The first is a six-turn use session
 on the published rc.2 (a Polish household, scripts allowed, 0.81 USD), which
@@ -908,6 +908,54 @@ Your part after the stage: the pilot by `docs/pilot.md` on rc.3; a yes for
 push, tag and release; optional: the `ANTHROPIC_API_KEY` secret, so that
 `evals.yml` runs the 115 cases with a shell on Linux.
 
+**Done on 14 Nov 2026** (the same session as the plan, after "tak"). On your
+instruction of the same day, nothing that calls a model was run: no session
+test, no behaviour test, no Codex run and no subagent. Everything below is
+checked by unit tests, the validators and offline checks.
+
+- **A.** Bands from the last day, with `plan_passed` and `plan_note`; the
+  optional `rule` field and `last_day` in `record.py due`; `rule` on every
+  statutory date from `dates.py recurring`; `tags` in i18n and
+  `provenance_local` in `due`, `window`, `event`, `deemed` and `recurring`.
+  The English joiner in the Polish note came from the pack's own `law`
+  strings, not from a template: 73 law citations of the PL pack now read the
+  Polish way („i”, „w zw. z”, names of regulations), a unit test keeps them
+  so, and pack text that exists only in English is marked `text_lang: "en"`.
+  Two date columns in the weekly brief and the deadline list; Polish titles
+  and notes in the Polish test household, whose tax instalment now names the
+  rule `tax`.
+- **B.** The two phases in all three scripts through one `Change` object in
+  `record.py` (`chores.py` and `statement.py` use it and get `commit`);
+  `init --profile-file -` creates the whole record in one change; `save` for
+  files; the hook (`hooks/gate.sh` finds Python, `hooks/gate.py` decides) in
+  shell form with `"onFailure": "continue"`; 26 skills and the rules
+  rewritten to preview, yes, commit; `scripts/validate.py` refuses the
+  one-call form and checks the hook. Added on the way: several entries of one
+  register in one preview (`add` takes a JSON list, `complete` takes `--id`
+  more than once), because a second preview of the same register goes stale
+  once the first one is committed; a chore plan keeps its approver through a
+  marker that `commit` replaces with the name.
+- **C.** `record.py export --ics` as planned.
+- **D.** `scripts/session_test.py` and 18 sessions. The sessions are JSON,
+  not YAML, so the runner stays on the standard library; `--check` seeds
+  every household and resolves every value without a model; identifiers in
+  the safety sessions are generated at run time.
+- **E.** `scripts/pack_review.py` and `pack-review.yml` (actions pinned to
+  tags, as in the other workflows); the procedure in `docs/country-packs.md`.
+- **F.** `docs/pilot.md` and `docs/pilot.pl.md`.
+- **G.** README, QUICKSTART, the plugin README and PRIVACY in both languages,
+  SECURITY, `docs/architecture.md` (lessons 23 and 24), CHANGELOG, bilingual
+  release notes, both manifests at 1.0.0-rc.3.
+
+Acceptance: (1) met: 198 unit tests green (49 new), `scripts/validate.py`
+0 errors and 0 warnings, `claude plugin validate --strict` passes for the
+plugin and the marketplace, `scripts/package.py --skills` builds 385 files
+including the hook; (2) and (3) wait for the paid runs; (4) met.
+
+Waiting for your yes: the paid verification (the session suite twice, about
+10 USD; the behaviour tests of the changed skills, about 6 USD; the full run,
+about 17 USD), then push, tag and release of rc.3, then the pilot.
+
 ### Stage 6. Any client and model, release (version 1.0.0, planned)
 
 Planned on 14 Nov 2026. Aim: the proof layer and the gate reach clients
@@ -987,7 +1035,17 @@ closing protocol alone.
 
 ---
 
-## 8. Status after Stages 1, 1.1, 2, 3 and 4
+## 8. Status after Stages 1 to 5
+
+**Version 1.0.0-rc.3 (Stage 5, guarantees in code).**
+
+| Level | Result |
+|---|---|
+| 1. Structure | `scripts/validate.py` (new check: no write in one call in skills, rules and agents; the hook in place): 0 errors, 0 warnings; `claude plugin validate --profile directory --strict` passes for the plugin and the marketplace; 385 plugin files of 512 |
+| 2. Arithmetic | 198 unit tests green (49 new): the gate (preview byte for byte, unknown, replayed, expired, edited and stale tokens, the approver checked at commit, a refused entry leaving nothing pending, originals copied at commit, batches), `save` (paths, pages, identifiers, replace with a copy), the calendar export (RFC 5545 folding and escaping, stable UIDs, neutral titles, cancelled entries), bands and last days, tags, the PL pack's citations, the hook (8) and the session runner with a scripted host (7) |
+| 3b. Sessions | 18 sessions ready (`--check`: every household seeded, every value resolved); not run, no model was to be called |
+| 3. Behaviour | not run in this stage |
+| 4. Use | the six-turn session on rc.2 that started the stage (0.81 USD, described in Stage 5) |
 
 **Version 1.0.0-rc.1 (Stage 4, reach, hardening, publication).**
 
@@ -1318,14 +1376,14 @@ confirmed, 7 corrected, 2 unresolved.
 | Merging of copies approved without the changes shown | `merge`: only copies from the list, all changed fields, entry checks | closed (Stage 4) |
 | Identifiers from outside Poland (IBAN, NI, sort code) | `identifier_findings`, the write refused | closed (Stage 4) |
 | A pack for one country only, without coverage | GB pack, coverage in the pack, own packs in `packs/` | closed (Stage 4) |
-| The band "overdue" taken from the plan date, not from the last day | `record.py due`, the five skills that print bands | open (Stage 5 A) |
-| Provenance tags and script notes in English in a Polish answer | `tags` in i18n, `provenance_local`, joiners from i18n | open (Stage 5 A) |
-| The write gate rests on the model: the model types `--approved-by`, `hooks.json` is empty | two-phase write with a token, a hook with the host's prompt | open (Stage 5 B) |
-| The log line for a saved file is typed by the model | `record.py save` | open (Stage 5 B) |
-| Reminders need a calendar connector or a scheduled task | `.ics` export | open (Stage 5 C) |
-| The script path has no behaviour tests on the development machine | session tests through `claude -p` with a shell | open (Stage 5 D) |
-| A pack's age is checked only in the household's annual review | monthly pack review in CI | open (Stage 5 E) |
-| The pilot has no scenarios and no measures | `docs/pilot.md` | open (Stage 5 F) |
+| The band "overdue" taken from the plan date, not from the last day | `record.py due`, the five skills that print bands | closed (Stage 5 A) |
+| Provenance tags and script notes in English in a Polish answer | `tags` in i18n, `provenance_local`, Polish citations in the PL pack, `text_lang` | closed (Stage 5 A) |
+| The write gate rests on the model: the model types `--approved-by`, `hooks.json` is empty | two-phase write with a token, a hook with the host's prompt | closed (Stage 5 B) |
+| The log line for a saved file is typed by the model | `record.py save` | closed (Stage 5 B) |
+| Reminders need a calendar connector or a scheduled task | `.ics` export | closed (Stage 5 C) |
+| The script path has no behaviour tests on the development machine | session tests through `claude -p` with a shell | runner and 18 sessions ready; first run waits for the paid verification (Stage 5 D) |
+| A pack's age is checked only in the household's annual review | monthly pack review in CI | closed (Stage 5 E) |
+| The pilot has no scenarios and no measures | `docs/pilot.md` | closed (Stage 5 F) |
 | The proof layer is reachable only through a plugin host | local MCP server | open (Stage 6 B) |
 | Codex support checked without running a model; other hosts and models not measured | host adapters, compatibility table | open (Stage 6 C, D) |
 

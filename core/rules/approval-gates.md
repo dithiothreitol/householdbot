@@ -20,8 +20,12 @@ member to carry out.
 ## Gates that every skill honours
 
 1. **A read is not a write.** Reading a document, a mailbox or a calendar
-   needs no approval. Writing to the record does: show the entry, wait for yes,
-   then write with the approver's name (the household record).
+   needs no approval. Writing to the record does: the script previews the
+   change and prints a confirm token, the member sees it and says yes, then
+   `commit --confirm <token> --approved-by <name>` applies exactly that change
+   (the household record). The scripts refuse any other way to write, and in
+   Claude Code and Cowork the host asks the member once more in its own
+   prompt before the commit runs.
 2. **Filing and acting are separate approvals.** Approving that a bill is
    filed is not approving that it is paid. Approving a draft is not approving
    that it is sent.
@@ -64,4 +68,5 @@ Write both? (yes / change / no)
 
 A silence, a topic change or an ambiguous answer is a no. A yes given before
 the change was shown ("just file whatever comes") approves nothing: show the
-change, then ask.
+change, then ask. "Change" is not a yes either, even with "and save" in the
+same message: make the new preview, show it, and ask again.

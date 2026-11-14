@@ -1,0 +1,29 @@
+{
+  "group": "dates",
+  "about": "reminders for a phone without a calendar connector",
+  "household": [
+    "full"
+  ],
+  "turns": [
+    {
+      "say": "Tu Piotr. Kalendarz nie jest podłączony, a chcę mieć przypomnienia w telefonie. Przygotuj plik do kalendarza.",
+      "expect": {
+        "record_unchanged": true,
+        "reply_matches": [
+          "\\.ics"
+        ]
+      }
+    },
+    {
+      "say": "tak",
+      "expect": {
+        "glob_exists": [
+          "exports/householdbot*.ics"
+        ],
+        "file_matches": {
+          "exports/householdbot*.ics": "BEGIN:VCALENDAR"
+        }
+      }
+    }
+  ]
+}

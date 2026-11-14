@@ -11,7 +11,11 @@ It has no server, no account and no analytics.
   the decisions log live in a folder the household chooses. HouseholdBot reads
   and writes there and nowhere else, apart from one pointer file
   (`~/.claude/plugins/config/householdbot/location.md`) that stores the
-  folder's path.
+  folder's path. A change waiting for a yes is kept in
+  `registers/.pending/` for at most 30 minutes and holds only what the write
+  would hold; a change made before a record exists (setup) waits next to the
+  pointer file. The calendar file in `exports/` is shared only by the member
+  who imports it.
 - **Claude.** Documents and questions are processed by Claude in the
   household's own Claude account, under that account's terms.
 - **Connected services.** Gmail, Google Calendar and Google Drive are used only

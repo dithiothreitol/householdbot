@@ -26,9 +26,8 @@ from __future__ import annotations
 import argparse
 import json
 import re
-import shutil
 import sys
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -38,7 +37,7 @@ sys.dont_write_bytecode = True
 import dates  # noqa: E402
 import record  # noqa: E402
 
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 SCHEMA_VERSION = 1
 CHORES = Path("registers/chores.json")
 ID_RE = re.compile(r"^ch-(\d{3,})$")
@@ -76,20 +75,6 @@ def load(root: Path, required: bool = True) -> dict:
     for key in ("people", "chores", "plans"):
         data.setdefault(key, [])
     return data
-
-
-def backup(root: Path) -> str | None:
-    src = root / CHORES
-    if not src.exists():
-        return None
-    hist = root / "registers" / ".history"
-    hist.mkdir(parents=True, exist_ok=True)
-    record.ensure_inside(root, hist)
-    dst = hist / f"chores-{datetime.now().strftime('%Y%m%dT%H%M%S%f')}.json"
-    shutil.copy2(src, dst)
-    for old in sorted(hist.glob("chores-*.json"))[:-record.HISTORY_KEEP]:
-        old.unlink()
-    return dst.relative_to(root).as_posix()
 
 
 def week_monday(d: date) -> date:
@@ -325,17 +310,17 @@ def members_from_profile(root: Path) -> list[dict]:
 # Commands
 # --------------------------------------------------------------------------
 
-def write(root: Path, data: dict, args, summary: str, today: date) -> dict:
+def write(root: Path, data: dict, args, summary: str, today: date, **extra) -> dict:
+    """Preview a change of the chores register; record.py commit (or chores.py commit)
+    applies it after a yes."""
+    record.require_writable(root, args)
     errors, _ = validate(data, today)
     if errors:
         raise ChoreError("; ".join(errors))
-    if args.dry_run:
-        return {"dry_run": True, "summary": summary}
-    record.require_writable(root, args)
-    saved = backup(root)
-    record.atomic_write_json(root / CHORES, data, root)
-    record.append_log(root, today, args.approved_by.strip(), [summary], record.lang_for(args, root))
-    return {"written": CHORES.as_posix(), "backup": saved, "summary": summary}
+    change = record.Change(root, record.lang_for(args, root), "chores")
+    change.write_json(CHORES, data)
+    change.log(summary)
+    return record.finish(change, args, {"file": CHORES.as_posix(), "summary": summary, **extra})
 
 
 def cmd_init(args) -> dict:
@@ -346,12 +331,11 @@ def cmd_init(args) -> dict:
     data = empty()
     data["people"] = members_from_profile(root)
     lang = record.lang_for(args, root)
-    res = write(root, data, args, lang.log("chores_created", people=", ".join(
-        f"{p['name']} {p['share']:g}" for p in data["people"]) or "-"), today)
-    res["people"] = data["people"]
-    res["note"] = ("children get a share of 0.5 by default; change it with "
-                   "chores.py person --name NAME --share N")
-    return res
+    return write(root, data, args, lang.log("chores_created", people=", ".join(
+        f"{p['name']} {p['share']:g}" for p in data["people"]) or "-"), today,
+        people=data["people"],
+        about_shares="children get a share of 0.5 by default; change it with "
+                     "chores.py person --name NAME --share N")
 
 
 def next_id(data: dict) -> str:
@@ -373,9 +357,8 @@ def cmd_add(args) -> dict:
     entry["id"] = next_id(data)
     data["chores"].append(entry)
     lang = record.lang_for(args, root)
-    res = write(root, data, args, lang.log("chore_added", id=entry["id"], title=entry["title"]), today)
-    res["entry"] = entry
-    return res
+    return write(root, data, args, lang.log("chore_added", id=entry["id"], title=entry["title"]), today,
+                 entry=entry)
 
 
 def parse_sets(pairs: list[str]) -> dict:
@@ -404,9 +387,8 @@ def cmd_update(args) -> dict:
             c.update(changes)
             lang = record.lang_for(args, root)
             what = ", ".join(f"{k}: {before[k]!r} → {changes[k]!r}" for k in changes)
-            res = write(root, data, args, lang.log("chore_changed", id=args.id, changes=what), today)
-            res["entry"] = c
-            return res
+            return write(root, data, args, lang.log("chore_changed", id=args.id, changes=what), today,
+                         entry=c)
     raise ChoreError(f"no chore {args.id}")
 
 
@@ -439,9 +421,8 @@ def cmd_person(args) -> dict:
         person["active"] = args.active == "yes"
     lang = record.lang_for(args, root)
     detail = ", ".join(f"{k} {person[k]}" for k in ("share", "birth_year", "active") if k in person)
-    res = write(root, data, args, lang.log("chore_person", name=args.name, detail=detail), today)
-    res["person"] = person
-    return res
+    return write(root, data, args, lang.log("chore_person", name=args.name, detail=detail), today,
+                 person=person)
 
 
 def cmd_plan(args) -> dict:
@@ -465,14 +446,13 @@ def cmd_save_plan(args) -> dict:
         assignments = [dict(s, person=n) for n, items in wk["by_person"].items() for s in items]
         data["plans"] = [p for p in data["plans"] if p.get("week") != wk["week"]]
         data["plans"].append({"week": wk["week"], "start": wk["start"], "assignments": assignments,
-                              "approved_by": (args.approved_by or "").strip() or None,
+                              "approved_by": record.APPROVER,
                               "saved": today.isoformat()})
         labels.append(wk["week"])
     data["plans"].sort(key=lambda p: p["week"])
     lang = record.lang_for(args, root)
-    res = write(root, data, args, lang.log("chore_plan_saved", weeks=", ".join(labels)), today)
-    res["plan"] = result
-    return res
+    return write(root, data, args, lang.log("chore_plan_saved", weeks=", ".join(labels)), today,
+                 plan=result)
 
 
 def cmd_swap(args) -> dict:
@@ -583,6 +563,10 @@ def build_parser() -> argparse.ArgumentParser:
     s.set_defaults(func=cmd_balance)
     s = common(sub.add_parser("validate", help="check registers/chores.json"))
     s.set_defaults(func=cmd_validate)
+    s = common(sub.add_parser("commit", help="apply a previewed change after a yes"))
+    s.add_argument("--confirm", required=True, help="the token printed with the preview")
+    s.add_argument("--approved-by", required=True, help="the name of the person who said yes")
+    s.set_defaults(func=record.cmd_commit)
     return p
 
 

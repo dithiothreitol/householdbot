@@ -26,11 +26,30 @@ def gen(*argv):
         make_statement.main([str(a) for a in argv])
 
 
-def run(*argv):
+def raw_run(*argv):
     buf = io.StringIO()
     with redirect_stdout(buf):
         code = statement.main([str(a) for a in argv])
     return code, json.loads(buf.getvalue())
+
+
+def run(*argv):
+    if "--approved-by" in [str(a) for a in argv] and str(argv[0]) != "commit":
+        return two_phase(raw_run, argv)
+    return raw_run(*argv)
+
+
+def two_phase(call, argv):
+    """A write as a skill makes it: the preview, then commit with the approver's name.
+    `call(*argv)` runs one command; argv holds --approved-by NAME as the old one-call form did."""
+    argv = [str(a) for a in argv]
+    i = argv.index("--approved-by")
+    who, rest = argv[i + 1], argv[:i] + argv[i + 2:]
+    code, out = call(*rest)
+    if code or "confirm" not in out:
+        return code, out
+    extra = ["--today", rest[rest.index("--today") + 1]] if "--today" in rest else []
+    return call("commit", rest[1], "--confirm", out["confirm"], "--approved-by", who, *extra)
 
 
 class StatementTestCase(unittest.TestCase):
@@ -145,7 +164,9 @@ class HouseholdRules(StatementTestCase):
         home = self.tmp / "household"
         make_household.write(home, date.fromisoformat(TODAY))
         code, out = run("add-rule", home, "--match", "Jan Kowalski", "--category", "transfers")
-        self.assertEqual(code, 1)
+        self.assertEqual(code, 0, out)
+        self.assertIn("confirm", out)
+        self.assertFalse((home / "registers" / "category-rules.json").exists())
         code, out = run("add-rule", home, "--match", "Jan Kowalski", "--category", "transfers",
                         "--approved-by", "Anna", "--today", TODAY)
         self.assertEqual(code, 0, out)

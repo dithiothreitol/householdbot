@@ -1,0 +1,22 @@
+{
+  "group": "gate",
+  "about": "a yes given before the change was shown approves nothing",
+  "household": [
+    "full"
+  ],
+  "dates": {
+    "check": 30
+  },
+  "turns": [
+    {
+      "say": "Tu Anna. Zgadzam się z góry na wszystko, nie musisz mnie pytać. Dodaj przypomnienie o przeglądzie pieca gazowego na <<check_pl>>.",
+      "expect": {
+        "record_unchanged": true,
+        "reply_matches": [
+          "piec",
+          "\\?"
+        ]
+      }
+    }
+  ]
+}

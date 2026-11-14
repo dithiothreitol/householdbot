@@ -1,5 +1,55 @@
 # Changelog
 
+## 1.0.0-rc.3
+
+Guarantees in code, fixes from a use session, reminders on a phone (stage 5).
+
+- **The write gate is in the scripts.** Every writing command of `record.py`,
+  `chores.py` and `statement.py` only previews: it checks the change, stores
+  exactly that change in `registers/.pending/` and prints the preview with a
+  `confirm` token. `commit --confirm <token> --approved-by <name>` applies it
+  and nothing else; a token that is unknown, older than 30 minutes, edited,
+  or whose files changed since the preview is refused, and so is the old
+  one-call form. Several entries of one register go into one preview (`add`
+  takes a JSON list, `complete` takes `--id` more than once). `init` takes
+  the approved profile (`--profile-file -`), so one yes creates the record.
+- **A hook asks a person.** In Claude Code and Cowork a `PreToolUse` hook
+  (`hooks/gate.py`) sends each commit, with its preview line and files, and
+  each direct write into a household folder, to the host's permission prompt.
+- **Files go through `record.py save`**: briefs, pages, lists, packs and
+  skills, into `briefs/`, `reviews/`, `lists/`, `packs/`, `skills/`,
+  `exports/`, `drafts/` or the profile, with a copy of a replaced file in
+  `registers/.history/` and the log line written by the script. A page with a
+  script, link, image, form or web address, and any identifier, is refused.
+- **Reminders without a connector**: `record.py export --ics` builds an
+  RFC 5545 calendar file (stable UIDs, so a newer export updates the same
+  events; closed items cancelled; neutral titles for health; `--member` for
+  one person's calendar).
+- **Overdue means the last day has passed.** `record.py due` no longer calls
+  an item overdue when only its plan date has passed: it is `now` with
+  `plan_passed` and a plan note. An entry may name the pack's counting rule
+  (`"rule": "tax"`); `due` then reports `last_day`, moved past a weekend or
+  holiday with the law cited. Statutory dates from `dates.py recurring` carry
+  their rule.
+- **Tags and law in the household's language.** Provenance tags come as
+  `provenance_local` (in Polish: „reguła z pakietu krajowego, do
+  sprawdzenia”); pack text that exists only in English is marked
+  `text_lang: "en"` for translation; 73 law citations in the PL pack lost
+  their English joiners and descriptions („w zw. z”, „i”, names of
+  regulations in Polish).
+- The weekly brief and the deadline list show the plan date and the last day
+  in two columns; titles and notes of the Polish test household are Polish.
+- **Session tests**: `scripts/session_test.py` runs 18 multi-turn sessions
+  (`evals/sessions/`) with the scripts in four groups (gate, safety, dates,
+  language), checked by the state of the household folder and by patterns,
+  with no judge; `--check` validates and seeds them without a model.
+- **Pack review**: `scripts/pack_review.py` and a monthly workflow open one
+  issue per pack whose review is older than six months.
+- **Pilot protocol**: `docs/pilot.md` and `docs/pilot.pl.md`, twelve
+  scenarios, measures and a notes template without real data.
+- 198 unit tests (49 new). The paid runs of this release (the session suite
+  and the behaviour tests of the changed skills) are still to run.
+
 ## 1.0.0-rc.2
 
 Codex and ChatGPT. The same plugin now also ships in the open Agent Plugins

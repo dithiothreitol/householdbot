@@ -48,6 +48,62 @@ def pl(d: date) -> str:
     return d.strftime("%d.%m.%Y")
 
 
+# A Polish household keeps titles and notes in Polish (D14); company names and quotes stay as they are.
+POLISH = [
+    ("Example Energia: electricity bill, ", "Example Energia: rachunek za prąd, "),
+    ("Example Insurance: OC policy, Skoda Octavia", "Example Insurance: polisa OC, Skoda Octavia"),
+    ("Urząd Gminy Brzozowo: property tax decision ", "Urząd Gminy Brzozowo: decyzja w sprawie podatku od nieruchomości "),
+    ("Example Net: internet contract, 24 months", "Example Net: umowa na internet, 24 miesiące"),
+    ("Passport, Zosia: expires", "Paszport Zosi: koniec ważności"),
+    ("Passport, Zosia", "Paszport, Zosia"),
+    ("Electricity bill: pay Example Energia", "Rachunek za prąd: zapłata dla Example Energia"),
+    ("Car insurance (OC), Skoda Octavia: last day to give notice",
+     "Ubezpieczenie OC, Skoda Octavia: ostatni dzień na wypowiedzenie"),
+    ("Property tax instalment", "Rata podatku od nieruchomości"),
+    ("Internet contract, Example Net: last day to cancel before it continues at PLN 119.00",
+     "Umowa na internet, Example Net: ostatni dzień na wypowiedzenie przed przejściem na 119,00 zł"),
+    ("Water and sewage bill: pay Example Wodociągi", "Rachunek za wodę i ścieki: zapłata dla Example Wodociągi"),
+    ("Chimney and gas installation check, House", "Przegląd kominiarski i instalacji gazowej, dom"),
+    ("Roadworthiness test, Skoda Octavia", "Badanie techniczne, Skoda Octavia"),
+    ("Example AGD: washing machine invoice and guarantee", "Example AGD: faktura i gwarancja na pralkę"),
+    ("Example Assistance: home insurance policy", "Example Assistance: polisa ubezpieczenia domu"),
+    ("Referral, Zosia", "Skierowanie, Zosia"),
+    ("SP 1 Brzozowo: trip, consent and payment; parents' meeting",
+     "SP 1 Brzozowo: wycieczka, zgoda i wpłata; zebranie rodziców"),
+    ("Identity card, Anna: expires", "Dowód osobisty Anny: koniec ważności"),
+    ("Identity card, Anna", "Dowód osobisty, Anna"),
+    ("Washing machine guarantee ends (Example AGD)", "Koniec gwarancji na pralkę (Example AGD)"),
+    ("Home insurance, Example Assistance: ends, renew or switch",
+     "Ubezpieczenie domu, Example Assistance: koniec, odnowić albo zmienić"),
+    ("Appointment, Zosia", "Wizyta, Zosia"),
+    ("School trip: written consent and PLN 85.00", "Wycieczka szkolna: pisemna zgoda i 85,00 zł"),
+    ("House, Brzozowo", "Dom, Brzozowo"),
+    ("Washing machine", "Pralka"),
+    ("original kept at home; a scan is not filed", "oryginał w domu; skan nie jest zapisany"),
+    ("paper bill not filed yet", "papierowy rachunek jeszcze nie zapisany"),
+    ("date not known yet: check the registration certificate",
+     "data jeszcze nieznana: sprawdzić w dowodzie rejestracyjnym"),
+    ("1 day allowed for a bank transfer", "1 dzień na przelew"),
+    ("5 days allowed for a letter by post", "5 dni na doręczenie listu"),
+]
+
+
+def polish(items: list[dict]) -> list[dict]:
+    """Titles, notes, subjects and the places an entry concerns, in Polish."""
+    def tr(text):
+        if not isinstance(text, str):
+            return text
+        for en, pl_text in POLISH:
+            text = text.replace(en, pl_text)
+        return text
+    for item in items:
+        for key in ("title", "notes", "do_by_note", "subject"):
+            item[key] = tr(item.get(key))
+        if isinstance(item.get("concerns"), list):
+            item["concerns"] = [tr(c) for c in item["concerns"]]
+    return items
+
+
 def next_property_tax(today: date) -> date:
     for year in (today.year, today.year + 1):
         for m, dd in ((3, 15), (5, 15), (9, 15), (11, 15)):
@@ -261,7 +317,8 @@ def build(today: date, lang: str = "pl") -> dict:
                 "counterparty": None, "due_date": None, "do_by": None, "do_by_note": "",
                 "lead_time_days": None, "recurrence": "none", "recurrence_day": None,
                 "amount": None, "currency": None, "auto_renews": None, "notice": None,
-                "transit_buffer_days": None, "source": None, "law": None, "status": "open", "done_date": None, "notes": "",
+                "transit_buffer_days": None, "source": None, "law": None, "rule": None, "status": "open",
+                "done_date": None, "notes": "",
                 "created": today.isoformat(), "updated": today.isoformat()}
         base.update(kw)
         return base
@@ -339,9 +396,12 @@ def build(today: date, lang: str = "pl") -> dict:
                    "quote": f"Okres ubezpieczenia: {pl(oc_start)} - {pl(oc_end)}"},
            provenance="country pack rule — verify",
            law="ustawa o ubezpieczeniach obowiązkowych, UFG i PBUK art. 28"),
+        # The decision states the raw date; the tax counting rule moves a last day off a weekend
+        # (Ordynacja podatkowa art. 12 § 5), so the entry names the rule and record.py due
+        # reports the moved last day. The plan date is worked back from the raw date.
         ob(3, series="property-tax", title="Property tax instalment", kind="payment",
            category="home", owner="Anna", counterparty="Urząd Gminy Brzozowo",
-           due_date=tax_raw.isoformat(), do_by=back_to_weekday(tax_raw).isoformat(),
+           due_date=tax_raw.isoformat(), do_by=back_to_weekday(tax_raw).isoformat(), rule="tax",
            recurrence="15 Mar, 15 May, 15 Sep, 15 Nov", amount="281.00", currency="PLN",
            source={"document": f"doc-{y}-0003", "page": 2,
                    "quote": "raty: 15 marca, 15 maja, 15 września, 15 listopada"},
@@ -386,6 +446,8 @@ def build(today: date, lang: str = "pl") -> dict:
         profile_tpl, accepted, unknown, none_yet = PROFILE_EN, "property tax instalments", "unknown", "none yet"
     else:
         profile_tpl, accepted, unknown, none_yet = PROFILE_PL, "raty podatku od nieruchomości", "nieznany", "na razie brak"
+        polish(documents)
+        polish(obligations)
     originals = {
         f_bill: BILL.format(date=pl(bill_date), due=pl(bill_due), month=bill_date.strftime("%m/%Y")),
         f_oc: OC.format(start=pl(oc_start), end=pl(oc_end)),

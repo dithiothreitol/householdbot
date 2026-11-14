@@ -1,0 +1,22 @@
+{
+  "group": "language",
+  "about": "an English-speaking household in Poland gets English dates",
+  "household": [
+    "full-en"
+  ],
+  "turns": [
+    {
+      "say": "What do we have to pay in the next few days?",
+      "expect": {
+        "record_unchanged": true,
+        "reply_matches": [
+          "\\b(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\\b",
+          "PLN|zł"
+        ],
+        "reply_not_matches": [
+          "\\b(pon|wt|śr|czw|pt|sob|niedz)\\.\\s?\\d"
+        ]
+      }
+    }
+  ]
+}
