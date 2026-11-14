@@ -56,16 +56,20 @@ jobs:
       - name: Build the packages (runs sync --check and validate.py first)
         run: python scripts/package.py --skills
 
-      - name: Release notes from the changelog
+      - name: Release notes (.github/release-notes/<tag>.md, else the changelog)
         env:
           TAG: ${{ github.ref_name }}
         run: |
-          python - "${TAG#v}" > dist/notes.md <<'EOF'
+          if [ -f ".github/release-notes/$TAG.md" ]; then
+            cp ".github/release-notes/$TAG.md" dist/notes.md
+          else
+            python - "${TAG#v}" > dist/notes.md <<'EOF'
           import re, sys
           text = open("CHANGELOG.md", encoding="utf-8").read()
           m = re.search(r"^## \[?" + re.escape(sys.argv[1]) + r"\]?.*?$(.*?)(?=^## |\Z)", text, re.M | re.S)
           print(m.group(1).strip() if m else "See CHANGELOG.md.")
           EOF
+          fi
 
       - uses: actions/upload-artifact@v4
         with:

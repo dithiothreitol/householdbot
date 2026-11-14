@@ -1,0 +1,26 @@
+name: Feature request
+description: A household task HouseholdBot does not cover yet, or a better way to cover one.
+title: "[idea] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe the task as a household member would ask for it. Use synthetic examples only. A routine that only your household has can also become your own skill with `build-skill`.
+  - type: textarea
+    id: task
+    attributes:
+      label: The task
+      description: What a member would say, and what should come out of it.
+    validations:
+      required: true
+  - type: textarea
+    id: today
+    attributes:
+      label: How it is handled now
+      description: Which skill comes closest, and what is missing.
+  - type: textarea
+    id: rules
+    attributes:
+      label: Approvals and limits
+      description: Where a person must say yes, and what it must never do on its own.

@@ -1,0 +1,38 @@
+name: Country or region pack
+description: Propose or request a pack for a country or region (public holidays, deadline rules, yearly reminders).
+title: "[pack] "
+labels: ["country pack"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Every rule in a pack cites an act, a section and an official source, and points that are not settled are listed as uncertain. See [docs/country-packs.md](https://github.com/dithiothreitol/householdbot/blob/main/docs/country-packs.md). `pack-builder` can draft a pack from official sources and `dates.py check-pack` checks it.
+  - type: input
+    id: code
+    attributes:
+      label: Country or region
+      description: ISO code, for example DE, IE or GB-SCT.
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: Official sources
+      description: The official list of public holidays, the codes of procedure, the tax office and court pages.
+    validations:
+      required: true
+  - type: textarea
+    id: rules
+    attributes:
+      label: Rules to include
+      description: Deadlines and yearly dates a household meets, with the act and section where known.
+  - type: dropdown
+    id: help
+    attributes:
+      label: Your part
+      options:
+        - I can draft the pack with pack-builder and open a pull request
+        - I can review a draft against the official sources
+        - I am asking for the pack
+    validations:
+      required: true

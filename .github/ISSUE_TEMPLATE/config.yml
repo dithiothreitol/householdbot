@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/dithiothreitol/householdbot/security/advisories/new
+    about: Please report vulnerabilities privately, never in a public issue.
+  - name: Quickstart (English)
+    url: https://github.com/dithiothreitol/householdbot/blob/main/QUICKSTART.md
+    about: Install on Claude Code, Cowork or claude.ai and file the first document.
+  - name: Szybki start (polski)
+    url: https://github.com/dithiothreitol/householdbot/blob/main/QUICKSTART.pl.md
+    about: Instalacja w Claude Code, Cowork i claude.ai oraz pierwszy zapisany dokument.

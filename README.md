@@ -1,37 +1,264 @@
-# HouseholdBot
+# HouseholdBot: an open-source Claude plugin for household paperwork and life admin
 
 **English** · [Polski](README.pl.md)
 
-HouseholdBot is an open-source Claude plugin that runs a household's
-paperwork from a conversation. It reads letters, bills, contracts and
-policies, files them into a folder the household owns, tracks every deadline,
-renewal and cancel-by date with the country's public holidays, and writes a
-short brief on the week ahead. Nothing is written, sent or paid without a
-household member's yes.
+[![Release](https://img.shields.io/github/v/release/dithiothreitol/householdbot?include_prereleases&sort=semver)](https://github.com/dithiothreitol/householdbot/releases)
+[![Validate](https://github.com/dithiothreitol/householdbot/actions/workflows/validate.yml/badge.svg)](https://github.com/dithiothreitol/householdbot/actions/workflows/validate.yml)
+[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-D97757)](https://code.claude.com/docs/en/plugins)
+[![Agent Skills](https://img.shields.io/badge/Agent%20Skills-34-6E56CF)](householdbot/skills)
+[![Languages](https://img.shields.io/badge/languages-English%20%7C%20Polski-2ea44f)](#languages-and-countries)
 
-The project applies the structure of Anthropic's open-source vertical plugins
+**HouseholdBot** is a [Claude Code plugin](https://code.claude.com/docs/en/plugins)
+with 34 [Agent Skills](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview)
+that runs a household's paperwork from a conversation. It reads bills,
+letters, contracts and insurance policies, files them in a folder you own,
+tracks every deadline with its legal basis and weekday, drafts replies,
+appeals and cancellations, and sums up the week ahead. It works in Claude
+Code, Cowork and claude.ai, speaks English and Polish, and knows the public
+holidays and statutory deadlines of Poland and of England and Wales.
+
+Nothing is written, sent, signed or paid without a household member's yes.
+
+## Contents
+
+- [What you can ask](#what-you-can-ask)
+- [Features](#features)
+- [Quick start](#quick-start)
+- [Example: a court claim over Christmas](#example-a-court-claim-over-christmas)
+- [How it works](#how-it-works)
+- [Privacy and safety](#privacy-and-safety)
+- [Languages and countries](#languages-and-countries)
+- [Where it runs](#where-it-runs)
+- [Quality and tests](#quality-and-tests)
+- [FAQ](#faq)
+- [Repository layout](#repository-layout)
+- [Development](#development)
+- [Contributing](#contributing)
+- [Status](#status)
+- [License](#license)
+
+## What you can ask
+
+| You say | HouseholdBot |
+|---|---|
+| "I got a letter" (with a photo, PDF or pasted email) | reads it, screens it for scams, explains what it wants by when, files it after your yes |
+| "What's due?" | lists deadlines by urgency, overdue first, each with its weekday and source |
+| "How long do we have to appeal?" | counts the deadline from the day of delivery with the country's holidays and the law |
+| "What do we need to pay?" | builds a payment list with totals per currency, checks the payee accounts, never pays |
+| "Is this message real?" | checks a text or email for known scam patterns before anything is clicked |
+| "Cancel our internet contract" | finds the last day to give notice, the form required, and drafts the notice |
+| "Where does our money go?" | turns a bank CSV export into one page of spending by category and month |
+| "Show me everything on one page" | a household dashboard: deadlines, payments, expiring documents, insurance, gaps |
+| "We had a baby" or "we're moving" | every statutory step of the life event, counted from the day it happened |
+| "Plan our meals" | a week of meals within your time and budget, then the shopping list |
+| "Turn this into a skill" | your own routine as a skill that keeps the same safety rules |
+
+## Features
+
+**Paperwork core.** Setup interview (`household-onboard`), document filing
+with scam screening (`file-document`), search with page and quote
+(`find-document`), deadlines and reminders (`deadline-tracker`), the weekly
+brief (`weekly-brief`), a one-page dashboard (`household-dashboard`), profile
+changes (`household-customize`), record checks and repair
+(`household-doctor`), and a front door for vague requests
+(`household-router`).
+
+**Money and correspondence.** Payment lists with two approvals
+(`bills-due`), bank statement summaries exact to the cent (`budget-snapshot`),
+subscriptions and price rises (`subscriptions-review`), contract and offer
+checks before signing (`contract-check`), cancellations and provider switches
+(`cancel-or-switch`), complaints, returns and insurance claims
+(`complaint-and-claim`), replies, appeals and emails (`reply-to-letter`),
+mailbox triage (`inbox-triage`), the annual tax return checklist
+(`tax-season-organizer`) and the monthly review (`monthly-review`).
+
+**Home, family and everyday life.** House checks and guarantees
+(`home-upkeep`), car papers, tests and fines (`vehicle-file`), all insurance
+policies in one table (`insurance-overview`), identity documents and travel
+readiness (`identity-and-travel`), school letters and payments
+(`school-desk`), health papers with strict privacy (`health-file`), the
+emergency file for the other adult (`emergency-file`), life events such as
+moving, a birth, buying a car or a death (`life-event`), the family calendar
+(`family-calendar`), meal plans (`meal-planner`), the shopping list
+(`shopping-list`), fair chore rotation (`chore-rotation`) and the annual
+review (`annual-review`).
+
+**Make it yours.** Your own repeated tasks as skills (`build-skill`) and
+your own country or region pack from official sources (`pack-builder`).
+
+## Quick start
+
+In [Claude Code](https://code.claude.com/docs/en/overview) (terminal, IDE or
+the desktop app's Code tab):
+
+```
+/plugin marketplace add dithiothreitol/householdbot
+/plugin install householdbot@householdbot
+/householdbot:household-onboard
+```
+
+The setup asks for your language and country, who lives with you, and where
+the household folder lives. Then send a photo or PDF of one bill or letter.
+
+- **Cowork**: add the marketplace under *Customize > Plugins*, or download
+  `householdbot.plugin` from the [latest release](https://github.com/dithiothreitol/householdbot/releases)
+  and choose *Upload plugin*.
+- **claude.ai**: install the plugin, or upload single skills from the
+  release (`skills/<skill>.zip`), with code execution turned on.
+- **Phone**: Remote Control drives a Claude Code session on your computer
+  that has the plugin.
+
+[QUICKSTART.md](QUICKSTART.md) walks through every surface, the first filed
+document and a scheduled weekly brief.
+
+## Example: a court claim over Christmas
+
+From a test session on synthetic data, a household in England:
+
+> We've had a county court claim from Example Credit Ltd and we want to
+> defend it. The response pack says the particulars of claim are deemed
+> served on Monday 14 December 2026. What will our deadlines be?
+
+| Step | Counted | Last day | Plan |
+|---|---|---|---|
+| Acknowledgment of service | 14 days (CPR 10.3) | Mon 28 Dec 2026 is a bank holiday (Boxing Day substitute), so filing at the court office moves to Tue 29 Dec 2026 (CPR 2.8) | Thu 24 Dec 2026, before the court closes |
+| Defence, after an acknowledgment | 28 days (CPR 15.4) | Mon 11 Jan 2027 | |
+
+The dates come from `dates.py` and the England and Wales country pack, each
+tagged `country pack rule — verify`, with a pointer to Citizens Advice or a
+solicitor. The two reminders were saved only after James said yes, and the
+decisions log records his name.
+
+## How it works
+
+```mermaid
+flowchart LR
+    A["Letter, bill, email,<br/>photo or PDF"] --> B["file-document<br/>reads and screens it"]
+    B --> C{"Your yes"}
+    C -->|yes| D[("Household folder<br/>profile, registers,<br/>documents, log")]
+    D --> E["deadline-tracker<br/>weekly-brief<br/>household-dashboard"]
+    P["Country pack<br/>holidays and law"] --> S["Scripts<br/>dates.py, record.py"]
+    S --> E
+```
+
+- **The household record** is a folder you choose, on your computer or in a
+  synced drive two adults share: `household-profile.md`, the registers
+  `documents.json` and `obligations.json`, your original papers, and
+  `log/decisions.md` with who approved each change.
+- **The model judges, the scripts prove.** Small Python scripts (standard
+  library only) count deadlines with public holidays, check and update the
+  registers, sum bank exports and plan chores. Where Python cannot run, the
+  skills count by hand, show the steps and mark the result
+  `model calculation — verify`.
+- **Every date says where it came from**: `stated in document`,
+  `told by household member`, `country pack rule — verify`.
+- **Approval gates**: every write is shown first and made with the
+  approver's name; payments, letters, cancellations and signatures are
+  prepared, never carried out.
+- **Shared rules** travel with every skill: personal data, untrusted
+  content, money, dates, the not-advice line.
+
+[docs/architecture.md](docs/architecture.md) describes the pattern, adapted
+from Anthropic's open-source vertical plugins
 ([knowledge-work-plugins](https://github.com/anthropics/knowledge-work-plugins),
-small-business in particular, and
-[claude-for-legal](https://github.com/anthropics/claude-for-legal)) to
-household administration: a router and a setup interview, shared rules every
-skill carries, a profile file, registers with provenance on every date,
-approval gates, and a read-only watcher agent. It adds a proof layer: small
-scripts count dates and check the registers, so the model judges and the
-scripts prove.
+[claude-for-legal](https://github.com/anthropics/claude-for-legal)), and what
+building it showed.
 
-## Languages
+## Privacy and safety
 
-HouseholdBot speaks **English** (the default) and **Polish**. The setup asks
-first; afterwards "in Polish" or "po angielsku" switches at any time. The
-language decides the answers, the weekly brief, the date and amount formats
-(`Fri 20 Nov 2026`, `PLN 1,240.00` or `pt. 20.11.2026`, `1 240,00 zł`), the
-profile template and the decisions log. Documents keep their own language:
-an English-speaking family in Poland gets Polish letters explained in English,
-with the original quoted, and drafts to Polish offices in Polish with an
-English translation. New languages are added as files in `core/i18n/` and
-`core/templates/<lang>/`.
+- Your papers stay in your folder. HouseholdBot has no server and no
+  account of its own. The connectors (Gmail, Google Calendar, Google Drive)
+  are optional, and anything they would create, such as a calendar entry or
+  a draft, waits for your yes.
+- Identifiers are never stored or repeated: national ID and tax numbers,
+  passport numbers, full bank account and card numbers, PINs and passwords.
+  The register points to the page of the document instead.
+- Text from letters, emails and bank exports is treated as data. Instructions
+  hidden in a document are quoted as suspicious and never followed, and such
+  text never reaches a command line.
+- Health details stay out of briefs, calendar titles and shared pages.
+- HouseholdBot prepares and explains; it is not legal, tax or financial
+  advice, and says when a professional should look at a matter.
 
-## What is in this repository
+See [PRIVACY.md](householdbot/PRIVACY.md) and [SECURITY.md](SECURITY.md).
+
+## Languages and countries
+
+- **Languages**: English (default) and Polish, for answers, briefs, date and
+  amount formats and the profile. "po polsku" or "in English" switches at
+  any time. Documents keep their own language: a Polish letter is explained
+  in English with the original quoted, and a draft to a Polish office is in
+  Polish with an English translation.
+- **Country packs**: Poland, and England and Wales. Each rule cites its act,
+  section and official source; points not settled are listed as uncertain.
+  The England and Wales bank holidays match the official gov.uk list for 2019
+  to 2028.
+- **Anywhere else** (Scotland, Northern Ireland, another country): the skills
+  work, and `pack-builder` builds a household pack from official sources,
+  checked by `dates.py check-pack` before use. See
+  [docs/country-packs.md](docs/country-packs.md).
+
+## Where it runs
+
+| Surface | Install | What works |
+|---|---|---|
+| Claude Code (terminal, IDE) | `/plugin marketplace add`, `/plugin install` | everything: skills, agents, scripts, local folder |
+| Claude desktop app, Code tab | *+ > Add plugins* in a local session | skills, agents, scripts, local folder |
+| Cowork | *Customize > Plugins* or *Upload plugin* | skills, agents and hooks; scheduled tasks can use the plugin |
+| claude.ai | the plugin, or single skill zips from a release | skills, scripts in the code sandbox, the folder through Google Drive |
+| Phone | Remote Control of a Claude Code session | as the session it drives |
+
+For an unattended weekly deadline check,
+[managed-agent-cookbooks/deadline-watcher](managed-agent-cookbooks/deadline-watcher)
+deploys it as a Claude Managed Agent with read-only, calculator and writer
+tiers.
+
+## Quality and tests
+
+- **149 unit tests** for the scripts: holidays, deadlines, deemed delivery,
+  registers, merges of sync-conflict copies, bank exports, chore plans and
+  security (identifiers, paths, untrusted input).
+- **115 behaviour tests** with `claude plugin eval` on synthetic households,
+  graded by an LLM judge, kept outside the plugin package.
+- **With and without the plugin**: on the same 115 cases and the same model,
+  98 passed in full with HouseholdBot and 19 without it. The final run of
+  version 1.0.0-rc.1 passed 103 of 115.
+- **Country packs checked against primary texts**: an independent check of
+  about forty claims in the England and Wales pack led to four corrections.
+
+The numbers, the failures and what each run showed are in the
+[development plan](docs/development-plan.md).
+
+## FAQ
+
+**Is HouseholdBot legal, tax or financial advice?** No. It reads, files,
+counts and drafts. Statutory dates carry their law and the word "verify",
+and court papers, tax assessments and debt collection get a pointer to a
+professional.
+
+**Does it pay bills or send letters for me?** No. It prepares payment lists
+and drafts; you pay in your bank and send the letter yourself. A draft goes
+into a connected mailbox only after you approve its text.
+
+**Where is my data?** In the household folder you choose, on your computer
+or in your own synced drive. HouseholdBot runs inside your Claude session.
+
+**Does it work outside Poland and the UK?** Yes. Filing, search, payment
+lists, briefs and the everyday skills work anywhere; statutory deadlines need
+a country pack, which `pack-builder` can build from official sources.
+
+**Do I need Python?** The scripts use the Python 3 standard library and make
+dates exact. Without Python the skills still work, show their arithmetic and
+mark it for checking.
+
+**Can two adults share it?** Yes, through a folder in a synced drive. Writes
+stop while a sync-conflict copy exists, and `household-doctor` merges it.
+
+**Is it affiliated with Anthropic?** No. HouseholdBot is an independent
+open-source project.
+
+## Repository layout
 
 ```
 .claude-plugin/marketplace.json   the marketplace (one plugin)
@@ -40,7 +267,7 @@ householdbot/                     the plugin
   skills/<skill>/shared/          generated copies of rules, country packs, scripts, templates
   agents/                         deadline-watcher and document-reader, read tools only
 managed-agent-cookbooks/          deadline-watcher as a Claude Managed Agent (three tiers, weekly)
-evals/                            behaviour tests for `claude plugin eval`, synthetic household;
+evals/                            behaviour tests for `claude plugin eval`, synthetic households;
                                   kept outside the plugin package, run by scripts/eval.py
 core/                             sources of everything under skills/*/shared/
   rules/                          the rules every skill follows
@@ -59,51 +286,39 @@ docs/country-packs.md             how a country pack is built and checked
 docs/development-plan.md          the staged plan (Polish version: development-plan.pl.md)
 ```
 
-Each skill carries its own copy of what it needs because on claude.ai and in
-the mobile apps only a skill's own folder reaches the sandbox.
+Each skill carries its own copy of what it needs, because on claude.ai only a
+skill's own folder reaches the sandbox.
 
-## Use it
-
-See [QUICKSTART.md](QUICKSTART.md). In Claude Code:
-
-```
-/plugin marketplace add dithiothreitol/householdbot
-/plugin install householdbot@householdbot
-/householdbot:household-onboard
-```
-
-Cowork, claude.ai and the phone are covered in the quickstart.
-
-## Develop it
+## Development
 
 ```
 python scripts/sync.py                       # after editing anything in core/
 python scripts/validate.py                   # repository checks
 python -m unittest discover -s tests         # proof-layer tests
 claude plugin validate ./householdbot --profile directory --strict
-python scripts/eval.py --scaffold --allow-tools Write Edit --no-publish   # tests run on a staged copy in build/
+python scripts/eval.py --scaffold --allow-tools Write Edit --no-publish   # behaviour tests on a staged copy in build/
+python scripts/package.py --skills           # release packages in dist/
 ```
 
-[CONTRIBUTING.md](CONTRIBUTING.md) covers new skills and country packs.
 [CLAUDE.md](CLAUDE.md) is the guide for working on the repository with
 Claude Code.
 
+## Contributing
+
+Country packs, translations, new skills and test cases are welcome; see
+[CONTRIBUTING.md](CONTRIBUTING.md) and the
+[Code of Conduct](CODE_OF_CONDUCT.md). Test data must be synthetic: never
+attach a real document, name or number to an issue or a pull request.
+Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md).
+
 ## Status
 
-Version 1.0.0-rc.1, the release candidate of 1.0, in English and Polish:
-setup, filing, search, deadlines, the weekly brief, profile changes and record
-repair; the mailbox, bills, contracts, subscriptions, bank statements, the
-tax-return checklist, replies, complaints, cancellations and the monthly
-review; the house, the car, insurance, identity documents and travel, school,
-health papers, the emergency file, life events, the family calendar, meals,
-shopping, chores and the annual review; a dashboard, the household's own
-skills and country packs; country packs for Poland and for England and Wales;
-an unattended weekly deadline check as a Claude Managed Agent. Version 1.0
-follows the pilot in a real household. See [CHANGELOG.md](CHANGELOG.md), and
-[docs/architecture.md](docs/architecture.md) for what building it showed.
+Version 1.0.0-rc.1 is the release candidate of 1.0; version 1.0 follows the
+pilot in a real household. See the [CHANGELOG](CHANGELOG.md) and the
+[releases](https://github.com/dithiothreitol/householdbot/releases).
 
 ## License
 
 Apache License 2.0; see [LICENSE](LICENSE) and [NOTICE](NOTICE).
 HouseholdBot is an independent project and is not affiliated with or endorsed
-by Anthropic.
+by Anthropic. Claude is a trademark of Anthropic.
