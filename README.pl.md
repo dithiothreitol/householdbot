@@ -1,4 +1,4 @@
-# HouseholdBot: otwarta wtyczka do Claude Code i Codexa do domowych dokumentów, rachunków i terminów
+<h1 align="center"><img src="docs/assets/logo.pl.png" alt="HouseholdBot: otwarta wtyczka do Claude Code i Codexa do domowych dokumentów, rachunków i terminów" width="480"></h1>
 
 [English](README.md) · **Polski**
 

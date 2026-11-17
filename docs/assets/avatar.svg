@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <!--
+    HouseholdBot avatar: a roof over two eyes on a mint square.
+    Full bleed on purpose: GitHub, Slack and the plugin stores round the corners
+    themselves (a square for an organization, a circle for a user), and the
+    drawing stays inside the inscribed circle.
+    Render docs/assets/avatar.png (512 x 512) the way the social preview is
+    rendered: msedge with the flags headless=new, hide-scrollbars,
+    force-device-scale-factor=1, window-size=512,512, screenshot=avatar.png.
+    (An XML comment may not contain two hyphens, so they are left off here.)
+  -->
+  <rect width="512" height="512" fill="#BDE9CF"/>
+  <path d="M108 216 256 98 404 216" fill="none" stroke="#10301F" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/>
+  <ellipse cx="196" cy="332" rx="42" ry="68" fill="#10301F"/>
+  <ellipse cx="316" cy="332" rx="42" ry="68" fill="#10301F"/>
+</svg>

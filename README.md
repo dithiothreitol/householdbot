@@ -1,4 +1,4 @@
-# HouseholdBot: an open-source Claude Code and Codex plugin for household paperwork and life admin
+<h1 align="center"><img src="docs/assets/logo.png" alt="HouseholdBot: an open-source Claude Code and Codex plugin for household paperwork and life admin" width="480"></h1>
 
 **English** · [Polski](README.pl.md)
 

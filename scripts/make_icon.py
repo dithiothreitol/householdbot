@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Draw the HouseholdBot icon (512 x 512 PNG) with the standard library only.
 
-A white house on a teal rounded square, with a teal check mark inside.
+The avatar from docs/assets/avatar.svg, a roof over two eyes on a mint
+square, with the corners rounded and transparent.
   python scripts/make_icon.py   writes householdbot/.claude-plugin/icon.png
 """
 import struct
@@ -9,9 +10,15 @@ import zlib
 from pathlib import Path
 
 SIZE, SS = 512, 3  # supersampling per axis
-BG = (31, 111, 120)
-FG = (255, 255, 255)
+BG = (189, 233, 207)  # #BDE9CF
+FG = (16, 48, 31)  # #10301F
 OUT = Path(__file__).resolve().parents[1] / "householdbot" / ".claude-plugin" / "icon.png"
+
+# Same geometry as docs/assets/avatar.svg.
+ROOF = ((108, 216), (256, 98), (404, 216))
+ROOF_HALF = 20  # half the stroke width; round caps and join
+EYES = ((196, 332), (316, 332))
+EYE_RX, EYE_RY = 42, 68
 
 
 def in_rounded_square(x, y, r=104):
@@ -20,13 +27,8 @@ def in_rounded_square(x, y, r=104):
     return (x - cx) ** 2 + (y - cy) ** 2 <= r * r and 0 <= x <= SIZE and 0 <= y <= SIZE
 
 
-def in_triangle(x, y, a, b, c):
-    def side(p, q):
-        return (x - q[0]) * (p[1] - q[1]) - (p[0] - q[0]) * (y - q[1])
-    d1, d2, d3 = side(a, b), side(b, c), side(c, a)
-    neg = d1 < 0 or d2 < 0 or d3 < 0
-    pos = d1 > 0 or d2 > 0 or d3 > 0
-    return not (neg and pos)
+def in_ellipse(x, y, c, rx, ry):
+    return ((x - c[0]) / rx) ** 2 + ((y - c[1]) / ry) ** 2 <= 1
 
 
 def near_segment(x, y, p, q, half):
@@ -39,11 +41,9 @@ def near_segment(x, y, p, q, half):
 def color_at(x, y):
     if not in_rounded_square(x, y):
         return None
-    house = in_triangle(x, y, (256, 106), (92, 246), (420, 246)) or (140 <= x <= 372 and 232 <= y <= 404)
-    if house:
-        tick = near_segment(x, y, (196, 320), (240, 362), 15) or near_segment(x, y, (240, 362), (322, 272), 15)
-        return BG if tick else FG
-    return BG
+    roof = near_segment(x, y, ROOF[0], ROOF[1], ROOF_HALF) or near_segment(x, y, ROOF[1], ROOF[2], ROOF_HALF)
+    eyes = any(in_ellipse(x, y, c, EYE_RX, EYE_RY) for c in EYES)
+    return FG if roof or eyes else BG
 
 
 def render():
